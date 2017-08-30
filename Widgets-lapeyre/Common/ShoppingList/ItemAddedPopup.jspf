@@ -1,0 +1,85 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<c:if test="${!pageloaded_itemAddedPopupJSPF}">
+	<c:if test="${widgetText == null}">
+		<fmt:setLocale value="${CommandContext.locale}" />
+		<fmt:setBundle basename="/Widgets/Properties/widgettext" var="widgetText" />
+	</c:if>
+
+	<div id="shoppingListItemAddedPopup" data-dojo-type="lapeyre/widget/Dialog" style="display:none;" title="<fmt:message key="DIALOG_TITLE_MESSAGE" bundle="${widgetText}" />">
+	<c:choose>
+		<c:when test="${isOnMobileDevice}">
+		
+		<%-- Affichage du popin mobile --%>
+			<div id="WishlistPopinAddedWrapper" style="display: block;" aria-labelledby="cartDropdownMessage" class="popinAddedShopCartMobile">
+				<div id="widget_minishopcart_popup_1">
+					<div id="cartDropdown" class="cartDropdownMobile">
+						<div id="listDropdownMessage" class="titleBlock"><fmt:message bundle="${widgetText}" key="ajoutWishlistPopinMobileTitle"/></div>
+						<a  role="button" id="shoppingListItemAddedClose" href="javascript:dijit.byId('shoppingListItemAddedPopup').hide();deleteWidgetAssociationInPopin();" class="closeButton"></a>
+					</div>
+				</div>
+			</div>
+			
+		</c:when>
+		<c:otherwise>
+		
+		<%-- Affichage du popin desktop --%>
+		    <div class="widget_site_popup">
+				<div class="content">
+					<div class="header">
+						<span><fmt:message key="ajoutWishlistPopinDesktopTitle" bundle="${widgetText}" /></span>
+						<a role="button" id="shoppingListItemAddedClose" href="javascript:void(0);" onclick="javascript:ShoppingListDialogJS.close();return false;" class="close tlignore" title="<fmt:message key="SL_CLOSE" bundle="${widgetText}" />" aria-label="<fmt:message key="SL_CLOSE" bundle="${widgetText}"/>" ></a>
+						<div class="clear_float"></div>
+					</div>
+					<div class="body">
+						<div class="product"><a id="shoppingListItemAddedLink">
+							<div class="product_image">
+								<img id="shoppingListItemAddedImg" onerror="this.src='/wcsstore/LapeyreSAS/images/desktopList/defaultImage.png'" alt=""/>
+								
+							</div>
+							<div class="product_info">
+								<div class="product_main_infos">
+									<div id="shoppingListItemAddedName" class="product_name"></div>
+									<div id="sopphingListIdemAddedShortDesc" class="product_description"></div>
+									<span class="sku" id="shoppingListItemAddedSkuRef">
+										<fmt:message key="ficheProduitSkuLabel" bundle="${widgetText}" /> : <span></span>
+									</span>
+								</div>
+							</div>
+						</a>
+						</div>
+					</div>
+					<div class="footer">
+						<div class="ctaContainer inline ">
+							<a id="shoppingListItemAddedContinue" href="javascript:ShoppingListDialogJS.close();" class="button left" title="<fmt:message key="SL_CONTINUE_SHOPPING" bundle="${widgetText}" />">
+								<fmt:message key="ajoutWishlistPopinCloseButtonLabel" bundle="${widgetText}" />
+							</a>
+							<input type="hidden" id="wishListID">
+							<a id="seeMyShoppingList" href="" class="button green left">
+								<fmt:message key="ajoutPanierPopinWishlistButtonLabel" bundle="${widgetText}" />
+							</a>
+						</div>
+						
+					</div>
+					<div class="clear_float"></div>
+				<!-- End content Section -->
+				</div>
+			</div>
+			
+		</c:otherwise>
+	</c:choose>	
+	</div>
+	
+	<c:set var="pageloaded_itemAddedPopupJSPF" value="true" scope="request"/>
+</c:if>

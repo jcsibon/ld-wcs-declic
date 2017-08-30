@@ -1,0 +1,46 @@
+[
+{
+	"uniteVenteLegaleCode":"M2",
+	"contrainteColisage":"1.0",
+	"quantityLegaleFieldLabel":"Surface",
+	"uniteVenteLegaleLabel":"m²",
+	"uniteSecondaireLabel":"boite",
+	"colisagePriceLabel":"Soit PRICE € la boite de NBUNIT m²",
+	"cartColisagePriceLabel":"Soit PRICE € le m²",
+	"colisageQuantitySingulierLabel":"QUANTITY Boite (soit NBUNIT m²)", 
+	"colisageQuantityPlurielLabel":"QUANTITY Boites (soit NBUNIT m²)"
+},
+{
+	"uniteVenteLegaleCode":"M2",
+	"contrainteColisage":"0.0",
+	"quantityLegaleFieldLabel":"Surface",
+	"uniteVenteLegaleLabel":"m²",
+	"uniteSecondaireLabel":"botte",
+	"colisagePriceLabel":"Soit PRICE € la botte de NBUNIT m²",
+	"cartColisagePriceLabel":"Soit PRICE € le m²",
+	"colisageQuantitySingulierLabel":"QUANTITY Botte (soit NBUNIT m²)", 
+	"colisageQuantityPlurielLabel":"QUANTITY Bottes (soit NBUNIT m²)"
+},
+{
+	"uniteVenteLegaleCode":"ML",
+	"contrainteColisage":"0.0",
+	"quantityLegaleFieldLabel":"Longueur",
+	"uniteVenteLegaleLabel":"mètre linéaire",
+	"uniteSecondaireLabel":"rouleau",
+	"colisagePriceLabel":"Soit PRICE € le rouleau de NBUNIT mètre linéaire",
+	"cartColisagePriceLabel":"Soit PRICE € du mètre linéaire",
+	"colisageQuantitySingulierLabel":"QUANTITY Rouleau (soit NBUNIT mètre linéaire)", 
+	"colisageQuantityPlurielLabel":"QUANTITY Rouleaux (soit NBUNIT mètre linéaire)"
+},
+{
+	"uniteVenteLegaleCode":"L",
+	"contrainteColisage":"0.0",
+	"quantityLegaleFieldLabel":"Contenance",
+	"uniteVenteLegaleLabel":"litre",
+	"uniteSecondaireLabel":"pot",
+	"colisagePriceLabel":"Soit PRICE € le pot de NBUNIT litre",
+	"cartColisagePriceLabel":"Soit PRICE € le pot",
+	"colisageQuantitySingulierLabel":"QUANTITY Pot (soit NBUNIT litre)", 
+	"colisageQuantityPlurielLabel":"QUANTITY Pots (soit NBUNIT litre)"
+}
+]

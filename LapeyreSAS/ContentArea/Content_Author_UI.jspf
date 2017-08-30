@@ -1,0 +1,23 @@
+<!-- Begin Content_Author_UI.jspf-->
+<%@ page trimDirectiveWhitespaces="true" %>
+<script type="text/javascript" src="${jsAssetsDir}javascript/ContentArea/Author.js?${versionNumber}"></script>
+
+<c:if test="${content.page.auteur != null && !empty content.page.auteur}">
+<div class="row">
+	<div class="authorArticle" id="authorToggle" itemprop="author" itemscope itemtype="${MICRO_DATA_PERSON}" >
+		<div class="authorPicture" id="sliderAuthor"><img itemprop="image" src="${imageUrl}${content.page.auteur.image.url}" alt="${content.page.auteur.image.alt}" /></div>
+		<div id="authorDescription">
+			<p itemprop="name">${content.page.auteur.nom}</p>
+			<div id="authorDescText">
+				<p><c:out value="${ecocea:replaceCarriageReturn(content.page.auteur.description)}" escapeXml="false"/></p>
+				<p class="authorWebsite"><a href="${content.page.auteur.url}" target="_blank">${content.page.auteur.libelleUrl}</a></p>
+				<c:if test="${!empty content.page.auteur.url}">
+					<meta itemprop="url" content="${content.page.auteur.url}"/>
+				</c:if>
+			</div>
+		</div>
+		<div id="arrowAuthor"></div>
+	</div>
+</div>
+</c:if>
+<!-- End Content_Author_UI.jspf-->

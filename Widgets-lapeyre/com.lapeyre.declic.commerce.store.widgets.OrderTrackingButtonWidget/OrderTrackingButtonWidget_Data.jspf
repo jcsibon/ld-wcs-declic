@@ -1,0 +1,18 @@
+<c:choose>
+	<c:when test="${userType == 'G'}">
+<wcf:url var="orderTrackingListURL" patternName="SearchOrderPageURL" value="OrderTrackingSearchView">
+	<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	<wcf:param name="langId" value="${langId}" />			
+	<wcf:param name="urlLangId" value="${urlLangId}" />
+</wcf:url>	
+	</c:when>
+	<c:otherwise>
+<wcf:url var="orderTrackingListURL" patternName="SearchOrderPageURL" value="OrderTrackingListView">
+	<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	<wcf:param name="langId" value="${langId}" />			
+	<wcf:param name="urlLangId" value="${urlLangId}" />
+</wcf:url>	
+	</c:otherwise>
+</c:choose>

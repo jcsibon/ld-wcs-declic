@@ -1,0 +1,22 @@
+<%-- Le chemin d'un widget est pris directement depuis la base de données --%>
+<ecocea:widgetPath var="merchandisingAssociationswidgetPath" identifier="MerchandisingAssociations" />
+<ecocea:widgetPath var="crossContentwidgetPath" identifier="CrossContentWidget" />
+
+<%-- Gestion des labels --%>
+<fmt:message var="navigationSectionDescriptiveLabel" key="ficheProduitStdNavigationSection1Label" bundle="${widgetText}" />
+<fmt:message var="mainSectionDescriptiveLabel" key="ficheProduitStdMainSection1Label" bundle="${widgetText}" />
+
+<fmt:message var="navigationSectionNoticeMontageLabel" key="ficheProduitStdNavigationNoticeMontageLabel" bundle="${widgetText}" />
+<fmt:message var="mainSectionNoticeMontageLabel" key="ficheProduitStdMainNoticeMontageLabel" bundle="${widgetText}" />
+
+<fmt:message var="navigationSectionNoticeMontageLabelPlural" key="ficheProduitStdNavigationNoticeMontageLabelPlural" bundle="${widgetText}" />
+<fmt:message var="mainSectionNoticeMontageLabelPlural" key="ficheProduitStdMainNoticeMontageLabelPlural" bundle="${widgetText}" />
+
+<fmt:message var="navigationSectionRatingReviewsLabel" key="ficheProduitStdNavigationRatingReviewsLabel" bundle="${widgetText}" />
+<fmt:message var="mainSectionRatingReviewsLabel" key="ficheProduitStdMainRatingReviewsLabel" bundle="${widgetText}" />
+
+<fmt:message var="navigationSectionAdvicesLabel" key="ficheProduitStdNavigationSection5Label" bundle="${widgetText}" />
+<fmt:message var="mainSectionAdvicesLabel" key="ficheProduitStdMainSection5Label" bundle="${widgetText}" />
+
+<fmt:message var="navigationSectionPersonnlisationLabel" key="ficheProduitStdNavigationSection2Label" bundle="${widgetText}" />
+<fmt:message var="mainSectionPersonnlisationLabel" key="ficheProduitStdMainSection2Label" bundle="${widgetText}" />

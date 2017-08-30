@@ -1,0 +1,13 @@
+<%@page import="com.lapeyre.declic.configurations.ConfigTool"%>
+<%@ page trimDirectiveWhitespaces="true" %>
+<%
+	//Si appelé en AJAX, il faut redéfinir l'url
+	String storeLocatorURL = ConfigTool.getConnectionPropertiesResource().getProperty("store.all.mag.url");
+	request.setAttribute("storeLocatorURL","/"+storeLocatorURL);
+%>
+<wcbase:useBean id="fullStoreDB" classname="com.lapeyre.declic.commerce.storelocator.beans.FullShopDataBean">
+	<c:set value="${extendedUserContext.defaultStores[0].id}" target="${fullStoreDB}" property="stlocId" />
+	<c:set value="${langId}" target="${fullStoreDB}" property="languageId" />
+</wcbase:useBean>
+
+<wcf:url var="HeaderStoreLocatorURL" value="HeaderStoreLocatorView" type="Ajax" />

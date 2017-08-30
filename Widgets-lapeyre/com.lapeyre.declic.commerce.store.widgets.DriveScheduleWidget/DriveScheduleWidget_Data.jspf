@@ -1,0 +1,24 @@
+<!-- BEGIN DriveScheduleWidget_Data.jsp -->
+<%@page import="java.util.Date"%>
+<%@page import="java.util.Calendar"%>
+<%@page import="com.lapeyre.declic.configurations.ConfigTool"%>
+<%@ page import="java.text.SimpleDateFormat" %>
+
+<c:set var="shopId" value="${(!empty WCParam.shopId) ? WCParam.shopId : (!empty param.shopId) ? param.shopId : ''}" />
+<c:set var="dateDebut" value="${!empty WCParam.dateDebut ? WCParam.dateDebut : (!empty param.dateDebut ? param.dateDebut : '')}" />
+<c:set var="dateFin" value="${!empty WCParam.dateFin ? WCParam.dateFin : (!empty param.dateFin ? param.dateFin : '')}" />
+<c:set var="startDateDriveSchedule" value="${!empty WCParam.startDateDriveSchedule ? WCParam.startDateDriveSchedule : (!empty param.startDateDriveSchedule ? param.startDateDriveSchedule : '')}" />
+<c:set var="endDateDriveSchedule" value="${!empty WCParam.endDateDriveSchedule ? WCParam.endDateDriveSchedule : (!empty param.endDateDriveSchedule ? param.endDateDriveSchedule : '')}" />
+<c:set var="step" value="${!empty WCParam.step ? WCParam.step : (!empty param.step ? param.step: '')}" />
+<c:set var="drivePreSelected" value="${!empty WCParam.drivePreSelected ? WCParam.drivePreSelected : (!empty param.drivePreSelected ? param.drivePreSelected: '')}" />
+
+<c:if test="${!empty shopId && !empty dateDebut && !empty dateFin }">
+	<ecocea:driveSchedule
+		var="driveScheduleContentHelper" 
+		shopId="${shopId}" 
+		startDate="${dateDebut}" 
+		endDate="${dateFin}" 
+	/>
+
+</c:if>
+<!-- END DriveScheduleWidget_Data.jsp -->

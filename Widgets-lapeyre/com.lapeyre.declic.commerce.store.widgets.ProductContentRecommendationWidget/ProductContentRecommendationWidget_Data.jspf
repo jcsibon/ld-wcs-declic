@@ -1,0 +1,242 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<%--
+  *
+  * Set up the variables required by the snippet.
+  *
+--%>
+<c:set var="requestURI"                value="${requestScope.requestURI}"/>
+<c:set var="commandName" value="${WCParam.commandName}"/>
+<c:if test="${empty commandName}" >
+	<c:set var="commandName" value="${param.commandName}"/>
+</c:if>
+<c:if test="${!empty commandName}">
+	<c:set var="requestURI" value="${commandName}"/>
+</c:if>
+<c:set var="emsName"                   value="${requestScope.emsName}"/>
+
+<%-- Set widget align style in "vertical", "horizontal" or "scroll". --%>
+<c:if test="${!empty param.align}">
+	<c:set var="align" value="${param.align}"/>
+</c:if>
+
+<%-- Set whether widget header title is displayable --%>
+<c:set var="displayHeader" value="true"/>
+<c:if test="${!empty param.displayHeader && param.displayHeader != 'true'}">
+	<c:set var="displayHeader" value="false"/>
+</c:if>
+
+<c:set var="espotName" value="${fn:replace(emsName,' ','')}"/>
+<c:set var="espotName" value="${fn:replace(espotName,'\\\\','')}"/>
+<c:set var="espotName" value="${fn:replace(espotName,'\"','')}"/>
+<c:set var="espotName" value="${fn:replace(espotName,'\\\'','')}"/>	
+
+<%--
+  *
+  * Specify if a fully qualified URL or relative paths should be used for
+  * image tags. A fully qualified URL is required for e-mail activity functionality.
+  *
+--%>
+<c:set var="prependFullURL">
+    <c:out value="${param.useFullURL}" default="false" />
+</c:set>
+
+<%--
+  *
+  * Set the ClickInfo command URL if the optional clickInfoURL parameter is provided; otherwise, use the
+  * default value of the URL.
+  *
+--%>
+<c:set value="ClickInfo" var="clickInfoCommand" />
+<c:set value="" var="clickOpenBrowser" />
+<c:if test="${!empty param.clickInfoURL}">
+    <c:set value="${param.clickInfoURL}" var="clickInfoCommand" />
+    <c:set value='target="_blank"' var="clickOpenBrowser" />
+</c:if>
+
+<%--
+  *
+  * Specify the host name of the URL that is used to point to the shared image directory.  
+  * Use this variable to reference images.
+  *
+--%>
+<c:set var="hostPath" value="" />
+<c:if test="${prependFullURL}">
+    <c:set value="${pageContext.request.scheme}://${pageContext.request.serverName}${portUsed}" var="hostPath" />
+</c:if>
+<%--
+  *
+  * Specify the dynamic properties
+  *
+--%>
+<c:if test="${!empty param.pagingControl}">
+	<c:set var="pagingControl" value="${param.pagingControl}"/>
+</c:if>
+<c:if test="${!empty param.maxProductsToDisplay}">
+	<c:set var="maxProductsToDisplay" value="${param.maxProductsToDisplay}"/>
+</c:if>
+
+<%--
+  *
+  * Create the e-Marketing Spot.
+  *
+--%>
+
+<%-- 
+	Try to get data from the map if this jspf is imported by EMarketingSpot 
+	If data exists, then the Store preview also handled by EMartketingSpot widget, set var ignorePreview
+--%>
+
+<wcf:eMarketingSpotCache marketingSpotData="${marketingSpotDatas}" catalogEntryDependencyName="productId" />
+
+<c:set var="espotTitle" value="" />
+<c:if test="${!empty param.espotTitle}">
+	<c:set var="espotTitle" value="${param.espotTitle}"/>
+</c:if>
+
+<%--
+  *
+  * Start: Catalog Entries
+  * The following block is used to display the catalog entries associated with this e-Marketing Spot. The
+  * product display page that shows the selected catalog entry will be referenced
+  * through the submission of the HTML form in the calling .jsp file.
+  *
+--%>  
+
+<c:set var="currentProductCount" value="0" />
+<c:set var="catentryIdList" value=""/>
+<c:set var="emsId" value="${marketingSpotDatas.marketingSpotIdentifier.uniqueID}"/>
+
+<c:forEach var="entryMap1" items="${requestScope.msaDatasProductContentMap}">
+	<c:forEach var="entryMap2" items="${entryMap1.value}">
+		<c:forEach var="marketingSpotData" items="${entryMap2.value}">
+			<c:if test="${marketingSpotData.dataType  eq 'CatalogEntryId'}">
+				<c:choose>
+		        	<c:when test="${empty catentryIdQueryList}">
+		        		<c:set var="catentryIdQueryList" value="${marketingSpotData.uniqueID}"/>
+		        	</c:when>
+		        	<c:otherwise>
+		        		<c:set var="catentryIdQueryList" value="${catentryIdQueryList},${marketingSpotData.uniqueID}"/>
+		        	</c:otherwise>
+	        	</c:choose>
+			</c:if>
+			<c:if test="${marketingSpotData.dataType  eq 'MarketingContent'}">
+			
+			</c:if>
+		</c:forEach>
+	</c:forEach>
+</c:forEach>
+<c:remove var="eSpotCatalogIdResults"/>
+<c:if test='${!empty catentryIdQueryList}'>
+	<wcf:rest var="catalogNavigationView1" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byIds" >
+		<c:forEach var="id" items="${catentryIdQueryList}">
+			<wcf:param name="id" value="${id}"/>
+		</c:forEach>
+		<wcf:param name="langId" value="${langId}" />
+		<wcf:param name="currency" value="${env_currencyCode}" />
+		<wcf:param name="responseFormat" value="json" />
+		<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+		<%--ECOCEA perf: ici pas besoin de plus d'info --%>
+		<wcf:param name="profileName" value="ECO_findProductByIds_Light" />
+	</wcf:rest>
+	<c:set var="eSpotCatalogIdResults" value="${catalogNavigationView1.catalogEntryView}"/>
+
+	<c:forEach var="id" items="${catentryIdQueryList}">
+		<c:forEach var="catEntryDetails" items="${eSpotCatalogIdResults}">
+			<c:if test="${id == catEntryDetails.uniqueID}">
+				<c:set var="catEntryType" value="${fn:toLowerCase(catEntryDetails.catalogEntryView[0].catalogEntryTypeCode)}" />		
+				<c:set var="catEntryType" value="${fn:replace(catEntryType,'bean','')}" />		
+				<c:choose>
+					<c:when test="${(catEntryType eq 'dynamickit' && showDynamicKit) || !(catEntryType eq 'dynamickit')}">  
+						<c:set var="currentProductCount" value="${currentProductCount+1}" />
+						<c:choose>
+							<c:when test="${empty catentryIdList}">
+								<c:set var="catentryIdList" value="${id}"/>
+							</c:when>
+							<c:otherwise>
+								<c:set var="catentryIdList" value="${catentryIdList},${id}"/>
+							</c:otherwise>							
+						</c:choose> 									      																										        
+					</c:when>
+				</c:choose>
+			</c:if>
+		</c:forEach>
+	</c:forEach>
+</c:if>
+
+<c:set var="prefix" value="eSpot"/>            
+<c:set var="useClickInfoURL" value="false"/>
+
+<c:set var="numEntries" value="${currentProductCount}"/>
+
+<c:set var="pageSize" value="${param.pageSize}" />
+<c:if test="${empty pageSize}">
+	<c:set var="pageSize" value="2" />
+</c:if>
+
+<c:set var="currentPage" value="${param.currentPage}" />
+<c:if test="${empty currentPage}">
+	<c:set var="currentPage" value="0" />
+</c:if>
+
+<c:if test="${currentPage < 0}">
+	<c:set var="currentPage" value="0"/>
+</c:if>
+<c:if test="${currentPage >= (totalPages)}">
+	<c:set var="currentPage" value="${totalPages-1}"/>
+</c:if>
+
+<fmt:formatNumber var="totalPages" value="${(numEntries/pageSize)+1}"/>
+<c:if test="${numEntries%pageSize == 0}">
+	<fmt:formatNumber var="totalPages" value="${numEntries/pageSize}"/>
+	<c:if test="${totalPages == 0 && numEntries!=0}">
+		<fmt:formatNumber var="totalPages" value="1"/>
+	</c:if>
+</c:if>
+<fmt:parseNumber var="totalPages" value="${totalPages}" integerOnly="true"/>
+
+<c:if test="${env_inPreview && !env_storePreviewLink}">
+
+	<fmt:message key="ES_PRODUCT_RECOMMENDATION" var="espotTypeInfo" bundle="${widgetPreviewText}"/>	
+</c:if>
+
+<c:set var="widgetSuffix" value="" />
+<c:if test="${(!empty param.pgl_widgetSlotId) && (!empty param.pgl_widgetDefId) && (!empty param.pgl_widgetId)}">
+	<c:set var="widgetSuffix" value="_${param.pgl_widgetSlotId}_${param.pgl_widgetDefId}_${param.pgl_widgetId}" />
+</c:if>
+
+<c:choose>
+	<c:when test="${param.displayPreference == '1' }" >
+		<c:set var="background" value="false"/>
+		<c:set var="border" value="false"/>
+	</c:when>
+	<c:when test="${param.displayPreference == '3' }" >
+		<c:set var="background" value="true"/>
+		<c:set var="border" value="true"/>
+	</c:when>
+	<c:otherwise>
+		<c:set var="background" value="true"/>
+		<c:set var="border" value="false"/>
+	</c:otherwise>
+</c:choose>
+
+<c:set var="columnCountByWidth" value="${!empty param.columnCountByWidth ? param.columnCountByWidth : '{0:1,430:2,645:3,860:4}'}"/>
+
+<%--
+  *
+  * End: CatalogEntries
+  *
+--%>   
+

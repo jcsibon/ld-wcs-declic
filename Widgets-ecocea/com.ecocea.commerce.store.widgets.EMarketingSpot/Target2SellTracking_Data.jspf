@@ -1,0 +1,127 @@
+<%-- Target2Sell tracking : block added on each page, we use data that has always been loaded in the page 
+set t2sPId for Commerce Composer page + iID replying on the page type 
+--%>
+<c:import url="/Widgets-ecocea/com.ecocea.commerce.store.widgets.EMarketingSpot/EMarketingSpot_T2S_Data.jsp"/>
+
+<c:set var="t2SpopupcartId" value="<%=com.ecocea.commerce.marketing.commands.elements.Target2SellRecommendationHelper.PAGE_POPUP_CART%>"/>
+<c:choose>
+<%-- Home --%>
+<c:when test="${requestScope.pageGroup == 'HomePage'}">
+	<c:set var="t2sPId" value="<%= com.ecocea.commerce.marketing.commands.elements.Target2SellRecommendationHelper.PAGE_HOME %>"/>
+</c:when>
+<%-- Add to cart --%>
+<c:when test="${t2sPId == t2SpopupcartId }">
+	<c:set var="iID" value="${t2saddeditems}" />
+</c:when>
+<%-- Product --%>
+<c:when test="${requestScope.pageGroup == 'Product' || requestScope.pageGroup == 'DynamicKit' || requestScope.pageGroup == 'Bundle' || requestScope.pageGroup == 'Kit'}">
+	<c:set var="t2sPId" value="<%= com.ecocea.commerce.marketing.commands.elements.Target2SellRecommendationHelper.PAGE_PRODUCT %>"/>
+	<c:set var="iID" value="${t2SPartnumber}" />
+</c:when>
+<%-- category or search --%>
+<c:when test="${requestScope.pageGroup == 'Category' || requestScope.pageGroup == 'Search'}">
+	<c:set var="iID" value="${t2spageitems}" />
+	
+	<c:choose>
+		<c:when test="${requestScope.pageGroup == 'Category'}">
+			<c:set var="t2sPId" value="<%= com.ecocea.commerce.marketing.commands.elements.Target2SellRecommendationHelper.PAGE_CATEGORY %>"/>
+		</c:when>
+		<c:when test="${requestScope.pageGroup == 'Search' && !empty globalresults}">
+			<c:set var="t2sPId" value="<%= com.ecocea.commerce.marketing.commands.elements.Target2SellRecommendationHelper.PAGE_SEARCH %>"/>
+		</c:when>
+		<c:when test="${requestScope.pageGroup == 'Search' && empty globalresults}">
+			<c:set var="t2sPId" value="<%= com.ecocea.commerce.marketing.commands.elements.Target2SellRecommendationHelper.PAGE_SEARCH_NORESULT %>"/>
+		</c:when>
+	</c:choose>
+</c:when>
+<%-- wishlist --%>
+<c:when test="${!empty t2swishlist}">
+	<c:set var="pID" value="<%= com.ecocea.commerce.marketing.commands.elements.Target2SellRecommendationHelper.PAGE_WISHLIST %>" /><%-- FIXME like a cart page ? --%>
+	<c:set var="iID" value="${t2swishlist}" />
+	<c:set var="wl" value="${t2swishlist}" />
+</c:when>
+ <c:when test="${empty t2sPId}">
+	<c:set var="t2sPId" value="<%= com.ecocea.commerce.marketing.commands.elements.Target2SellRecommendationHelper.PAGE_CONTENT %>" scope="request" />
+</c:when>
+<%-- otherwise t2sPId set directly in the JSP --%>
+</c:choose>
+
+<c:if test="${!empty t2sPId}">
+<%@ taglib uri="http://commerce.ibm.com/foundation-fep/stores" prefix="wcst" %>
+<wcst:storeconf var="t2sMerchantId" name="target2sell.merchantId" scope="request" /> 
+	<script type="text/javascript">
+	  //<![CDATA[
+	  console.log("T2S tracking page ${t2sPId}");
+	  
+	   userConsent = function (){
+        //TODO customize your business logic here : EU cookie policy - cf. https://documentation.target2sell.com/support/IntegrationOfTheTrackingOnTheWebsite.html
+        return true; 
+    	};
+    	
+	    var _t2sparams = _t2sparams || {};
+	    _t2sparams.eN = 'view';
+	    _t2sparams.cID = '${t2sMerchantId}';
+	    _t2sparams.pID = '${t2sPId}';
+	    _t2sparams.lang = '${t2sLocale.language}';
+	<c:if test="${!empty iID}">
+		_t2sparams.iID = '${iID}';
+	</c:if>
+	<c:if test="${!empty t2sCategory}">
+		_t2sparams.aId = '${t2sCategory}';
+	</c:if>
+	<c:if test="${!empty t2sbasket}">
+		_t2sparams.bP = "${t2sbasket}";
+		_t2sparams.qTE= "${t2sQuantities}";
+		_t2sparams.bS = "${t2sTotalAmount}";
+	</c:if>
+	<c:if test="${!empty searchTerm}">
+		<c:choose>
+			<c:when test="${!empty WCParam.searchTerm}">
+			_t2sparams.q = '${WCParam.searchTerm}';
+			_t2sparams.kw = '${WCParam.searchTerm}';
+			</c:when>
+			<c:otherwise>
+			_t2sparams.q = '${searchTerm}';
+			_t2sparams.kw = '${searchTerm}';
+			</c:otherwise>
+		</c:choose>
+	</c:if>
+    <c:if test="${!empty orderId}">
+	    <c:choose>
+	    <c:when test="${!empty WCParam.orderId}">
+	    _t2sparams.oID = '${WCParam.orderId}';
+	    </c:when>
+	    <c:otherwise>
+	    _t2sparams.oID = '${orderId}';
+	    </c:otherwise>
+	    </c:choose>
+	</c:if>
+	<c:if test="${t2sPId == '<%= com.ecocea.commerce.marketing.commands.elements.Target2SellRecommendationHelper.PAGE_CONTENT %>'}">
+		_t2sparams.cUrl = '${t2sUrl.replace("'","%27")}';
+	</c:if>
+	<c:if test="${!empty t2swishlist}">
+		_t2sparams.wl= '${t2swishlist}';
+	</c:if>	
+	//TODO _t2sparams.hasRankOption=true;
+
+	    (function() {
+	      var t2sScript = document.createElement('script');
+	      t2sScript.type = 'text/javascript';
+	      t2sScript.async = true;
+	      t2sScript.src = ('https:' ==document.location.protocol ? 
+			'https://static.target2sell.com/t2s.min.js' : 
+		 'http://s3.target2sell.com/t2s.min.js');
+	      var s = document.getElementsByTagName('script')[0];
+	      s.parentNode.insertBefore(t2sScript, s);
+	<%-- Reco are managed server side, so this block has been commented
+	       t2sScript.onload = function() {
+	        $(document).ready(function(){
+	          T2S.reco();
+	        });
+	      }
+	 --%>
+	     })();
+
+	  //]]>
+	</script>
+</c:if>

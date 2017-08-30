@@ -1,0 +1,35 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2012 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%@ page trimDirectiveWhitespaces="true" %>
+<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/UserArea/MultipleWishLists.js?${versionNumber}"/>"></script>
+
+<wcf:url var="WishListSelectAreaView" value="MultipleWishListSelectionView" type="Ajax">
+  <wcf:param name="langId" value="${langId}" />						
+  <wcf:param name="storeId" value="${WCParam.storeId}" />
+  <wcf:param name="catalogId" value="${WCParam.catalogId}" />
+</wcf:url>
+
+<wcf:url var="WishListDisplayAreaView" value="WishListResultDisplayView" type="Ajax">
+	<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	<wcf:param name="langId" value="${langId}" />
+</wcf:url>
+
+<script type="text/javascript">
+	dojo.addOnLoad(function() {
+		MultipleWishLists.setCommonParameters('<c:out value="${WCParam.langId}"/>','<c:out value="${WCParam.storeId}"/>','<c:out value="${WCParam.catalogId}"/>');
+		CommonControllersDeclarationJS.setControllerURL("WishlistSelect_Controller", "<c:out value="${WishListSelectAreaView}"/>");
+		CommonControllersDeclarationJS.setControllerURL("WishlistDisplay_Controller", "<c:out value="${WishListDisplayAreaView}"/>");
+	});
+</script> 

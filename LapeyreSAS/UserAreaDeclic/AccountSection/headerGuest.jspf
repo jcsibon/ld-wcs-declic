@@ -1,0 +1,202 @@
+<div class="body">
+<div id="loginMonCompte" class="col-container">
+
+	<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/CommonContextsDeclarations.js?${versionNumber}"/>"></script>
+	<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/CommonControllersDeclaration.js?${versionNumber}"/>"></script>
+	<script type="text/javascript" src="${jspStoreImgDir}UserAreaDeclic/javascript/userJS.js?${versionNumber}"></script>
+	<script type="text/javascript" src="${jsAssetsDir}javascript/Validation/dist/jquery.validate.js?${versionNumber}"></script>
+	<script type="text/javascript" src="${jsAssetsDir}javascript/Validation/dist/additional-methods.js?${versionNumber}"></script>
+	<script type="text/javascript">
+		$().ready(function() {
+			// validate signup form on keyup and submit
+			$("#LogonPopup").validate({
+				rules : {
+					logonId : {
+						required : true,
+						email : true,
+					},
+					logonPassword : {
+						required: "#clientoui:checked",
+					}
+				},
+				messages : {
+					logonId : {
+						required : "<fmt:message bundle='${storeText}' key='missingLoginErrorMessage' />",
+						email : "<fmt:message bundle='${storeText}' key='InvalidLoginErrorMessage' />",
+						maxlength : "<fmt:message bundle='${storeText}' key='maxLengthLoginErrorMessage' />"
+					},
+					logonPassword : {
+						required: "<fmt:message bundle='${storeText}' key='missingPasswordErrorMessage' />",
+					}
+				},
+				errorPlacement : function(error,
+						element) {
+					if (element.is("select")) {
+						//For select inputs, insert at the parent
+						error.insertAfter(element
+								.parent());
+					} else if (element.attr("type") == "radio") {
+						//for radio button, insert at the end of the grandparent
+						error.appendTo(element
+								.parent().parent());
+					} else {
+						error.insertAfter(element);
+					}
+				}
+			});
+		});
+	</script>
+
+<%-- 	<wcf:url var="ForgetPasswordURL" value="ResetPasswordGuestErrorView">
+		<wcf:param name="langId" value="${langId}" />
+		<wcf:param name="storeId" value="${WCParam.storeId}" />
+		<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+		<wcf:param name="state" value="forgetpassword" />
+	</wcf:url> --%>
+	<wcf:url var="ForgotPassUrl" value="ResetPasswordForm">
+	<wcf:param name="langId" value="${WCParam.langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+</wcf:url>
+	
+
+	<wcf:url var="UserRegistrationFormUrl" value="UserRegistrationForm">
+		<wcf:param name="langId" value="${WCParam.langId}" />
+		<wcf:param name="storeId" value="${WCParam.storeId}" />
+		<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+		<%--Mantis  0001855 et 0001856 : on redirige vers la page de confirmation de création de compte quand on crée son compte en dehors du tunnel--%>
+		<c:choose >
+			<c:when test="${!empty WCParam.returnPage && WCParam.returnPage == 'Tunnel'}">
+				<wcf:param name="returnURL" value="${returnURL}" />
+			</c:when>
+			<c:otherwise>
+				<wcf:param name="returnURL" value="${NewUserDisplayFromCreation}" />
+			</c:otherwise>
+		</c:choose>	
+		<wcf:param name="returnPage" value="${WCParam.returnPage}" />
+	</wcf:url>
+
+	<%--Calculate returnURL --%>
+	<c:choose>
+		<%--Si on vient du tunnel on redirige vers le tunnel apres login --%>
+		<c:when test="${WCParam.returnPage eq 'Tunnel'}">
+			<wcf:url var="tunnelShippingLink" value="TunnelCommandAddressValidation">
+				<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+				<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+				<wcf:param name="langId" value="${WCParam.langId}" />
+			</wcf:url>
+			<c:set var="returnURL" value="${tunnelShippingLink}"/>
+		</c:when>
+		<c:when test="${!empty WCParam.URL || !empty param.URL}">
+			<c:set var="returnURL" value="${!empty WCParam.URL ? WCParam.URL : param.URL }"/>
+		</c:when>
+		<c:when test="${!empty WCParam.returnURL || !empty param.returnURL}">
+			<c:set var="returnURL" value="${!empty WCParam.returnURL ? WCParam.returnURL : param.returnURL }"/>
+		</c:when>
+		<c:otherwise>
+			<c:set var="returnURL" value="${MyAccountURL}"/>
+		</c:otherwise>
+	</c:choose>
+	<wcf:url var="ReLogonForm" value="LogonForm">
+		<wcf:param name="langId" value="${langId}" />
+		<wcf:param name="storeId" value="${storeId}" />
+		<wcf:param name="catalogId" value="${catalogId}" />
+		<wcf:param name="myAcctMain" value="1" />
+		<wcf:param name="returnURL" value="${returnURL}" />
+		<wcf:param name="returnPage" value="${WCParam.returnPage}" />
+	</wcf:url>
+	<div class="col client-form">
+		<form name="Logon" method="post" action="RedirectView?URL=${UserRegistrationFormUrl}" id="Logon_LogonPopup">
+			
+			<input type="hidden" name="storeId" value="<c:out value="${WCParam.storeId}"/>" />
+			<input type="hidden" name="catalogId" value="<c:out value="${WCParam.catalogId}"/>" />
+			<input type="hidden" name="reLogonURL" value="${ReLogonForm}" />
+			<input type="hidden" name="URL" value="${returnURL}" />
+
+			<c:choose>
+				<c:when test="${(!empty WCParam.logonId) && (!empty WCParam.validationCode) && (empty errorMessage)}">
+					<input type="hidden" name="myAcctMain" value="<c:out value="1"/>"/>
+				</c:when>
+				<c:otherwise>
+					<input type="hidden" name="myAcctMain" value="<c:out value="${WCParam.myAcctMain}"/>"/>
+				</c:otherwise>
+			</c:choose>
+
+			<c:if test="${WCParam.returnPage eq 'Tunnel'}">
+				<input type="hidden" name="fromOrderId" value="*"/>
+				<input type="hidden" name="toOrderId" value="."/>
+				<input type="hidden" name="deleteIfEmpty" value="*" />
+				<input type="hidden" name="createIfEmpty" value="1" />
+				<input type="hidden" name="calculationUsageId" value="-1" />
+				<input type="hidden" name="updatePrices" value="0" />
+				<input type="hidden" name="errorViewName" value="TunnelShopCartView" />
+			</c:if>
+
+			<input type="hidden" name="continue" value="1"  />								
+			<input type="hidden" name="previousPage" value="logon" />								
+			<input type="hidden" name="returnPage" value="<c:out value="${WCParam.returnPage}"/>" />
+
+			<c:if test="${!empty WCParam.nextUrl}">
+				<input type="hidden" name="nextUrl" value="<c:out value="${WCParam.nextUrl}"/>"/>
+			</c:if>
+
+			<%--ReturnURL est calculé en début de page --%>
+			<input type="hidden" name="URL" value="${returnURL}"  />
+			<input type="hidden" id="logonId_LogonPopup" name="logonId" value="" />
+			<input type="hidden" id="logonPassword_LogonPopup" name="logonPassword" value="" />
+										
+			<script type="text/javascript">
+				function connecterPopup(){
+					$('#logonId_LogonPopup').val($('#connectLogin_LogonPopup').val());
+					$('#logonPassword_LogonPopup').val($('#connectPassword_LogonPopup').val());
+					soumettreLogonPopup('/Logon');
+				}
+				function creerPopup(){
+					$('#logonId_LogonPopup').val($('#creerLogin_LogonPopup').val());
+					soumettreLogonPopup('/RedirectView?URL=${UserRegistrationFormUrl}');
+					return false;
+				}
+
+				function soumettreLogonPopup(action){
+					var logonForm = $('#Logon_LogonPopup');
+					logonForm.attr('action', action);
+					setDeleteCartCookie();
+					logonForm.submit();
+				}
+			</script>
+
+			<div class="row">
+				<label for="connectLogin_LogonPopup"><fmt:message bundle="${storeText}" key="loginFieldlabel" /></label>
+				<input type="email" size="40" maxlength="100" aria-required="true" id="connectLogin_LogonPopup" value="${WCParam.logonId}" required="" onkeypress="if(event.keyCode==13){ javascript:setDeleteCartCookie(); $('#Logon_LogonPopup').submit(); return false;}" name=/>
+			</div>
+			<div class="row no-margin">
+				<label for="connectPassword_LogonPopup"><fmt:message bundle="${storeText}" key="passwordFieldLabel" />
+				<input type="password" size="35" maxlength="100" aria-required="true" id="connectPassword_LogonPopup" value="" onkeypress="if(event.keyCode==13){ connecterPopup(); return false;}" />
+			</div>
+			<div class="row">
+				<a class="black underline" href="${ForgotPassUrl}"><fmt:message bundle="${storeText}" key="forgottenPasswordLinkLabel"/></a>
+			</div>
+			<div class="row">
+				<input id="SubmitButton" type="button" class="button green" value="<fmt:message bundle="${storeText}" key="identificationPageSubmitLabel"/>" onclick="javascript:connecterPopup();" />
+			</div>
+			<c:if test="${!empty errorMessage }">
+				<div class="row">
+					<div class="error">
+						<span class="error"><c:out value="${errorMessage}" /></span>
+					</div>
+				</div>
+			</c:if>
+		</form>
+	</div>
+
+	<div class="col separator">
+		<div class="circled">
+			ou
+		</div>
+	</div>
+
+	<div class="col cta">
+		<a class="underline" href="javascript: creerPopup();"><fmt:message bundle="${storeText}" key="identificationPageCreateAccountLabel"/></a>
+	</div>
+</div>
+</div>

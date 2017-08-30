@@ -1,0 +1,20 @@
+<wcf:url var="orderSummaryViewAjaxURL" value="OrderSummaryViewAjax" type="Ajax">
+	<wcf:param name="langId" value="${langId}" />
+	<wcf:param name="storeId" value="${storeId}" />
+	<wcf:param name="catalogId" value="${catalogId}" />
+	<wcf:param name="orderId" value="${orderId}" />
+	<wcf:param name="pageType" value="PANIER" />
+</wcf:url>
+
+<script>
+	require(["dojo/ready"], function(ready){
+		ready(function(){
+			var orderSummaryController = wc.render.getRefreshControllerById("OrderSummaryController");
+		    orderSummaryController.url = '<c:out value="${orderSummaryViewAjaxURL}" />';
+		});
+	});
+</script>
+<% boolean isinsummary = true; %>
+<div class="orderSummaryWrapper">
+	<div dojoType="wc.widget.RefreshArea" id="orderSummaryRefreshArea" objectId="orderSummaryRefreshArea" controllerId="OrderSummaryController"></div>
+</div>

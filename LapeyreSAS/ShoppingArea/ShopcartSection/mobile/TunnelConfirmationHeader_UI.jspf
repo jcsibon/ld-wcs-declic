@@ -1,0 +1,48 @@
+<!-- BEGIN mobile/TunnelConfirmationHeader_UI.jspf -->
+<%@ page trimDirectiveWhitespaces="true" %>
+<div class="row">
+	<div class="col12 slot1 full-background" id="tunnelHeader" data-slot-id="1">
+		<ul class="etapes">
+			<li>
+				<a href="#">
+					<div>
+						<span>1</span>
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<div>
+						<span>2</span>
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<div>
+						<span>3</span>
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<div>
+						<span>4</span>
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<div class="current">
+						<span>5</span>
+					</div>
+				</a>
+			</li>
+		</ul>
+		<p class="etapeTitle title5">
+			${tunnelConfirmationBreadcrumbLabel}
+		</p>
+	</div>
+</div>
+
+<!-- END mobile/TunnelConfirmationHeader_UI.jspf -->

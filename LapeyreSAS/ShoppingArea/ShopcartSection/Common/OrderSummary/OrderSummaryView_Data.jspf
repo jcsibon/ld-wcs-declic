@@ -1,0 +1,30 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<%-- Retrieve order --%>
+<c:if test="${empty orderFromId}">
+	<c:catch>
+		<c:choose>
+			<%-- Guest user can view current shopping cart only --%>
+			<c:when test="${userType eq 'G'}">
+				<wcf:getData type="com.ibm.commerce.order.facade.datatypes.OrderType" var="orderFromId" expressionBuilder="findCurrentShoppingCart" scope="request">
+					<wcf:param name="accessProfile" value="IBM_Summary" />
+				</wcf:getData>
+			</c:when>
+			<%-- Registered user can view all orders they issued --%>
+			<c:when test="${userType eq 'R'}">
+				<wcf:getData type="com.ibm.commerce.order.facade.datatypes.OrderType" var="orderFromId" expressionBuilder="findByOrderId" scope="request">
+					<wcf:param name="accessProfile" value="IBM_Summary" />
+					<wcf:param name="orderId" value="${WCParam.orderId}" />
+				</wcf:getData>
+			</c:when>
+		</c:choose>
+	</c:catch>
+</c:if>
+
+<c:if test="${not empty orderFromId}">
+	<c:if test="${empty xOrderDetails}">
+		<ecocea:xOrderDetails orderId="${orderFromId.orderIdentifier.uniqueID}" var="xOrderDetails" scope="2"/>
+	</c:if>
+	<c:if test="${empty xOrderSummary}">
+		<ecocea:xOrderSummary orderDetails="${xOrderDetails}" pro="${extendedUserContext.isPro}" var="xOrderSummary" pageType="${WCParam.pageType}" scope="2"/>
+	</c:if>
+</c:if>

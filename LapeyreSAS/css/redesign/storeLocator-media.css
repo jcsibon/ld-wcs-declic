@@ -1,0 +1,122 @@
+
+/*-------------------------------------------------------------*\
+    $RESPONSIVE
+    Responsive style
+\*-------------------------------------------------------------*/
+
+/* Mobile and Tablet */
+@media screen and (max-width:1199px) {
+	#mapContainer {
+		width: 100%!important;
+	}
+	.shop-block-link {
+	    margin-left: 10px !important;
+	}
+}
+
+/* Tablet and Desktop */
+@media screen and (min-width:768px) {
+	#listMapToggle {
+		display: none;
+	}
+}
+
+/* Mobile */
+@media screen and (max-width:767px) {
+	.horizontal-separator {
+		border: none !important;
+	}
+	#listShopContainerRow {
+		width: 100% !important;
+	}
+	
+	#mapShopContainerRow {
+		width: 100% !important;
+		display: none;
+	}
+	
+	#listShopContainerRow {
+	    height: initial !important;
+	}
+	
+	.map-toggle-button {
+		display: inline-block;
+		padding: 8px 16px;
+	}
+	
+	#listMapToggle {
+		display: flex;
+	    display: -webkit-box;
+	    display: -moz-box;
+	    display: -ms-flexbox;
+	    display: -webkit-flex;
+	    display: -moz-flex;
+	    display: -ms-flex;
+	    justify-content: center;
+	}
+	
+	#listMapToggle-button-container {
+		border: 2px solid #d4d4d4;
+	    border-radius: 20px;
+	    position: absolute;
+	    top: 70px;
+	    z-index: 5;
+	    background: #d4d4d4;
+	}
+	
+	#listToggle.selected {
+	    background: white;
+	    border-radius: 30px;
+	    border-top-right-radius: 0px;
+	    border-bottom-right-radius: 0px;
+	    color: #da192f;
+	    font-weight: bold;
+	}
+	
+	#listToggle {
+	    background: #d4d4d4;
+	    border-radius: 15px;
+	    border-top-right-radius: 0px;
+	    border-bottom-right-radius: 0px;;
+	}
+	
+	#mapToggle {
+	    background: #d4d4d4;
+	    border-radius: 25px;
+	    border-top-left-radius: 0px;
+	    border-bottom-left-radius: 0px;;
+	}
+	
+	#mapToggle.selected {
+	    background: white;
+	    border-radius: 30px;
+	    border-top-left-radius: 0px;
+	    border-bottom-left-radius: 0px;
+	    color: #da192f;
+	    font-weight: bold;
+	}
+    
+	.searchBarForMaps {
+		position: initial !important;
+		padding-bottom: 30px;
+	}
+	
+	#storeLocatorSearchBox {
+		display: flex;
+	    display: -webkit-box;
+	    display: -moz-box;
+	    display: -ms-flexbox;
+	    display: -webkit-flex;
+	    display: -moz-flex;
+	    display: -ms-flex;
+	}
+	
+	#storeLocatorSearchTermWrapper {
+		flex: 1;
+		margin: 4px 0 0 0;
+	}
+	
+	.titleBlock {
+	    padding-top: 35px;
+	}
+}

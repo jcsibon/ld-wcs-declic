@@ -1,0 +1,227 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%@ page trimDirectiveWhitespaces="true" %>
+<!-- BEGIN /Widgets-lapeyre/Common/PDP_CatalogEntryData.jspf -->
+<%@ page trimDirectiveWhitespaces="true" %>
+<c:if test="${CatalogEntryDataIncluded ne 'true'}">
+<c:choose>
+	<c:when test="${!empty param.productId}">
+		<c:set var="productId" value="${param.productId}" />
+	</c:when>
+	<c:when test="${!empty WCParam.productId}">
+		<c:set var="productId" value="${WCParam.productId}" />
+	</c:when>
+</c:choose>
+
+<%--
+Surcharge: si le productId de la requete (param) est un item (ItemBean) alors il faut récupérer l'id de son parent (productBean) 
+Dans la quickView comme dans la page produit le productId doit toujours etre un productBean
+--%>
+<c:if test="${!empty parentCatEntryId}" >
+	<c:set var="productId" value="${parentCatEntryId}" />		
+</c:if>
+<c:if test="${!empty productId}">
+	<%-- Try to get it from our internal hashMap --%>
+	<c:set var="key1" value="${productId}+getCatalogEntryViewAllByID"/>
+	<c:set var="catalogEntryDetails" value="${cachedCatalogEntryDetailsMap[key1]}"/>
+	<c:if test="${empty catalogEntryDetails}">
+		<wcf:rest var="catalogNavigationView" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byId/${productId}" >	
+			<wcf:param name="langId" value="${langId}"/>
+			<wcf:param name="currency" value="${env_currencyCode}"/>
+			<wcf:param name="responseFormat" value="json"/>		
+			<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+			<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+		</wcf:rest>
+		<c:set var="catalogEntryDetails" value="${catalogNavigationView.catalogEntryView[0]}"/>
+		<wcf:set target = "${cachedCatalogEntryDetailsMap}" key="${key1}" value="${catalogNavigationView.catalogEntryView[0]}"/>
+	</c:if>
+	<c:if test="${empty fullImageAltDescription}">
+		<wcf:getData type="com.ibm.commerce.catalog.facade.datatypes.CatalogNavigationViewType" var="catalogNavigationViewBOD" 
+			expressionBuilder="getCatalogEntryViewSummaryByID" varShowVerb="showCatalogNavigationView" maxItems="1" recordSetStartNumber="0">
+			<wcf:param name="accessProfile" value="IBM_Store_Summary_SEO"/>
+			<wcf:param name="searchProfile" value=""/>
+			<wcf:param name="UniqueID" value="${productId}"/>
+			<wcf:contextData name="storeId" data="${WCParam.storeId}" />
+			<wcf:contextData name="catalogId" data="${WCParam.catalogId}" />
+		</wcf:getData>
+		<c:set var="fullImageAltDescription" value="${catalogNavigationViewBOD.catalogEntryView[0].fullImageAltDescription}" scope="request"/>
+	</c:if>
+</c:if>
+
+<c:if test="${empty productId && !empty WCParam.partNumber}">
+	<c:set var="key1" value="${WCParam.partNumber}+getCatalogEntryViewAllByPartnumber"/>
+	<c:set var="catalogEntryDetails" value="${cachedCatalogEntryDetailsMap[key1]}"/>
+	<c:if test="${empty catalogEntryDetails}">
+		<wcf:rest var="catalogNavigationView" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/${WCParam.partNumber}" >	
+			<wcf:param name="langId" value="${langId}"/>
+			<wcf:param name="currency" value="${env_currencyCode}"/>
+			<wcf:param name="responseFormat" value="json"/>		
+			<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+			<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+		</wcf:rest>
+		<c:set var="catalogEntryDetails" value="${catalogNavigationView.catalogEntryView[0]}"/>
+		<wcf:set target = "${cachedCatalogEntryDetailsMap}" key="${key1}" value="${catalogNavigationView.catalogEntryView[0]}"/>
+	</c:if>
+	<c:if test="${empty fullImageAltDescription}">
+		<wcf:getData type="com.ibm.commerce.catalog.facade.datatypes.CatalogNavigationViewType" var="catalogNavigationViewBOD" 
+			expressionBuilder="getCatalogEntryViewSummaryByPartnumber" varShowVerb="showCatalogNavigationView" maxItems="1" recordSetStartNumber="0">
+			<wcf:param name="accessProfile" value="IBM_Store_Summary_SEO"/>
+			<wcf:param name="searchProfile" value=""/>
+			<wcf:param name="PartNumber" value="${WCParam.partNumber}"/>
+			<wcf:contextData name="storeId" data="${WCParam.storeId}" />
+			<wcf:contextData name="catalogId" data="${WCParam.catalogId}" />
+		</wcf:getData>
+		<c:set var="fullImageAltDescription" value="${catalogNavigationViewBOD.catalogEntryView[0].fullImageAltDescription}" scope="request"/>
+	</c:if>
+</c:if>
+
+<c:set var="type" value="${fn:toLowerCase(catalogEntryDetails.catalogEntryTypeCode)}" />
+<c:if test="${empty catalogEntryID}">
+	<c:set var="catalogEntryID" value="${catalogEntryDetails.uniqueID}" />
+</c:if>
+<c:set var="type" value="${fn:replace(type,'bean','')}" />
+<c:set var="entitledItems" value="${catalogEntryDetails.sKUs}"/>
+<c:set var="numberOfSKUs" value="${catalogEntryDetails.numberOfSKUs}"/>
+<c:set var="attributes" value="${catalogEntryDetails.attributes}"/>
+
+<wcf:useBean var="swatchImagesList" classname="java.util.ArrayList"/>
+<c:forEach items="${catalogEntryDetails.attachments}" var="attachment">
+	<c:if test="${attachment.usage == 'SWATCH_IMAGE'}">
+		<c:set var="attchName" value="${attachment.name}" />
+		<c:set var="attchIdentifier" value="${attachment.identifier}" />
+		<jsp:useBean id="swatchDetails" class="java.util.HashMap" type="java.util.Map"/>
+		<c:set target="${swatchDetails}" property="name" value="${attchName}"/>
+		<c:set target="${swatchDetails}" property="identifier" value="${attchIdentifier}"/>
+		<c:set target="${swatchDetails}" property="assetPath" value="${attachment.attachmentAssetPath}"/>
+		<wcf:set target="${swatchImagesList}" value="${swatchDetails}"/>
+		<c:remove var="swatchDetails"/>
+	</c:if>
+</c:forEach>
+
+<%-- Find out all the subscription related attributes if any --%>
+<c:set var="isRecurrable" value="true"/>
+<c:if test="${catalogEntryDetails.disallowRecurringOrder == '1'}">
+	<c:set var="isRecurrable" value="false"/>
+</c:if>
+<c:set var="isSubscription" value="false"/>
+<c:if test="${!empty catalogEntryDetails.subscriptionTypeCode && catalogEntryDetails.subscriptionTypeCode != 'NONE'}">
+	<c:set var="isSubscription" value="true"/>
+</c:if>
+
+<c:set var="displayPriceRange" value="true" />
+
+<c:if test="${numberOfSKUs > 0}">
+	<c:set var="firstItemID" value="${entitledItems[0].uniqueID}"/>
+</c:if>
+
+<c:choose>
+	<c:when test="${isItem}">
+		<c:forEach var="anItem" items="${entitledItems}">
+			<c:if test="${anItem.uniqueID eq catalogEntryID}">
+				<c:set var="productOrItemPrices" value="${anItem.price}" />
+			</c:if>
+		</c:forEach>
+	</c:when>
+	<c:otherwise>
+		<c:set var="productOrItemPrices" value="${catalogEntryDetails.price}" />
+	</c:otherwise>
+</c:choose>
+
+<%-- ECOCEA : On est en mode prix indexé donc tous le bloc sur les prix calculé ne sert à rien --%>
+<c:forEach var="prices" items="${productOrItemPrices}">
+	<c:if test="${prices.usage == 'Offer'}">
+		<c:set var="maximumItemPrice" value="${prices.maximumValue.value}"/>
+		<c:if test="${empty maximumItemPrice}">						
+			<c:set var="maximumItemPrice" value="${prices.value}"/>
+		</c:if>
+	</c:if>
+</c:forEach>
+<%-- 
+	Loop through all the SKUs and see if any one of them is marked 'buyable'. 
+	Even if one of them is buyable, we show Add to Cart button.. Buyable flag set at product level is ignored 
+--%>
+<c:if test="${empty requestScope.bundleId and empty requestScope.packageId}">
+	<c:set var="bundleKitAvailable" value="false" scope="request"/> <%-- set default value to false --%>
+</c:if>
+<c:set var="productAvailable" value="false"/> <%-- set default value to false --%>
+<c:set var="dynamicKitAvailable" value="false" scope="request"/> <%-- set default value to false --%>
+
+<c:if test="${!empty maximumItemPrice && maximumItemPrice gt 0.0}">
+	<%-- We have price... Continue with other checks --%>
+	<c:choose>
+		<c:when test="${type eq 'bundle' or type eq 'package'}">
+			<%--For bundle and package check the buyable flag at the bundle or pacakge level instead of looping through each individual components --%>
+			<c:set var="bundleKitAvailable" value="${catalogEntryDetails.buyable}" scope="request"/>
+		</c:when>
+		<c:when test="${type eq 'dynamickit'}">
+			<%-- For dynamic kit, check the buyable flag directly at the details level instead of looping through each individual components --%>
+			<c:set var="dynamicKitAvailable" value="${catalogEntryDetails.buyable}"/>
+
+		</c:when>
+		<c:otherwise>
+			<%-- It is not a Subscription item OR Subscription products with the well known 3 attributes set properly --%>
+			<c:if test="${!isSubscription || (fulfillmentFrequency != '' && paymentFrequency != '' && aValidTimePeriod != '')}" >
+				<c:choose>
+					<%-- If it is a product iterate through all its SKUs --%>
+					<c:when test="${type eq 'product'}">
+						<c:forEach var="entitledItem" items="${entitledItems}">
+							<c:if test = "${entitledItem.buyable eq 'true'}">
+								<c:set var="productAvailable" value="true"/> <%-- We have one item which is marked as buyable..Show AddToCart button --%>
+							</c:if>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<%-- Since it is an item, pick from buyable field --%>
+						<c:set var="productAvailable" value="${catalogEntryDetails.buyable}"/>
+					</c:otherwise>
+				</c:choose>
+			</c:if>
+		</c:otherwise>
+	</c:choose>
+</c:if>
+
+<%-- For dynamic kit, check the buyable flag directly at the details level instead of looping through each individual components --%>
+<c:if test="${type eq 'dynamickit'}">
+	<c:set var="dynamicKitAvailable" value="${catalogEntryDetails.buyable}" scope="request"/>	            
+</c:if>
+
+<c:set var="buyable" value="${catalogEntryDetails.buyable}"/>
+
+<c:set var="singleSKU" value="false"/>
+<c:choose>
+	<c:when test="${type == 'bundle'}">
+		<c:set var="singleSKU" value="${catalogEntryDetails.hasSingleSKU}"/>
+	</c:when>
+	<c:when test="${type == 'product'}">
+		<c:set var="singleSKU" value="${catalogEntryDetails.hasSingleSKU}"/>
+	</c:when>
+	<c:when test="${type == 'dynamickit'}">
+		<c:set var="singleSKU" value="false"/>
+		<c:set var="isDKConfigurable" value="${!empty catalogEntryDetails.dynamicKitModelReference}"/>
+		<c:if test="${empty isDKConfigurable}">
+			<c:set var="isDKConfigurable" value="true"/>
+		</c:if>
+
+		<c:if test="${empty isDKPreConfigured}">
+			<%-- determine if the kit is pre-configured or not --%>
+			<c:set var="isDKPreConfigured" value="${catalogEntryDetails.dynamicKitDefaultConfigurationComplete}"/>
+			<c:if test="${isDKPreConfigured == 1}">
+				<c:set var="isDKPreConfigured" value="true"/>
+			</c:if>
+		</c:if>
+	</c:when>
+</c:choose>
+<c:set var="CatalogEntryDataIncluded" value="true" scope="request"/>
+</c:if>
+<!-- END /Widgets-lapeyre/Common/PDP_CatalogEntryData.jspf -->

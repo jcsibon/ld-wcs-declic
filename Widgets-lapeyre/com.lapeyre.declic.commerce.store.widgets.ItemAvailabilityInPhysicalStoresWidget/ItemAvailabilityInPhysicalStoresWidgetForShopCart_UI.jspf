@@ -1,0 +1,178 @@
+<fmt:message var="orderGlobalAvailabilityMessage" key="orderGlobalAvailabilityMessage" bundle="${widgetText}" />
+<fmt:message var="indispoProduitInfoBulleErrorMessage" key="indispoProduitInfoBulleErrorMessage" bundle="${widgetText}" />
+<fmt:message var="orderItemavailabilityInStockLabel" key="orderItemavailabilityInStockLabel" bundle="${widgetText}" />
+
+		<div class="dropdownLP">
+        	<select id="shopSelect" class="full-width shop-select" >
+        		<option value="-1" ><fmt:message key="magasinSelectPlaceholder" bundle="${widgetText}" /></option>
+        		<c:forEach var="shop" items="${activeShopsList}" >
+        			<c:if test="${firstDefaultShop.id eq shop.id}">
+        				<c:set var="selected" value=" selected" />
+        			</c:if>
+					<option value="${shop.id}" data-shop-name="${shop.name}"${selected}>${shop.zipcode} - ${shop.name}</option>
+					<c:remove var="selected" />
+				</c:forEach>
+        	</select>
+		</div>
+<c:if test="${!isMixteStandardCatalog}">
+	<script id="itemAvaibilityScripts">
+		dojo.addOnLoad(function(){
+			resetRequest();
+			itemAvailabilityInPhysicalStoresForShopCart.initialize("${userType}");
+			itemAvailabilityInPhysicalStoresForShopCart.attach("shopSelect");
+			itemAvailabilityInPhysicalStoresForShopCart.setDefaultStoreSucceed('SetDefaultStoreSucceedOnPagePanier');
+			
+			stockAvailabilityForShopCart.initialize();
+			stockAvailabilityForShopCart.addOnComputeTaskReceivedListener(onComputeTaskProductAvailabiliyForShopCartHandler);
+			stockAvailabilityForShopCart.addOnStockAvailabilityReceivedListener(onGetProductsAvailabilityForShopCartHandler);
+			$(stockAvailabilityForShopCart).trigger("onComputeTask_Event", {productId : null});
+		});
+		
+		function buildShopDataObjectForShopCart() {
+			var shopIds = new Array();
+			shopIds.push("${firstDefaultShop.identifier}");
+			shopIds = cleanArray(shopIds);
+			var product = new Object();
+			$("input[id^='quantity_']").each(function(){
+				var eltId = $(this).attr('id');
+				eltId = eltId.split('_');
+				var partNumber=eltId['1'];
+				var id = eltId['1']+"_"+eltId['2'];
+				var qty=$(this).val();
+				if($("input[id^='colisage_" + id + "']").val() == 1){
+					qty=$("input[id^='surface_" + id + "']").val(); //TODO arrondir au centieme superieur?
+				}
+				if(product[partNumber]){
+					product[partNumber] = +product[partNumber] +  +qty;
+				}else{
+					product[partNumber]	 = qty ;
+				}
+			});
+			return {"shopIds" : JSON.stringify(shopIds), "products" : JSON.stringify(product)};
+		}
+		
+		function onComputeTaskProductAvailabiliyForShopCartHandler() {
+			var datas = buildShopDataObjectForShopCart();
+			if(datas.shopIds == '[]')
+				return;
+			stockAvailabilityForShopCart.setDatas(datas);
+			timer.reset(function(){stockAvailabilityForShopCart.askForAvailability();}, 500);
+		}
+		
+		function onGetProductsAvailabilityForShopCartHandler(data) {
+				var messageDispo = '${orderItemavailabilityInStockLabel}'; 
+				var messageNonDispo = '${unavailableLabel}'; 
+				var messageDispoLater = '${availablefromLabel}'; 
+				var orderGlobalAvailabilityMessage = '${orderGlobalAvailabilityMessage}';
+				var indispoProduitInfoBulleErrorMessage = '${indispoProduitInfoBulleErrorMessage}';
+				
+				$("div[id^='dispo_']")
+					.html('')
+					.removeClass('dispo tard')
+					.removeClass('non');
+							
+		 		if(data != null && data != '') {
+			  		var storeKeys = Object.keys(data); //shopIds
+					for(var i = 0; i < storeKeys.length ; i++) {
+						var storeKey = storeKeys[i]; //shopId
+						var resultObject = data[storeKey]; // {partNumber:dateDispo,partNumber:dateDispo,partNumber:dateDispo}
+						if(resultObject == null || (typeof resultObject == 'string' && resultObject == "ERR")) {
+							$("div[id^='dispo_']").addClass('dispo').addClass('non').html(messageNonDispo);
+							$('#zoneAlertIndispo').addClass('show');
+							$('#infoBulleDateDispo').hide();
+							$('div[id^=infobulle]').html(indispoProduitInfoBulleErrorMessage);
+							$('div[id^=infobulle]').removeClass('hide');
+							$('div[id^=infobulle]').addClass('show');
+							$('.validateButton .button').addClass('disabled');
+							$('.validateButton .button').attr('disabled','disabled');
+						} else {
+							var orderDispo = true;
+							var dateDispoOrder = null;
+							//TODO : ici on doit avoir partnumber=>date:'','bain'
+							for(partNumber in resultObject) {
+								var dateDispo = resultObject[partNumber];
+								
+								if (dateDispo == 'today') {
+									var today = formatDate(new Date());
+									if (dateDispoOrder == null || isLater(today, dateDispoOrder)) {
+										dateDispoOrder = today;
+									}
+									$("#container_" + storeKey).addClass("dispo");
+									$("div[id^='dispo_" + partNumber +"']")
+										.removeClass('dispo tard')
+										.addClass('dispo')
+										.html(messageDispo);
+									/* $('div[id^=infobulle]').removeClass('show');
+									$('div[id^=infobulle]').addClass('hide'); */
+									
+								} else if(dateDispo == null || dateDispo == ""){
+									orderDispo = false;
+									$("div[id^='dispo_" + partNumber +"']")
+										.addClass('dispo non')
+										.html(messageNonDispo);
+									
+								} else {
+									dateDispo = formatDate(parseDate(dateDispo));
+									if(dateDispoOrder == null || isLater(dateDispo, dateDispoOrder)) {
+										dateDispoOrder = dateDispo;
+									}
+									$("div[id^='dispo_" + partNumber +"']")
+										.addClass('dispo tard')
+										.html(messageDispoLater + ' ' + dateDispo);
+								}
+							}
+							if(dateDispoOrder != null && orderDispo) {
+								$('#infoBulleDateDispo').html(formatMessage(orderGlobalAvailabilityMessage, dateDispoOrder));
+								if(differenceFromDateToNow(dateDispoOrder) < 10) {
+									$('#infoBulleDateDispo').addClass('close');
+								} else {
+									$('#infoBulleDateDispo').removeClass('close');
+								}
+								$('#infoBulleDateDispo').css('display','inline-block');
+							} else {
+								$('#infoBulleDateDispo').hide();
+							}
+									
+							if(!orderDispo) {
+								$('#zoneAlertIndispo').show();
+								$('div[id^=infobulle]').html(indispoProduitInfoBulleErrorMessage);
+								$('div[id^=infobulle]').removeClass('hide');
+								$('div[id^=infobulle]').addClass('show');
+								$('.validateButton .button').addClass('disabled');
+								$('.validateButton .button').attr('disabled','disabled');
+							} else {
+								$('#zoneAlertIndispo').hide();
+								$('div[id^=infobulle]').removeClass('show');
+								$('div[id^=infobulle]').addClass('hide');
+								$('.validateButton .button').removeClass('disabled');
+								$('.validateButton .button').removeAttr('disabled');
+							}
+						}
+					}
+		 		} else {
+					$("div[id^='dispo_']").each(function() {
+							  $(this).addClass('dispo').addClass('non');
+							  $(this).html(messageNonDispo);
+					});
+					
+					$('#zoneAlertIndispo').show();
+					$('#infoBulleDateDispo').hide();
+					$('div[id^=infobulle]').html(indispoProduitInfoBulleErrorMessage);
+					$('div[id^=infobulle]').removeClass('hide');
+					$('div[id^=infobulle]').addClass('show');
+					$('.validateButton .button').addClass('disabled');
+					$('.validateButton .button').attr('disabled','disabled');
+		 		}
+		}
+		
+		function cleanArray(array) {
+			var newArray = new Array();
+			for(var index = 0; index < array.length; index++) {
+				if(array[index] != "") {
+					newArray.push(array[index]);
+				}
+			}
+			return newArray;
+		}
+	</script>
+</c:if>

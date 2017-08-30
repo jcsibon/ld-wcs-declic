@@ -1,0 +1,93 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<%-- Common setup --%>
+<c:set var="socialSharingSitename" value="Lapeyre" scope="request"/>
+<c:set var="socialSharingLocalization" value="fr_FR" scope="request"/>
+
+<c:choose>
+
+	<c:when test="${isPageEdito}">
+		<c:set var="socialSharingURL" value="${urlToShare}" scope="request"/>
+		<c:set var="socialSharingTitle" value="${pageTitle}" scope="request"/>
+		<c:set var="socialSharingDescription" value="${metaDescription}" scope="request"/>
+		<c:set var="socialSharingImage" value="http:${imageUrl}${isMobile?content.page.visuelMobile.url:content.page.visuelDesktop.url}" scope="request"/>
+		<c:set var="socialSharingObjectType" value="article"/>
+	</c:when>
+	
+	<c:when test="${isCategoryPage}">
+		<c:set var="socialSharingURL" value="${CategoryDisplayURL}" scope="request"/>
+		<c:set var="socialSharingTitle" value="${categoryName}" scope="request"/>
+		<c:set var="socialSharingDescription" value="${metaDescription}" scope="request"/>
+		<c:if test="${empty socialSharingDescription}">
+			<c:set var="socialSharingDescription" value="${catalogEntryDetails.auxDescription1}" scope="request"/>
+		</c:if>
+		<c:set var="socialSharingImage" value="${catGroupDetailsViewBOD.catalogGroupView[0].fullImage}" scope="request"/>
+		<c:if test="${empty socialSharingImage}">
+			<c:set var="socialSharingImage" value="${catGroupDetailsViewBOD.catalogGroupView[0].thumbnail}" scope="request"/>
+		</c:if>
+		<astpush:assetPushUrl var="socialSharingImage" type="${catGroupDetailsViewBOD.catalogGroupView[0].type}" device="desktop" source="main" format="full" urlRelative="${socialSharingImage}" scope="request" />
+		<c:set var="socialSharingObjectType" value="product.group" scope="request"/>
+	</c:when>
+	
+	<c:when test="${isProductPage}">
+		<c:set var="socialSharingURL" value="${ProductDisplayURL}" scope="request"/>
+		<c:set var="socialSharingTitle" value="${productName}" scope="request"/>
+		<c:set var="socialSharingDescription" value="${metaDescription}" scope="request"/>
+		<c:if test="${empty socialSharingDescription}">
+			<c:set var="socialSharingDescription" value="${catalogEntryDetails.auxDescription1}"  scope="request"/>
+		</c:if>
+		<c:set var="socialSharingImage" value="${catalogNavigationViewBOD.catalogEntryView[0].fullImage}" scope="request"/>
+		<c:if test="${empty socialSharingImage}">
+			<c:set var="socialSharingImage" value="${catalogNavigationViewBOD.catalogEntryView[0].thumbnail}" scope="request"/>
+		</c:if>
+		<astpush:assetPushUrl var="socialSharingImage" type="${catalogNavigationViewBOD.catalogEntryView[0].type}" device="desktop" source="main" format="full" urlRelative="${socialSharingImage}" scope="request" />
+		<c:set var="socialSharingObjectType" value="product" scope="request"/>
+	</c:when>
+	<c:when test="${isQuickView}">
+		<c:set var="socialSharingURL" value="${catEntryDisplayUrl}" scope="request"/>		
+		<c:set var="socialSharingObjectType" value="product" scope="request"/>
+	</c:when>
+	
+	<c:when test="${isWishlistPage}">
+		<c:set var="socialSharingURL" value="${sharedWishListViewURL}" scope="request"/>
+		<fmt:message bundle="${storeText}" key="WISHLIST_TITLE" var="socialSharingTitleText"/>
+		<%--c:set var="socialSharingTitle" value="${socialSharingTitleText} ${storeName}" scope="request"/ --%>
+		<c:set var="socialSharingDescription" value="${socialSharingTitleText} ${selectedSoaWishList.description.name} chez ${storeName }" scope="request"/>
+		<c:set var="socialSharingTitle" value="${selectedSoaWishList.description.name}" scope="request"/>
+		<ecocea:contextRoot var="contextRoot"/>
+		<c:set var="socialSharingImage" value="${env_absoluteUrlWithoutEndSlash}${jspStoreImgDir}images/Visuel_cuisine.jpg" scope="request"/>
+		<c:set var="socialSharingObjectType" value="product.group" scope="request"/>
+	</c:when>
+	<c:when test="${isStoreLocationPage}">
+		<c:set var="socialSharingURL" value="${urlToShare}" scope="request"/>
+		<c:set var="socialSharingTitle" value="${mag.titre}" scope="request"/>
+		<c:set var="socialSharingDescription" value="${mag.seo.description}" scope="request"/>
+		<c:choose>
+			<c:when test="${empty mag.imageMobile.url}">
+				<c:set var="socialSharingImage" value="http:${imageUrl}${mag.imageLarge.url}" scope="request"/>
+			</c:when>
+			<c:otherwise>
+				<c:set var="socialSharingImage" value="http:${imageUrl}${mag.imageMobile.url}" scope="request"/>
+			</c:otherwise>
+		</c:choose>
+		<c:set var="socialSharingObjectType" value="article" scope="request"/>
+	</c:when>
+	<c:when test="${isHomePage}">	
+	</c:when>
+</c:choose>
+<c:if test="${!empty socialSharingImage && fn:startsWith(socialSharingImage,'/')}">
+	<c:set var="socialSharingImage" value="http:${socialSharingImage}" scope="request" />
+</c:if>
+
+<meta property="og:title" content="<c:out value="${socialSharingTitle}"/>" />
+<meta property="og:image" content="<c:out value="${socialSharingImage}"/>" />
+<meta property="og:url" content="<c:out value="${socialSharingURL}"/>" />
+<meta property="og:type" content="<c:out value="${socialSharingObjectType}"/>" />
+<meta property="og:description" content="<c:out value="${socialSharingDescription}"/>" />
+
+<!-- Evol 3127 -->
+ <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@lapeyreofficiel">
+<meta name="twitter:creator" content="@lapeyreofficiel">
+<meta name="twitter:title" content="<c:out value="${socialSharingTitle}"/>">
+<meta name="twitter:description" content="<c:out value="${socialSharingDescription}"/>">
+<meta name="twitter:image" content="<c:out value="${socialSharingImage}"/>"> 

@@ -1,0 +1,128 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<wcf:url var="AccountURL" value="AjaxLogonForm">
+	<wcf:param name="langId" value="${WCParam.langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+</wcf:url>
+<wcf:url var="WishListURL" value="WishListDisplayView">
+	<wcf:param name="langId" value="${WCParam.langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+</wcf:url>
+<wcf:url var="NewsLetterURL" value="UserNewsletterView">
+	<wcf:param name="langId" value="${WCParam.langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+</wcf:url>
+<wcf:url var="ShopsURL" value="UserShopsView">
+	<wcf:param name="langId" value="${WCParam.langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+</wcf:url>
+<wcf:url var="addressBookURL" value="AddressBookForm" scope="request">
+	<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	<wcf:param name="langId" value="${WCParam.langId}" />
+</wcf:url>
+
+<wcf:url var="QuickCheckoutView" value="OrderCopy">
+	<wcf:param name="URL" value="OrderPrepare?URL=QuickCheckoutSummaryView"/>
+	<wcf:param name="orderId" value="."/>
+	<wcf:param name="toOrderId" value="."/>
+	<wcf:param name="shippingAddressFromOrderProfile" value="1"/>
+	<wcf:param name="orderInfoFrom" value="q"/>
+	<wcf:param name="payInfoFrom" value="q"/>
+	<wcf:param name="langId" value="${langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	<wcf:param name="status" value="P" />       
+	<wcf:param name="orderItemId*" value="" />
+	<wcf:param name="quantity*" value="" />                                                                                           
+	<wcf:param name="errorViewName" value="OrderCopyErrorView" />                                                  
+</wcf:url>
+               
+<wcf:url var="orderMove" value="OrderItemMove">
+	<wcf:param name="URL" value="OrderCalculate?URL=${QuickCheckoutView}"/>
+	<wcf:param name="page" value="${WCParam.page}"/>
+	<wcf:param name="fromOrderId" value="*"/>
+	<wcf:param name="toOrderId" value="."/>
+	<wcf:param name="deleteIfEmpty" value="*"/>
+	<wcf:param name="continue" value="1"/>
+	<wcf:param name="createIfEmpty" value="1"/>
+	<wcf:param name="calculationUsageId" value="-1"/>
+	<wcf:param name="calculationUsageId" value="-2"/>
+	<wcf:param name="calculationUsageId" value="-7"/>
+	<wcf:param name="updatePrices" value="0"/>
+</wcf:url>
+
+<wcf:url var="orderTrackingListURL" value="OrderTrackingListView">
+	<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	<wcf:param name="langId" value="${WCParam.langId}" />			
+</wcf:url>
+
+
+<wcf:url var="QuotationTrackingSearchURL" value="QuotationTrackingSearchView">
+	<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	<wcf:param name="langId" value="${WCParam.langId}" />			
+	<wcf:param name="urlLangId" value="${urlLangId}" />
+</wcf:url>
+<div class="body">
+<div id="navMonCompte">
+	<div class="col-container">
+		<div class="col">
+			<ul>
+				<li>
+					<a class="black hover_underline" href="${AccountURL}">
+						<span><fmt:message bundle="${storeText}" key="myAccountMenuLinkLabel"/></span>
+					</a>
+				</li>
+				<li>
+					<a class="black hover_underline" href="${addressBookURL}">
+						<fmt:message bundle="${storeText}" key="myAddressesMenuLinkLabel"/>
+					</a>
+				</li>
+				<li>
+					<a class="black hover_underline" href="${NewsLetterURL}">
+						<fmt:message bundle="${storeText}" key="myNewsletterMenuLinkLabel"/>
+					</a>
+				</li>
+				<li>
+					<a class="black hover_underline" href="${ShopsURL}">
+						<fmt:message bundle="${storeText}" key="myStoresMenuLinkLabel"/>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<div class="col">
+			<ul>
+				<li>
+					<a class="black hover_underline" href="${orderTrackingListURL}">
+						<fmt:message bundle="${storeText}" key="myOrdersMenuLinkLabel"/>
+					</a>
+				</li>
+				<li>
+					<a class="black hover_underline" href="${QuotationTrackingSearchURL}">
+						<fmt:message bundle="${storeText}" key="myQuotationsMenuLinkLabel"/>
+					</a>
+				</li>
+				<li>
+					<a class="black hover_underline" href="${WishListURL}">
+						<fmt:message bundle="${storeText}" key="myWishlistMenuLinkLabel"/>
+					</a>
+				</li>
+				<%-- Add a logoff link for mobile users --%>
+				<li>
+					<a class="black hover_underline desktop-hidden" href="${fn:escapeXml(Logon_LogoutURL)}">
+						<fmt:message bundle="${storeText}" key="HEADER_SIGN_OUT"/>
+					</a>
+				</li>				
+			</ul>
+		</div>
+	</div>
+</div>
+</div>
+<div class="cta pasVous mobile-hidden">
+	<span><fmt:message bundle="${storeText}" key="HEADER_UNLOG_LABEL"/> ${firstName} ${lastName} ? </span></span><a class="lapeyreLink" href="${fn:escapeXml(Logon_LogoutURL)}"><fmt:message bundle="${storeText}" key="HEADER_SIGN_OUT"/></a>
+</div>

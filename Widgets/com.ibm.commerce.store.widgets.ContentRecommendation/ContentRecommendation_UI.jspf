@@ -1,0 +1,248 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2012, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<!-- BEGIN ContentRecommendation_UI.jspf -->
+
+<%-- ADDED HB ? 
+<script>
+	function clickOnElement(action) {
+		
+		// category://
+		if(action.length > 11 && action.substring(0, 11) == "category://") {
+			window.location.href="${env_TopCategoriesDisplayURL}/" + action.split("category://")[1];
+		}
+		
+		// product://
+		if(action.length > 10 && action.substring(0, 10) == "product://") {
+			window.location.href="${env_TopCategoriesDisplayURL}/" + action.split("product://")[1];
+		}
+		
+		// home://
+		if(action.length == 7 && action.substring(0, 7) == "home://") {
+		alert("${env_TopCategoriesDisplayURL}/");
+			window.location.href="${env_TopCategoriesDisplayURL}/";
+		}
+		
+		// cmsContent://
+		if(action.length > 13 && action.substring(0, 13) == "cmsContent://") {
+			window.location.href="http://poclapeyre2.ecocea.com" + action.split("cmsContent://")[1] + ".html" + "?langId=${langId}&storeId=${storeId}&catalogId=${catalogId}";
+		}
+	}
+
+/*
+set var="cmsValue" value="${partNumber}" scope="request"/
+set var="cmsType" value="Sku" scope="request"/
+set var="tagValue" value="${catalogNavigationView.catalogEntryView[0].keyword}" scope="request"/
+*/
+	dojo.addOnLoad(function()  {
+			require([
+				"dojo/dom-attr", 
+				"dojo/_base/xhr", 
+				"dojo/json", 
+				"dojo/dom-construct", 
+// 				"wc/widget/WCCarousel",
+				"dojox/mobile/Carousel",
+			    "dojox/mobile/CarouselItem",
+			    "dojox/mobile/SwapView",
+			    "dojo/_base/connect",
+			    "dojox/mobile",
+			    "dojox/mobile/parser",
+		   		"dojo/domReady!"
+			], function(domAttr, xhr, JSON, domConstruct, Carousel, CarouselItem, SwapView, connect){
+				dojo.query("#contentRecommendationWidget${widgetSuffix} .cmsPush").forEach(
+					function(node){
+						var PATH = "http://cms.ecocea.com:8080";
+						
+						var classAttribute = domAttr.get(node, "class");
+						var classes = classAttribute.split(" ");
+						
+						var type = "";
+						var id = "";
+						var fullId = "";
+
+						for (var i = 0; i < classes.length ; i++) {
+							if(classes[i] != "cmsPush") {
+							    type = classes[i];
+							    id = "div" + type + "${cmsValue}";
+							    fullId = "contentCarouselWidget_" + id;
+							    dojo.setAttr(node, "id", fullId);
+							}
+						}
+								
+								
+						
+								
+						if(type != "") {
+							var url = PATH + "/rest/push/listFor${cmsType}/" + type + "/${cmsValue}";
+		
+							<c:if test="${!empty tagValue}" >
+								var encoded = encodeURIComponent("${tagValue}");
+								url += "/" + encoded;
+							</c:if>
+							
+							console.log(url);
+							
+							xhr.get({
+						        url:url,
+						        handleAs:"json",
+						        load: function(data){
+						            console.log(data);
+						            
+						            var useCarrousel = false;
+						            
+						            var ulElement;
+						            if(data.length > 1) {
+						            	useCarrousel = true;
+						            	
+								        var carousel1 = new Carousel({
+								            height:"150px",
+								            navButton:true,
+								            numVisible:1,
+								            title:"Category"
+								        }, fullId);
+						            	
+										divCarrousel = carousel1;
+
+// 						           		dojo.setAttr(node, "class", "contentCarouselWidget carousel " + classAttribute);
+// 						           		dojo.setAttr(node, "data-dojo-type", "wc/widget/WCCarousel");
+// 						           		dojo.setAttr(node, "data-dojo-props", "speed:2000");
+						           		
+// 						           		var divCarrousel = domConstruct.create("div", {"class": "content", "data-dojo-attach-point": "content"}, node);
+						           		
+// 						           		ulElement = domConstruct.create("ul", {"data-dojo-attach-point": "ul"}, divCarrousel);
+						            }
+						            
+						            for (var i = 0; i < data.length ; i++) {
+										var currentData = data[i];
+										console.log(currentData);
+										var imagePath = currentData["imagePath"];
+										var title = currentData["title"];
+										var redirectAction = currentData["redirectAction"];
+										
+// 										var elementWhereAdding = node;
+										
+										if(useCarrousel) {
+											swapview = new SwapView();
+        									divCarrousel.addChild(swapview);
+										
+											var item = new CarouselItem({src:PATH + imagePath, value:redirectAction, headerText:""});
+// 											 domAttr.set(item, "onclick", "clickOnElement('" + redirectAction + "')");
+									        item.placeAt(swapview.containerNode);							
+										
+// 											elementWhereAdding = domConstruct.create("li", null, ulElement);
+											
+// 											var div = domConstruct.create("div", {id: id + "push" + i}, elementWhereAdding);
+// 											var img = domConstruct.create("img", {src: PATH + imagePath}, div);
+										} else {
+										
+											var div = domConstruct.create("div", {id: id + "push" + i}, node);
+											domAttr.set(div, "onclick", "clickOnElement('" + redirectAction + "')");
+											var img = domConstruct.create("img", {src: PATH + imagePath, style:"max-width:100%;"}, div);
+										
+										}
+									}
+									
+									if(useCarrousel) {
+// 										domConstruct.create("a", {"id": "prevPageButton" + id, "href": "#", "data-dojo-attach-point": "prevPageButton", "role":"button", "aria-label":">"}, node);
+// 										domConstruct.create("a", {"id": "nextPageButton" + id, "href": "#", "data-dojo-attach-point": "nextPageButton", "role":"button", "aria-label":"<"}, node);
+										carousel1.startup();
+										
+										connect.subscribe("/dojox/mobile/carouselSelect", function(carousel, itemWidget, itemObject, index){
+								            // Each argument means:
+								            //   carousel - The carousel widget containing the selected item
+								            //   itemWidget - The selected item widget
+								            //   itemObject - The item object in the data store for the selected item widget
+								            //       (In case of Carousel widget, data store is not used so it is always undefined.)
+								            //   index - The index of the selected item in the carousel items
+								
+								            clickOnElement(itemWidget.value);
+								        });
+										
+									}
+									
+									
+						        },
+							    error: function(error){
+		
+							    }
+						    });
+							
+						}
+						
+					}
+				);
+			});
+		});
+</script>
+ END ADDED HB --%>
+
+<c:if test="${!empty contentFormatMap}">
+	<c:choose>
+		<c:when test="${fn:length(contentFormatMap) > 1}">
+			<fmt:message key="PC_PREVIOUS_PAGE" bundle="${widgetText}" var="PC_PREVIOUS_PAGE"/>
+			<fmt:message key="PC_NEXT_PAGE" bundle="${widgetText}" var="PC_NEXT_PAGE"/>
+			<fmt:message key="PC_MOVE_TO_PAGE_{0}" bundle="${widgetText}" var="PC_MOVE_TO_PAGE"/>
+			
+			<div id="contentRecommendationWidget${widgetSuffix}" class="contentRecommendationWidget carousel clip-true padding-true background-${background} border-${border}" data-dojo-type="wc/widget/WCCarousel" data-dojo-props="columnCountByWidth:${columnCountByWidth}" <c:if test="${!empty titleContentTypeMap && (eSpotTitleIncluded == null || empty eSpotTitleIncluded[emsName])}">role="region" aria-labelledby="title${widgetSuffix}"</c:if>>
+			<c:if test="${!empty titleContentTypeMap && (eSpotTitleIncluded == null || empty eSpotTitleIncluded[emsName])}" >
+				<h2 id="title${widgetSuffix}"><%@include file="../Common/ESpot/ESpotTitle_UI.jspf"%></h2>
+			</c:if>
+				<div class="content" data-dojo-attach-point="content">
+					<ul data-dojo-attach-point="ul">
+						<c:forEach items="${contentFormatMap}" var="contentFormat"><li>
+							<c:set var="key" value="${contentFormat.key}"/>
+							<%@include file="Content_UI.jspf"%>
+						</li></c:forEach>
+					</ul>
+				</div>
+				<a id="prevPageButton${widgetSuffix}" href="#" class="prevPageButton" data-dojo-attach-point="prevPageButton" role="button" aria-label="${PC_PREVIOUS_PAGE}"></a>
+				<a id="nextPageButton${widgetSuffix}" href="#" class="nextPageButton" data-dojo-attach-point="nextPageButton" role="button" aria-label="${PC_NEXT_PAGE}"></a>
+				<flow:ifEnabled feature="RemoteWidget">
+					<c:if test="${param.showFeed}">
+						<%out.flush();%>
+						<c:import url="/Widgets/Common/ESpot/FeedAndRemoteWidgetDisplay.jsp">
+							<c:param name="feedURL" value="${eMarketingFeedURL}"/>
+							<c:param name="widgetPrefix" value="${widgetPrefix}"/>
+						</c:import>
+						<%out.flush();%>
+					</c:if>
+				</flow:ifEnabled>
+			</div>
+		</c:when>
+		
+		<c:otherwise>
+			<div id="contentRecommendationWidget${widgetSuffix}" class="contentRecommendationWidget" <c:if test="${!empty titleContentTypeMap}"> role="region" aria-labelledby="title${widgetSuffix}" </c:if>>
+			<c:if test="${!empty titleContentTypeMap}">
+				<c:if test="${!empty titleContentTypeMap && (eSpotTitleIncluded == null || empty eSpotTitleIncluded[emsName])}" >
+					<h2 id="title${widgetSuffix}"><%@include file="../Common/ESpot/ESpotTitle_UI.jspf"%></h2>
+				</c:if>
+			</c:if>
+			<c:forEach var="contentFormat" items="${contentFormatMap}">
+				<c:set var="key" value="${contentFormat.key}"/>
+				<%@include file="Content_UI.jspf"%>
+			</c:forEach>
+			<flow:ifEnabled feature="RemoteWidget">
+				<c:if test="${param.showFeed}">
+					<c:import url="/Widgets/Common/ESpot/FeedAndRemoteWidgetDisplay.jsp">
+						<c:param name="feedURL" value="${eMarketingFeedURL}"/>
+						<c:param name="widgetPrefix" value="${widgetPrefix}"/>
+					</c:import>
+				</c:if>
+			</flow:ifEnabled>
+			</div>
+		</c:otherwise>
+	</c:choose>
+</c:if>
+
+<!-- END ContentRecommendation_UI.jspf -->

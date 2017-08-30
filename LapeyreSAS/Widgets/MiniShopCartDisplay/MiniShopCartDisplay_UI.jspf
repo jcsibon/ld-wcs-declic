@@ -1,0 +1,206 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<%-- START MiniShopCartDisplay_UI.jspf --%>
+
+<c:set var="search" value='"'/>
+<c:set var="replaceStr" value="'"/>
+
+<a id="widget_minishopcart" href="#" role="button"
+			onclick="javascript:location.href='${fn:escapeXml(ShoppingCartURL)}';"
+			aria-label="<fmt:message bundle="${storeText}" key="MINI_SHOPCART_SHOPPING_CART"/>">
+	<div class="picto shopCartPicto"></div>
+	<div class="headerDataContainer">
+				<span class="minishopcart_total">
+					<c:choose>
+				       <c:when test="${!anonymousUser && (cookie[cookieOrderIdKey] == null ) || WCParam.deleteCartCookie == true || multiSessionEnabled}">
+				       		(${orderQuantity == 0 ? 0:orderQuantity})
+				       </c:when>
+				       <c:otherwise>(0)</c:otherwise>
+			       </c:choose>
+				</span>
+	</div>
+</a>
+<div id="placeHolder"></div>
+
+<div id="MiniShopCartProductAdded">
+	<c:choose>
+		<c:when test="${!isOnMobileDevice}">
+			<div id="MiniShopCartProductAddedWrapper" style="display:none;" aria-labelledby="cartDropdownMessage">
+		</c:when>
+		<c:otherwise>
+			<div id="MiniShopCartProductAddedWrapper" style="display:none;" aria-labelledby="cartDropdownMessage" class="popinAddedShopCartMobile">
+		</c:otherwise>
+	</c:choose>
+	
+		<div id="widget_minishopcart_popup_1">
+			<c:choose>
+				<c:when test="${!isOnMobileDevice}">
+					<div id="addToCartPopin">
+				</c:when>
+				<c:otherwise>
+					<div id="addToCartPopin" class="cartDropdownMobile">
+				</c:otherwise>
+			</c:choose>
+			
+				
+				<div id="product_popin_title" ><span class="product_popin_shopcartCheck"></span><fmt:message bundle="${storeText}" key="ajoutPanierPopinDesktopTitle"/></div>
+				<a id="MiniShopCartCloseButton_2" href="javascript:dijit.byId('MiniShopCartProductAdded').hide();deleteWidgetAssociationInPopin();" class="closeButton"></a>
+				
+				<c:if test="${!isOnMobileDevice}">
+					<div class="add2cart_popin_content">
+							<div class="products">
+								<c:forEach var="orderItemRecentlyAddedMap" items="${orderItemsRecentlyAddedList}">
+									<div class="product_popin">
+										<div class="row product_infos_popin">
+											<div class="col l4 product_image">
+													<c:set var="altImgText">
+														<c:out value="${fn:replace(orderItemRecentlyAddedMap['productName'], search, replaceStr)}" escapeXml="false"/>
+													</c:set>
+												<a id="MiniShopCartAddedProdImg_${orderItemRecentlyAddedMap['catEntryId']}" href="${orderItemRecentlyAddedMap['productURL']}" title="${orderItemRecentlyAddedMap['parentProductName']}">
+													<img  class="responsive-img" src="${orderItemRecentlyAddedMap['productImage']}" alt="${altImgText}" />										
+												</a>
+											</div>
+										
+											<div class="col l8 product_info">
+												<div class="product_main_infos">
+													<div class="product-reference">
+														<fmt:message bundle="${storeText}" key="ficheProduitSkuLabel"/> : ${orderItemRecentlyAddedMap['productSKU']}
+													</div>
+													<div class="product_name">
+														<a class="hover_underline" href="${orderItemRecentlyAddedMap['productURL']}" id="MiniShopCartAddedProdName_${orderItemRecentlyAddedMap['catEntryId']}">
+															<c:out value="${orderItemRecentlyAddedMap['parentProductName']}"/>
+														</a>
+													</div>
+													<div class="product_description">
+															<p>${orderItemRecentlyAddedMap['productDescription']}</p>
+															<p><fmt:message bundle="${storeText}" key="quantityLabel"/> : ${orderItemRecentlyAddedMap['productQty']}</p>
+															<c:if test="${!empty orderItemRecentlyAddedMap.productAttributes and !isOnMobileDevice}">
+															 	<p>
+																		<c:forEach var="definingAttr" items="${orderItemRecentlyAddedMap.productAttributes}">
+																			- ${definingAttr.attributeName} : ${definingAttr.attributeValue}<br />
+																		</c:forEach>
+																</p>
+															</c:if>
+															
+													</div>
+												</div>
+												<div class="price-block">													
+													<div class="product_recently_added_price">
+													
+														<%-- Calcul de l'Ecopart --%>
+														<c:set var="totalEcopart" value="${orderItemRecentlyAddedMap['notFormattedEcopart'] * orderItemRecentlyAddedMap['productQty']}"/>
+																											
+														<%-- Calcul du prix + ecopart --%>
+														<c:set var="totalProductPrice" value="${orderItemRecentlyAddedMap['notFormattedProductPrice'] + totalEcopart}"/>
+													
+														<%-- Calcul du prix + ecopart + adjustment --%>
+														<c:set var="totalProductPriceAdjustments" value="${orderItemRecentlyAddedMap['totalAdjustmentPrice'] + totalProductPrice}"/>
+													
+														<c:set var="totalFormattedProductPrice">
+															<fmt:formatNumber value="${totalProductPrice}" type="currency" currencySymbol="" maxFractionDigits="${env_currencyDecimal}"/>
+														</c:set>
+														
+														<c:set var="totalFormattedProductPriceAdjustments">
+															<fmt:formatNumber value="${totalProductPriceAdjustments}" type="currency" currencySymbol="" maxFractionDigits="${env_currencyDecimal}"/>
+														</c:set>
+														
+														
+														<c:choose>
+															<c:when test="${totalProductPriceAdjustments eq  totalProductPrice}">
+																<div class="product_popin_price">${totalFormattedProductPrice} ${env_CurrencySymbolToFormat}</div>
+															</c:when>
+															<c:otherwise>
+																<div class="product_popin_price fichePrix">
+																	<span class="old_price_value">${totalFormattedProductPrice} ${env_CurrencySymbolToFormat}</span>
+																	<span class="price-promo">${totalFormattedProductPriceAdjustments} ${env_CurrencySymbolToFormat}</span>
+																</div>
+															</c:otherwise>
+														</c:choose>
+														
+													
+														<c:if test="${totalEcopart > 0}">
+															<%-- Formatage de l'Ecopart --%>
+															<c:set var="formattedEcopart">
+																<fmt:formatNumber value="${totalEcopart}" type="currency" currencySymbol="" maxFractionDigits="${env_currencyDecimal}"/>
+															</c:set>
+															<div class="ecoPartContainer"><fmt:message key="ecoPartIncludingLabel" bundle="${widgetText}" /> : ${formattedEcopart} ${env_CurrencySymbolToFormat}</div>
+														</c:if>
+														
+														<c:if test="${!empty orderItemRecentlyAddedMap['typeConversion']}">
+															<div class="coefContainer">
+																<fmt:message key="ajoutPanierPopinCoefConversionLabel" bundle="${storeText}" />&nbsp;
+																<fmt:formatNumber value="${orderItemRecentlyAddedMap['productQty'] / orderItemRecentlyAddedMap['coefConversion']}" maxFractionDigits="${env_currencyDecimal}"/> m<sup>2</sup> 
+															</div>
+														</c:if>
+														
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col s12 product_price_options">
+												<div class="shopperActions mobile-hidden">
+													<div id="product_popin_shopping_buttons">
+														<a id="continueShoppingButton" href="javascript:dijit.byId('MiniShopCartProductAdded').hide();deleteWidgetAssociationInPopin();" class="basicButton">
+															<span><span class="back_button"><</span><fmt:message bundle="${storeText}" key="ajoutPanierPopinCloseButtonLabel"/></span>
+														</a>
+														<a id="product_popin_goToCart" href="${fn:escapeXml(ShoppingCartURL)}" class="basicButton">
+															<span><span class="picto whiteShopCartPicto"></span><fmt:message bundle="${storeText}" key="ajoutPanierPopinCartButtonLabel"/></span>
+														</a>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									
+
+								</c:forEach>
+								<%-- Target2Sell Reco BEGIN --%>
+								<c:if test="${!empty orderItemsRecentlyAddedList}">
+									<div class="content_recommendation">
+										<div class="content_recommendation_title">
+											<fmt:message bundle="${storeText}" key="ajoutPanierPopinDesktopRecoLabel"/>
+										</div>
+										<c:set var="t2sorderItemsRecentlyAddedList" value="${orderItemsRecentlyAddedList}" scope="request"/>
+										<c:set var="t2sPId" value="<%= com.ecocea.commerce.marketing.commands.elements.Target2SellRecommendationHelper.PAGE_POPUP_CART %>" scope="request" />
+										<% out.flush(); %>
+										<c:import url="/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.EMarketingSpot/EMarketingSpot.jsp">
+											<c:param name="emsName" value="T2SAddToCart"/>
+											<c:param name="widgetOrientation" value="horizontal"/>
+											<c:param name="pageSize" value="3"/>
+											<c:param name="t2sWidgetSuffix" value="T2SAddToCart"/>
+											<c:param name="displayPreference" value="1"/>
+										</c:import>
+										<% out.flush(); %>
+										<%-- <%@ include file="../../../Widgets-ecocea/com.ecocea.commerce.store.widgets.EMarketingSpot/Target2SellTracking_Data.jspf" %> --%>
+									</div>
+								</c:if>
+								<%-- Target2Sell Reco END --%>
+							</div>
+					</div>
+				</c:if>
+			</div>
+		</div>
+	</div>
+</div>
+
+<input type="hidden" id="currentOrderQuantity" value="<c:out value='${orderQuantity}'/>"/>
+<input type="hidden" id="currentOrderAmount" value="<c:out value='${orderAmountValue}'/>"/>
+<input type="hidden" id="currentOrderCurrency" value="<c:out value='${orderAmountCurrency}'/>"/>
+<input type="hidden" id="currentOrderLanguage" value="<c:out value='${langId}'/>"/>
+<input type="hidden" id="currentOrderId" value="<c:out value='${orderId}'/>"/>
+<input type="hidden" id="currentOrderLocked" value="<c:out value='${currentOrderLocked}'/>"/>
+
+<%-- END MiniShopCartDisplay_UI.jsp --%>

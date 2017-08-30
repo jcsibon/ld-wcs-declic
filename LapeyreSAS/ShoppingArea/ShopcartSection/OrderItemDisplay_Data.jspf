@@ -1,0 +1,167 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2007, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%--
+  *****
+  * This JSP file displays the shopping cart details. It shows an empty shopping cart page accordingly.
+  *****
+--%>                    
+<!-- BEGIN OrderItemDisplay_Data.jspf -->
+
+<!-- Get order Details using the ORDER SOI -->
+<c:set var="pageSize" value="${WCParam.pageSize}" />
+<c:if test="${empty pageSize}">
+	<c:set var="pageSize" value="${maxOrderItemsPerPage}"/>
+</c:if>
+
+<c:set var="pageType" value="TunnelPanier" scope="request" />
+
+<c:set var="beginIndex" value="${WCParam.beginIndex}" />
+<c:if test="${empty beginIndex}">
+	<c:set var="beginIndex" value="0" />
+</c:if>  
+<wcf:getData type="com.ibm.commerce.order.facade.datatypes.OrderType" scope="request" 
+	var="order" expressionBuilder="findCurrentShoppingCartWithPagingOnItem" varShowVerb="ShowVerbCart" maxItems="${pageSize}" recordSetStartNumber="${beginIndex}" recordSetReferenceId="ostatus">
+	<wcf:param name="accessProfile" value="IBM_Details" />	 
+	<wcf:param name="sortOrderItemBy" value="orderItemID" />
+	<wcf:param name="isSummary" value="false" />
+</wcf:getData>
+
+<c:choose>	
+	<c:when test="${ShowVerbCart.recordSetTotal > ShowVerbCart.recordSetCount}">
+			<c:set var="orderQuantity" value="${ShowVerbCart.recordSetTotal}"/>
+		</c:when>
+	<c:otherwise>
+		<c:forEach var="orderItem" items="${order.orderItem}" varStatus="status">
+			<c:set var="orderQuantity" value="${orderQuantity + orderItem.quantity.value}"/>
+		</c:forEach>
+	</c:otherwise>
+</c:choose>
+
+<fmt:formatNumber value="${orderQuantity}" var="orderQuantity" pattern="###0"/>
+
+<wcf:url var="currentShoppingCartLink" value="ShopCartPageView" type="Ajax">
+	<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	<wcf:param name="langId" value="${WCParam.langId}" />
+</wcf:url>
+
+<c:set var="orderId" value="${order.orderIdentifier.uniqueID}" scope="request"/>
+
+<c:if test="${empty itemDetailsInThisOrder}">
+	<jsp:useBean id="itemDetailsInThisOrder" class="java.util.HashMap" scope="page"/>
+</c:if>
+
+<!-- Shipping mode : Retrait(par d�faut) ou Livraison -->
+<c:set var="shippingMode" value="${!empty WCParam.shippingMode ? WCParam.shippingMode : 'Retrait'}"/>
+
+
+<wcf:url var="validateCouponPromoLink" value="ValidateExternalAdjust" type="Ajax">
+	<wcf:param name="orderId"   value="${orderId}"  />
+</wcf:url>
+
+<wcf:url var="tunnelRecapShopCartLink" value="TunnelShopCartView" type="Ajax">
+	<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	<wcf:param name="langId" value="${WCParam.langId}" />
+</wcf:url>
+
+<wcf:url var="tunnelShippingLink" value="TunnelCommandAddressValidation">
+	<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	<wcf:param name="langId" value="${WCParam.langId}" />
+</wcf:url>
+
+<wcf:url var="tunnelLogonLink" value="LogonForm" type="Ajax">
+	<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	<wcf:param name="langId" value="${WCParam.langId}" />
+	<wcf:param name="tunnelStep" value="2" />
+	<wcf:param name="returnURL" value="${tunnelShippingLink}" />
+	<wcf:param name="returnPage" value="Tunnel" />
+</wcf:url>
+
+<wcf:url var="tunnelPaymentLink" value="TunnelCommandPaymentView">
+	<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	<wcf:param name="langId" value="${WCParam.langId}" />
+</wcf:url>
+<wcf:url var="tunnelConfirmationLink" value="TunnelCommandConfirmationView">
+	<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	<wcf:param name="langId" value="${WCParam.langId}" />
+</wcf:url>
+
+<wcf:url var="validateTunnelRecapPanierLink" value="ValidateTunnelRecapPanier">
+	<wcf:param name="orderId"   value="${orderId}"  />
+  	<wcf:param name="langId" value="${langId}" />
+ 	<wcf:param name="storeId" value="${storeId}" />
+  	<wcf:param name="catalogId" value="${catalogId}" />
+</wcf:url>
+
+<ecocea:widgetPath var="itemAvailabilityInPhysicalStoreswidget" identifier="ItemAvailabilityInPhysicalStoresWidget" />
+
+<!-- widgetText -->
+<fmt:message var="tunnelRecapCmdBreadcrumbLabel" key="tunnelRecapCmdBreadcrumbLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="tunnelIdentificationBreadcrumbLabel" key="tunnelIdentificationBreadcrumbLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="tunnelLivraisonBreadcrumbLabel" key="tunnelLivraisonBreadcrumbLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="tunnelPaiementBreadcrumbLabel" key="tunnelPaiementBreadcrumbLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="tunnelConfirmationBreadcrumbLabel" key="tunnelConfirmationBreadcrumbLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="tunnelBackButtonlabel" key="tunnelBackButtonlabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="tunnelValidationButtonlabel" key="tunnelValidationButtonlabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="puhtColumnLabel" key="puhtColumnLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="puttcColumnLabel" key="puttcColumnLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="quantityColumnLabel" key="quantityColumnLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="tvaRateColumnLabel" key="tvaRateColumnLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="panierStoreSelectionLabel" key="panierStoreSelectionLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="prixTtcColumnLabel" key="prixTtcColumnLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="prixHtColumnLabel" key="prixHtColumnLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="panierGlobalTVALabel" key="panierGlobalTVALabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="panierGlobalPromotionLabel" key="panierGlobalPromotionLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="panierTotalAmountLabel1" key="panierTotalAmountLabel1" bundle="${widgetText}" scope="request"/>
+<fmt:message var="panierTotalAmountLabel2" key="panierTotalAmountLabel2" bundle="${widgetText}" scope="request"/>
+<fmt:message var="orderGlobalAvailabilityMessage" key="orderGlobalAvailabilityMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="codeAvantageSectionTitle" key="codeAvantageSectionTitle" bundle="${widgetText}" scope="request"/>
+<fmt:message var="codeAvantageOpenButtonLabel" key="codeAvantageOpenButtonLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="codeAvantageFieldlabel" key="codeAvantageFieldlabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="codeAvantageRemoveSubmitButtonLabel" key="codeAvantageRemoveSubmitButtonLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="unavailableItemWarnMessageTitle" key="unavailableItemWarnMessageTitle" bundle="${widgetText}" scope="request"/>
+<fmt:message var="unavailableItemWarnMessageContent" key="unavailableItemWarnMessageContent" bundle="${widgetText}" scope="request"/>
+<fmt:message var="indispoProduitInfoBulleErrorMessage" key="indispoProduitInfoBulleErrorMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="mixteOrderWarnMessageTitle" key="mixteOrderWarnMessageTitle" bundle="${widgetText}" scope="request"/>
+<fmt:message var="mixteOrderWarnMessageContent" key="mixteOrderWarnMessageContent" bundle="${widgetText}" scope="request"/>
+<fmt:message var="commandeMixteInfoBulleErrorMessage" key="commandeMixteInfoBulleErrorMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="invalidCouponErrorMessage" key="invalidCouponErrorMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="unkownsCouponErrorMessage" key="unkownsCouponErrorMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="emptyCouponErrorMessage" key="emptyCouponErrorMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="technicalErrorCouponErrorMessage" key="technicalErrorCouponErrorMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="couponNotValidYetErrorMessage" key="couponNotValidYetErrorMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="OutdatedCouponErrorMesage" key="OutdatedCouponErrorMesage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="CouponAlreadyUsedErrorMessage" key="CouponAlreadyUsedErrorMessage" bundle="${widgetText}" />
+<fmt:message var="unapplicableCouponMessage" key="unapplicableCouponMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="coupon_AMOUNT_Description" key="coupon_AMOUNT_Description" bundle="${widgetText}" scope="request"/>
+<fmt:message var="coupon_RATE_ITEM_Description" key="coupon_RATE_ITEM_Description" bundle="${widgetText}" scope="request"/>
+<fmt:message var="coupon_RATE_ORDER_Description" key="coupon_RATE_ORDER_Description" bundle="${widgetText}" scope="request"/>
+<fmt:message var="promotionCodePlaceholder" key="promotionCodePlaceholder" bundle="${widgetText}" scope="request" />
+<fmt:message var="dontLabel" key="dontLabel" bundle="${widgetText}" scope="request"/>
+
+<c:choose>
+	<c:when test="${isOnMobileDevice}">
+		<fmt:message var="codeAvantageApplySubmitButtonLabel" key="LAP024_REDIRECTION_PRODUIT_BUTTON_OK" bundle="${widgetText}" scope="request"/>
+	</c:when>
+	<c:otherwise>
+		<fmt:message var="codeAvantageApplySubmitButtonLabel" key="codeAvantageApplySubmitButtonLabel" bundle="${widgetText}" scope="request"/>
+	</c:otherwise>
+</c:choose>
+<!-- END OrderItemDisplay_Data.jspf -->
+

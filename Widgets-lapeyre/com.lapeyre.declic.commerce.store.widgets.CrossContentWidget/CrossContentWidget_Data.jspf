@@ -1,0 +1,12 @@
+<%
+  //filtrer les meas depuis l'objet en request, à partir des parametres du widget
+  {
+  com.lapeyre.declic.cms.ContentHelper contentHelper = (com.lapeyre.declic.cms.ContentHelper) request.getAttribute("contentHelper"); 
+  java.util.List<org.apache.commons.json.JSONObject> resultXContent = contentHelper.getPages();
+  request.setAttribute("xcontents", resultXContent);
+  request.setAttribute("xcontentsSize", resultXContent!=null?resultXContent.size():0);
+  }
+%>
+
+
+

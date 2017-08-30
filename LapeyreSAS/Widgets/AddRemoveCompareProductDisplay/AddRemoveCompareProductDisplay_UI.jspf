@@ -1,0 +1,28 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<!-- BEGIN AddRemoveCompareProductDisplay_UI.jsp -->
+<%@ page trimDirectiveWhitespaces="true" %>
+<c:set var="catalogEntryId"  value="${param.catalogEntryId }"/>
+<c:set var="productId"  value="${param.productId }"/>
+<c:set var="displayType"  value="${param.displayType }"/>
+<div id="compare_${fn:escapeXml(catalogEntryId)}${displayType}" productid="compare_${fn:escapeXml(productId)}" class="compare_target mobile-hidden">
+	<label for="comparebox_${fn:escapeXml(catalogEntryId)}${displayType}">
+		<input id="comparebox_${fn:escapeXml(catalogEntryId)}${displayType}" type="checkbox" name="comparebox_${fn:escapeXml(catalogEntryId)}" value="${catalogEntryId}"
+		onchange="javascript:shoppingActionsJS.addOrRemoveFromCompare('${fn:escapeXml(catalogEntryId)}',this.checked)" class="checkLP"/>
+		<div></div>
+		<span id="spanFor_${fn:escapeXml(catalogEntryId)}${displayType}"><fmt:message key="LAP003_COMPARE_ADD" bundle="${widgetText}"/></span>
+	</label>
+</div>
+
+<!-- END AddRemoveCompareProductDisplay_UI.jsp -->

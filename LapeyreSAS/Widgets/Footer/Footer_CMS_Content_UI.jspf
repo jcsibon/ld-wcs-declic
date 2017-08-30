@@ -1,0 +1,81 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2013, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<div class="row footer-mid">
+	<div class="col l2 hide-on-med-and-down">
+		<c:choose>
+			<c:when test="${extendedUserContext.isPro eq true}">
+				<a href="${env_TopCategoriesDisplayURL}"><img src="${jspStoreImgDir}images/redesign/logo_pro.png" /></a>
+			</c:when>
+			<c:otherwise>
+				<a href="${env_TopCategoriesDisplayURL}"><img src="${jspStoreImgDir}images/redesign/logo.png"/></a>
+			</c:otherwise>
+		</c:choose>
+	</div>
+	<div class="col s12 l10">
+		<div id="footerRow2"><%-- TODO : gerer map plutôt que prendre 1er /2e --%>
+			<c:forEach var="blocLiens" items="${headerContentHelper.content.result.footer.footerBottoms[0].meas}" varStatus="current">
+				<div class="col s12 l3 footer-section">
+					<c:if test="${!empty blocLiens.titre}">
+						<span class="footer-header">${blocLiens.titre} <div class="plusMinusWhitePicto plusWhitePicto hide-on-large-only"></div></span>
+					</c:if>
+					<ul class="footer-list-cms">
+					<c:forEach var="lien" items="${blocLiens.cible}">
+						<% out.flush(); %>
+						<c:import url="/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.meaWidget/meaWidget_lien_UI.jsp">
+							<c:param name="type" value="${lien.type}" />
+							<c:param name="lien" value="${lien.lien}" />
+						</c:import>
+						<% out.flush(); %>
+						<li><a href="${linkUrl}">${lien.libelleBouton}</a></li>
+					</c:forEach>
+					</ul>
+				</div>
+				<c:if test="${current.count % 5 == 0}">
+					<br class="clearFloat"/>
+				</c:if>
+			</c:forEach>
+			<div class="col s12 l3 footer-section hide-on-med-and-down">
+				<span class="footer-header"> Nos Produits </span>
+				<ul class="footer-list-cms">
+				<c:forEach var="department" items="${categoryHierarchy.catalogGroupView}">
+					<li>
+						<a href="${fn:escapeXml(categoryURLMap[department.uniqueID])}">
+							<span><c:out value="${department.name}"/></span>
+						</a>
+					</li>
+				</c:forEach>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<hr class="hide-on-med-and-down"/>
+<div class="row footer-bottom">
+	<div class="col l2 s12" id="footerCopyright"><fmt:message bundle='${storeText}' key='footerCopyright' /></div>
+	<div class="col l10 s12 footer-bottom-links">
+		<ul>
+		<c:forEach var="blocLiens" items="${headerContentHelper.content.result.footer.footerBottoms[1].meas}" varStatus="current">
+			<c:forEach var="lien" items="${blocLiens.cible}">
+				<% out.flush(); %>
+				<c:import url="/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.meaWidget/meaWidget_lien_UI.jsp">
+					<c:param name="type" value="${lien.type}" />
+					<c:param name="lien" value="${lien.lien}" />
+				</c:import>
+				<% out.flush(); %>
+				<li><a href="${linkUrl}">${lien.libelleBouton}</a></li>
+			</c:forEach>
+		</c:forEach>	
+		</ul>
+	</div>
+</div>

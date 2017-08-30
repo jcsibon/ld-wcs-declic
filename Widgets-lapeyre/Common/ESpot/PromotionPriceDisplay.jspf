@@ -1,0 +1,174 @@
+<%-- Begin PromotionPriceDisplay.jspf --%>
+	  <%--
+	  *
+	  * Show Payment Promotion Results - Discount Price and description
+	  *
+	  * The following block is used to display the result of "Payment promotion", like Category Promotion, Order level payment, 
+	  * another Order level promotion, etc. For Example, a 'stacked' promotion, "Payment Promotion", might have 
+	  * 30% discount off Furniture, 5% off visa, 10% off today. 
+	  *
+	  * The results will be associated with this e-Marketing Spot. The URL link
+	  * defined with the content can be referenced through the submission of
+	  * the HTML form in the calling JSP.
+	  *
+	  * Index properties:
+	  *  The indexed properties need to append the sequence number(start with 0)
+	  *  with the name to get the value: For instance:
+	  *		CalculationCodeId: The calcode ID of the promotion.
+	  *   	 - CalculationCodeId: <c:out value="${marketingSpotData.properties['CalculationCodeId0']}"/>
+	  *		CalculationCodeDescription: The short description.
+	  *   	 - CalculationCodeDescription: <c:out value="${marketingSpotData.properties['CalculationCodeDescription0']}"/>
+	  *		CalculationCodeLongDescription The long description.
+	  *   	 - CalculationCodeDescription: <c:out value="${marketingSpotData.properties['CalculationCodeLongDescription0']}"/>
+	  *		PriceAdjustment: The discount amount as result of the promotion.
+	  *   	 - PriceAdjustment: <c:out value="${marketingSpotData.properties['PriceAdjustment0']}"/>
+	  *
+	  *  For the predefined property name for the promotional price activity, they are:
+	  *		Currency:           <c:out value="${marketingSpotData.properties['Currency']}"/>
+	  *     OriginalPriceTotal: <c:out value="${marketingSpotData.properties['OriginalPriceTotal']}"/>
+	  *     FinalPriceTotal:    <c:out value="${marketingSpotData.properties['FinalPriceTotal']}"/>
+	  *		
+	  *		NumberOfPriceAdjustments: The number of discounts/promotions( can be stacked, 1 to n) in this result.
+	  *     - NumberOfPriceAdjustments: <c:out value="${marketingSpotData.properties['NumberOfPriceAdjustments']}"/>
+	  *
+	  --%>
+	  
+	  <%--
+	  ATTENTION: ce web activity ne fonctionne pas pour les PROs car le widget Display Promotional Price n'execute pas les priceRules.
+	  
+	  
+	  Input param:
+	  	param.offerPrice : the real offerprice of catentry (ecopart included), calculated in PriceDisplay_Data.jspf
+	  	param.displayPrice: the real listPrice of catentry (ecopart included), calculated in PriceDisplay_Data.jspf
+	   --%>
+	  <c:set var="currentContentCount" value="0" />
+   	  <wcf:useBean var="promoPricesList" classname="java.util.ArrayList" scope="request"/>
+   	  <wcf:useBean var="promoPricesListToDisplay" classname="java.util.ArrayList" scope="request"/>
+	  <c:set var="finalPromoPrice" value="-1" scope="request"/>
+
+ 	  <c:forEach var="marketingSpotData" items="${marketingSpotDatas.baseMarketingSpotActivityData}" varStatus="status5">
+
+		<c:if test='${marketingSpotData.dataType eq "PromotionResultType"}'>
+			<c:set var="currentContentCount" value="${currentContentCount+1}" />
+				
+		    <%--
+        	 *
+         	* Display the payment promotion discount and short description (i.e., Save 10% off Furniture ) 
+         	*
+        	--%>		  	
+            <c:if test="${(!empty marketingSpotData.name) and (!empty marketingSpotData.properties['PriceAdjustment0']) }">		  
+		   	 <%--
+              *
+              * 1.For Brazil store, set the promotion discount into map, optionally be referenced later, like view form of Payments, 
+              *   featured items, non Installment payment, etc 
+              * 2.show the promotion discount and short description
+              *
+             --%>
+
+			        <c:set var="prevPriceAdjAmount" value="0" />
+			        <c:remove var="nonInstallmentDiscountMap"/>
+	
+					<c:set var="numberOfPriceAdjustments" value="${marketingSpotData.properties['NumberOfPriceAdjustments']}"/>
+	  			    <c:forEach var="idx" begin="0" end="${numberOfPriceAdjustments-1}" >
+	  			    	<c:remove var="promoPricesMap"/>
+	  			    	<c:remove var="promoPricesMapToDisplay"/>
+	  			    	<c:set var="promoPricesMap" value="<%=new java.util.HashMap()%>"/>
+	  			    	<c:set var="promoPricesMapToDisplay" value="<%=new java.util.HashMap()%>"/>
+						<c:set var="priceAdjustmentIdx" value="PriceAdjustment${idx}"/>
+						<c:set var="calculationCodeDescriptionIdx" value="CalculationCodeDescription${idx}"/>
+	
+						<c:choose>
+							<c:when test="${not empty param.coeffConversionQuantite &&  param.coeffConversionQuantite!=1}">
+								<c:set var="priceAdjustment" value="${marketingSpotData.properties[priceAdjustmentIdx] / param.coeffConversionQuantite}"/>
+							</c:when>
+							<c:when test="${not empty param.coeffConversionPrix &&  param.coeffConversionPrix!=1}">
+								<c:set var="priceAdjustment" value="${marketingSpotData.properties[priceAdjustmentIdx] * param.coeffConversionPrix}"/>
+							</c:when>
+							<c:otherwise>
+								<c:set var="priceAdjustment" value="${marketingSpotData.properties[priceAdjustmentIdx]}"/>
+							</c:otherwise>
+						</c:choose>
+						<c:set var="calculationCodeDescription" value="${marketingSpotData.properties[calculationCodeDescriptionIdx]}"/>
+
+	    			   	<%-- output the calculate discount amount followed by a Short description --%>
+						<c:if test="${fn:startsWith(priceAdjustmentIdx, 'PriceAdjustment')==true}">
+					    	<%--save the initial promotion discount for this occurrence--%>
+		        		    <c:choose>
+		        		        <c:when test="${prevPriceAdjAmount eq '0'}">   
+			        		     	<%-- save and display the 1st 'PriceAdjustment' discount & short desc  --%>
+			        		     	<%-- marketingSpotData.OriginalPriceTotal=${marketingSpotData.properties['OriginalPriceTotal'] }
+			        		     	param.offerPrice=${param.offerPrice }
+			        		     	priceAdjustment=${priceAdjustment } --%>
+			        		     	
+								  	<%--<c:set var="prevPriceAdjAmount" value="${ marketingSpotData.properties['OriginalPriceTotal'] - priceAdjustment }" />--%>
+								  	<c:set var="prevPriceAdjAmount" value="${ param.offerPrice - priceAdjustment }" />
+	
+								    <%-- If there was an payment Promotion discount before this promotion(stacked promotions ), 
+								          don't bother to show results again because already being displayed--%>
+								    <c:if test="${empty nonInstallmentDiscountMap || numberOfPriceAdjustments == '1'}" ><%-- OR just one promotion rule, display discounts--%>
+						                <c:set var="nonInstallmentPriceDiscount" value="${marketingSpotData.properties['FinalPriceTotal']}" />
+                 						<c:set var="nonInstallmentDiscountMap" value="<%=new java.util.HashMap()%>" scope="request"/>
+						                <c:set target="${nonInstallmentDiscountMap}" property="BOLETO" value="${nonInstallmentPriceDiscount}" />
+                 						<c:set target="${nonInstallmentDiscountMap}" property="NON_INSTALLMENT_DISCOUNT" value="${nonInstallmentPriceDiscount}" />
+
+										<%-- Set the value (price & desc) into the map --%>
+										<c:set target="${promoPricesMap}" property="PRICE_REDUCED" value="${param.offerPrice - priceAdjustment}" />
+										<c:set target="${promoPricesMap}" property="PROMO_DESC" value="${calculationCodeDescription}" />
+										<wcf:set target="${promoPricesList}" value="${promoPricesMap}" />
+										
+										<c:if test="${param.showPrices eq 'true' }">
+											<c:set target="${promoPricesMapToDisplay}" property="id_promo_price" value="WC_PromotionDiscountDisplay_${productId}_${idx}" />
+											<c:set target="${promoPricesMapToDisplay}" property="promo_price" value="${param.offerPrice - priceAdjustment}" />
+
+											<c:set target="${promoPricesMapToDisplay}" property="id_promo_price_description" value="WC_PromotionDescriptionDisplay_${productId}_${idx}" />
+											<c:set target="${promoPricesMapToDisplay}" property="promo_price_description" value="${calculationCodeDescription}" />
+											<wcf:set target="${promoPricesListToDisplay}" value="${promoPricesMapToDisplay}" />
+											
+											<c:set var="finalPromoPrice" value="${param.offerPrice - priceAdjustment}" scope="request"/>
+											
+	       								</c:if>
+        							</c:if>
+						   	 	</c:when>
+		        		   	 	<c:otherwise>
+						          	<c:set var="paymentPromotionDiscount" value="${ prevPriceAdjAmount - priceAdjustment }" />
+
+									<%-- Set the value (price & desc) into the map --%>
+									<c:set target="${promoPricesMap}" property="PRICE_REDUCED" value="${paymentPromotionDiscount}" />
+									<c:set target="${promoPricesMap}" property="PROMO_DESC" value="${calculationCodeDescription}" />
+									<wcf:set target="${promoPricesList}" value="${promoPricesMap}" />
+									
+									<c:if test="${param.showPrices eq 'true' }">
+										<c:set target="${promoPricesMapToDisplay}" property="id_promo_price" value="WC_PromotionDiscountDisplay_${productId}_${idx}" />
+										<c:set target="${promoPricesMapToDisplay}" property="promo_price" value="${paymentPromotionDiscount}" />
+	
+										<c:set target="${promoPricesMapToDisplay}" property="id_promo_price_description" value="WC_PromotionDescriptionDisplay_${productId}_${idx}" />
+										<c:set target="${promoPricesMapToDisplay}" property="promo_price_description" value="${calculationCodeDescription}" />									
+										<wcf:set target="${promoPricesListToDisplay}" value="${promoPricesMapToDisplay}" />
+										
+										<c:if test="${! extendedUserContext.isPro eq true}">
+											<c:set var="finalPromoPrice" value="${paymentPromotionDiscount}" scope="request"/>
+										</c:if>
+									
+        							</c:if>
+								    <%-- save the current discounted amount for next 'stacked' promotion  --%>
+								    <c:set var="prevPriceAdjAmount" value="${paymentPromotionDiscount }" />
+
+		        		   		</c:otherwise>
+		        		  	</c:choose> 	    
+						</c:if>						   
+					</c:forEach>
+            </c:if>
+		  
+		</c:if>
+	  </c:forEach>
+	  
+	  
+	  <c:if test="${finalPromoPrice == -1}">
+	  	<c:remove var="finalPromoPrice"/>
+	  </c:if>
+<%--
+  *
+  * End: Show payment Promotion Results
+  *
+--%>
+<%-- End PromotionPriceDisplay.jspf --%>

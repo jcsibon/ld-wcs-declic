@@ -1,0 +1,328 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%@ page import="com.ibm.commerce.member.facade.datatypes.PersonType" %>
+<%@ taglib uri="http://commerce.ibm.com/foundation" prefix="wcf" %>
+<%@taglib uri="http://commerce.ibm.com/coremetrics" prefix="cm"%>
+<%@page import="com.ibm.commerce.bi.BIConfigRegistry"%>
+<%@page import="com.ibm.commerce.command.CommandContext"%>
+<%@page import="com.ibm.commerce.server.ECConstants"%>
+<flow:ifEnabled feature="Analytics">
+	<%
+	CommandContext commandContext = (CommandContext) request.getAttribute(ECConstants.EC_COMMANDCONTEXT);
+	Integer storeId = commandContext.getStoreId();
+	pageContext.setAttribute("hostedVar", BIConfigRegistry.getInstance().useHostedLibraries(storeId));
+	%>
+	<script src="${jsAssetsDir}javascript/Analytics.js?${versionNumber}"></script>
+	<script>
+	dojo.addOnLoad(function() {
+		analyticsJS.storeId = "${storeId}";
+		analyticsJS.catalogId = "${catalogId}";
+		analyticsJS.loadShopCartHandler();
+		analyticsJS.loadPagingHandler();
+		analyticsJS.loadProductQuickInfoHandler("productIdQuickInfo");
+		analyticsJS.loadStoreLocatorPageViews();
+		analyticsJS.loadWishlistHandler();
+		dojo.require("wc.analytics.CoremetricsEventListener");
+		(new wc.analytics.CoremetricsEventListener()).load(${hostedVar});
+	});
+	</script>
+</flow:ifEnabled>
+<script>var isGuest = ${userType == 'G'};</script>
+
+<script src="${jsAssetsDir}javascript/Widgets/header.js?${versionNumber}"></script>
+
+<c:choose>
+	<c:when test="${userType == 'G'}">
+		<wcf:url var="orderTrackingListURL" patternName="SearchOrderPageURL" value="OrderTrackingSearchView">
+			<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+			<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+			<wcf:param name="langId" value="${langId}" />			
+			<wcf:param name="urlLangId" value="${urlLangId}" />
+		</wcf:url>	
+		<wcf:url var="QuotationTrackingSearchURL" patternName="SearchQuotationPageURL" value="QuotationTrackingSearchView">
+			<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+			<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+			<wcf:param name="langId" value="${langId}" />			
+			<wcf:param name="urlLangId" value="${urlLangId}" />
+		</wcf:url>
+	</c:when>
+	<c:otherwise>
+		<wcf:url var="orderTrackingListURL" value="OrderTrackingListView">
+			<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+			<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+			<wcf:param name="langId" value="${langId}" />			
+			<wcf:param name="urlLangId" value="${urlLangId}" />
+		</wcf:url>	
+		<wcf:url var="QuotationTrackingSearchURL" value="QuotationTrackingSearchView">
+			<wcf:param name="storeId"   value="${WCParam.storeId}"  />
+			<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+			<wcf:param name="langId" value="${langId}" />			
+			<wcf:param name="urlLangId" value="${urlLangId}" />
+		</wcf:url>
+	</c:otherwise>
+</c:choose>
+
+<%-- Chercher les coordoonees du magasin --%>
+<c:set var="pickUpStoreId" value="${cookie.WC_pickUpStore.value}" />
+
+<c:set var="cookieVal" value="${cookie.WC_physicalStores.value}" />
+<c:if test="${!empty cookieVal}">	
+  <c:set var="cookieVal" value="${fn:replace(cookieVal, '%2C', ',')}" scope="page" />
+	
+  <wcf:getData type="com.ibm.commerce.store.facade.datatypes.PhysicalStoreType[]"
+               var="physicalStores" varException="physicalStoreException" expressionBuilder="findPhysicalStoresByUniqueIDs">
+    <wcf:param name="accessProfile" value="IBM_Store_Details" />
+    <c:forTokens items="${cookieVal}" delims="," var="phyStoreId">
+      <wcf:param name="uniqueId" value="${phyStoreId}" />	
+    </c:forTokens>
+  </wcf:getData>
+</c:if>
+
+<c:if test="${userType eq 'R'}">
+	<!-- Retrieve user infos : firstName, lastName, address -->
+	<wcf:getData type="com.ibm.commerce.member.facade.datatypes.PersonType" var="person" expressionBuilder="findCurrentPerson">
+	       <wcf:param name="accessProfile" value="IBM_All" />
+	</wcf:getData>
+	<flow:ifEnabled feature="Analytics">
+		<cm:registration personType="${person}"/>
+	</flow:ifEnabled>
+	<c:set var="firstName" value="${person.personalProfile.attributes['userProfileField2']}"/>
+	<c:set var="lastName" value="${person.personalProfile.displayName}"/>			
+
+</c:if>
+
+<%-- Fin --%>
+<c:if test="${empty isPageEdito}">
+	<c:set var="isPageEdito" value="${param.isPageEdito}"/>
+</c:if>
+	
+<div id="headerContainer">
+	<div id="headerRows">
+	<div id="headerMobileContainer" class="print-hidden row desktop-hidden">
+		
+		<div id="headerMobile" class="col s12">
+			<div class="col m5 s7" id="mobileLeftHeader">
+			    <div id="headerMobile-menu" class="vCenteredHeaderContainer col s3">
+			    	<div class="vCenteredHeaderBlock">
+			        <!-- BEGIN Sliding side panel -->
+			        <a href="javascript:void(0);" id="slider-arrow" class="show">
+			            <div class="mobileIcon menuPicto"></div> 
+			            <span><fmt:message bundle="${storeText}" key="mobileMenuLabel"/></span>
+			        </a>
+			        <!-- END Sliding side panel -->
+			        </div>
+			    </div>
+			    <div id="headerMobile-logo" class="vCenteredHeaderContainer col s7">
+			    	<div class="vCenteredHeaderBlock">
+				        <c:choose>
+				            <c:when test="${extendedUserContext.isPro eq true}">
+				                <a href="${env_TopCategoriesDisplayURL}"><img src="${jspStoreImgDir}images/logo_pro.png" alt="Lapeyre" class="responsive-img" /></a>
+				            </c:when>
+				            <c:otherwise>
+				                <a href="${env_TopCategoriesDisplayURL}"><img src="${jspStoreImgDir}images/logo.png" class="responsive-img" alt="Lapeyre" /></a>
+				            </c:otherwise>
+				        </c:choose>
+			        </div>
+			    </div>
+			    <div id="headerMobile-search" class="vCenteredHeaderContainer col s2">
+			    	<div class="vCenteredHeaderBlock">
+							<div class="picto searchPicto"></div>
+					</div>
+				</div>
+			</div>
+			<div class="col m6 offset-m1 s5" id="mobileRightHeader">
+				<div id="StoreChosenInfosTemp" class="vCenteredHeaderContainer print-hidden col m6 hide-on-small-only"></div>
+			    <flow:ifEnabled feature="SOAWishlist">
+						<div id="headerMobile-wishListDisplay" class="vCenteredHeaderContainer col m3 s6">
+							<div class="vCenteredHeaderBlock">
+								<a href="${fn:escapeXml(WishListDisplayURL)}">
+									<div class="picto wishListPicto"></div>
+								</a>
+							</div>
+						</div>
+				</flow:ifEnabled>
+				<div id="headerMobile-cart" class="vCenteredHeaderContainer col m3 s6">
+					<div class="vCenteredHeaderBlock">
+				        <a id="widget_minishopcart" href="${fn:escapeXml(ShoppingCartURL)}">
+				        	<div class="picto shopCartPicto"></div>
+				        	<div class="headerDataContainer">
+				            	(<span class="minishopcart_total" id="minishopcart_total_mobile" >0</span>)
+				            </div>
+				        </a>
+				    </div>
+			    </div>
+			</div>
+		</div>
+		<div id="mobileSearch"></div>
+	</div>
+	
+	<div id="headerWidget" class="navPanel">
+		<div id="header" role="banner" class="col s12">
+		
+			<%-- Overlay is moved to the right container when page is loaded / window resized --%>
+			<div id="overlay"></div>
+			
+			<div id="quickLinksBarContainer" class="mobile-hidden">
+				<ul id="quickLinksBar" class="print-hidden headerNonsticky container">
+	
+				<li><a href="<c:out value='${QuotationTrackingSearchURL}'/>" id="WC_MyAccountSidebarDisplayf_links_5"><fmt:message bundle="${storeText}" key="metaNavSuiviDevisLinkLabel"/></a></li>
+				<li><a href="<c:out value='${orderTrackingListURL}'/>" id="WC_MyAccountSidebarDisplayf_links_5"><fmt:message bundle="${storeText}" key="metaNavSuiviCommandeLinkLabel"/></a></li>
+				<c:set var="LPProUrl" value="${lapeyreProUrl}"/>
+
+				<%-- Affichage du lien PRO si user non connect� ou PRO --%>
+				<c:choose>
+					<c:when test="${userType eq 'G' || extendedUserContext.isPro eq true}">
+						<li class="LPProDesktop hide-on-med-and-down">
+					</c:when>
+					<c:otherwise>
+						<li class="LPProDesktop hide-on-med-and-down" style="display:none;">
+					</c:otherwise>
+				</c:choose>
+						<a id="metaNavlapeyrePro" href="${LPProUrl}"><fmt:message bundle="${storeText}" key="CatalogueMenuLapeyreProLinkLabel"/></a>
+						</li>
+				</ul>
+			</div>
+			
+			<!-- Fin quickLinksBar -->	
+
+			<div id="headerRow1" class="mobile-hidden container">
+				<div id="logo">
+					<div class="contentRecommendationWidget">
+						<div class="left_espot centered">
+							<c:choose>
+								<c:when test="${extendedUserContext.isPro eq true}">
+									<a href="${env_TopCategoriesDisplayURL}"><img src="${jspStoreImgDir}images/redesign/logo_pro.png" /></a>
+								</c:when>
+								<c:otherwise>
+									<a href="${env_TopCategoriesDisplayURL}"><img src="${jspStoreImgDir}images/redesign/logo.png" /></a>
+								</c:otherwise>
+							</c:choose>
+						</div>
+					</div>
+				</div>
+				
+				<%-- TODO ici dropdown --%>
+				<div class="dropdownLP">
+					<select onchange="location = this.options[this.selectedIndex].value;" id="dropDownMenuCategories">
+						<option value="#">Nos univers</option>
+						<c:forEach var="department" items="${categoryHierarchy.catalogGroupView}">
+							<option
+								id="" value="${fn:escapeXml(categoryURLMap[department.uniqueID])}">
+								<c:out value="${department.name}"/>
+							</option>
+						</c:forEach>
+					</select>
+				</div>
+											
+				
+				<%out.flush();%>
+					<c:import url="${env_jspStoreDir}Widgets/Search/Search.jsp">
+						<c:param name="isPageEdito" value="${isPageEdito}" />
+					</c:import>
+				<%out.flush();%>
+				
+				<div id="MiniShopCartDisplay" class="right vCenteredHeaderContainer print-hidden">
+					<div class="vCenteredHeaderBlock">
+						<%out.flush();%><c:import url="${env_jspStoreDir}Widgets/MiniShopCartDisplay/MiniShopCartDisplayRefresh.jsp"/><%out.flush();%>
+						<script type="text/javascript">
+							$(document).ready(function(){
+								handleMiniCartHover();
+							});
+						</script>
+					</div>
+				</div>
+				
+				<flow:ifEnabled feature="SOAWishlist">
+					<div id="WishListDisplay" class="right vCenteredHeaderContainer print-hidden">
+							<div class="vCenteredHeaderBlock">
+								<a href="${fn:escapeXml(WishListDisplayURL)}">
+									<div class="picto wishListPicto"></div>
+								</a>
+							</div>
+					</div>
+				</flow:ifEnabled>
+				
+				<div id="MyAccountInOut" class="right vCenteredHeaderContainer print-hidden" >
+					<div class="vCenteredHeaderBlock">
+						<div class="picto myAccountPicto"></div>
+						<div class="headerDataContainer">
+							<span>
+								<c:choose>
+									<c:when test="${userType == 'G'}">
+										<a class="hover_underline" id="signInOutQuickLink" href="${fn:escapeXml(Logon_LogoutURL)}" aria-haspopup="true">${SIGN_IN_OUT}</a>
+									</c:when>
+									<c:otherwise>
+										<a class="hover_underline" id="myAccountQuickLink" href="${fn:escapeXml(MyAccountURL)}" onmouseover="javascript:$('#monComptePopup').show();" aria-haspopup="true"><ecocea:crop value="${firstName} ${lastName}" length="56" /></a>
+									</c:otherwise>
+								</c:choose>
+							</span>
+						</div>
+					</div>
+				</div>
+				
+				<div id="StoreChosenInfos" class="right vCenteredHeaderContainer print-hidden" dojoType="wc.widget.RefreshArea" controllerId="HeaderStoreLocationRefreshArea" >
+					<%out.flush();%>
+						<c:import url="/Widgets-lapeyre/Common/HeaderStoreLocator/HeaderStoreLocator.jsp" />
+					<%out.flush();%>
+				</div>
+				
+			</div>
+			<!-- Fin headerRow1 -->	
+			
+			<!-- Debut headerRow2 -->
+			<%-- check if isPageEdito attribute is set in parent JSP or if request parameter --%>
+				<%@ include file="ext/Header_Navigation_Catalog_UI.jspf" %>
+			<!-- Fin headerRow2 -->
+		</div>
+	</div>
+	</div>
+</div>
+
+<%-- We hide the login popup for the moment --%>
+<c:if test="${userType != 'G'}">
+	<div id="monComptePopup">
+		<div class="popover-frame-arrow mobile-hidden"></div>
+		<div class="header mobile-hidden">
+			<h2 class="title">
+				<fmt:message key="myAccountBreadcrumbLabel" bundle="${widgetText}" />
+			</h2>
+			<a class="closeButton" onclick="javascript:$('#monComptePopup').fadeToggle(300);"></a>
+		</div>
+		<c:choose>
+			<c:when test="${userType != 'G'}">
+				<%@ include file="../../UserAreaDeclic/AccountSection/headerClient.jspf" %>
+			</c:when>
+			<c:otherwise>
+				<c:if test="${isOnMobileDevice ne true }">
+					<%@ include file="../../UserAreaDeclic/AccountSection/headerGuest.jspf" %>
+				</c:if>
+				<%-- LogonSubsection/LogonForm.jsp --%>
+			</c:otherwise>
+		</c:choose>
+	</div>
+</c:if>
+
+<div id="MiniShopCartProductAddedNotification" style="display: none;">
+	<div id="add2cart_notification_title" ><span class="product_popin_shopcartCheck_white"></span><fmt:message bundle="${storeText}" key="ajoutPanierPopinDesktopTitle"/>
+	<span id="closeButtonNotification"></span>
+	</div>
+</div>
+
+<script>
+	$(document).ready(function() {
+	    $("#closeButtonNotification").click(function() {
+	    	$("#MiniShopCartProductAddedNotification").fadeOut();
+	    });
+	});
+</script>

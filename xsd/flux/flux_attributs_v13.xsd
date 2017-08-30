@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2014 rel. 2 sp1 (x64) (http://www.altova.com) by robin (ecocea) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="data">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="attribute" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="type">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="Decimal"/>
+				<xs:enumeration value="Integer"/>
+				<xs:enumeration value="String"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="label" type="String254WithLocaleAttribute"/>
+	<xs:element name="action">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="add"/>
+				<xs:enumeration value="delete"/>
+				<xs:enumeration value="update"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="header">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="sender"/>
+				<xs:element ref="SASid"/>
+				<xs:element ref="extractDate"/>
+				<xs:element ref="targetCatalog"/>
+				<xs:element ref="nbDataEntries"/>
+				<xs:element ref="credentials"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="nbDataEntries" type="xs:integer"/>
+	<xs:element name="SASid" type="xs:string"/>
+	<xs:element name="credentials">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="login" type="xs:string"/>
+				<xs:element name="password" type="xs:string"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="sender" type="xs:string"/>
+	<xs:element name="message">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="header"/>
+				<xs:element ref="data"/>
+			</xs:sequence>
+			<xs:attribute name="type" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="attributeImport"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="attribute">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="action"/>
+				<xs:element ref="identifier"/>
+				<xs:element ref="label"/>
+				<xs:element ref="description" minOccurs="0"/>
+				<xs:element ref="type"/>
+				<xs:element ref="isListOfValues"/>
+				<xs:element ref="isDisplayedFront"/>
+				<xs:element ref="allowedValueList" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="identifier">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="254"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="description" type="String254WithLocaleAttribute"/>
+	<xs:element name="extractDate" type="xs:dateTime"/>
+	<xs:element name="allowedValue">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="allowedValueIdentifier"/>
+				<xs:choice>
+					<xs:element ref="allowedValueString"/>
+					<xs:element ref="allowedValueDecimal"/>
+					<xs:element ref="allowedValueInteger"/>
+				</xs:choice>
+				<xs:element ref="allowedValueSequence"/>
+				<xs:element ref="allowedValueImage" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="targetCatalog">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="future"/>
+				<xs:enumeration value="current"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="isListOfValues" type="xs:boolean"/>
+	<xs:element name="allowedValueList">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="allowedValue" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="isDisplayedFront" type="xs:boolean"/>
+	<xs:element name="allowedValueImage">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="254"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="allowedValueString" type="String2000WithLocaleAndDefaultAttribute"/>
+	<xs:element name="allowedValueDecimal">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:decimal">
+					<xs:attribute name="locale" use="required">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="fr"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+					<xs:attribute name="default" type="xs:boolean" use="required"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="allowedValueInteger">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:integer">
+					<xs:attribute name="locale" use="required">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="fr"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+					<xs:attribute name="default" type="xs:boolean" use="required"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="allowedValueSequence">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:double">
+					<xs:attribute name="locale" use="required">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="fr"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="allowedValueIdentifier">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="254"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:complexType name="LocaleType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="locale" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="fr"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="LocaleAndDefaultType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="locale" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="fr"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="default">
+					<xs:simpleType>
+						<xs:restriction base="xs:boolean"/>
+					</xs:simpleType>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="String254WithLocaleAttribute">
+		<xs:simpleContent>
+			<xs:restriction base="LocaleType">
+				<xs:maxLength value="254"/>
+			</xs:restriction>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="String128WithLocaleAttribute">
+		<xs:simpleContent>
+			<xs:restriction base="LocaleType">
+				<xs:maxLength value="128"/>
+			</xs:restriction>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="String64WithLocaleAttribute">
+		<xs:simpleContent>
+			<xs:restriction base="LocaleType">
+				<xs:maxLength value="64"/>
+			</xs:restriction>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="String32WithLocaleAttribute">
+		<xs:simpleContent>
+			<xs:restriction base="LocaleType">
+				<xs:maxLength value="32"/>
+			</xs:restriction>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="String16WithLocaleAttribute">
+		<xs:simpleContent>
+			<xs:restriction base="LocaleType">
+				<xs:maxLength value="128"/>
+			</xs:restriction>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="String4000WithLocaleAttribute">
+		<xs:simpleContent>
+			<xs:restriction base="LocaleType">
+				<xs:maxLength value="4000"/>
+			</xs:restriction>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="String1000000WithLocaleAttribute">
+		<xs:simpleContent>
+			<xs:restriction base="LocaleType">
+				<xs:maxLength value="1000000"/>
+			</xs:restriction>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="String1024WithLocaleAttribute">
+		<xs:simpleContent>
+			<xs:restriction base="LocaleType">
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="String2000WithLocaleAttribute">
+		<xs:simpleContent>
+			<xs:restriction base="LocaleType">
+				<xs:maxLength value="2000"/>
+			</xs:restriction>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="String2000WithLocaleAndDefaultAttribute">
+		<xs:simpleContent>
+			<xs:restriction base="LocaleAndDefaultType"/>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>

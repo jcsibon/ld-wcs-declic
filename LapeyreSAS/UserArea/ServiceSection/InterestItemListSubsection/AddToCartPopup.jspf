@@ -1,0 +1,157 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2012, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%@ page trimDirectiveWhitespaces="true" %>
+<c:set var="keyDefaultImageMaps" value="STANDARD_list_thumbnail"/>
+<astpush:assetPushUrl var="defaultProductThumbnailImage" urlRelative="${defaultImageMaps[keyDefaultImageMaps]}" type="STANDARD" source="list" device="${device}" format="thumbnail" defaultUrl="true"/>
+
+<c:if test="${!pageloaded_addToCartPopupJSPF}">
+<script type="text/javascript">
+var actionAdd;
+function setChoice(val){
+	actionAdd=val;
+	dojo.byId('chooseActionMessage').innerHTML="";
+	dojo.query("#addToCartPopup .top .button").forEach(function(e){dojo.removeClass(e,"buttonSelected");});
+	dojo.addClass(dojo.byId('addToCartPopup_choice'+val),"buttonSelected");
+}
+function doAction(ShoppingCartURL){
+	if(actionAdd==undefined){
+		dojo.byId('chooseActionMessage').innerHTML="<fmt:message key='missingWishlistConversionModeErrorMessage' bundle='${storeText}' />";
+	}else{
+		if(actionAdd=='Replace'){
+			shoppingListJS.doReplaceCart('${storeId}','${order.orderIdentifier.uniqueID}',ShoppingCartURL);
+		}
+		else{
+			shoppingListJS.doAddToCart(false,ShoppingCartURL);
+		}
+	}
+}
+</script>
+
+	<div id="addToCartPopup" role="dialog" dojoType="lapeyre/widget/Dialog" title="<fmt:message key='convertWishlistPopinTitle' bundle='${storeText}' />" style="display: none">
+		<div class="widget_site_popup">
+			<div class="content">
+<%-- 				<c:set var="numberMissing" value="${empty selectedSoaWishList.item? 0 : fn:length(selectedSoaWishList.item) - someBuyable}"/> --%>
+				<div class="header">
+					<span>
+						<fmt:message key='convertWishlistPopinTitle' bundle='${storeText}' />
+					</span>
+					<a role="button" id="addToCartPopup_close" href="javascript:void(0);" onclick="dijit.byId('addToCartPopup').hide();" class="close" tabindex="4" title="Fermer" aria-label="Fermer"></a>
+					<div class="clear_float"></div>
+				</div>
+					<span id="chooseActionMessage"></span>
+				</div>
+				<div class="body">
+					<div class="top">
+						<c:choose>
+							<c:when test="${someBuyable ==1 }">
+								<a id="addToCartPopup_choiceMerge" href="javascript:setChoice('Merge');" class="button column_48-5 bcolumn_100 left " tabindex="1">
+									<span id="addToCartPopup_div_choiceMerge" class="button_text">
+										<fmt:message key="mergeWishlistButtonLabel_one" bundle="${storeText}">
+											<fmt:param value="${someBuyable}" />
+										</fmt:message>
+									</span>
+								</a>
+								<div class="gutter mobile-hidden"></div>
+								<a id="addToCartPopup_choiceReplace" href="javascript:setChoice('Replace');" class="button column_48-5 bcolumn_100 left" tabindex="1">
+									<span id="addToCartPopup_div_choiceReplace" class="button_text">
+										<fmt:message key="replaceWishlistButtonLabel_one" bundle="${storeText}">
+											<fmt:param value="${someBuyable}" />
+										</fmt:message>
+									</span>
+								</a>
+							</c:when>
+							<c:otherwise>
+								<a id="addToCartPopup_choiceMerge" href="javascript:setChoice('Merge');" class="button bcolumn_100 column_48-5 left" tabindex="1">
+									<span id="addToCartPopup_div_choiceMerge" class="button_text">
+										<fmt:message key="mergeWishlistButtonLabel_many" bundle="${storeText}">
+											<fmt:param value="${someBuyable}" />
+										</fmt:message>
+									</span>
+								</a>
+								<div class="column_6 gutter mobile-hidden"></div>
+								<a id="addToCartPopup_choiceReplace" href="javascript:setChoice('Replace');" class="button bcolumn_100 column_42  left" tabindex="1">
+									<span id="addToCartPopup_div_choiceReplace" class="button_text">
+										<fmt:message key="replaceWishlistButtonLabel_many" bundle="${storeText}">
+											<fmt:param value="${someBuyable}" />
+										</fmt:message>
+									</span>
+								</a>
+							</c:otherwise>
+						</c:choose>
+					</div>
+					<div class="clearAll"></div>
+
+					<c:if test="${numberMissing > 0}">
+						<div id="addToCartErrorMessageArea">
+							<img class="error_icon" src="<c:out value='${jspStoreImgDir}' />images/info.png" alt=""/>
+							<p id="addToCartErrorMessageText" class="textinlinewithicon">
+								<c:choose>
+									<c:when test="${numberMissing==1}">
+										<fmt:message key="wishlistConversionWarnMessage" bundle="${storeText}">
+											<fmt:param value="${numberMissing}"/>
+										</fmt:message>
+									</c:when>
+									<c:otherwise>
+										<fmt:message key="wishlistConversionWarnMessageMany" bundle="${storeText}">
+											<fmt:param value="${numberMissing}"/>
+										</fmt:message>
+									</c:otherwise>
+								</c:choose>
+							</p>
+							<div class="clear_float"></div>
+						</div>
+						<div id="listeIndispos">
+							<c:set var="detailMissingSKUS" value="{\"results\":[${detailMissingSKUS}]}" />
+							<ecocea:stringToJson var="listMissingSKUS" value="${detailMissingSKUS}"/>
+							<c:forEach items="${listMissingSKUS.results}" var="missingSKU">
+								<div class="row">
+						
+									<div class="image">
+										<c:choose>
+											<c:when test="${!empty missingSKU.image}">
+												<img src="${missingSKU.image}" alt="${missingSKU.name}" border="0" onerror="this.src='${defaultProductThumbnailImage}';"/>
+											</c:when>
+											<c:otherwise>
+												<img src="<c:out value='${defaultProductThumbnailImage}'/>" alt="${missingSKU.name}"> 
+											</c:otherwise>
+										</c:choose>
+									</div>
+									
+									<div class="line">
+										<div class="productName light" title="${missingSKU.name}"><ecocea:crop value="${missingSKU.name}" length="41" /></div>
+										<div class="line quantity light"><fmt:message key="PD_QTY" bundle="${storeText}"/> : ${missingSKU.quantity}</div>
+										<div class="line offerprice light">${missingSKU.price}</div>
+										<div class="dispo orderStatusRed"><fmt:message key="quotationUnavailableItemLabel" bundle="${storeText}" /></div>
+									</div>
+								</div>
+							</c:forEach>
+						</div>
+					</c:if>
+					
+					<div class="footer">
+						<div class="button_container">
+							<a id="addToCartPopup_save" href="javascript: doAction('${ShoppingCartURL}');" tabindex="2">
+								<div class="left_border"></div>
+								<span id="addToCartPopup_div_edit_save" class="button green"><fmt:message key="wishlistConversionPopinSubmitButtonLabel" bundle="${storeText}" /></span>
+								<div class="right_border"></div>
+							</a>
+						</div>
+						<div class="clear_float"></div>
+					</div>
+				<div class="clear_float"></div>
+			</div>
+		</div>
+	</div>
+	<c:set var="pageloaded_addToCartPopupJSPF" value="true" scope="request"/>
+</c:if>	

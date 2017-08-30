@@ -1,0 +1,128 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2007, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<!-- BEGIN TunnelRetraitMagasinTab_UI.jspf -->
+
+<c:set var="prefixRetraitMagasin" value="retraitMagasin"/>
+
+<script type="text/javascript">
+	$().ready(function() {
+		
+		$("div[id^='${prefixRetraitMagasin}_${prefixSelect}']").each(function(index){
+			if($(this).hasClass('selectable')) {
+				var that = this;
+				$(this).click(function() {
+					changeDefaultMagasinForRetraitMagasin(that);
+				});
+			}
+		});
+		
+		$("#SearchShopByZipCode").validate({
+			rules: {
+				zipCode : {
+					required : true,
+					maxlength : 20
+				}
+			},
+			messages: {
+				zipCode : {
+					required : "<fmt:message bundle='${widgetText}' key='missingZipCodeMessage' />",
+					maxlength : "<fmt:message bundle='${widgetText}' key='maxLengthZipCodeMessage' />"
+				}
+			},
+			errorPlacement : function(error, element) {
+				$('#SearchShopByZipCode label.error').remove();
+				error.appendTo($("#SearchShopByZipCode"));
+			},
+			submitHandler: function(form) {
+				requestSubmitted = true;
+				cursor_wait();
+				SearchShopsJS.doSearchShopFromAddress(trim(form.zipCode.value), function() {
+					SearchShopsJS.updateNearestShops();
+				});
+				return false;
+			}
+		});
+	});
+</script>
+
+<div id="retraitMagasinZoneDefaultMagasin" style="display:${(empty fullStoreDB1 || empty fullStoreDB1.identifier)?'none':'block'}">
+	<h2 class="titleBlock">
+		<c:choose>
+			<c:when test="${!empty fullStoreDB1 && fullStoreDB1.retraitDrive}">
+				<fmt:message key="defaultStoreDriveSectionTitle" bundle="${widgetText}" />
+			</c:when>
+			<c:otherwise>
+				<fmt:message key="defaultStoreRetraitSectionTitle" bundle="${widgetText}" />
+			</c:otherwise>
+		</c:choose>
+	</h2>
+	<div class="row defaultShop">
+		<div class="shopContainer">
+			<c:if test="${!empty fullStoreDB1 && !empty fullStoreDB1.identifier}">
+				<c:set var="prefix" value="${prefixRetraitMagasin}_${prefixDefault}"/>
+				<c:set var="selectable" value="false"/>
+				<c:set var="selected" value="false"/>
+				<c:set var="shop" value="${fullStoreDB1}"/>
+				<%@ include file="Common/BlocMagasin/BlocMagasin_UI.jsp" %>
+			</c:if>
+		</div>
+		<p>
+			<a class="button button--minor tunnel" href="#" onclick="switchRetraitMagasinZoneDefaultSelectMagasin(1);return false;"><fmt:message key="changeStoreButtonLabel" bundle="${widgetText}" /></a>
+		</p>
+	</div>
+</div>
+<div id="retraitMagasinZoneSelectMagasin" style="display:${(empty fullStoreDB1 || empty fullStoreDB1.identifier)?'block':'none'}">
+	<h2 class="titleBlock"><fmt:message key="chooseStoreButtonLabel" bundle="${widgetText}" /></h2>
+	<div class="row choixMagasin">
+		<div class="col6 left form_3column">
+			<form id="SearchShopByZipCode">
+				<div class="column column_67">
+					<div class="column_label ">
+						<fmt:message key="zipCodeLabel" bundle="${widgetText}" />
+					</div>
+					<input class="column_67" type="text" name="zipCode" id="zipCode">
+				</div>
+				<div class="gutter"></div>
+				<div class="column column_30">
+					<div class="column_label noLabel">
+					</div>
+					<input type="submit" class="button" value="<fmt:message key="livraisonSearchStoreButtonLabel" bundle="${widgetText}" />" />
+				</div>
+				<div class="clearAll"></div>
+			</form>
+		</div>
+		<div class="col6 left">
+			<div class="column_label"><fmt:message key="livraisonSelectStoreFieldLabel" bundle="${widgetText}" /></div>
+			<div tabindex="0" dojoType="wc.widget.RefreshArea" controllerId="itemAvailabilityRefreshAreaInTunnelLivraisonController" id="itemAvailabilityRefreshArea">
+				<%out.flush(); %>
+					<c:import url="${itemAvailabilityInPhysicalStoreswidget}">
+						<c:param name="pageType" value="TunnelLivraison"/>
+					</c:import>
+				<%out.flush(); %>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div dojoType="wc.widget.RefreshArea" class="greyBackground" id="favoritesShopsId" objectId="favoritesShopsId" controllerId="favoritesShopsInTunnelLivraison_controller">
+			<%@include file="Common/BlocMagasin/FavoritesShopsDisplay.jsp" %>
+		</div>
+		<div class="col6 left greyBackground">
+			<h2 class="titleBlock"><span><fmt:message key="nearestStoreSubSectionTitle" bundle="${widgetText}" /></span></h2>
+			<div class="shopContainer">
+				<%@include file="Common/BlocMagasin/NearestShopsDisplay.jsp" %>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- END TunnelRetraitMagasinTab_UI.jspf -->

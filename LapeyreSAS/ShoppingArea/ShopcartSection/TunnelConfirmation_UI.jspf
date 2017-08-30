@@ -1,0 +1,273 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2007, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<!-- BEGIN TunnelConfirmation_UI.jspf -->
+<%@ page trimDirectiveWhitespaces="true" %>
+<%@page import="com.lapeyre.declic.configurations.ConfigTool"%>
+<%-- Target2Sell BEGIN--%>
+<c:set var="t2sPId" value="<%= com.ecocea.commerce.marketing.commands.elements.Target2SellRecommendationHelper.PAGE_POSTPAYMENT %>" scope="request" />
+<%-- Target2Sell END --%>
+
+<c:set var="orderId" value="${!empty param.orderId?param.orderId :  WCParam.orderId}"/>
+<c:set var="transactionAmount" value="${!empty param.transactionAmount?param.transactionAmount :  WCParam.transactionAmount}"/>
+<c:set var="shopName" value="${!empty param.shopName?param.shopName :  WCParam.shopName}"/>
+<c:set var="placedOrderTime" value="${!empty param.placedOrderTime?param.placedOrderTime :  WCParam.placedOrderTime}"/>
+
+<%
+	String orderConfirmationEmspotList = ConfigTool.getWidgetConfiguratationPropertiesResource().getProperty("order.confirmation.emspot.list");
+	String placedOrderTime = (String) pageContext.getAttribute("placedOrderTime");
+	placedOrderTime = java.net.URLDecoder.decode(placedOrderTime, "UTF-8");
+	pageContext.setAttribute("placedOrderTime",placedOrderTime);
+	String shopName = (String) pageContext.getAttribute("shopName");
+	//pb d'encodage
+// 	if(shopName!=null){
+// 		shopName = new String(shopName.getBytes("ISO-8859-1"), "UTF-8");
+// 		pageContext.setAttribute("shopName",shopName);
+// 	}
+	
+	
+ %>
+ <c:set var="orderConfirmationEmspotList" value="<%=orderConfirmationEmspotList%>"/>
+<%-- <%@ include file="/LapeyreSAS/ShoppingArea/CheckoutSection/CheckoutPaymentsAndBillingAddress.jspf" %> --%>
+<div class="row tunnel">
+	<div class="blockPresentation printable">
+		<div class="editoBackground"><img width="960" height="330px" src="${jspStoreImgDir}/images/commandConfirmationBackground.jpg"></div>
+		<div class="textContainer">
+			<h1><fmt:message bundle="${widgetText}" key="ConfirmationPageTitle" /></h1>
+			<img src="${jspStoreImgDir}/images/separator.png" alt="......................" class="separator"/>
+			<p class="subtitle">
+				<fmt:message bundle="${widgetText}" key="ConfirmationPageSubTitle" >
+					<fmt:param value="${orderId}"/>
+				</fmt:message>
+			</p>
+		</div>
+	</div>
+	<div class="confirmation printable text">
+	
+		<jsp:useBean id="nowDateForQuotes" class="java.util.Date" />
+		<c:if test="${!empty placedOrderTime}">
+			<fmt:parseDate var="nowDateForQuotes" value="${placedOrderTime}" pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="${fn:replace(cookie.WC_timeoffset.value, '%2B', '+')}"/>
+		</c:if>
+		
+		<fmt:formatDate value="${nowDateForQuotes}" type="date" pattern="dd/MM/yyyy"  var="formattedOrderDate" timeZone="${fn:replace(cookie.WC_timeoffset.value, '%2B', '+')}"/>
+		<fmt:formatDate value="${nowDateForQuotes}" type="time" pattern="HH"  var="formattedOrderHour" timeZone="${fn:replace(cookie.WC_timeoffset.value, '%2B', '+')}"/>
+		<fmt:formatDate value="${nowDateForQuotes}" type="time" pattern="mm"  var="formattedOrderMinute" timeZone="${fn:replace(cookie.WC_timeoffset.value, '%2B', '+')}"/>
+		<fmt:formatNumber var="transactionAmount" value="${transactionAmount}" type="currency"  maxFractionDigits="${env_currencyDecimal}" currencySymbol="<sup>${env_CurrencySymbolToFormat}</sup>"/>
+
+<c:if test ="${shipModeId[0] eq 'RETRAIT_MAGASIN_DRIVE'}">		 		
+		<c:set var="creneauDriveArray" value="${fn:split(creneauDrive[0], '_')}"/>
+
+		<fmt:parseDate var="creneauDriveDay" value="${creneauDriveArray[0]}" pattern="yyyyMMdd" timeZone="${fn:replace(cookie.WC_timeoffset.value, '%2B', '+')}"/>
+		<fmt:formatDate value="${creneauDriveDay}" type="date" pattern="dd/MM/yyyy"  var="formattedCreneauDriveDay" timeZone="${fn:replace(cookie.WC_timeoffset.value, '%2B', '+')}"/>
+		
+		<c:set var ="creneauDriveHeureDebut" value="${ fn:substring(creneauDriveArray[1],0,4)}" />
+		<fmt:parseDate var="creneauDriveHeureDebut2" value="${creneauDriveHeureDebut}" pattern="HHmm" timeZone="${fn:replace(cookie.WC_timeoffset.value, '%2B', '+')}"/>
+		<fmt:formatDate value="${creneauDriveHeureDebut2}" type="time" pattern="HH'h'mm"  var="formattedCeneauDriveHeureDebut" timeZone="${fn:replace(cookie.WC_timeoffset.value, '%2B', '+')}"/>
+		
+		<c:set var ="creneauDriveHeureFin" value="${ fn:substring(creneauDriveArray[1],4,8)}" />
+		<fmt:parseDate var="creneauDriveHeureFin2" value="${creneauDriveHeureFin}" pattern="HHmm" timeZone="${fn:replace(cookie.WC_timeoffset.value, '%2B', '+')}"/>
+		<fmt:formatDate value="${creneauDriveHeureFin2}" type="time" pattern="HH'h'mm"  var="formattedCeneauDriveHeureFin" timeZone="${fn:replace(cookie.WC_timeoffset.value, '%2B', '+')}"/>			
+			<wcf:getData type="com.ibm.commerce.order.facade.datatypes.OrderType" var="orderInCart" expressionBuilder="findByOrderId" scope="request">
+			<wcf:param name="accessProfile" value="IBM_Details" />
+			<wcf:param name="orderId" value="${orderId}" />
+		</wcf:getData>
+</c:if>
+		
+		<fmt:message bundle="${widgetText}" key="ConfirmationPageMerci">
+			<fmt:param value="${formattedOrderDate}"/>
+			<fmt:param value="${formattedOrderHour}h${formattedOrderMinute}"/>
+			<fmt:param value="${orderId}"/>
+		</fmt:message>		
+		
+		<wcf:getData type="com.ibm.commerce.order.facade.datatypes.OrderType" var="orderInCart" expressionBuilder="findByOrderId" scope="request">
+			<wcf:param name="accessProfile" value="IBM_Details" />
+			<wcf:param name="orderId" value="${orderId}" />
+		</wcf:getData>
+		<%@include file="OrderItemDetail_Data.jspf" %>
+		<c:set var="suiviCom" value="true" scope="request"/>
+		<c:set var="isConfirmation" value="true" scope="request"/>
+		<fmt:message var="puhtColumnLabel" key="puhtColumnLabel" bundle="${widgetText}" />
+		<fmt:message var="puttcColumnLabel" key="puttcColumnLabel" bundle="${widgetText}" />
+		<fmt:message var="quantityColumnLabel" key="quantityColumnLabel" bundle="${widgetText}" />
+		<fmt:message var="tvaRateColumnLabel" key="tvaRateColumnLabel" bundle="${widgetText}" />
+		<fmt:message var="prixTtcColumnLabel" key="prixTtcColumnLabel" bundle="${widgetText}" />
+		<fmt:message var="prixHtColumnLabel" key="prixHtColumnLabel" bundle="${widgetText}" />
+		<fmt:message var="panierTotalAmountLabel1" key="panierTotalAmountLabel1" bundle="${widgetText}" />
+		<fmt:message var="panierTotalAmountLabel2" key="panierTotalAmountLabel2" bundle="${widgetText}" />
+	<div class="row tunnel suiviCom order tracking" id="confirmationRecapOrder">	
+		<span class="titleBlock"><fmt:message bundle="${widgetText}" key="ConfirmationPageRecapCommandeSectionTitle" /></span>
+		<%-- ENTETE COMMANDE --%>
+		<div class="orderHeaderWrapper">
+			<div class="orderHeader">
+				<div class="row">
+					<div class="quantityTotal bold">
+						<c:choose>
+							<c:when test="${orderQuantity <= 1}">
+								<span>${orderQuantity} <fmt:message bundle="${storeText}" key="productLabel"/></span>
+							</c:when>
+							<c:otherwise>
+								<span>${orderQuantity} <fmt:message bundle="${storeText}" key="productsLabel"/></span>
+							</c:otherwise>
+						</c:choose>
+					</div>
+					<div class="quantity">
+						${quantityColumnLabel}
+					</div>
+					<%-- <div class="vat">
+						<c:if test="${!extendedUserContext.isPro}">${tvaRateColumnLabel}</c:if>
+					</div> --%>
+					<div class="unitPrice">
+						<c:choose>
+							<c:when test="${extendedUserContext.isPro}">
+								${puhtColumnLabel}
+							</c:when>
+							<c:otherwise>
+								${puttcColumnLabel}
+							</c:otherwise>
+						</c:choose>
+					</div>
+					<div class="totalPrice white-background">
+						<c:choose>
+							<c:when test="${extendedUserContext.isPro}">
+								${prixHtColumnLabel}
+							</c:when>
+							<c:otherwise>
+								${prixTtcColumnLabel}
+							</c:otherwise>
+						</c:choose>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+		<%-- LIGNES COMMANDE --%>
+		<div class="orderBodyWrapper">
+			<div class="orderBody">
+				<jsp:include page="OrderItemDetailConfirmation.jsp"/>
+			</div>
+		</div>
+	
+		<%-- RECAP COMMANDE --%>
+		<%--  X_ORDER DETAILS  --%>
+		<ecocea:xOrderSummary orderDetails="${xOrderDetails}" pro="${extendedUserContext.isPro}" var="xOrderSummary" pageType="SUIVI" scope="2"/>
+		<div class="orderSummaryWrapper">
+			<div class="paymentMethod">
+				<img alt="${xOrderSummary.paymentMethod}" src="${jspStoreImgDir}/images/card_${fn:toLowerCase(xOrderSummary.paymentMethod)}.png">
+			</div>
+			<%@ include file="Common/OrderSummary/OrderSummaryView_UI.jspf" %>
+		</div>
+	</div>
+	
+	<br />
+	<br />
+	<fmt:message bundle="${widgetText}" key="ConfirmationPageRecap" />
+	<c:choose>
+		<c:when test="${!empty shopName}">
+			<c:choose>
+				<c:when test ="${shipModeId[0] eq 'RETRAIT_MAGASIN'}">
+					<fmt:message bundle="${widgetText}" key="ConfirmationPageBodyRetraitWithShopInfo">
+						<fmt:param value="${shopName}"/>
+						<fmt:param value="${dateEnlevement[0]}"/>
+					</fmt:message>
+				</c:when>
+				<c:when test ="${shipModeId[0] eq 'RETRAIT_MAGASIN_DRIVE'}">
+					<fmt:message bundle="${widgetText}" key="ConfirmationPageBodyDriveWithShopInfo">
+						<fmt:param value="${shopName}"/>
+						<fmt:param value="${formattedCreneauDriveDay}"/>
+						<fmt:param value="${formattedCeneauDriveHeureDebut}"/>
+						<fmt:param value="${formattedCeneauDriveHeureFin}"/>
+					</fmt:message>
+				</c:when>
+				<c:otherwise>
+					<fmt:message bundle="${widgetText}" key="ConfirmationPageBodyLivraisonWithShopInfo">
+						<fmt:param value="${dateEnlevement[0]}"/>
+					</fmt:message>
+
+					<c:if test="${shipModeId[0] eq 'TRANSPORTER' }">
+						<fmt:message bundle="${widgetText}" key="ConfirmationPageBodyTransporteurWithShopInfo">
+							<fmt:param value="${shopName}"/>
+						</fmt:message>
+					</c:if>
+				</c:otherwise>
+			</c:choose>
+		</c:when>
+		<c:otherwise>
+			<fmt:message bundle="${widgetText}" key="ConfirmationPageBodyWithoutShopInfo" />
+		</c:otherwise>
+	</c:choose>
+	<fmt:message bundle="${widgetText}" key="ConfirmationPageQuestions" />
+		
+		<div class="ctaContainer inline">
+			<a class="button mobile-hidden" href="" onclick="JavaScript: print();return false;"><fmt:message bundle="${widgetText}" key="printButtonlabel"/></a><a class="button green" href="${env_TopCategoriesDisplayURL}"><fmt:message bundle="${widgetText}" key="confirmationPageHomeButtonlabel"/></a>
+		</div>
+	</div>
+	<!--  ZONE MEA UP -->
+	<div id="pageConfirmationMeaTop" class="col12 print-hidden">
+		<c:import url="${env_jspStoreDir}/include/ContentContext.jsp">
+			<c:param name="typePage" value="/tunnel" />
+			<c:param name="id" value="etape5"/>
+			<c:param name="complement" value=""/>
+		</c:import>
+		<c:import url = "/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.meaWidget/meaWidget.jsp">
+			<c:param name="emplacement" value="Top" />
+		</c:import>
+	</div>
+	<!-- ESPOT confirmation -->
+	<%-- target2Sell BEGIN --%>
+		<%out.flush();%>
+		<c:catch var="exc">
+			<ecocea:widgetPath var="emspotpath" identifier="EMarketingSpot" />
+			<c:import url="${emspotpath}">
+				<c:param name="storeId" value="${storeId}" />
+				<c:param name="catalogId" value="${catalogId}" />
+				<c:param name="emsName" value="OrderConfirmationMarketingSpot_RecoProduits" />
+				<c:param name="t2sWidgetSuffix" value="OrderConfirmationMarketingSpot_RecoProduits"/>
+				<c:param name="displayPreference" value="1"/>
+				<c:param name="pageSize" value="4"/>
+			</c:import>
+			<c:import url="${emspotpath}">
+				<c:param name="storeId" value="${storeId}" />
+				<c:param name="catalogId" value="${catalogId}" />
+				<c:param name="emsName" value="OrderConfirmationMarketingSpot_bestSeller" />
+				<c:param name="pageSize" value="4"/>
+				<c:param name="t2sWidgetSuffix" value="OrderConfirmationMarketingSpot_bestSeller"/>
+				<c:param name="displayPreference" value="1"/>
+			</c:import>
+			<c:import url="${emspotpath}">
+				<c:param name="storeId" value="${storeId}" />
+				<c:param name="catalogId" value="${catalogId}" />
+				<c:param name="emsName" value="OrderConfirmationMarketingSpot_SelectionDuMois" />
+				<c:param name="pageSize" value="4"/>
+				<c:param name="t2sWidgetSuffix" value="OrderConfirmationMarketingSpot_SelectionDuMois"/>
+				<c:param name="displayPreference" value="1"/>
+			</c:import>
+			<c:import url="${emspotpath}">
+				<c:param name="storeId" value="${storeId}" />
+				<c:param name="catalogId" value="${catalogId}" />
+				<c:param name="emsName" value="OrderConfirmationMarketingSpot_ProduitsEtContenus" />
+				<c:param name="pageSize" value="4"/>
+				<c:param name="t2sWidgetSuffix" value="OrderConfirmationMarketingSpot_ProduitsEtContenus"/>
+				<c:param name="displayPreference" value="1"/>
+			</c:import>
+		</c:catch>
+		<%out.flush();%>
+	<%-- target2Sell END --%>
+	<!--  ZONE MEA BOTTOM -->
+	<div id="pageConfirmationMeaBottom" class="col12 print-hidden">
+		<c:import url = "/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.meaWidget/meaWidget.jsp">
+			<c:param name="emplacement" value="Bottom" />
+		</c:import>
+	</div>
+</div>
+
+<!-- END TunnelConfirmation_UI.jspf -->

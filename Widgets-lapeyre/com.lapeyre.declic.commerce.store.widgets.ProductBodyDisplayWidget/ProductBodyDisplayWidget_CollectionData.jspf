@@ -1,0 +1,24 @@
+<%-- Gestion des label --%>
+<fmt:message var="navigationSectionDescriptiveLabel" key="ficheProduitCollectionNavigationSection1Label" bundle="${widgetText}" />
+<fmt:message var="mainSectionDescriptiveLabel" key="ficheProduitCollectionMainSection1Label" bundle="${widgetText}" />
+<fmt:message var="navigationSectionCompoTypeLabel" key="ficheProduitCollectionNavigationSection2Label" bundle="${widgetText}" />
+<fmt:message var="mainSectionCompoTypeLabel" key="ficheProduitCollectionMainSection2Label" bundle="${widgetText}" />
+
+<fmt:message var="navigationSectionNoticeMontageLabel" key="ficheProduitStdNavigationNoticeMontageLabel" bundle="${widgetText}" />
+<fmt:message var="mainSectionNoticeMontageLabel" key="ficheProduitStdMainNoticeMontageLabel" bundle="${widgetText}" />
+<fmt:message var="navigationSectionNoticeMontageLabelPlural" key="ficheProduitStdNavigationNoticeMontageLabelPlural" bundle="${widgetText}" />
+<fmt:message var="mainSectionNoticeMontageLabelPlural" key="ficheProduitStdMainNoticeMontageLabelPlural" bundle="${widgetText}" />
+
+<fmt:message var="navigationSectionRatingReviewsLabel" key="ficheProduitStdNavigationRatingReviewsLabel" bundle="${widgetText}" />
+<fmt:message var="mainSectionRatingReviewsLabel" key="ficheProduitStdMainRatingReviewsLabel" bundle="${widgetText}" />
+
+<c:forEach var="attachment" items="${attachments}">
+	<c:if test="${attachment.usage eq COLLECTION_COMPO_TYPE_ATCHMT}">
+		<c:set var="compositionTypeAttchment" value="${attachment}" />
+	</c:if>
+	<c:if test="${attachment.usage eq COLLECTION_DESC_ATCHMT}">
+		<c:set var="collectionDescriptionAttachment" value="${attachment}" />
+	</c:if>
+</c:forEach>
+
+<astpush:assetPushUrl var="compositionTypeAttUrl" urlRelative="${compositionTypeAttchment.attachmentAssetPath}" type="${productType}" source="compo_type" device="${device}" format="full" />

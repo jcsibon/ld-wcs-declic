@@ -1,0 +1,156 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2013, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%@page import="com.lapeyre.declic.configurations.ConfigTool"%>
+<script src="${jsAssetsDir}javascript/Widgets/footer.js?${versionNumber}"></script>
+<script type="text/javascript" src="${jsAssetsDir}javascript/Validation/dist/jquery.validate.js?${versionNumber}"></script>
+<script type="text/javascript" src="${jsAssetsDir}javascript/Validation/dist/additional-methods.js?${versionNumber}"></script>
+<script type="text/javascript">
+dojo.ready(function(){
+	$('#submitNewsletter').click(function(e) {
+		e.preventDefault();
+		$("#subscribeNewsletter").submit();
+	});
+	$("#subscribeNewsletter")
+		.validate(
+				{
+					onfocusout: false,
+					onkeyup: false,
+					onclick: false,
+					rules : {					
+						email : {
+							required : true,
+							email : true,
+							maxlength : 100
+						},
+						firstName : {
+							maxlength : 80
+						},
+						lastName : {
+							maxlength : 80
+						}
+					},
+					messages : {
+						email : {
+							required : "<fmt:message bundle='${widgetText}' key='missingEmailErrorMessage' />",
+							email : "<fmt:message bundle='${widgetText}' key='InvalidEmailErrorMessage' />",
+							maxlength : "<fmt:message bundle='${widgetText}' key='maxLengthEmailErrorMessage' />"
+						},
+						firstName:{
+							maxlength : "<fmt:message bundle='${widgetText}' key='maxLengthFirstnameFieldErrorMessage' />"
+						},
+						lastName:{
+							maxlength : "<fmt:message bundle='${widgetText}' key='maxLengthLastnameFieldErrorMessage' />"
+						}
+					
+					},
+					errorPlacement : function(error,
+							element) {
+						$('#subscribeNewsLetterPopupValidationError').html(error);
+						$('#subscribeNewsLetterPopupValidationError').show();
+					},
+					submitHandler : function(form) {
+						dataLayer.push({"event":"newsletterSubscription","newsletterPopinStep":"Submit"});
+						$('#subscribeNewsLetterPopupValidationError').hide();
+						subscribeNewsletter(form);
+					}
+				}
+		);
+});
+
+function pushSocialNetworkFollow(socialNetwork_name){
+	dataLayer.push({"event":"socialFollow", "nom_reseau_social":socialNetwork_name});
+}
+
+</script>
+
+<%-- TMP - new footer --%>
+<footer id="footer">
+	<div id="subscription" class="subscription">
+		<div class="container">
+			<div class="row">
+				<%-- Loyalty card --%>
+				<div class="col s5 m3 l4">
+					<div class="row">
+						<div class="col l8 push-loyalty-info">
+							<h3 class="subscription-title hide-on-small-only"><fmt:message bundle='${storeText}' key='footerLoyaltySectionTitle' /></h3>
+							<p class="hide-on-med-and-down"><fmt:message bundle='${storeText}' key='footerLoyaltyContent' /></p>
+						</div>
+						<div class="col l4 pull-l8">
+							<img src="<c:out value='${jspStoreImgDir}'/>images/card.png" alt="" />
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s12 m9 center-on-small-only push-loyalty-info">
+							<%-- TODO : this url will be managed by GTM --%>
+							<a href="/c/h/carte-club-lapeyre" class="link-primary"><fmt:message bundle='${storeText}' key='footerLoyaltyLink' /></a>
+						</div>
+					</div>
+				</div>
+				<%-- Newsletter --%>
+				<div class="col s7 m5 l4">
+					<h3 class="subscription-title hide-on-small-only"><fmt:message bundle='${storeText}' key='footerNewsletterSectionTitle' /></h3>
+					<div><fmt:message bundle='${storeText}' key='footerNewsletterContent' /></div>
+					<form action="${newsletterUrl}" method="post" name="subscribeNewsletterForm" id="subscribeNewsletter"  class="subscription-form">
+						<input type="email" placeholder="<fmt:message bundle='${storeText}' key='footerNewsletterPlaceholder' />" class="subscription-input col s12 m8 l8 center-on-small-only" name="email"/>
+						<button class="subscription-button col s12 m4 l2"><fmt:message bundle='${storeText}' key='footerNewsletterConfirmation' /></button>
+						<div id="subscribeNewsletterErrorMessageArea" class="col s12">
+						<span id="WC_Newsletter_Subscribe_Error">
+							<p id="subscribeNewsLetterPopupValidationError" style="display:none;"></p>
+							<p id="subscribeNewsLetterPopupOK" style="display:none;"><fmt:message bundle="${storeText}" key="abonnementNewsletterFooterConfirmMessage"/></p>
+							<p id="subscribeNewsLetterPopupKO" style="display:none;"><fmt:message bundle="${storeText}" key="abonnementNewsletterFooterFunctionnalErrorMessage"/></p>
+							<p id="subscribeNewsLetterPopupKOTech" style="display:none;"><fmt:message bundle="${storeText}" key="abonnementNewsletterFooterTechnicalErrorMessage"/></p>
+						</span>
+					</div>
+					</form>
+				</div>
+				<%-- Social networks --%>
+				<div class="col s12 m4 l4">
+					<hr class="hide-on-med-and-up" />
+					<h3 class="subscription-title center-on-small-only"><fmt:message bundle='${storeText}' key='footerSocialSectionTitle' /></h3>
+					<div class="shareSocialNetwork">
+						<ul>
+							<li class="facebookShare" onclick="pushSocialNetworkFollow('Facebook');">
+								<a href="https://www.facebook.com/Lapeyre" target="_blank" title="facebook"><div></div>
+								</a>
+							</li>
+							<li class="instagramShare" onclick="pushSocialNetworkFollow('Instagram');">
+								<a href="https://www.instagram.com/lapeyreofficiel/" target="_blank" title="Instagram"><div></div>
+								</a>
+							</li>
+							<li class="pinterestShare" onclick="pushSocialNetworkFollow('Printerest');">
+								<a href="https://www.pinterest.com/lapeyre/" target="_blank" title="Pinterest"><div></div>
+								</a>
+							</li>
+							<li class="youtubeShare" onclick="pushSocialNetworkFollow('Youtube');">
+								<a href="https://www.youtube.com/user/LapeyreTV" target="_blank" title="youTube"><div></div>
+								</a>
+							</li>
+							<li class="twitterShare" onclick="pushSocialNetworkFollow('Twitter');">
+								<a href="https://twitter.com/lapeyreofficiel" target="_blank" title="Twitter"><div></div>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="footerCMSContent" class="container">
+		<%@ include file="Footer_CMS_Content_UI.jspf" %>
+	</div>
+	
+	<%out.flush();%>
+	<c:import url="/LapeyreSAS/Widgets/Footer/ext/CookieConsentement.jsp" />
+	<%out.flush();%>
+</footer>

@@ -1,0 +1,40 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<c:set var="pageTemplate" value="produit" />
+
+<c:set var="productIdentifier" value="${partNumber}"/>
+
+<%-- Cache it in our internal hash map --%>
+<c:set var="key1" value="${productId}+getCatalogEntryViewAllByID"/>
+<c:set var="catalogEntryDetails" value="${cachedCatalogEntryDetailsMap[key1]}"/>
+
+<c:if test="${empty catalogEntryDetails && !empty productId}">
+	<wcf:rest var="catalogNavigationView" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byId/${productId}" >	
+		<wcf:param name="langId" value="${langId}"/>
+		<wcf:param name="currency" value="${env_currencyCode}"/>
+		<wcf:param name="responseFormat" value="json"/>		
+		<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+		<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+		<wcf:param name="profileName" value="ECO_findProductByIds_Details_Without_Attachment_Nor_SKU_Nor_Attribute" />
+	</wcf:rest>
+	<c:set var="catalogEntryDetails" value="${catalogNavigationView.catalogEntryView[0]}"/>
+</c:if>
+
+<c:forEach var="price" items="${catalogEntryDetails.price}">
+	<c:if test="${price.usage eq 'Offer' }">
+		<c:set var="discountPrice" value="${price.value}" />
+	</c:if>	
+	<c:if test="${price.usage eq 'Display' }">
+		<c:set var="realPrice" value="${price.value}" />
+	</c:if>
+</c:forEach>
+<c:if test="${empty type}">
+	<c:set var="type" value="${fn:toLowerCase(catalogEntryDetails.catalogEntryTypeCode)}" />
+	<c:set var="type" value="${fn:replace(type,'bean','')}" />
+</c:if>
+<c:set var="isBundle" value="${(type eq 'bundle') ? 'Y' : 'N'}" />
+<c:forEach var="catgroups" items="${categoryId}">
+	<c:set var="catgroupsArray" value="${fn:split(catgroups, '_')}"/>
+	<c:if test="${fn:length(catgroupsArray) eq 2 && catgroupsArray[0] eq catalogId}">
+		<c:set var="categoryId" value="${catgroupsArray[1]}" />
+	</c:if>
+</c:forEach>

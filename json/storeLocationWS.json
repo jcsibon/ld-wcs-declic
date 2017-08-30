@@ -1,0 +1,70 @@
+{
+  "status": {
+    "code": 0,
+    "message": "OK"
+  },
+  "result": {
+    "magasins": [
+      {
+        "type": "Magasin",
+        "horaires": [
+          {
+            "jour": "Lundi",
+            "ouverture_matin": "08:00",
+            "fermeture_matin": "12:00",
+            "ouverture_apresmidi": "15:00",
+            "fermeture_apresmidi": "17:00"
+          },
+          {
+            "jour": "Vendredi",
+            "ouverture_matin": "08:00",
+            "fermeture_matin": "",
+            "ouverture_apresmidi": "",
+            "fermeture_apresmidi": "19:00"
+          }
+        ],
+        "contacts": [
+          {
+            "libelle": "SAV2",
+            "numero": "0122334455",
+            "mentionLegale": "Non surtaxé"
+          },
+          {
+            "libelle": "Acceuil",
+            "numero": "068987949",
+            "mentionLegale": "(0.15 € TTC/min)"
+          },
+          {
+            "libelle": "Test42",
+            "numero": "0194698464",
+            "mentionLegale": ""
+          }
+        ],
+        "adresse": {
+          "numVoie": "31 rue de Mogador",
+          "compl1": "6eme étage",
+          "compl2": "Bâtiment 42",
+          "compl3": "Lieu-dit Alliance",
+          "codePostal": "75009",
+          "ville": "Paris",
+          "region": "Ile-de-France",
+          "pays": "France",
+          "latitude": "48.875989",
+          "longitude": "2.331397",
+          "acces": "<p>Par la route :\r\n\t A86 sortie 26, direction Trifouillis-les-Oies</p>"
+        },
+        "idMagasin": 42,
+        "idMetier": 99999996,
+		"titre": "Magasin Lapeyre Ecocea",
+        "imageLarge": "",
+        "imageMobile": "",
+   		"modeLivraison":{
+			"retraitMagasin":true,
+			"retraitDrive": false,
+			"livraisonColissimo": false,
+			"livraisonTransporteur": true
+   		}
+      }
+    ]
+  }
+}

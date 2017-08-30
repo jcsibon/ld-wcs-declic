@@ -1,0 +1,120 @@
+<!-- BEGIN StoreLocator_SearchBar_UI.jsp -->
+<%@ page trimDirectiveWhitespaces="true" %>
+<script>
+	
+	dojo.addOnLoad(function(){
+		var submitSearch = function(e) {
+			document.ShopSearchForm.searchTermMaps.blur();
+			document.ShopSearchForm.searchTermMaps.value = trim(document.ShopSearchForm.searchTermMaps.value);
+			if(document.ShopSearchForm.searchTermMaps.value.length > 0) {
+				if(dojo.byId('listShopContainerRow').className == 'row mobile-hidden'){
+					dojo.byId('mapShopContainerRow').className = 'row mobile-maps-hidden';
+					dojo.byId('listShopContainerRow').className = 'row greyBackground';
+					dojo.byId('listMapToggle').innerHTML = '<fmt:message key="StoreLocatorMapViewButtonLabel" bundle="${storeText}" />';
+				}
+				SearchShopsJS.SearchFromBar=true;
+				requestSubmitted = true;
+				cursor_wait(0);
+				SearchShopsJS.doSearchShopFromAddress(document.ShopSearchForm.searchTermMaps.value,function(){
+					SearchShopsJS.updateNearestShopsFromCache();
+				});
+			}
+		}
+		
+		dojo.connect(document.getElementById('searchShopsSubmitButtonId'),'click',function(){
+			submitSearch();
+			return false;
+		});
+		
+		dojo.require("dojo/keys");
+		dojo.connect(document.getElementById('storeLocatorSearchBox'),'onkeydown',function(e){
+			if(e.keyCode == dojo.keys.ENTER){
+				submitSearch();
+				dojo.stopEvent(e);
+			}
+		});
+		
+		dojo.connect(document.getElementById('storeLocatorSearchBox'),'onsubmit',function(e){
+			submitSearch();
+		});
+		
+		$('#listToggle').click(toggleList);
+		$('#mapToggle').click(toggleMap);
+	});
+	
+	/* Function used in mobile to switch to the map */
+	function toggleMap() {
+		if (dojo.byId('mapShopContainerRow') != null) {
+			dojo.removeClass("mapShopContainerRow", "hidden");
+			dojo.addClass("mapShopContainerRow", "block-visible");
+			
+			dojo.removeClass("listShopContainerRow", "block-visible");
+			dojo.addClass("listShopContainerRow", "hidden");
+			
+			dojo.addClass("mapToggle", "selected");
+			dojo.removeClass("listToggle", "selected");
+			
+			// Scroll to the top of page
+			window.scroll(0,0);
+			// Repaint map, important ! 
+			MapStoreLocatorJS.repaint();
+    	}
+	}
+	
+	/* Function used in mobile to switch to the list of stores */
+	function toggleList() {
+		if (dojo.byId('mapShopContainerRow') != null) {
+			dojo.removeClass("listShopContainerRow", "hidden");
+			dojo.addClass("listShopContainerRow", "block-visible");
+			
+			dojo.removeClass("mapShopContainerRow", "block-visible");
+			dojo.addClass("mapShopContainerRow", "hidden");
+			
+			dojo.addClass("listToggle", "selected");
+			dojo.removeClass("mapToggle", "selected");
+    	}
+	}
+	
+	$(document).ready(function() {
+		/* Used to display or not the close button in the search bar */
+		$( "#SimpleSearchForm_StoreLocator" ).on('input', function(){
+			if(this.value.length>0) {
+				$( "#closeButtonSearchBar" ).show();
+			} else {
+				$( "#closeButtonSearchBar" ).hide();
+			}
+		});
+		
+		/* Used to clean the input when clicked */
+		$("#closeButtonSearchBar").on('click', function(){
+			$("#SimpleSearchForm_StoreLocator").val("");
+			$("#closeButtonSearchBar").hide();
+		});
+	});
+</script>
+
+<div class="searchBarForMaps">
+	<div id="storeLocatorSearchBar">
+		<div class="container">
+			<form id="storeLocatorSearchBox" name="ShopSearchForm" method="get" action="">
+				<div id="storeLocatorSearchTermWrapper">
+                    <input value="${WCParam.storeSearch}" id="SimpleSearchForm_StoreLocator" name="searchTermMaps" placeholder="<fmt:message key="rechercheMagasinDefaultabel" bundle="${storeText}"/>" autocomplete="off" maxlength="200">
+					<span id="closeButtonSearchBar"></span>
+				</div>
+				<!-- Refresh area to retrieve cached suggestions -->
+				<a href="#" id="searchShopsSubmitButtonId" class="searchBar-button" role="button" aria-label="SearchShops" title="Search Shops">Ok</a>
+				<span class="vertical-separator"></span>
+			</form>
+			<div class="storeLocator-error">
+				<label class="error"></label>
+			</div>
+		</div>
+	</div>
+	<div id="listMapToggle" class="new-style">
+		<div id="listMapToggle-button-container">
+			<a id="listToggle" class="map-toggle-button selected" href="#"><fmt:message key="StoreLocatorListViewButtonLabel" bundle="${storeText}" /></a>
+			<a id="mapToggle" class="map-toggle-button" href="#"><fmt:message key="StoreLocatorMapViewButtonLabel" bundle="${storeText}" /></a>
+		</div>
+	</div>
+</div>
+<!-- END StoreLocator_SearchBar_UI.jsp -->

@@ -1,0 +1,319 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%@ include file="/Widgets-lapeyre/Common/QuickInfo/QuickInfoPopup.jspf" %>
+<script>
+	CompareProductJS.setCommonParameters('<c:out value="${langId}"/>','<c:out value="${storeId}"/>','<c:out value="${catalogId}"/>','<c:out value="${param.compareReturnName}"/>','<c:out value="${param.returnUrl}"/>');
+</script>
+<c:set var="pageType" value="Compare"/>
+<div class="widget_product_compare">
+	<c:if test="${!empty param.compareReturnName}">
+	<%-- 
+	<div class="compare_back">
+		<a id="compareBackLink" href="<c:out value="${param.returnUrl}"/>">
+			<fmt:message bundle="${storeText}" key="CPG_BACK_TO_{0}" >
+				<fmt:param><c:out value="${param.compareReturnName}"/></fmt:param>
+			</fmt:message>
+		</a>
+	</div>
+	 --%>
+	</c:if>
+	<div class="content">
+		<c:choose>
+			<c:when test="${productCount eq 0}">
+				<div class="compare_heading">
+					<h1 class="titleBlock">
+						<span><fmt:message bundle="${storeText}" key='comparateurTitle'/></span>
+					</h1>
+				</div>
+				<div class="compare_nb_products">
+					<span>
+						<!-- Suppression du libellé si pas de produit -->
+<%-- 						<c:if test="${empty param.catentryId}"> --%>
+<%-- 							<fmt:message bundle="${storeText}" key="noProductLabel" /> --%>
+<%--						</c:if> ---%>
+						<c:if test="${fn:length(catEntryIds) eq 1 && !empty param.catentryId}">
+							1 <fmt:message bundle="${storeText}" key="productLabel" />
+						</c:if>
+						<c:if test="${fn:length(catEntryIds) gt 1}">
+							<fmt:message bundle="${storeText}" key="xProductLabel" >
+								<fmt:param><c:out value="${fn:length(catEntryIds)}"/></fmt:param>
+							</fmt:message>
+						</c:if>
+				     </span>
+			  	</div>
+				<div class="message"><fmt:message bundle="${storeText}" key='emptyComparateurMessage'/></div>
+			</c:when>
+			<c:otherwise>
+				<div class="compare_main">
+					<table class="compare_4 totalColumn_${productCount}"> <!-- Can change this to compare_1 or compare_2 or compare_3 or compare_4 -->
+						<tr class="row height_spacing_top removeButtons">
+							<td class="heading"></td>
+							<td colspan="${productCount}">
+								<div class="compare_heading">
+									<h1 class="titleBlock">
+										<span><fmt:message bundle="${storeText}" key='comparateurTitle'/></span>
+									</h1>
+								</div>
+								<div class="compare_nb_products">
+									<span>
+										<c:if test="${empty param.catentryId}">
+											<fmt:message bundle="${storeText}" key="noProductLabel" />
+										</c:if>
+										<c:if test="${fn:length(catEntryIds) eq 1 && !empty param.catentryId}">
+											1 <fmt:message bundle="${storeText}" key="productLabel" />
+										</c:if>
+										<c:if test="${fn:length(catEntryIds) gt 1}">
+											<fmt:message bundle="${storeText}" key="xProductLabel" >
+												<fmt:param><c:out value="${fn:length(catEntryIds)}"/></fmt:param>
+											</fmt:message>
+										</c:if>
+								     </span>
+							  	</div>
+							</td>
+						</tr>
+						
+						<tr class="row height_spacing_top removeButtons">
+							<td class="heading"></td>
+							<c:forEach var="catEntryId" items="${catEntryIds}" varStatus="status">
+								<td class="item">
+									<a id="comparePageRemoveItem_${status.count}" href="javascript:CompareProductJS.remove('${catEntryId}');"></a>
+								</td>
+							</c:forEach>
+						</tr>
+						<tr class="row productImages">
+							<td class="heading"></td>
+							<c:forEach var="catalogEntryDetails" items="${catEntryDetails}" varStatus="status">
+								<td class="item product_image">
+									<c:forEach var="itemAttachment" items="${catalogEntryDetails.attachments}" varStatus="status1">
+										<c:if test="${itemAttachment.usage eq GRIDIMAGES_FULLIMAGE_ATCHMT}">
+											<astpush:assetPushUrl var="gridImage" urlRelative="${itemAttachment.attachmentAssetPath}" type="GRID_ASSET" source="main" device="${device}" format="full"/>
+										</c:if>
+									</c:forEach>
+									
+									<c:if test="${empty gridImage }">
+										<c:set var="keyDefaultImageMaps" value="GRID_ASSET_main_full"/>
+										<astpush:assetPushUrl var="gridImage" urlRelative="${defaultImageMaps[keyDefaultImageMaps]}" type="GRID_ASSET" source="main" device="${device}" format="full" defaultUrl="true"/>
+									</c:if>	
+									<div class="image ficheImage <c:if test="${catalogEntryDetails.isOnSpecial}">promo</c:if><c:if test="${adRibbonMap[catalogEntryDetails.uniqueID] != null && fn:contains(adRibbonMap[catalogEntryDetails.uniqueID],'soldesRateValue')}"> soldes</c:if>">
+										<a href="${catEntryUrlMap[catalogEntryDetails.uniqueID]}" title="${catEntryShortDescMap[catalogEntryDetails.uniqueID]}">
+											<img src="${gridImage}" alt="${catalogEntryDetails.name}" onerror="this.src='/wcsstore/LapeyreSAS/images/desktopList/defaultImage.png'"/>
+											<c:forEach var="adRibbon" items="${adRibbonMap[catalogEntryDetails.uniqueID]}">
+												<c:set var="adRibbonStyle" value="RibbonAdDefault ${fn:replace(adRibbon.key , '\"' , '_')}"/>
+												<div class="${fn:escapeXml(adRibbonStyle)}">${adRibbon.value}</div>
+											</c:forEach>
+										</a>
+										<%out.flush();%>
+											<c:import url = "/Widgets-lapeyre/Common/ShoppingList/ShoppingList.jsp">
+												<c:param name="productId" value="${catalogEntryDetails.uniqueID}" />
+												<c:param name="display" value="overlay" />
+											</c:import>
+										<%out.flush();%>
+									</div>
+								</td>
+								<c:remove var="gridImage"/>
+							</c:forEach>
+						</tr>
+						
+						<tr class="row productNames">
+							<td class="heading"></td>
+							<c:forEach var="catEntryName" items="${catEntryNames}" varStatus="status">
+								<td class="item">
+									<h2>${catEntryName}</h2>
+									<c:forEach var="catEntryType" items="${catEntryTypeMap}" varStatus="status2">
+										<c:if test="${status.count == status2.count}">
+											<input type="hidden" value="<c:out value='${catEntryName}'/>"/>
+										</c:if>
+									</c:forEach>
+									<c:forEach var="catalogEntryDetails" items="${catEntryDetails}" varStatus="status2">
+										<c:if test="${status.count == status2.count}">
+											<span>${catalogEntryDetails.shortDescription}</span>
+										</c:if>
+									</c:forEach>
+								</td>
+							</c:forEach>
+						</tr>
+						<tr class="row productPrices">
+							<td class="heading"><%-- mantis 1223 <fmt:message bundle="${storeText}" key='CPG_PRICE'/>--%></td> 
+							<wcf:useBean var="emptyPriceMap" classname="java.util.HashMap"/>
+							
+							<c:forEach var="catalogEntryDetails" items="${catEntryDetails}" varStatus="status">
+								<td class="item">
+									<c:set var="displayPriceRange" value="true" />
+									<c:set var="catEntryIdentifier" value="${catalogEntryDetails.uniqueID}" />
+									<%@ include file="/Widgets-lapeyre/Common/PriceDisplay/PriceDisplay.jspf" %>
+									
+									<c:set var="isPriceEmpty" value="false" />
+									<c:if test="${!empty emptyPriceString || calculatedPrice.value eq 0.0 }">
+										<c:set var="isPriceEmpty" value="true" />
+									</c:if>
+									<wcf:set target="${emptyPriceMap}" key="${catEntryIdentifier}" value="${isPriceEmpty}"/>
+								</td>
+							</c:forEach>
+                     	</tr>					
+
+						<tr class="row verticalAlignTops" >
+							<td class="heading"></td>
+							<c:forEach var="catEntryType" items="${catEntryProductTypeMap}" varStatus="status">
+								<c:set var="buyableKey">${status.count}</c:set>
+								<td class="item">
+									<c:choose>
+										<c:when test="${fn:startsWith(catEntryType.value,SUR_MESURE_PRODUCT)}">
+											<div class="ctaContainer">
+												<a href="${storeLocatorURL}" class="button trouverMonMagasinBtn"><fmt:message key="ficheProduitSMStoreLocButtonLabel" bundle="${widgetText}" /></a>
+											</div>
+										</c:when>
+										<c:when test="${fn:startsWith(catEntryType.value,COLLECTION_PRODUCT)}">
+											<div class="ctaContainer">
+												<c:choose>
+													<c:when test="${fn:contains(catEntryType.value,'_true')}">
+														<wcf:url var="CollectionSearchDisplayURL" value="CollectionSearchDisplay">
+															<wcf:param name="storeId" value="${storeId}" />
+															<wcf:param name="catalogId" value="${catalogId}" />
+															<wcf:param name="productId" value="${catEntryType.key}" />
+															<wcf:param name="categoryId" value="${WCParam.categoryId}" />
+														</wcf:url>
+														<a  href="${CollectionSearchDisplayURL}" class="button orange achatEnligneCollectionBtn"><fmt:message key="ficheProduitCollectionListeMeublesButtonLabel" bundle="${widgetText}" /></a>
+													</c:when>
+													<c:otherwise>
+														<a href="${storeLocatorURL}" class="button trouverMonMagasinBtn"><fmt:message key="ficheProduitCollectionStoreLocButtonLabel" bundle="${widgetText}" /></a>
+													</c:otherwise>
+												</c:choose>
+											</div>	
+										</c:when>
+										<c:otherwise>
+											<div class="ctaContainer">
+												<c:choose>
+													<c:when test="${emptyPriceMap[catEntryType.key]}">
+														<div class="button disabled">
+															<fmt:message key="PD_UNAVAILABLE" bundle="${widgetText}"/>
+														</div>
+													</c:when>
+													<c:otherwise>														
+														<a href="${catEntryUrlMap[catEntryType.key]}" class="button achatEnLigneBtn"><fmt:message key="addToCartStandardButtonLabel" bundle="${widgetText}" /></a>
+													</c:otherwise>
+												</c:choose>
+											</div>	
+										</c:otherwise>
+									</c:choose>
+								</td>
+							</c:forEach>
+						</tr>						
+						<c:if test="${hasBrand}">
+							<tr class="row">
+								<td class="heading"><fmt:message bundle="${storeText}" key='CPG_BRAND'/></td>
+								<c:forEach var="brand" items="${brands}" varStatus="status">
+									<td class="item">${brand}</td>
+								</c:forEach>
+							</td>
+						</c:if>
+
+						<c:forEach var="catEntryAttribute" items="${catEntryAttributes}" varStatus="status">
+							<tr class="row">
+								<td class="heading">${catEntryAttribute.key}</td>
+								<c:set var="catEntryAttributeValue" value="${catEntryAttribute.value}"/>
+								<c:forEach begin="1" end="${productCount}" varStatus="valueStatus">
+									<c:set var="attributeValueKey">${valueStatus.count}</c:set>
+									<td class="item">
+										<c:choose>
+											<c:when test="${catEntryAttribute.value[attributeValueKey] eq catEntryAttribute.key}">
+												<img src="${jspStoreImgDir}${env_vfileColor}check.png" alt="<fmt:message bundle="${storeText}" key='CPG_CHECK'/>"/>
+											</c:when>
+											<c:otherwise>
+												<c:out value="${catEntryAttribute.value[attributeValueKey]}"/>
+											</c:otherwise>
+										</c:choose>
+									</td>
+								</c:forEach>
+							</tr>
+						</c:forEach>
+						
+						<tr class="row verticalAlignTops" >
+							<td class="heading"></td>
+							<c:forEach var="catEntryType" items="${catEntryProductTypeMap}" varStatus="status">
+								<c:set var="buyableKey">${status.count}</c:set>
+								<td class="item">
+									<c:choose>
+										<c:when test="${fn:startsWith(catEntryType.value,SUR_MESURE_PRODUCT)}">
+											<div class="ctaContainer">
+												<a href="${storeLocatorURL}" class="button trouverMonMagasinBtn"><fmt:message key="ficheProduitSMStoreLocButtonLabel" bundle="${widgetText}" /></a>
+											</div>
+										</c:when>
+										<c:when test="${fn:startsWith(catEntryType.value,COLLECTION_PRODUCT)}">
+											<div class="ctaContainer">
+												<c:choose>
+													<c:when test="${fn:contains(catEntryType.value,'_true')}">
+														<wcf:url var="CollectionSearchDisplayURL" value="CollectionSearchDisplay">
+															<wcf:param name="storeId" value="${storeId}" />
+															<wcf:param name="catalogId" value="${catalogId}" />
+															<wcf:param name="productId" value="${catEntryType.key}" />
+															<wcf:param name="categoryId" value="${WCParam.categoryId}" />
+														</wcf:url>
+														<a  href="${CollectionSearchDisplayURL}" class="button orange achatEnligneCollectionBtn"><fmt:message key="ficheProduitCollectionListeMeublesButtonLabel" bundle="${widgetText}" /></a>
+													</c:when>
+													<c:otherwise>
+														<a href="${storeLocatorURL}" class="button trouverMonMagasinBtn"><fmt:message key="ficheProduitCollectionStoreLocButtonLabel" bundle="${widgetText}" /></a>
+													</c:otherwise>
+												</c:choose>
+											</div>	
+										</c:when>
+										<c:otherwise>
+											<div class="ctaContainer">
+												<c:choose>
+													<c:when test="${emptyPriceMap[catEntryType.key]}">
+														<div class="button disabled">
+															<fmt:message key="PD_UNAVAILABLE" bundle="${widgetText}"/>
+														</div>
+													</c:when>
+													<c:otherwise>
+														<a href="${catEntryUrlMap[catEntryType.key]}" class="button achatEnLigneBtn"><fmt:message key="addToCartStandardButtonLabel" bundle="${widgetText}" /></a>
+													</c:otherwise>
+												</c:choose>
+											</div>	
+										</c:otherwise>
+									</c:choose>
+								</td>
+							</c:forEach>
+						</tr>
+					</table>
+				</div>
+				<%-- Target2Sell Reco BEGIN --%>
+				<div>
+					<c:set var="t2sPId" value="<%=com.ecocea.commerce.marketing.commands.elements.Target2SellRecommendationHelper.PAGE_COMPARATOR%>" scope="request" />
+					<% out.flush(); %>
+					<c:import url="/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.EMarketingSpot/EMarketingSpot.jsp">
+						<c:param name="emsName" value="T2SComparator"/>
+						<c:param name="widgetOrientation" value="horizontal"/>
+						<c:param name="pageSize" value="4"/>
+						<c:param name="t2sWidgetSuffix" value="T2SComparator"/>
+						<c:param name="displayPreference" value="1"/>
+					</c:import>
+					<% out.flush(); %>
+				</div>
+				<%-- Target2Sell Reco END --%>
+				<%-- If productCount > 2 removed... --%>
+				<script>
+				dojo.addOnLoad(function() { 
+					dojo.topic.subscribe("OnRemoveProductFromComparatorEvent", function(catEntryId) {
+						console.log('receive OnRemoveProductFromComparatorEvent. catEntryId : ' + catEntryId);
+						if(typeof(CompareProductJS) != 'undefined' && CompareProductJS != null) {
+							CompareProductJS.reloadComparePageOnRemoveProduct(catEntryId);
+						}
+					});
+				});
+					
+				</script>
+			</c:otherwise>
+		</c:choose>
+	</div>
+</div>

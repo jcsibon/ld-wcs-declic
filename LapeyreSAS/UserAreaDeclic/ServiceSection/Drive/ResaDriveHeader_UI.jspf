@@ -1,0 +1,25 @@
+<!-- BEGIN ResaDriveHeader_UI.jspf -->
+<div class="row">
+	<div class="col12 slot1 full-background" id="tunnelHeader">
+		<ul class="etapes resaDrive">
+			<li>
+				<a href="#">
+					<div class="${resaDrive || confirmResa ? 'current':'' }">
+						<span>1</span>
+						${reservationCreneauDriveStep1BreadcrumbLabel}
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<div class="${confirmResa ? 'current':'' }">
+						<span>2</span>
+						${reservationCreneauDriveStep2BreadcrumbLabel}
+					</div>
+				</a>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<!-- END ResaDriveHeader_UI.jspf -->

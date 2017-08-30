@@ -1,0 +1,40 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2012 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%@ page trimDirectiveWhitespaces="true" %>
+<div id="inactivityWarningPopup" dojoType="lapeyre/widget/Dialog" title="<fmt:message bundle="${storeText}" key="INACTIVITY_WARNING_DIALOG_TITLE"/>" style="display:none;">
+	<div class="widget_site_popup">
+		<div class="content">
+			<div class="header">
+				<span><fmt:message key="expirationTitleLabel" bundle="${storeText}" /></span>
+				<a role="button" class="close" title="<fmt:message bundle="${storeText}" key='LC_CLOSE'/>" href="javascript:void(0);" onclick="dijit.byId('inactivityWarningPopup').hide(); if (dialogTimeoutTracker != null) {clearTimeout(dialogTimeoutTracker);}"></a>
+			</div>
+			<div id="inactivityWarningPopup_body" class="body">
+				<fmt:formatNumber var="timeoutInMinutes" value="${requestScope.loginTimeoutValue/60000}" type="number" maxFractionDigits="0"/>
+				
+				<div class="message_text">
+				<fmt:message bundle="${storeText}" key="INACTIVITY_WARNING_DIALOG_TEXT">
+					<fmt:param value="${timeoutInMinutes}"/>
+				</fmt:message>
+				</div>
+			</div>
+			<div class="footer">
+				<div class="ctaContainer">
+					<a role="button" aria-labelledby="inactivityWarningPopupOK_Label" id="inactivityWarningPopupOK" href="javascript:void(0);" onclick="dijit.byId('inactivityWarningPopup').hide(); if (dialogTimeoutTracker != null) {clearTimeout(dialogTimeoutTracker);} resetServerInactivity();" class="button green">
+						<span id="inactivityWarningPopupOK_Label"><fmt:message bundle="${storeText}" key="CP_OK"/></span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

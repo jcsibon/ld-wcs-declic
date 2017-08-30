@@ -1,0 +1,14 @@
+
+<%@ page trimDirectiveWhitespaces="true" %>
+<c:choose>
+	<c:when test="${fn:length(globalbreadcrumbs.breadCrumbTrailEntryView) eq 1}">
+		<c:set var="pageTemplate" value="univers" />
+	</c:when>
+	<c:when test="${fn:length(globalbreadcrumbs.breadCrumbTrailEntryView) eq 2}">
+		<c:set var="pageTemplate" value="famille" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="pageTemplate" value="sous-famille" />
+	</c:otherwise>
+</c:choose>
+

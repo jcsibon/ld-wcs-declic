@@ -1,0 +1,239 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2012 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+ 
+ Ce qui est calcul� ici:
+ -emptyPriceString (si pas de offerPrice)
+ -offerPrice (valeur num�rique)
+ -displayPrice (valeur num�rique)
+ -offerPriceString (valeur String)
+ -displayPriceString (valeur String)
+ 
+ 
+--%>
+
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.StringTokenizer" %>
+<%@ page import="java.util.regex.Matcher" %>
+<%@ page import="java.util.regex.Pattern" %>
+
+
+<%@ page import="com.ibm.commerce.command.CommandContext" %>
+<%@ page import="com.ibm.commerce.context.preview.PreviewContext" %>
+
+
+
+<c:if test="${widgetText == null || empty widgetText}">
+	<fmt:setLocale value="${CommandContext.locale}" />
+	<fmt:setBundle basename="/Widgets/Properties/widgettext" var="widgetText" />
+</c:if>
+<c:if test="${empty productId}">
+	<c:set var="productId" value="${WCParam.productId}" />
+</c:if>
+<c:if test="${empty catalogEntryDetails}" >
+	<c:if test="${!empty productId}">
+		<wcf:rest var="catalogNavigationView" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byId/${productId}" >
+			<wcf:param name="langId" value="${langId}" />
+			<wcf:param name="currency" value="${env_currencyCode}" />
+			<wcf:param name="responseFormat" value="json" />
+			<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+			<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+		</wcf:rest>
+	</c:if>
+	<c:if test="${empty productId && !empty WCParam.partNumber}">
+		<wcf:rest var="catalogNavigationView" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/${WCParam.partNumber}" >
+			<wcf:param name="langId" value="${langId}" />
+			<wcf:param name="currency" value="${env_currencyCode}" />
+			<wcf:param name="responseFormat" value="json" />
+			<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+			<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+		</wcf:rest>
+	</c:if>
+	<c:if test="${!empty catalogNavigationView && !empty catalogNavigationView.catalogEntryView[0]}">
+		<c:set var="catalogEntryDetails" value="${catalogNavigationView.catalogEntryView[0]}"/>
+		<c:set property="productId" value="${catalogEntryDetails.uniqueID}" target="${WCParam}"/>
+		<c:set var="productId" value="${WCParam.productId}" />
+	</c:if>
+</c:if>
+
+<c:set var="pricesFromCatalogEntryDetails" value="${catalogEntryDetails.price}" />
+<c:if test="${env_inPreview && !env_storePreviewLink}">
+	<%
+	//cf. EnvironmentSetup.jspf: d�termination de la date de preview
+		String datePreview = "";
+		CommandContext pmt_commandContext = (CommandContext) request.getAttribute("CommandContext");
+		PreviewContext pmt_previewContext = (PreviewContext) pmt_commandContext.getContext(PreviewContext.CONTEXT_NAME);
+		if(pmt_previewContext!=null){
+			Pattern pmt_p = Pattern.compile(".*\\[preview time = (.*) \\| isStatic = (.*) \\| other data = (.*) \\| dirty = (.*)\\]");
+			Matcher pmt_m = pmt_p.matcher(pmt_previewContext.toString());
+			if (pmt_m.matches()) {
+				datePreview = pmt_m.group(1);
+				if(datePreview!=null && !datePreview.equals("null") && !datePreview.isEmpty()){
+					SimpleDateFormat pmt_sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+					SimpleDateFormat target_sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss.S"); //format du tag
+					datePreview= target_sdf.format(pmt_sdf.parse(datePreview));
+				}else{
+					datePreview="";
+				}
+			}
+		}
+		request.setAttribute("datePreview",datePreview);
+	%>
+	<ecocea:calculatedPriceData var="pricesFromCatalogEntryDetails" productId="${catalogEntryDetails.uniqueID}" date="${datePreview}" isProBTP="${extendedUserContext.isPro}" />
+</c:if>
+
+
+<c:set var="emptyPriceString" value=""/>
+<c:set var="offerPrice" value=""/>
+<c:set var="offerPriceNumeric" value=""/>
+<c:set var="offerPriceString" value="" />
+<c:set var="offerPriceStringEmptyCurrencySymbol" value="" />
+
+<c:set var="displayPrice" value="" />
+<c:set var="displayPriceString" value="" />
+<c:set var="displayPriceStringEmptyCurrencySymbol" value="" />
+
+<c:set var="dataBean" value="true"/>
+<c:set var="priceClass" value="price" />
+
+<c:set var="catalogEntryID" value="${catalogEntryDetails.uniqueID}"/>
+<c:set var="listPriced" value="false"/>
+
+<%--Set the list price and the offer price --%>
+<c:forEach var="price" items="${pricesFromCatalogEntryDetails}" >
+	<c:choose>
+		<c:when test="${price.usage == 'Display'}">
+			<fmt:parseNumber var="displayPrice" value="${price.value}" parseLocale="en_US"/>
+			<c:set var="listPriced" value="true"/>
+		</c:when>
+		<c:when test="${price.usage == 'Offer'}">
+			<c:set var="calculatedPrice" value="${price}" />
+			<fmt:parseNumber var="offerPrice" value="${calculatedPrice.value}" parseLocale="en_US"/>
+		</c:when>
+	</c:choose>
+</c:forEach>
+
+<%-- Chargement des promos si il y en a des �ligibles --%>
+<%-- START Marketing spot promotion display. ONLY FOR PART !! --%>
+	<ecocea:widgetPath var="emspotpath" identifier="EMarketingSpot" />
+	<c:if test="${catalogEntryDetails.type eq 'STANDARD' && extendedUserContext.isPro ne true}">
+		<c:choose>
+			<c:when test="${!empty defaultProductSkuID}">
+				<c:set var="productId_Promo" value="${defaultProductSkuID }"/>
+			</c:when>
+			<c:otherwise>
+				<c:set var="productId_Promo" value="${catalogEntryDetails.uniqueID }"/>
+			</c:otherwise>
+		</c:choose>
+		<% out.flush(); %>
+		<c:import url="${emspotpath}">
+			<c:param name="storeId" value="${storeId}" />
+			<c:param name="catalogId" value="${catalogId}" />
+			<c:param name="emsName" value="productPrice_RecoPromo" />
+			<c:param name="displayPreference" value="1"/>
+			<c:param name="productId" value="${productId_Promo }"/>
+			<c:param name="offerPrice" value="${offerPrice}" />
+			<c:param name="coeffConversionQuantite" value="${linkcoeffConversionQuantite}"/>
+			<c:param name="coeffConversionPrix" value="${linkcoeffConversionPrix}"/>
+			<c:param name="displayPrice" value="${displayPrice}" />
+			<c:param name="showPrices" value="true" />
+		</c:import>
+		<% out.flush(); %>
+	</c:if>
+	
+<c:set var="hasPromotionToDisplay" value="false"/>
+				
+<c:if test="${not empty finalPromoPrice}">
+	<c:set var="hasPromotionToDisplay" value="true"/>
+</c:if>
+
+<%-- Prise en compte des prix promotionn�s --%>
+<c:if test="${hasPromotionToDisplay eq 'true'}">
+
+	<%-- Si on a un prix barr�, on garde la valeur, sinon, on prend le prix affich� comme prix de base --%>
+	<c:if test="${empty displayPrice}">
+		<c:set var="displayPrice" value="${offerPrice}"/>
+	</c:if>
+
+	<%-- On remplace le prix affich� par le prix promotionn� calcul� --%>
+	<fmt:parseNumber var="offerPrice" value="${finalPromoPrice}" parseLocale="en_US"/>
+		
+</c:if>
+
+<%--Si pas de offerPrice --%>
+<c:if test="${empty offerPrice}">
+	<fmt:message bundle="${widgetText}" var="emptyPriceString" key="noPriceLabel" />
+	<c:set var="priceClass" value="noPrice" />
+</c:if>
+
+
+<%--If sur mesure, on rempli la variable � partir de  --%>
+<c:if test="${catalogEntryDetails.type eq 'SUR_MESURE'}">
+	<fmt:message bundle="${widgetText}" var="priceFrom" key="priceFrom" />
+</c:if>
+
+
+<%-- Get the priceLabel if it is an item --%>
+<c:forEach var="attr" items="${catalogEntryDetails.sKUs[0].attributes}" >
+	<c:if test="${attr.identifier == 'priceLabel'}">
+		<c:set var="priceLabel" value="${attr.values[0].value}" />
+	</c:if>
+</c:forEach>
+
+<%-- Get the priceLabel if it is a product --%>
+<c:forEach var="attr" items="${catalogEntryDetails.attributes}" >
+	<c:if test="${attr.identifier == 'priceLabel'}">
+		<c:set var="priceLabel" value="${attr.values[0].value}" />
+	</c:if>
+</c:forEach>
+
+
+<c:if test="${!empty offerPrice}">
+	
+	<%-- Formatage du prix pour microdata --%>
+	<fmt:setLocale value="en_US"/>
+	<fmt:formatNumber value="${offerPrice}" var="offerPriceNumeric" type="number" pattern="0.00" />
+	<fmt:setLocale value="${CommandContext.locale}" />
+	
+	<%-- Validit� --%>
+	<c:set var="priceValidUntil" value="${extendedUserContext.isPro ? catalogEntryDetails.priceProEndDate : catalogEntryDetails.pricePartEndDate }" />
+	
+	<c:set var="offerPriceString">
+		<c:choose>
+			<c:when test="${extendedUserContext.isPro eq true}">
+				<fmt:formatNumber value="${offerPrice}" type="currency" currencySymbol="<span itemprop=priceCurrency content=${env_currencyCode}>${env_CurrencySymbolToFormat}</span>" maxFractionDigits="${env_currencyDecimal}"/>
+			</c:when>
+			<c:otherwise>
+				<fmt:formatNumber value="${offerPrice}" type="currency" currencySymbol="${env_CurrencySymbolToFormat}" maxFractionDigits="${env_currencyDecimal}"/>
+			</c:otherwise>
+		</c:choose>
+	</c:set>
+	<c:set var="offerPriceStringEmptyCurrencySymbol">
+		<fmt:formatNumber value="${offerPrice}" type="currency" currencySymbol="" maxFractionDigits="${env_currencyDecimal}"/>
+	</c:set>
+</c:if>
+
+<c:if test="${!empty displayPrice}">
+	<c:set var="displayPriceString">
+	<c:choose>
+		<c:when test="${extendedUserContext.isPro eq true}">
+			<fmt:formatNumber value="${displayPrice}" type="currency" currencySymbol="${env_CurrencySymbolToFormat}" maxFractionDigits="${env_currencyDecimal}"/>
+		</c:when>
+		<c:otherwise>
+			<fmt:formatNumber value="${displayPrice}" type="currency" currencySymbol="${env_CurrencySymbolToFormat}" maxFractionDigits="${env_currencyDecimal}"/>
+		</c:otherwise>
+	</c:choose>
+	</c:set>
+	<c:set var="displayPriceStringEmptyCurrencySymbol">
+		<fmt:formatNumber value="${displayPrice}" type="currency" currencySymbol="" maxFractionDigits="${env_currencyDecimal}"/>
+	</c:set>
+</c:if>

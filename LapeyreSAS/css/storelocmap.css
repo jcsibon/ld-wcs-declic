@@ -1,0 +1,79 @@
+/* overflow reset */
+.gm-style .gm-style-iw {
+	overflow: inherit;
+}
+
+/* info window color */
+.gm-style > div:first-child > div + div > div:last-child > div > div:first-child > div:last-child {
+	background: #bf1e2e !important; 
+	border-radius: 4px !important;
+}
+
+/** info window shadow */
+.gm-style > div:nth-child(1) > div:nth-child(3) > div:nth-child(4) > div > div:nth-child(1) > div:nth-child(2) {
+	border-radius: 4px !important;
+}
+
+/* default border */
+.gm-style > div:first-child > div + div > div:last-child > div > div:first-child > div:first-child {
+	border: none !important;
+}
+			
+/* default arrow */
+.gm-style > div:first-child > div + div > div:last-child > div > div:first-child > div > div > div {
+    display: none !important;
+}
+
+/* close button */
+.gm-style > div:first-child > div + div > div:last-child > div > div:last-child {
+    top: 6px !important;
+    right: 6px !important;
+}
+
+
+.infoPin {
+	margin: 0 10px;
+	font-size: 11px;
+	color: #fff;
+	text-align: center;
+	overflow: hidden;
+	min-width: 120px;
+	padding-bottom:15px;
+}
+
+
+.infoPin h3 {
+	font-size: 13px;
+	font-weight: 400;
+	font-family: 'Roboto condensed';
+	text-transform: uppercase;
+}
+
+.infoPin h3 + p {
+	background: url('../images/separator-horizontal-small-white.png') repeat-x 0% 100%;
+	margin-bottom: 7px;
+	padding-bottom: 8px;
+}
+
+.transparentPin {
+	left: 50%;
+	position: absolute;
+	transform: translateX(-50%);
+	-webkit-transform: translateX(-50%);
+	bottom: -27px;
+}
+
+.toPinOrNotToPin,
+.goTo {
+	position: absolute;
+	margin-top:5px;
+/*	width: 19px;*/
+	height: 19px;
+	left: -8px;
+	bottom: -5px;
+}
+
+.goTo {
+	left: inherit;
+	right: -8px;
+}

@@ -1,0 +1,100 @@
+/**
+ *				TABLE OF CONTENTS
+ *
+ * MEA............................ Mea style
+  
+ **/
+ 
+/*-------------------------------------------------------------*\
+    $MEA
+    Mea style
+\*-------------------------------------------------------------*/
+
+
+.meaUniversTopArea, .meaUniversTopArea .meaBanniere{
+	padding: 0;
+}
+
+.bannerContainer {
+    margin: 0 auto;
+    max-width: 1200px;
+    width: 100%;
+}
+.middleUniversContainer{
+    background: #f2f3f4;
+    padding: 70px 0 20px 0;
+    clear: both;
+    position: relative;
+    top: -80px;
+}
+
+.meaBanniere {
+	position: relative;	
+}
+
+.middleUniversContainer .article-text {
+	background: none;
+}
+
+.titleBanner {
+	font-weight: bold;
+}
+
+.titleBanner, .sousTitreBanner {
+	color: white;
+}
+
+.sousTitreBanner {
+	text-align: center;
+}
+.categoryName, .allProductsButton {
+	color: white;
+   	font-size: 12px;
+    background: #fe8100;
+    border: none;
+    max-width: 125px;
+    text-align: center;
+    padding: 10px !important;
+    border-radius: 2px;
+    height: 30px;
+}
+
+.categoryName {
+	float: left;
+    max-width: 125px;
+    margin: 1px 1px;
+}
+
+.allProductsButton {
+    margin: auto;
+}
+
+.flex {
+	display: -webkit-box; 
+	display: -moz-box; 
+	display: -ms-flexbox; 
+	display: -webkit-flex;
+	display: flex;
+	align-items: center;
+    justify-content: center;
+}
+
+.flex-column{
+	flex-direction: column;
+}
+
+.arrowWhiteDown {
+	padding-left: 5px;
+}
+
+.subUnivers {
+	display: flex;
+    justify-content: center;
+    position: relative;
+    top: -50px;
+    z-index: 1;
+}
+
+.textBannerContainer {
+    height: 100%;
+}

@@ -1,0 +1,186 @@
+<%--  The following code is created as an example. Modify the generated code and add any additional required code.  --%>
+<c:set var="cropTitleLimit" value="" />
+<c:choose>
+	<c:when test="${isOnMobileDevice }" >
+		<c:set var="cropTitleLimit" value="46" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="cropTitleLimit" value="112" />
+	</c:otherwise>
+</c:choose>
+
+<script type="text/javascript" src="${jspStoreImgDir}../Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.PDP_FullImage/javascript/ProductFullImage.js?${versionNumber}"></script>
+<script type="text/javascript" src="${jsAssetsDir}javascript/Widgets/ShoppingList/ShoppingList.js?${versionNumber}"></script>
+<script type="text/javascript" src="${jsAssetsDir}javascript/Widgets/ShoppingList/ShoppingListServicesDeclaration.js?${versionNumber}"></script>
+<script type="text/javascript" src="${jspStoreImgDir}../Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.StandardProductDisplayWidget/javascript/StandardProductDisplayWidget.js?${versionNumber}"></script>
+
+<div id="collectionFicheProduitHead" class="container">
+	<div class="row">
+		<%-- Left column --%>
+		<div id="collectionFicheProduitHeadLeftCol" class="col s12 m7 l7">
+			<div class="row">
+				<div class="ficheImage<c:if test="${isOnSpecial}" > ribbon promo</c:if> <c:if test="${soldeFlagProduct eq 1 || soldeFlagProduct eq 1.0 }"> ribbon soldes</c:if>" id="ficheImage">
+					<%-- Full image widget --%>
+					<%out.flush(); %>
+					<c:import url="${fullImagewidgetPath}" >
+						<c:param name="widgetCeption" value="true" />
+					</c:import>
+					<%out.flush(); %>
+					
+					<c:if test="${productRedirected eq 'true' && productRedirectedType ge 0 && productRedirectedType le 1}" >
+					<%@ include file="/Widgets-lapeyre/Common/ProductRedirectionPopup.jspf" %>    
+					</c:if>
+				</div>
+			</div>
+			
+			<div class="row hide-on-med-and-down">			
+				<%-- Social networks --%>
+				<div class="col s12" id="collectionShareContainer">
+					<div class="col s3">
+						<div id="collectionShare" class="fullImage-thumbnails-container">
+							<c:import url="${sharePopupPath}"></c:import>
+						</div>
+					</div>		
+				</div>
+			 </div>
+		</div>
+		
+		<%-- Right column --%>
+		<div class="col s12 m5 l4">
+			<div id="ficheProduitCollectionficheAside" class="product-page-collection-right-column ${microDataOfferAttributes}">
+				<%-- Partnumber --%>
+				<div class="row">
+					<div class="col s12 product-reference">
+						<fmt:message key="ficheProduitSkuLabel" bundle="${widgetText}" /> : 
+						<span itemprop="sku" content="${defaultSku.partNumber}" id="product_SKU_<c:out value='${catalogEntryID}' />">${partNumber}</span>
+					</div>
+				</div>
+				
+				<%-- Product name --%>
+				<div class="row">
+					<h1 role="heading" aria-level="1" class="main_header product-name" title="<c:out value="${name}" escapeXml="false"/>" itemprop="name"><ecocea:crop value="${name}" length="${cropTitleLimit}" />
+						<div id="atoutPrix" class="<c:if test="${atoutPrix ne 1 && atoutPrix ne 1.0 }">hidden</c:if>"><span class="asterix atoutPrix"></span></div>
+					</h1>
+				</div>
+				
+				<div class="row">
+					<div class="col s12">
+						<a href="#description" class="link-primary link-bold"><fmt:message key="ficheProduitCollectionMainSection1Label" bundle="${widgetText}" /></a>
+					</div>
+					
+			        <div id="BVRRSummaryContainer" class="col s6">
+			        	${sBvOutputSummary}
+			        </div>
+				</div>
+			
+				<%-- Defining attributes --%>
+				<div class="row" id="ficheContent" data-slot-id="5">
+					<%out.flush(); %>
+						<c:import url="${definingAttributeswidgetsPath}">
+							<c:param name="displayType" value="${displayType}" />
+							<c:param name="widgetCeption" value="true" />
+							<c:param name="displayOptionsChoicesWarning" value="true" /> <%-- 0001088 : [Fiche produit standard] - L'info bulle mes options n'apparit jamais--%>
+						</c:import>
+					<%out.flush(); %>
+				</div>
+				
+				<div class="row" id="appointmentBlock">
+					<!-- Search Button -->
+					<c:if test="${hasCollectionRelationship}">
+						<div class="col s12 m12 l6">
+								<wcf:url var="CollectionSearchDisplayURL" value="CollectionSearchDisplay">
+									<wcf:param name="storeId" value="${storeId}" />
+									<wcf:param name="catalogId" value="${catalogId}" />
+									<wcf:param name="productId" value="${productId}" />
+									<wcf:param name="categoryId" value="${WCParam.categoryId}" />
+								</wcf:url>
+								<fmt:message key="ficheProduitCollectionListeMeublesButtonLabel" var="ficheProduitCollectionListeMeublesButtonLabel" bundle="${widgetText}" >
+								   <fmt:param value="${catalogNavigationView2.recordSetTotal}"/>
+								</fmt:message>
+								<a href="${CollectionSearchDisplayURL}" class="button button-gray"><c:out value="${ficheProduitCollectionListeMeublesButtonLabel}"/></a>
+						</div>
+						<!-- Appointment Button -->
+						<div class="col s12 m12 l6">
+							<c:import url="${appointmentPopupPath}"></c:import>
+						</div>
+					</c:if>
+					<c:if test="${!hasCollectionRelationship}">
+						<!-- Appointment Button -->
+						<div class="col s12 m12 l12">
+							<c:import url="${appointmentPopupPath}"></c:import>
+						</div>
+					</c:if>
+				</div>
+					
+			</div>
+	
+		</div>	
+	</div>
+</div>
+<br clear="all"/>
+<div class="ficheProduitBlockInfo">
+	<c:forEach var="brand" items="${brands}">
+	 	<wcf:url var="brandSearchURL" value="SearchDisplay">
+			<wcf:param name="langId" value="${WCParam.langId}" />
+			<wcf:param name="storeId" value="${WCParam.storeId}" />
+			<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+			<wcf:param name="searchTerm" value="${brand.name}" />			
+			<wcf:param name="urlLangId" value="${urlLangId}" />
+		</wcf:url>
+		<astpush:assetPushUrl var="brandURL" scope="page" urlRelative="${brand.attachmentAssetPath}" type="" source="" device="" format=""/>
+		<a href="${brandSearchURL}" itemprop="brand" itemscope itemtype="${MICRO_DATA_ORGANIZATION}"><img src="${brandURL}" alt="${brand.name}">
+			<meta itemprop="name" content="${brand.name}" />
+		</a>
+		<%-- shortdesc de la relation entre un produit et l'attachment, dans la table ATCHRELDSC --%>
+		<p>${brand.shortdesc}</p>
+		<p><a href="${brandSearchURL}"><fmt:message key="brandSearchLinkLabel" bundle='${widgetText}' /></a></p>
+		
+	</c:forEach>
+	<c:if test="${empty brands || fn:length(brands) == 0}">
+		<span itemprop="brand" itemscope itemtype="${MICRO_DATA_ORGANIZATION}" style="display:none;">
+			<span itemprop="name">${MICRO_DATA_MANUFACTURER}</span>
+		</span>
+	</c:if>
+</div>
+
+<script>
+	dojo.addOnLoad(function(){
+		standardProductDisplay.initialize('${catalogEntryID}', '${displayPriceRange}','${attrIdentifiers}', '${displayType}');
+		standardProductDisplay.buildDefiningAttributesArray('${defaultSkuAttrsJSON}');
+		standardProductDisplay.selectDefaultSku();
+		/*youtubePlayer.init();*/
+		initCarousel();
+		
+		dojo.topic.subscribe('ProductImageUpdated', updateBackground);
+		
+		function updateBackground() {
+			$('#ficheProduitHead').css("background-image", "url("+$("#productMainImage").attr("src").replace(" ","%20")+")");
+		}
+	});
+	
+	function initCarousel() {
+		var lightSlider = $('#lightSlider');
+	  	if( ${isOnMobileDevice} ) {
+	  		collectionProductDisplay.initMobile(lightSlider);
+	  	} else {
+	  		collectionProductDisplay.initDesktop(lightSlider);
+	  	}
+	}
+	
+	$('.lSPager li a').click(function(e){
+			e.stopPropagation();
+			e.preventDefault();
+		}
+	);
+
+	$('#ficheProduitHead').css("background-image", "url("+$('#productMainImage').attr("src").replace(" ","%20")+")");
+	$('#ficheProduitHead').css("background-repeat", "no-repeat");
+	$('#ficheProduitHead').css("background-size", "100%");
+	$('#ficheProduitHead').css("background-position", "center center");
+
+	$('#ProductAngleImagesAreaList li').on('click', function () {
+		$('#ficheProduitHead').css("background-image", "url("+$("img", this).attr("data-src").replace(" ","%20")+")");
+	});
+	
+	
+</script>

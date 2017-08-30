@@ -1,0 +1,65 @@
+<%--
+//********************************************************************
+//*-------------------------------------------------------------------
+//* Licensed Materials - Property of IBM
+//*
+//* WebSphere Commerce
+//*
+//* (c) Copyright IBM Corp. 2003, 2004
+//*
+//* US Government Users Restricted Rights - Use, duplication or
+//* disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+//*
+//*-------------------------------------------------------------------
+//*
+--%>
+
+<%-- 
+  *****
+  * This page is called by the JSP that requires error handling
+  * It retrieves the store error message corresponding to the ECMessage key and the error code.
+  *****
+--%>
+
+<wcbase:useBean id="storeError" classname="com.ibm.commerce.common.beans.StoreErrorDataBean" scope="page">
+       <c:set target="${storeError}" property="resourceBundleName" value="${sdb.jspStoreDir}/storetext_v2"/>
+</wcbase:useBean>
+
+<c:set var="rnvpErrorCode" value="" />
+<c:set var="rnvpIsBreak" value="false" />
+
+<c:if test="${!empty storeError.key}">
+		<c:choose>
+			<c:when test="${storeError.key eq '.2000'}">
+				 <fmt:message var="errorMessage" key="missingLoginErrorMessage" bundle="${storeText}"/>
+			</c:when>
+			<c:when test="${storeError.key eq '.2010' || storeError.key eq '.2020' || storeError.key eq '.2030'}">
+				<fmt:message var="errorMessage" key="identificationErrorMessage" bundle="${storeText}"/>
+			</c:when>
+			<c:when test="${fn:startsWith(storeError.key,'_RNVP_ERROR')}">
+				<c:set var="rnvpErrorCode" value="${fn:split(storeError.key,'.')[1]}" />
+			</c:when>
+			<c:when test="${storeError.key eq '_RNVP_SELECTION.MANY'}">
+				<c:set var="rnvpIsBreak" value="true" />
+				<c:set var="rnvpIsCitySelection" value="${excData['RNVPCitySelection']}" />
+				<c:set var="rnvpIsStreetSelection" value="${excData['RNVPStreetSelection']}" />
+				<c:set var="rnvpChoices" value="${excData['RNVPChoices']}" />
+			</c:when>
+			<c:otherwise>
+				 <c:set var="errorMessage" value="${storeError.message}"/>
+			</c:otherwise>
+		</c:choose>
+      
+       <%--
+       Special case: if key not found, fall back to ErrorDataBean.getMessage()
+       --%>
+       <c:if test="${empty errorMessage && empty rnvpErrorCode && rnvpIsBreak eq 'false'}">
+              <wcbase:useBean id="error" classname="com.ibm.commerce.beans.ErrorDataBean" scope="page"/>
+              <c:set var="errorMessage" value="${error.message}"/>
+              <c:if test="${empty errorMessage}">
+                     <c:set var="errorMessage" value="${error.messageKey}"/>
+              </c:if>
+       </c:if>
+       <fmt:setBundle basename="${jspStoreDir}storeErrorMessages" var="storeErrorMessageBundle"/>
+</c:if>
+

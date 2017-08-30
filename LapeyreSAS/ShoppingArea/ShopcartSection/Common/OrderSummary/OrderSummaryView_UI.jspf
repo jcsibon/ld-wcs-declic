@@ -1,0 +1,84 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<div class="orderSummary">
+<% boolean insumview = true; %>
+	<c:forEach var="line" items="${xOrderSummary.lines}">	
+	<c:if test="${!line.special || line.free || line.value != '0.0' }">
+		<dl class="row ${line.main ? 'main ':''}${line.special ? 'special ':''}${line.italic ? 'line-ecopart ':''}${line.free ? 'free ':''}line" id="${line.id}">
+			<dt class="col s6 label <c:if test="${line.main && WCParam.pageType == 'PANIER'}">OrderSummaryFlex</c:if>">
+		<c:if test="${not empty line.discountCode}">		
+		<c:url var="DiscountDetailsDisplayViewURL" value="DiscountDetailsDisplayView">
+			<c:param name="code" value="${line.discountCode}" />
+			<c:param name="langId" value="${langId}" />
+			<c:param name="storeId" value="${WCParam.storeId}" />
+			<c:param name="catalogId" value="${WCParam.catalogId}" />
+		</c:url><a href="${DiscountDetailsDisplayViewURL}">
+		</c:if>
+				<c:if test="${line.main && WCParam.pageType == 'PANIER'}">
+					<span class="montantTotalLabel">
+				</c:if>
+					${line.label}
+				<c:if test="${line.main && WCParam.pageType == 'PANIER'}">
+					</span>
+				</c:if>
+		<c:if test="${not empty line.discountCode}"></a></c:if>
+			</dt>
+			<dd class="col s6 order-summary-price value">
+				<span class="price">
+					<c:choose>
+						<c:when test="${line.free  }">
+							<span class=special>${line.value }</span>
+						</c:when>
+						<c:otherwise>
+							<fmt:formatNumber value="${line.value}" type="currency"  maxFractionDigits="${env_currencyDecimal}" currencySymbol="" />
+							<span class=currency>${env_CurrencySymbolToFormat}</span>
+						</c:otherwise>
+					</c:choose>
+					
+				</span>
+				
+			</dd>
+		</dl>
+	</c:if>
+	</c:forEach>
+</div>
+<script id="TagManagerRefresh">
+	var newDataLayer=[];
+	
+	//chercher les nouvelles valeurs dans la page
+	var transacShipamount="";
+	dojo.query('[id^=FRAIS_LIVRAISON] span.price').forEach(function(element){
+		transacShipamount=element.innerHTML.replace(/[\t\n\r ]+/g,"").replace(",",".");
+	});
+	var transacStoreId=""
+	//TODO que si pas onglet livraison ?
+	dojo.query('.shopBlock h3>a').forEach(function(element){
+		transacStoreId=element.innerHTML.replace(/[\t\n\r]+/g,"").replace(/  +/g," ");
+	});
+	
+	var transacPostalCode="";
+	var transacCity="";
+	//TODO recuperer, que si livraison ?
+
+	if(typeof dataLayer !== 'undefined'){
+		dataLayer.forEach(function(element){
+			//si shipamount change
+			if(element["basketShipping"]!=undefined && transacShipamount!=""){
+				newDataLayer.push({"basketShipping" : transacShipamount});
+			//si magasin change
+			}else if(element["transaction_store_id"]!=undefined && transacStoreId!=""){
+				newDataLayer.push({"transaction_store_id" : transacStoreId});
+			
+			//si adresse livraison change	
+			}else if(element["user_postalcode"]!=undefined && transacPostalCode!=""){
+				newDataLayer.push({"user_postalcode" : transacPostalCode});
+			}else if(element["user_city"]!=undefined && transacCity!=""){
+				newDataLayer.push({"user_city" : transacCity});
+
+			}else{
+				newDataLayer.push(element);
+			}
+		});
+		dataLayer=newDataLayer;
+		//console.log(dataLayer);
+	}
+</script>

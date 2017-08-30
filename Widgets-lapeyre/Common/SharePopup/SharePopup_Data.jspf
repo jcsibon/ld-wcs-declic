@@ -1,0 +1,2 @@
+<%--  Add your data related code here --%>
+<ecocea:widgetPath var="socialNetworksWidgetPath" identifier="SocialNetworks" storeId="${storeId}"/>

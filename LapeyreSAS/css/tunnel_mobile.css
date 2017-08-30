@@ -1,0 +1,176 @@
+.tunnel .buttonContainer {
+	margin: 10px 16px;
+}
+
+.tunnel .button {
+    width: calc(100% - 30px); /* soustrait tous les paddings horizontaux */
+}
+
+.tunnel .validateButton {
+	float: inherit;
+	margin: 0;
+	width: 100%;
+}
+
+.tunnel .stocks {
+	padding: 12px 16px;
+	background-color: #f7f7f7;
+}
+
+.tunnel .stocks .dropdownLP {
+	margin: 4px 0;
+}
+
+.tunnel .stocks .label {
+	font-size: 80%;
+  	font-weight: 300;
+}
+
+.tunnel .defaultShop { padding-top: 15px; }
+.tunnel .headerStyle { margin-bottom: 15px; }
+
+.button.back, .button.tunnel {
+    color: #666;
+    display: inline-block;
+    padding: 10px 12px 10px 30px;
+    position: relative;
+    text-transform: none;
+}
+
+.tunnel .button {
+    display: block;
+    margin: 10px auto;
+    width: 85%;
+}
+
+.engageBlock > ul > li {
+    width: 50%;
+}
+
+.tunnel  #codeToShow {
+	padding: 16px;
+    box-sizing: border-box;
+}
+
+.tunnel #codeToShow .button {
+    display: inline-block;
+    width: auto;
+    margin:0;
+}
+
+.engageBlock {
+    background-color: #f7f7f7;
+}
+
+.tunnel .infoBulleOptions {
+    padding: 5px 5px 5px 50px;
+    width: 50%;
+    float: none;
+    margin: 8px auto;
+}
+
+.tunnel .infoBulleOptions:after {
+    left: 50%;
+    top: -8px;
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+	border-bottom: 8px solid #cd0018;
+}
+
+.tunnel #codeToShow input {
+    width: 60%;
+}
+
+.tunnel .livraisonButtons .button {
+    float: left;
+    margin: 10px 3%;
+    padding: 5px;
+    width: 40%;
+}
+
+.tunnel .shopContainer .shopBlock {
+    display: block;
+    float: none !important;
+    margin: 0px 15px 10px !important;
+    width: auto !important;
+}
+
+.tunnel .defaultShop .shopContainer>.shopBlock {
+	margin-bottom:20px!important;
+}
+	
+.tunnel #favoritesShopsId .shopContainer .shopBlock:first-child, 
+.tunnel #searchMagasinResult .shopContainer .shopBlock:first-child {
+	margin-top:0px!important;
+}
+.defaultShopButtonContainer {
+	margin:0 20px;
+	width:calc(100% - 40px);
+}
+
+.tunnel .right {
+    float: none;
+    margin: 10px 20px 40px;
+    width: calc(100% - 40px);
+}
+
+.tunnel .headerStyle .button {
+    margin: 6px 20px;
+    width: auto;
+}
+
+.tunnel .shopContainer .shopBlock .left:first-child {
+    height: auto;
+}
+
+.tunnel .choixMagasin {
+	padding: 15px 10px 15px;
+}
+
+.tunnel .choixMagasin .col12:last-child {
+	padding-top: 10px;
+  	box-sizing: border-box;
+}
+
+.tunnel .choixMagasin input[type="text"] {
+	display: inline-block;
+}
+
+.tunnel .choixMagasin .button {
+	display: inline-block;
+    width:auto;
+}
+
+.tunnel .choixMagasin .onclick-menu {
+    margin: 0 5px 10px 0;
+}
+
+#contentWrapper {
+	margin-bottom:40px;
+}
+
+.shipping.validateButton {
+	width: 85%;
+}
+
+#horairesContainer h3 {
+	margin-bottom:10px; 
+}
+
+#zonePaymentInfo div {
+	float:none;
+}
+
+.tunnel .paiementContainer .cards ul li {
+    margin-bottom: 30px;
+    width: 33.333%;
+}
+
+div.tunnel > div.left {
+    margin: 0;
+}
+
+.quantity_label > * {
+   margin: 0 10px;
+}
+

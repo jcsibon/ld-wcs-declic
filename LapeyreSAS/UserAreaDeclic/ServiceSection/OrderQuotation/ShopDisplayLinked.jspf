@@ -1,0 +1,76 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<div class="shopBlock">
+	<div class="left" id="shopBlockMain${shopDB.strLocId}">
+		<h3><a id="shopBlockLinkToMag${shopDB.strLocId}" href="${shopDB.seoUrl}">${shopDB.name}</a></h3>
+		<p>${shopDB.type} <c:if test="${shopDB.retraitDrive eq 'true'}"><img src="${jspStoreImgDir}/images/logoDrive.png"></c:if></p>
+		<p>${shopDB.address1}</p>
+		<p>${shopDB.cp} ${shopDB.city}</p>
+		<p>${shopDB.mainPhoneLibelle} : ${shopDB.mainPhone}</p>
+		<div class="transports">
+			<c:if test="${not empty shopDB.access}" >
+				<p>${shopDB.access}</p>
+			</c:if>
+			<c:if test="${empty shopDB.access && not empty shopDB.secondaryPhone}" >
+				<c:forEach items="${shopDB.secondaryPhone}" var="secPhoneKey">
+						<p>${secPhoneKey.key} : ${secPhoneKey.value}</p>
+				</c:forEach>
+			</c:if>
+		</div>
+	</div>
+	<div class="right">
+		<div class="row">
+			<c:set var="classNameEpingler" value="aepingler" />
+			<c:set var="epinglable" value="false" />			
+			<c:set var="hrefEpingle" value="#" />
+			<c:if test="${shopDB.favorite eq 'true'}">
+				<c:set var="classNameEpingler" value="epingle" />
+			</c:if> 
+			
+			<c:set var="scriptOnClick" value="SearchShopsJS.toggleFavoriteMag(${shopDB.favorite},'${shopDB.strLocId}'); return false;" />
+			
+			<c:if test="${shopDB.retraitMagasin eq 'true' || shopDB.retraitDrive eq 'true' || shopDB.livraisonColissimo eq 'true' || shopDB.livraisonTransporteur eq 'true'}">
+				<c:set var="epinglable" value="true" />
+			</c:if>
+				
+			
+			<c:if test="${epinglable eq 'false'}">
+				<c:set var="hrefEpingle" value="#" />
+				<c:set var="classNameEpingler" value="notepinglable" />
+				<c:set var="scriptOnClick" value="return false;" />
+			</c:if>
+			
+			<c:if test="${userType eq 'G'}">
+				<c:set var="hrefEpingle" value="javascript:redirectToSignOn();" />
+				<c:set var="scriptOnClick" value="" />
+			</c:if>
+			
+			<a href="${hrefEpingle}" class="${classNameEpingler}${shopDB.strLocId}" onclick="${scriptOnClick}">
+				<img src="${jspStoreImgDir}/images/shopBlockEpingle.png" alt="">
+				<c:if test="${epinglable eq 'true'}">
+					<fmt:message key="StoreLocEpingler" bundle="${storeText}" />
+				</c:if>
+			</a>
+		</div>
+		<wcf:url var="StoreLocURL" value="AjaxStoreLocatorDisplayView">
+			<wcf:param name="storeId" value="${WCParam.storeId}" />
+			<wcf:param name="langId" value="${WCParam.langId}" />
+			<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+		</wcf:url>
+		<div class="row">
+			<%-- TODO link vers storeLoc --%>
+			
+			<a href="${StoreLocURL}">
+				<img src="${jspStoreImgDir}/images/shopBlockYaller.png" alt="">
+				<fmt:message key="StoreLocYAller" bundle="${storeText}" />
+				<span>
+					<c:if test="${not empty shopDB.distance}">
+						<fmt:formatNumber var="distance" value="${shopDB.distance}" maxFractionDigits="1" />
+						<fmt:message key="StoreLocYAllerDistance" bundle="${storeText}" >
+							<fmt:param value="${distance}" />
+						</fmt:message>
+					</c:if>
+				</span>
+			</a>
+		</div>
+	</div>
+</div>

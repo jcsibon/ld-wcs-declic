@@ -1,0 +1,367 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<%-- BEGIN OrderDetails_Data.jsp --%>
+
+<%-- Get the list of items present in the customers shopping cart --%>
+<%@ taglib uri="ecocea.tld" prefix="ecocea" %>
+
+<c:set var="orderQuantity" value="0"/>
+<c:set var="tooManyItems" value="false"/>
+<c:set var="cookieOrderIdKey" value="WC_CartOrderId_${storeId}"/>
+
+<ecocea:xOrderDetails var="xOrderDetails" orderId="${orderId}" />
+<c:if test="${!empty xOrderDetails.coupons }">
+	<c:set var="orderExternalAdjusts" value="${ xOrderDetails.coupons}"/>
+</c:if>
+
+<c:catch>
+	<wcf:getData type="com.ibm.commerce.order.facade.datatypes.OrderType"
+		   var="orderInCart" expressionBuilder="findByOrderId" varShowVerb="ShowVerbCart" maxItems="${env_maxOrderItemsToInspect}" recordSetStartNumber="0" recordSetReferenceId="headerorder" scope="request">
+		<wcf:param name="orderId" value="${orderId}"/>
+		<wcf:param name="accessProfile" value="IBM_All" />	 
+		<wcf:param name="sortOrderItemBy" value="orderItemID" />
+		<wcf:param name="isSummary" value="true" />
+	</wcf:getData>
+</c:catch>
+<c:choose>	
+	<c:when test="${ShowVerbCart.recordSetTotal > ShowVerbCart.recordSetCount}">
+		<c:set var="orderQuantity" value="${ShowVerbCart.recordSetTotal}"/>
+	</c:when>
+	<c:otherwise>
+		<c:forEach var="orderItem" items="${orderInCart.orderItem}" varStatus="status">
+			<c:set var="orderQuantity" value="${orderQuantity + orderItem.quantity.value}"/>
+		</c:forEach>
+	</c:otherwise>
+</c:choose>
+
+<c:choose>
+	<c:when test="${extendedUserContext.isPro}">
+		<c:set var="orderAmountValue" value="${xOrderDetails.ORDERTOTALAMOUNT_HT}" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="orderAmountValue" value="${xOrderDetails.ORDERTOTALAMOUNT_TTC}" />
+	</c:otherwise>
+</c:choose>
+
+<c:set var="orderAmountTVAValue" value="${xOrderDetails.ORDERTOTALAMOUNT_VAT}" scope="request"/>
+
+<c:if test="${empty orderAmountValue}">
+	<c:set var="orderAmountValue" value="0.00" />
+</c:if>
+<c:set var="orderAmountCurrency" value="${orderInCart.orderAmount.totalProductPrice.currency}" />
+<c:if test="${empty orderAmountCurrency}">
+	<c:set var="orderAmountCurrency" value="${CommandContext.currency}" />
+</c:if>
+
+<c:if test="${!tooManyItems}">
+	<fmt:formatNumber value="${orderQuantity}" var="orderQuantity" pattern="###0"/>
+ </c:if>
+
+<c:set var="totalNumberOfItems" value="${orderQuantity}"/>
+<%-- List of orderItem objects present in the cart. Each object in the list represent one orderItem and is modelled as a HashMap --%>
+<wcf:useBean var="orderItemsDetailsList" classname="java.util.ArrayList"/>
+<%-- List of orderItem objects recently added to the cart. Each object in the list represent one orderItem and is modelled as a HashMap --%>
+<wcf:useBean var="discountReferences" classname="java.util.HashMap" scope="page" />
+<wcf:useBean var="ecoPartTotalMap" classname="java.util.HashMap" scope="page" />
+<c:if test="${!empty orderInCart.orderItem }" >
+	<c:forEach var="orderItem" items="${orderInCart.orderItem}" varStatus="status">
+		<c:set var="orderItemTva" value="${xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].VAT_RATE}"/>
+		<%-- Eco-part for orderItem--%>
+		<ecocea:orderItemEcopart var="ecoPartOrderItem" orderItemId="${orderItem.orderItemIdentifier.uniqueID }" />
+		<c:forEach var="ecopart" items="${ecoPartOrderItem}">
+			<wcf:useBean var="ecoPartMap" classname="java.util.HashMap"/>
+			<wcf:set target="${ecoPartMap}" key="type" value="${ecopart.type}"/>
+			<wcf:set target="${ecoPartMap}" key="label" value="${ecopart.label}"/>
+			<c:set var="ecopartValue">
+				<%--ECOCEA: ajout de la TVA dans le montant de l'item --%>
+				<c:choose>
+					<c:when test="${extendedUserContext.isPro}">
+						${ecopart.value_HT}
+					</c:when>
+					<c:otherwise>
+						${ecopart.value_TTC}
+					</c:otherwise>
+				</c:choose>
+			</c:set>
+			<c:choose>
+				<c:when test="${empty ecoPartTotalMap[ecopart.type]}">
+					<wcf:set target="${ecoPartMap}" key="value" value="${ecopartValue}"/>
+				</c:when>
+				<c:otherwise>
+					<wcf:set target="${ecoPartMap}" key="value" value="${ecoPartTotalMap[ecopart.type]['value'] + ecopartValue}"/>
+				</c:otherwise>
+			</c:choose>
+			<wcf:set target="${ecoPartTotalMap}" key="${ecopart.type}" value="${ecoPartMap}"/>
+			<c:remove var="ecoPartMap"/>
+		</c:forEach>
+		<%-- Build itemDetailsMap with all the details and add it to orderItemsDetailsList ArrayList --%>
+			<wcf:useBean var="itemDetailsMap" classname="java.util.HashMap"/>
+			
+			<wcf:url var="catEntryDisplayUrl" patternName="ProductURL" value="Product1">
+				<wcf:param name="catalogId" value="${catalogId}"/>
+				<wcf:param name="storeId" value="${storeId}"/>
+				<wcf:param name="productId" value="${orderItem.catalogEntryIdentifier.uniqueID}"/>
+				<wcf:param name="langId" value="${langId}"/>
+				<wcf:param name="urlLangId" value="${urlLangId}" />
+			</wcf:url>
+			
+			<fmt:formatNumber var="qty" value="${orderItem.quantity.value}"  pattern='#####'/> <%-- Display 1.0 as 1 --%>
+			<wcf:set target="${itemDetailsMap}" key="productQty" value="${qty}"/>
+			<wcf:set target="${itemDetailsMap}" key="catEntryId" value="${orderItem.catalogEntryIdentifier.uniqueID}"/>
+			<wcf:set target="${itemDetailsMap}" key="productURL" value="${catEntryDisplayUrl}"/>
+			<wcf:set target="${itemDetailsMap}" key="orderItemId" value="${orderItem.orderItemIdentifier.uniqueID}"/>
+			<wcf:set target="${itemDetailsMap}" key="productName" value="${orderItem.catalogEntryIdentifier.externalIdentifier.partNumber}"/>
+			<wcf:set target="${itemDetailsMap}" key="productSKU" value="${orderItem.catalogEntryIdentifier.externalIdentifier.partNumber}"/>
+			<wcf:set target="${itemDetailsMap}" key="TVA" value="${orderItemTva}"/>
+			
+			<c:set var="totalProductPrice">
+				<c:choose>
+					<c:when test="${extendedUserContext.isPro}">
+						${xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].TOTALPRODUCT_HT + xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].TOTALECOPART_HT + xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].AJUSTMENT_HT + xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].EXTAJUSTMENT_HT}
+					</c:when>
+					<c:otherwise>
+						${xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].TOTALPRODUCT_TTC + xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].TOTALECOPART_TTC + xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].AJUSTMENT_TTC + xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].EXTAJUSTMENT_TTC}
+					</c:otherwise>
+				</c:choose>
+			</c:set>
+			
+			<%-- row to display product level discount --%>
+			<c:if test="${!empty orderItem.orderItemAmount.adjustment}">
+				<wcf:useBean var="discountReferencesOnItem" classname="java.util.HashMap"/>
+				<%-- Loop through the discounts, summing discounts with the same code --%>
+				<c:forEach var="discounts" items="${orderItem.orderItemAmount.adjustment}">		
+					<%-- only show the adjustment detail if display level is OrderItem, if display level is order, display it at the order summary section --%>
+					<c:if test="${discounts.displayLevel == 'OrderItem' && discounts.usage == 'Discount'}">
+						<wcf:set target="${discountReferencesOnItem}" key="${discounts.code}" value="${discounts}"/>
+					</c:if>
+				</c:forEach>
+				<wcf:set target="${itemDetailsMap}" key="discountReferences" value="${discountReferencesOnItem}"/>
+				<c:remove var="discountReferencesOnItem"/>
+			</c:if>
+			
+			<c:set var="unitProductPrice">
+				<c:choose>
+					<c:when test="${extendedUserContext.isPro}">
+						${xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].PRICE_HT}
+					</c:when>
+					<c:otherwise>
+						${xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].PRICE_TTC}
+					</c:otherwise>
+				</c:choose>
+			</c:set>
+			<c:set var="unitProductPriceNumber" value="${unitProductPrice}" />
+			
+
+			<fmt:parseNumber var="unitProductPrice" type="number" value="${unitProductPrice}" parseLocale="en_US" />
+			
+			<c:set var="unitProductPriceWithEcoPart">
+				<c:choose>
+					<c:when test="${extendedUserContext.isPro}">
+						${unitProductPrice + xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].ECOPART_HT}
+					</c:when>
+					<c:otherwise>
+						${unitProductPrice + xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].ECOPART_TTC}
+					</c:otherwise>
+				</c:choose>
+			</c:set>
+			<fmt:parseNumber var="unitProductPriceWithEcoPart" type="number" value="${unitProductPriceWithEcoPart}" parseLocale="en_US" />	
+
+			<c:set var="originalPriceValueWithEcoPart">
+				<c:choose>
+					<c:when test="${extendedUserContext.isPro}">
+						<c:if test="${!empty xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].ORIGINALPRICE_HT}">
+							<fmt:parseNumber type="number" value="${xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].ORIGINALPRICE_HT}" parseLocale="en_US"/>
+						</c:if>		
+					</c:when>
+					<c:otherwise>
+						<c:if test="${!empty xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].ORIGINALPRICE_TTC}">
+							<fmt:parseNumber type="number" value="${xOrderDetails.orderItems[orderItem.orderItemIdentifier.uniqueID].ORIGINALPRICE_TTC}" parseLocale="en_US"/>
+						</c:if>	
+					</c:otherwise>
+				</c:choose>
+			</c:set>
+			<fmt:parseNumber var="originalPriceValueWithEcoPart" type="number" value="${originalPriceValueWithEcoPart}" parseLocale="en_US" />	
+			
+			<%-- Calcul prix barre --%>
+			<c:if test="${!empty originalPriceValueWithEcoPart && unitProductPriceWithEcoPart < originalPriceValueWithEcoPart}">
+				<wcf:set target="${itemDetailsMap}" key="prixBarre" value="true"/>
+				<fmt:formatNumber var="oldUnitPrice" value="${originalPriceValueWithEcoPart}" type="currency" maxFractionDigits="${env_currencyDecimal}" currencySymbol="${env_CurrencySymbolToFormat}"/>
+				<fmt:formatNumber var="oldTotalPrice" value="${originalPriceValueWithEcoPart * qty}" type="currency" maxFractionDigits="${env_currencyDecimal}" currencySymbol="${env_CurrencySymbolToFormat}"/>
+				<wcf:set target="${itemDetailsMap}" key="oldUnitPrice" value="${oldUnitPrice}"/>
+				<wcf:set target="${itemDetailsMap}" key="oldTotalPrice" value="${oldTotalPrice}"/>
+			</c:if>
+						
+			<fmt:formatNumber var="totalFormattedProductPrice" value="${totalProductPrice}" type="currency" currencySymbol="" maxFractionDigits="${env_currencyDecimal}" />
+			<fmt:formatNumber var="unitFormattedProductPrice" value="${unitProductPrice}" type="currency" currencySymbol="${env_CurrencySymbolToFormat }" maxFractionDigits="${env_currencyDecimal}" />
+			
+			
+			<wcf:set target="${itemDetailsMap}" key="unitProductPrice" value="${unitFormattedProductPrice}"/>
+			<wcf:set target="${itemDetailsMap}" key="totalProductPrice" value="${totalProductPrice}"/>
+			<wcf:set target="${itemDetailsMap}" key="productPrice" value="${totalFormattedProductPrice}"/>
+			
+			<wcf:set target="${orderItemsDetailsList}" value="${itemDetailsMap}"/>
+			<c:remove var="itemDetailsMap"/>
+	</c:forEach>
+</c:if>
+
+<%-- Adjustments, promotions and discounts --%>
+<%-- Loop through the discounts, summing discounts with the same code --%>
+<c:forEach var="adjustment" items="${orderInCart.orderAmount.adjustment}">
+	<c:if test="${adjustment.displayLevel.name == 'Order' && adjustment.usage == 'Discount'}">
+		<wcf:useBean var="discountsMap" classname="java.util.HashMap"/>
+		<wcf:set target="${discountsMap}" key="discountDescription" value="${adjustment.description.value}" />
+		<c:if test="${empty adjustment.description.value}">
+			<fmt:message bundle="${storeText}" var="defaultDescription" key="DISCOUNT_DETAILS_TITLE"/>
+			<wcf:set target="${discountsMap}" key="discountDescription" value="${defaultDescription}" />
+		</c:if>
+		<wcf:url var="DiscountDetailsDisplayViewURL" value="DiscountDetailsDisplayView">
+			<wcf:param name="code" value="${adjustment.code}" />
+			<wcf:param name="langId" value="${langId}" />
+			<wcf:param name="storeId" value="${WCParam.storeId}" />
+			<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+		</wcf:url>
+		<wcf:set target="${discountsMap}" key="displayURL" value="${DiscountDetailsDisplayViewURL}" />
+		<c:set var="adjustValue">
+			<c:choose>
+				<c:when test="${extendedUserContext.isPro}">
+					${xOrderDetails.adjustments[adjustment.code].AMOUNT_HT}
+				</c:when>
+				<c:otherwise>
+					${xOrderDetails.adjustments[adjustment.code].AMOUNT_TTC}
+				</c:otherwise>
+			</c:choose>
+		</c:set>
+		<fmt:formatNumber var="formattedDiscountValue" value="${adjustValue}" type="currency" maxFractionDigits="${env_currencyDecimal}" currencySymbol="${env_CurrencySymbolToFormat}"/>
+		<wcf:set target="${discountsMap}" key="aggregatedDiscount" value="${formattedDiscountValue}" />			
+		<wcf:set key="${adjustment.code}" value="${discountsMap}" target="${discountReferences}" />
+		<c:remove var="discountsMap"/>
+	</c:if>	
+</c:forEach>
+
+<%-- Get more info for the catEntryIds which needs to be displayed in the miniCart page --%>
+<c:if test="${!empty orderItemsDetailsList}">	
+	<wcf:rest var="catalogNavigationView" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byIds">
+		<c:forEach var = "itemDetailsMap" items = "${orderItemsDetailsList}" varStatus = "status">
+			<wcf:param name="id" value="${itemDetailsMap['catEntryId']}"/>
+		</c:forEach>
+		<wcf:param name="langId" value="${langId}" />
+		<wcf:param name="currency" value="${env_currencyCode}" />
+		<wcf:param name="responseFormat" value="json" />
+		<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+		<%--ECOCEA --%>
+		<%-- <wcf:param name="profileName" value="IBM_findProductByIds_Summary_WithNoEntitlementCheck" /> --%>
+		<wcf:param name="profileName" value="ECO_findProductByIds_Summary_WithNoEntitlementCheck" />
+		<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+	</wcf:rest>
+</c:if>
+
+<c:set var="productStandardExists" value="false"/>
+<c:set var="productCatalogExists" value="false"/>
+<%-- Populate our hashMap stored in orderItemDetails list with the catEntry details like fullImage, name, shortDescription, isOnSpecial... --%>
+<c:forEach items="${catalogNavigationView.catalogEntryView}" var="catalogEntryDetails">
+	<c:forEach items="${orderItemsDetailsList}" var="itemDetailsMap">
+		<c:if test="${itemDetailsMap.catEntryId == catalogEntryDetails.uniqueID}">
+			<c:choose>
+			<c:when test="${not empty catalogEntryDetails.fullImage && fn:trim(catalogEntryDetails.fullImage) !=''}">
+				<c:set var="miniCartListImage" value="${catalogEntryDetails.fullImage}" />
+
+				<c:if test="${!empty catalogEntryDetails.fullImage}">
+					<astpush:assetPushUrl var="miniCartListImage" scope="page" urlRelative="${catalogEntryDetails.fullImage}" type="${catalogEntryDetails.type}" source="main" device="${device}" format="full"/>
+				</c:if>
+				
+				<c:if test="${empty miniCartListImage}">
+						<c:set var="keyDefaultImageMaps" value="GRID_ASSET_main_full"/>
+						<astpush:assetPushUrl var="miniCartListImage" urlRelative="${defaultImageMaps[keyDefaultImageMaps]}" type="GRID_ASSET" source="main" device="${device}" format="full" defaultUrl="true"/>
+				</c:if>
+			</c:when>
+			<c:otherwise>
+				<c:set var="keyDefaultImageMaps" value="GRID_ASSET_main_full"/>
+				<astpush:assetPushUrl var="miniCartListImage" urlRelative="${defaultImageMaps[keyDefaultImageMaps]}" type="GRID_ASSET" source="main" device="${device}" format="full" defaultUrl="true"/>
+			</c:otherwise>
+			</c:choose>
+			<wcf:set target="${itemDetailsMap}" key="productImage" value="${miniCartListImage}"/>
+			<wcf:set target="${itemDetailsMap}" key="productName" value="${catalogEntryDetails.name}"/>
+			<wcf:set target="${itemDetailsMap}" key="productDescription" value="${catalogEntryDetails.shortDescription}"/>
+			<wcf:set target="${itemDetailsMap}" key="parentCatalogEntryID" value="${catalogEntryDetails.parentCatalogEntryID}"/>
+			
+			<%--  Chercher produit STANDARD et/or CATALOG_PAPER --%>			
+			<c:if test="${!empty catalogEntryDetails.type && catalogEntryDetails.type eq STANDARD_PRODUCT}">
+				<c:set var="productStandardExists" value="true"/>
+			</c:if>
+			<c:if test="${!empty catalogEntryDetails.type && catalogEntryDetails.type eq CATALOGUE_PAPIER_PRODUCT}">
+				<c:set var="productCatalogExists" value="true"/>
+			</c:if>
+			<%-- Recuperer les infos du product parent --%>
+			<c:if test="${empty catalogEntryDetails.shortDescription && catalogEntryDetails.catalogEntryTypeCode eq 'ItemBean'}">
+				<wcf:rest var="catalogParentNavigationView" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byId/${catalogEntryDetails.parentCatalogEntryID}" >
+					<wcf:param name="langId" value="${langId}" />
+					<wcf:param name="currency" value="${env_currencyCode}" />
+					<wcf:param name="responseFormat" value="json" />
+					<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+				</wcf:rest>
+				<c:set var = "parentCatalogEntryDetails" value = "${catalogParentNavigationView.catalogEntryView[0]}"/>
+				<wcf:set target="${itemDetailsMap}" key="productDescription" value="${parentCatalogEntryDetails.shortDescription}"/>
+			</c:if>
+		</c:if>
+	</c:forEach>
+</c:forEach>
+
+<c:set var="isMixteStandardCatalog" value="false"  scope="request"/>
+<c:if test="${productStandardExists && productCatalogExists}">
+	<c:set var="isMixteStandardCatalog" value="true"/>
+</c:if>
+	
+<%--  APPLIQUER LE CODE AVANTAGE --%>
+<%-- <c:if test="${!empty orderExternalAdjusts }">
+	<c:forEach var="orderExternalAdjust" items="${orderExternalAdjusts}">
+		<c:choose>
+			<c:when test="${extendedUserContext.isPro}">
+				<c:set var="orderAdjustAmount" value="${orderExternalAdjust.adjustAmount_HT}"/>
+			</c:when>
+			<c:otherwise>
+				<c:set var="orderAdjustAmount" value="${orderExternalAdjust.adjustAmount_TTC}"/>
+			</c:otherwise>
+		</c:choose>
+		<c:set var="orderAmountValue" value="${orderAmountValue + orderAdjustAmount}"/>
+		<c:if test="${orderExternalAdjust.type eq 'RATE_ITEM'}">
+			<c:forEach items="${orderItemsDetailsList}" var="itemDetailsMap">
+				<c:if test="${itemDetailsMap['orderItemId']  eq orderExternalAdjust.orderItemId}">
+					<c:set var="totalProductPrice" value="${itemDetailsMap['totalProductPrice'] + orderAdjustAmount}"/>
+					
+					<fmt:formatNumber var="totalFormattedProductPrice" value="${totalProductPrice}" type="currency" currencySymbol="" maxFractionDigits="${env_currencyDecimal }" />
+					<wcf:set target="${itemDetailsMap}" key="totalProductPrice" value="${totalProductPrice}"/>
+					<wcf:set target="${itemDetailsMap}" key="productPrice" value="${totalFormattedProductPrice}"/>
+				</c:if>
+			</c:forEach>
+		</c:if>
+	</c:forEach>
+</c:if> --%>
+<c:set var="orderSubTotal">
+	<fmt:formatNumber value="${orderAmountValue}" type="currency"  maxFractionDigits="${env_currencyDecimal}" currencySymbol=""/>
+</c:set>
+
+<%-- On récupère les infos du magasin --%>
+<wcbase:useBean id="orderDB" classname="com.ibm.commerce.order.beans.OrderDataBean">
+	<c:set target="${orderDB}" property="orderId" value="${orderId}" />
+</wcbase:useBean>
+<c:set value="${orderDB.field1}" var="shopId"/>
+<c:catch var="ErrorShop">
+	<wcbase:useBean id="shopDB" classname="com.lapeyre.declic.commerce.storelocator.beans.FullShopDataBean" scope="page">
+		<c:set value="${shopId}" target="${shopDB}" property="identifier"/>
+		<c:set value="${langId}" target="${shopDB}" property="languageId"/>
+		<c:set value="${CommandContext}" target="${shopDB}" property="commandContext"/>
+	</wcbase:useBean>
+</c:catch>
+<%-- BEGIN OrderDetails_Data.jsp --%>

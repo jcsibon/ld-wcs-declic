@@ -1,0 +1,30 @@
+<%@ taglib uri="http://commerce.ibm.com/base" prefix="wcbase" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://commerce.ibm.com/foundation-fep/stores" prefix="wcst" %>
+
+<flow:ifEnabled feature="Target2SellRanking">
+<c:if test="${empty t2sRanking}"><%-- check once per request --%>
+<%-- TODO only set if not yet or cookie was UNKNOWN,force reset on logon    --%>
+<%-- TODO : force reset on logon ? --%>
+	<c:forEach items="${cookie}" var="currentCookie">
+		<c:if test="${currentCookie.key == 't2s-p'}">
+			<c:set var="t2sCookieValue" value="${currentCookie.value.value}"/>
+		</c:if>
+	</c:forEach>
+	<%-- if first page or no cookies allowed, set unknown --%>
+	<c:if test="${empty t2sCookieValue}">
+		<c:set var="t2sCookieValue" value="UNKNOWN" />
+	</c:if>
+
+	<wcst:storeconf var="t2sMerchantId" name="target2sell.merchantId" scope="request" /> 
+	
+	<wcbase:useBean id="rankingBean" classname="com.ecocea.commerce.marketing.commands.elements.Target2SellUserRankingDataBean" scope="page">
+		<c:set value="${t2sMerchantId}" target="${rankingBean}" property="cId"/>
+		<c:set value="${t2sCookieValue}" target="${rankingBean}" property="cookie"/>
+	</wcbase:useBean>
+<%-- TODO : could be set in session ? --%>
+	<c:set var="t2sRanking" value="${rankingBean.rank}" scope="request" /> 
+	<%-- <script>console.log("set T2S ranking to ${t2sRanking}");</script> --%>
+</c:if>
+
+</flow:ifEnabled>

@@ -1,0 +1,89 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<%-- BEGIN WorklightJSToInclude.jspf --%>
+<link rel="stylesheet" href="${jspStoreImgDir}WorklightHybrid/${env_vfileStylesheet}?${versionNumber}" type="text/css" />
+<link rel="stylesheet" href="${jsAssetsDir}css/base.css?${versionNumber}" type="text/css" />
+		
+<c:choose>
+<c:when test="${EC_deviceAdapter.deviceFormatId == -42 || EC_deviceAdapter.deviceFormatId == -44}">
+	<c:set var="platformType" value="android"/>
+</c:when>
+<c:otherwise>
+</c:otherwise>
+</c:choose>
+<c:if test="${!empty platformType}">
+<%--
+	The order of script load should reflect the Worklight project platform-specific WCHybrid.html.
+	It is recommended not to change the script load order.
+--%>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/js/WCHybridAppProperties.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/cordova.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/js/wljq.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/js/wl_.min.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/js/sjcl.min.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/analytics/Tealeaf.min.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/js/stacktrace.min.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/js/base.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/messages.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/js/wlcommon.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/diagnosticDialog.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/deviceAuthentication.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/window.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/worklight.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/wlclient.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/wlfragments.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/encryptedcache.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/checksum.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/deviceSensors/triggers.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/deviceSensors/acquisition.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/deviceSensors/geo.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/deviceSensors/wifi.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/events/eventTransmitter.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/deviceSensors/bind.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/deviceSensors/geoUtilities.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/challengeHandlers/antiXSRFChallengeHandler.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/challengeHandlers/authenticityChallengeHandler.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/challengeHandlers/deviceAuthAutoProvisioningChallengeHandler.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/challengeHandlers/deviceAuthNoProvisioningChallengeHandler.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/challengeHandlers/remoteDisableChallengeHandler.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/deviceSensors/ExtendedGeolocation.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/features_stubs/jsonstore_stub.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/wlgap.${platformType}.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/wlclient/js/jsonstore/jsonstore.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages_en_US.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages_fr_FR.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages_de_DE.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages_it_IT.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages_es_ES.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages_pt_BR.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages_zh_CN.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages_zh_TW.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages_ko_KR.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages_ja_JP.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages_iw_IL.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages_tr_TR.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages_ru_RU.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages_ro_RO.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages_pl_PL.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/messages_ar_EG.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/js/WCHybridApp.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/${platformType}/js/initOptionsApp.js?${versionNumber}"></script>
+</c:if>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/ContactsSelector.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/DisplayMap.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/BarcodeScan.js?${versionNumber}"></script>
+<script src="${jspStoreImgDir}WorklightHybrid/common/js/NativeSearch.js?${versionNumber}"></script>
+<%-- END WorklightJSToInclude.jspf --%>

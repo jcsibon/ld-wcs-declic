@@ -1,0 +1,20 @@
+<div id="updateAccountPopin" data-dojo-type="lapeyre/widget/Dialog" title="<fmt:message bundle="${storeText}" key="updateAccountConfirmationPopinTitle"/>">
+	<div class="widget_site_popup">
+		<div class="content">
+			<div class="header">
+				<span class="bold blockTitle"><fmt:message bundle="${storeText}" key="updateAccountConfirmationPopinTitle"/></span>
+				<a class="close" href="javascript:hidePopup('updateAccountPopin')" title="<fmt:message bundle="${widgetText}" key="SL_CLOSE" />"></a>
+				<div class="clear_float"></div>
+			</div>
+			<div class="body">
+				<p><fmt:message bundle="${storeText}" key="updateAccountConfirmationPopinContent"/></p>
+			</div>
+			<div class="footer">
+				<div class="ctaContainer">
+					<a class="button green" href="javascript:hidePopup('updateAccountPopin')" tabindex="0" onclick="" title="OK"><fmt:message bundle="${storeText}" key="updateAccountConfirmationPoponButtonLabel"/></a>
+				</div>
+			</div>
+			<div class="clear_float"></div>
+		</div>
+	</div>
+</div>

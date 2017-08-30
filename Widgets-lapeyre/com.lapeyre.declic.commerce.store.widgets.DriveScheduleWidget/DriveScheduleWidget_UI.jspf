@@ -1,0 +1,293 @@
+<!-- BEGIN DriveScheduleWidget_UI.jsp -->
+<c:choose>
+	<c:when test="${!empty driveScheduleContentHelper.tranchesHoraires && fn:length(driveScheduleContentHelper.tranchesHoraires) > 0}">
+		<script type="text/javascript" id="DriveScheduleScript">
+			var shopId = '${shopId}';
+			var sDateDebut = '${dateDebut}';
+			var sDateFin = '${dateFin}';
+			var step = parseInt('${step}');
+			var startDateDriveSchedule = '${startDateDriveSchedule}';
+			var endDateDriveSchedule = '${endDateDriveSchedule}';
+			var drivePreSelected = '${drivePreSelected}';
+			
+			var driveTimeSelected = '';
+			
+			
+			
+						
+			dojo.addOnLoad(function() {
+				if(dijit.byId('driveScheduleCarousel') != null) {
+					
+					if(dijit.byId('driveScheduleCarousel').pageIndex == 0) {
+						$('#prevPageButton_driveSchedule').addClass('inactive');
+					}
+					
+					dijit.byId('driveScheduleCarousel').nextPage = function(wrap) {
+					  if(this.pageIndex == (this.pageCount - 1)) {
+					  	driveScheduleNext();
+					  } else {
+					  	this.set("pageIndex", (wrap ? (this.pageIndex + 1) % this.pageCount : Math.min(this.pageIndex + 1, this.pageCount - 1)));
+					  	 $('#prevPageButton_driveSchedule').removeClass('inactive');
+					  	 $('#prevPageButton_driveSchedule').show();					  	 
+					  }
+					}
+					
+					
+					dijit.byId('driveScheduleCarousel').prevPage = function(wrap) {
+					  if(this.pageIndex == 0) {
+					  	console.log('toto');
+					  	driveSchedulePrev();
+					  	$('#prevPageButton_driveSchedule').addClass('inactive');
+					  } else {
+					  	//Si on clique sur précédent alors qu'on est sur la page 1 => il faut alors griser le bouton Back du slider
+					  	if(this.pageIndex == 1) {
+					  		$('#prevPageButton_driveSchedule').addClass('inactive');
+					  	}
+						this.set("pageIndex", (wrap ? (this.pageIndex === 0 ? this.pageCount - 1 : this.pageIndex - 1) : Math.max(this.pageIndex - 1, 0)));
+						$('#nextPageButton_driveSchedule').show();
+					  }
+					}
+				}
+				dojo.publish("SuccessOnGetDriveSchedule", ['${shopId}']);
+			});
+			
+			
+			
+			driveSchedulePrev = function() {
+				if(typeof(startDateDriveSchedule) != 'undefined' && startDateDriveSchedule != null &&  startDateDriveSchedule != sDateDebut) {
+					require(["dojo/date"], function(date){
+						var currentDate = new Date();
+						var startDate = parseCMSDate(sDateDebut);
+						var	diff =  date.difference(currentDate,startDate,'day');
+						
+						var dateDebut = new Date(startDate);
+						var dateFin = new Date(startDate);
+						
+						if(diff > step) {
+							dateDebut.setDate(dateDebut.getDate() - step);
+						} else {
+							dateDebut = new Date(currentDate);
+						}
+						
+						dateFin.setDate(dateFin.getDate() - 1);
+						dateDebut = convertToCMSDate(dateDebut);
+						dateFin = convertToCMSDate(dateFin);
+						if(shopId != null && dateDebut != null && dateFin != null)
+							wc.render.updateContext("DriveSchedule_Context",{shopId:shopId,dateDebut:dateDebut,dateFin:dateFin,startDateDriveSchedule:startDateDriveSchedule,endDateDriveSchedule:endDateDriveSchedule,step:step});
+					});
+				} 
+			}
+			
+			driveScheduleNext = function() {
+				if(typeof(endDateDriveSchedule) != 'undefined' && endDateDriveSchedule != null && sDateFin != endDateDriveSchedule) {
+					require(["dojo/date"], function(date){
+						var driveScheduleEndDate = parseCMSDate(endDateDriveSchedule);
+						var endDate = parseCMSDate(sDateFin);
+						
+						var diff =  date.difference(endDate,driveScheduleEndDate,'day');
+						
+						var dateDebut = new Date(endDate);
+						var dateFin = new Date(endDate);
+						
+						if(diff > step) {
+							dateFin.setDate(dateFin.getDate() + step);
+						} else {
+							dateFin = new Date(driveScheduleEndDate);
+						}
+						
+						dateDebut.setDate(dateDebut.getDate() + 1);
+						
+						dateDebut = convertToCMSDate(dateDebut);
+						dateFin = convertToCMSDate(dateFin);
+						if(shopId != null && dateDebut != null && dateFin != null)
+							wc.render.updateContext("DriveSchedule_Context",{shopId:shopId,dateDebut:dateDebut,dateFin:dateFin,startDateDriveSchedule:startDateDriveSchedule,endDateDriveSchedule:endDateDriveSchedule,step:step});
+					});
+				}
+			}
+			
+			selectDriveTime = function(target) {
+				if(!$(target).hasClass('disabled')) {
+					driveTimeSelected = target.id;
+					$('.buttonDriveSchedule').removeClass('green');
+					$(target).addClass('green');
+					dojo.topic.publish('DriveTime_Selected',driveTimeSelected);
+				}
+			}
+		
+		</script>
+		
+			<div id="driveScheduleCarousel" class="carousel clip-true padding-true background-false border-false" data-dojo-type="wc/widget/WCCarousel" data-dojo-props="columnCountByWidth:{0:1,240:2,420:4,860:6}">
+				<div class="content" data-dojo-attach-point="content">
+					<ul data-dojo-attach-point="ul" style="left: 0%; -webkit-transition: 500ms; transition: 500ms;">
+						<c:set var="item" value="${driveScheduleContentHelper.tranchesHoraires[0]}"/>
+						<c:set var="tmpDate" value="${item.date}"/>
+						<li>
+							<!-- HEADER1 -->
+							<div class="plagesHoraireHeader">
+								<ul>
+									<li>
+
+										<fmt:parseDate value="${item.date}" pattern="yyyyMMdd" var="itemDate" timeZone="GMT"/>
+										
+										<p> 
+											<c:choose>
+												<c:when test="${!empty item.isToday && item.isToday eq true}">
+													<fmt:message key="DriveScheduleTodayLabel" bundle="${widgetText}" />
+												</c:when>
+												<c:when test="${!empty item.isTomorrow && item.isTomorrow eq true}">
+													<fmt:message key="DriveScheduleTomorrowLabel" bundle="${widgetText}" />
+												</c:when>
+												<c:otherwise>
+													<fmt:formatDate value="${itemDate}" pattern="EEEE"/>
+												</c:otherwise>
+											</c:choose>
+										</p>
+										<p>		
+											<fmt:formatDate value="${itemDate}" pattern="dd/MM"/>
+										</p>
+									</li>
+								</ul>
+							</div>
+							<!-- BUTTONS1 -->
+							<div class="plagesHoraireButtons">
+								<div class="plagesHoraireButtonsBlock">
+								<ul>
+									<li>
+										<c:if test="${!empty item.ouverture && !empty item.fermeture}">
+											<c:choose>
+												<c:when test="${!empty item.isToday && item.isToday eq true}">
+													<c:choose>
+														<c:when test="${!empty item.isInAnHour && item.isInAnHour eq true}">
+															<a class="button buttonDriveSchedule ${!empty item.disabled && item.disabled eq true ? 'disabled':''} ${!empty item.hidden && item.hidden eq true ? 'hidden':''}" id="${item.id}" onClick="selectDriveTime(this);return false;"><fmt:message key="DriveScheduleInOneHour" bundle="${widgetText}" /></a>
+														</c:when>
+														<c:otherwise>
+															<a class="button buttonDriveSchedule ${!empty item.disabled && item.disabled eq true ? 'disabled':''} ${!empty item.hidden && item.hidden eq true ? 'hidden':''}" id="${item.id}" onClick="selectDriveTime(this);return false;">${item.ouverture}&nbsp;-&nbsp;${item.fermeture}</a>
+														</c:otherwise>
+													</c:choose>
+												</c:when>
+												<c:otherwise>
+													<a class="button buttonDriveSchedule ${!empty item.disabled && item.disabled eq true ? 'disabled':''} ${!empty item.hidden && item.hidden eq true ? 'hidden':''}" id="${item.id}" onClick="selectDriveTime(this);return false;">${item.ouverture}&nbsp;-&nbsp;${item.fermeture}</a>
+												</c:otherwise>
+											</c:choose>
+										</c:if>
+			
+						<c:forEach var="item" items="${driveScheduleContentHelper.tranchesHoraires}" varStatus="statut">
+							<c:if test="${!empty previousHour && !empty previousDate && !empty item.ouverture && item.ouverture != previousHour && item.date == previousDate}">
+								<%-- insertion d'un espace si les créneaux ne sont pas continus --%>
+								<div style="margin:20px;"></div>
+							</c:if>
+							<c:set var="previousHour" value="${item.fermeture}" />
+							<c:set var="previousDate" value="${item.date}" />
+							
+							
+							<c:if test="${statut.index > 0 }">
+							<c:choose>
+							<c:when test="${tmpDate ne item.date}">
+									</li>
+								</ul>
+								</div>
+							</div>
+						</li>
+						<li>
+							<!-- HEADER2 -->
+							<div class="plagesHoraireHeader">
+								<ul>
+									<li>
+										<fmt:parseDate value="${item.date}" pattern="yyyyMMdd" var="itemDate" timeZone="GMT"/>
+										
+										<p> 
+											<c:choose>
+												<c:when test="${!empty item.isToday && item.isToday eq true}">
+													<fmt:message key="DriveScheduleTodayLabel" bundle="${widgetText}" />
+												</c:when>
+												<c:when test="${!empty item.isTomorrow && item.isTomorrow eq true}">
+													<fmt:message key="DriveScheduleTomorrowLabel" bundle="${widgetText}" />
+												</c:when>
+												<c:otherwise>
+													<fmt:formatDate value="${itemDate}" pattern="EEEE"/>
+												</c:otherwise>
+											</c:choose>
+										</p>
+										<p>		
+											<fmt:formatDate value="${itemDate}" pattern="dd/MM"/>
+										</p>
+									</li>
+								</ul>
+							</div>
+							<!-- BUTTONS2 -->
+							<div class="plagesHoraireButtons">
+								<div class="plagesHoraireButtonsBlock">
+								<ul>
+									<li>
+										<c:if test="${!empty item.ouverture && !empty item.fermeture}">
+											<c:choose>
+												<c:when test="${!empty item.isToday && item.isToday eq true}">
+													<c:choose>
+														<c:when test="${!empty item.isInAnHour && item.isInAnHour eq true}">
+															<a class="button buttonDriveSchedule ${!empty item.disabled && item.disabled eq true ? 'disabled':''} ${!empty item.hidden && item.hidden eq true ? 'hidden':''}" id="${item.id}" onClick="selectDriveTime(this);return false;"><fmt:message key="DriveScheduleInOneHour" bundle="${widgetText}" /></a>
+														</c:when>
+														<c:otherwise>
+															<a class="button buttonDriveSchedule ${!empty item.disabled && item.disabled eq true ? 'disabled':''} ${!empty item.hidden && item.hidden eq true ? 'hidden':''}" id="${item.id}" onClick="selectDriveTime(this);return false;">${item.ouverture}&nbsp;-&nbsp;${item.fermeture}</a>
+														</c:otherwise>
+													</c:choose>
+												</c:when>
+												<c:otherwise>
+													<a class="button buttonDriveSchedule ${!empty item.disabled && item.disabled eq true ? 'disabled':''} ${!empty item.hidden && item.hidden eq true ? 'hidden':''}" id="${item.id}" onClick="selectDriveTime(this);return false;">${item.ouverture}&nbsp;-&nbsp;${item.fermeture}</a>
+												</c:otherwise>
+											</c:choose>
+										</c:if>
+								<c:set var="tmpDate" value="${item.date}"/>
+							</c:when>
+							<c:otherwise>
+								<c:if test="${!empty item.ouverture && !empty item.fermeture}">
+									<c:choose>
+										<c:when test="${!empty item.isToday && item.isToday eq true}">
+											<c:choose>
+												<c:when test="${!empty item.isInAnHour && item.isInAnHour eq true}">
+													<a class="button buttonDriveSchedule ${!empty item.disabled && item.disabled eq true ? 'disabled':''} ${!empty item.hidden && item.hidden eq true ? 'hidden':''}" id="${item.id}" onClick="selectDriveTime(this);return false;"><fmt:message key="DriveScheduleInOneHour" bundle="${widgetText}" /></a>
+												</c:when>
+												<c:otherwise>
+													<a class="button buttonDriveSchedule ${!empty item.disabled && item.disabled eq true ? 'disabled':''} ${!empty item.hidden && item.hidden eq true ? 'hidden':''}" id="${item.id}" onClick="selectDriveTime(this);return false;">${item.ouverture}&nbsp;-&nbsp;${item.fermeture}</a>
+												</c:otherwise>
+											</c:choose>
+										</c:when>
+										<c:otherwise>
+											<a class="button buttonDriveSchedule ${!empty item.disabled && item.disabled eq true ? 'disabled':''} ${!empty item.hidden && item.hidden eq true ? 'hidden':''}" id="${item.id}" onClick="selectDriveTime(this);return false;">${item.ouverture}&nbsp;-&nbsp;${item.fermeture}</a>
+										</c:otherwise>
+									</c:choose>
+								</c:if>
+							</c:otherwise>
+							</c:choose>
+							</c:if>
+						</c:forEach>
+						</li>
+								</ul>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<a id="prevPageButton_driveSchedule" href="#" class="prevPageButton" data-dojo-attach-point="prevPageButton" role="button" aria-label="<fmt:message key="LAP013_EDITO_CARROUSEL_PREVIOUS" bundle="${widgetText}" />" alt="<fmt:message key="LAP013_EDITO_CARROUSEL_PREVIOUS" bundle="${widgetText}" />"></a>
+				<a id="nextPageButton_driveSchedule" href="#" class="nextPageButton" data-dojo-attach-point="nextPageButton" role="button" aria-label="<fmt:message key="LAP012_EDITO_CARROUSEL_NEXT" bundle="${widgetText}" />" alt="<fmt:message key="LAP012_EDITO_CARROUSEL_NEXT" bundle="${widgetText}" />"></a>
+			</div>
+		<script id="DriveScheduleScript">
+			dojo.ready(function(){				
+				if(drivePreSelected != null || trim(drivePreSelected).length > 0) {
+					$('.buttonDriveSchedule').each(function(){
+						if($(this).attr('id') == drivePreSelected) {
+							selectDriveTime(this);
+						}
+					});
+				}
+			});
+		</script>
+	</c:when>
+	<c:otherwise>
+		 <script id="DriveScheduleScript">
+			 dojo.addOnLoad(function() {
+			 	dojo.publish("ErrorOnGetDriveSchedule", ['${shopId}']);
+			 });
+		 </script>
+	</c:otherwise>
+</c:choose>
+<!-- END DriveScheduleWidget_UI.jsp -->

@@ -1,0 +1,15 @@
+<div id="shareMailNotSentPopup" data-dojo-type="lapeyre/widget/Dialog" style="display: none; width: 20em">
+	<div class="widget_site_popup">
+		<div class="content">
+			<div class="header">
+				<span class="bold">
+					Désolé
+				</span>
+				<a href="javascript:hidePopup('shareMailNotSentPopup')" aria-label="<fmt:message bundle="${widgetText}" key="SL_CLOSE" />" title="<fmt:message bundle="${widgetText}" key="SL_CLOSE" />" class="close" title="<fmt:message key="SL_CLOSE" bundle="${widgetText}" />"></a>
+			</div>
+			<div class="body">
+				<fmt:message key="shareMailErrorMessage" bundle="${storeText}" />
+			</div>
+		</div>
+	</div>
+</div>

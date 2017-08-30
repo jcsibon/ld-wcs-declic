@@ -1,0 +1,26 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<%@page import="java.text.MessageFormat"%>
+<%@page import="com.lapeyre.declic.configurations.ConfigTool"%>
+<c:if test="${!empty vids}">
+	<c:set var="pluralForm" value="" />
+	<c:if test="${fn:length(vids) > 1 }">
+		<c:set var="pluralForm" value="Plural" />
+	</c:if>
+	<div class="other_views">
+		<p><fmt:message key='productVideoAssetListTitle${pluralForm}' bundle='${widgetText}' /></p>
+		<c:forEach var="vid" items="${vids}">
+			<c:set var="videoID" value="${ecocea:extractVideoId(vid.attachmentAssetPath)}" />
+			<c:set var="thumbnailUrl" value="${ecocea:fmtMessage(ecocea:getProperty('youtube.thumbnail.url'), videoID)}" />
+			<c:set var="embedUrl" value="${ecocea:fmtMessage(ecocea:getProperty('youtube.embed.url'), videoID)}" />
+			<div itemscope itemtype="${MICRO_DATA_VIDEO}" class="youtubeVideo">
+				<img src="${thumbnailUrl}" data-video-id="${videoID}" alt="${videoID}" class="thumb" data-embed-url="${embedUrl}"/>
+				<meta itemprop="name" content="${vid.name}"/>
+				<meta itemprop="description" content="${not empty vid.shortdesc ? vid.shortDesc : vid.name}"/>
+				<meta itemprop="contentUrl" content="${vid.attachmentAssetPath}"/>
+				<meta itemprop="thumbnailUrl" content="${thumbnailUrl}"/>
+				<meta itemprop="datePublished" content="${MICRO_DATA_TODAY}"/>
+				<meta itemprop="uploadDate" content="${MICRO_DATA_TODAY}"/>
+			</div>
+		</c:forEach>
+	</div>
+</c:if>

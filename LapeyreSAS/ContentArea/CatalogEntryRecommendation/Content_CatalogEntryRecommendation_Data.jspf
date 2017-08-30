@@ -1,0 +1,38 @@
+
+<wcf:useBean var="associatedProducts" classname="java.util.ArrayList" />
+
+<c:forEach var="productPartnumber" items="${productsAssociated}" >
+	<wcf:rest var="productDetails" url="${searchHostNamePath}${searchContextPath}/store/${storeId}/productview/${productPartnumber}">
+		<wcf:param name="langId" value="${langId}"/>
+		<wcf:param name="currency" value="${env_currencyCode}"/>
+		<wcf:param name="responseFormat" value="json"/>		
+		<wcf:param name="catalogId" value="${WCParam.catalogId}"/>	
+	</wcf:rest>
+	<c:if test="${!empty productDetails.catalogEntryView}" >
+		<wcf:useBean var="productDetailsMap" classname="java.util.HashMap" />
+		<c:set var="catalogEntryViewDetails" value="${productDetails.catalogEntryView[0]}" />
+		
+		<c:forEach var="attch" items="${catalogEntryViewDetails.attachments}">
+			<c:if test="${attch.usage eq GRIDIMAGES_FULLIMAGE_ATCHMT}">
+				<c:set var="gridImageAsset" value="${attch}" />		
+			</c:if>
+		</c:forEach>
+		<c:choose>
+			<c:when test="${gridImageAsset != null && !empty gridImageAsset}">
+				<astpush:assetPushUrl var="imageFullURL" urlRelative="${gridImageAsset.attachmentAssetPath}" type="GRID_ASSET" source="main" device="${device}" format="full" />
+			</c:when>
+			<c:otherwise>
+				<c:set var="keyDefaultImageMaps" value="GRID_ASSET_main_full"/>
+				<astpush:assetPushUrl var="imageFullURL" urlRelative="${defaultImageMaps[keyDefaultImageMaps]}" type="GRID_ASSET" source="main" device="${device}" format="full" defaultUrl="true"/>
+			</c:otherwise>
+		</c:choose>
+
+		<wcf:set target="${productDetailsMap}" key="name" value="${catalogEntryViewDetails.name}" />
+		<wcf:set target="${productDetailsMap}" key="imageURL" value="${imageFullURL}" />
+		<wcf:set target="${productDetailsMap}" key="shortDesc" value="${catalogEntryViewDetails.shortDescription}" />
+		<wcf:set target="${productDetailsMap}" key="id" value="${catalogEntryViewDetails.uniqueID}" />
+		<wcf:set target="${associatedProducts}" value="${productDetailsMap}" />
+		<c:remove var="productDetailsMap" />
+		<c:remove var="gridImageAsset" />
+	</c:if>
+</c:forEach>

@@ -1,0 +1,693 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE taglib
+  PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+  "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+<taglib>
+	<tlib-version>1.0</tlib-version>
+	<jsp-version>1.2</jsp-version>
+	<short-name>ecocea</short-name>
+	<uri>http://www.ecocea.com/taglib</uri>
+	<display-name>Ecocea tag library</display-name>
+	<description>Some custom tag lib utility</description>
+	<tag>
+		<name>widgetPath</name>
+		<tag-class>com.lapeyre.declic.commerce.pagelayout.taglib.FetchWidgetPathTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to fetch the widget jsp path from database</description>
+		<attribute>
+			<name>identifier</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Widget identifier</description>
+		</attribute>
+		<attribute>
+			<name>storeId</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>The store id for the widget, the default value is 0</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>crop</name>
+		<tag-class>com.lapeyre.declic.commerce.pagelayout.taglib.CropStringTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to crop a too long string</description>
+		<attribute>
+			<name>value</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Value to crop</description>
+		</attribute>
+		<attribute>
+			<name>length</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Lenght limit for crop</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>listToJson</name>
+		<tag-class>com.lapeyre.declic.misc.taglib.ConvertListToJsonTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to convert a java list object to json object</description>
+		<attribute>
+			<name>value</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>List object</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>stringToJson</name>
+		<tag-class>com.lapeyre.declic.misc.taglib.ConvertStringToJsonTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to convert a string to json object</description>
+		<attribute>
+			<name>value</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>String object</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>mapToJson</name>
+		<tag-class>com.lapeyre.declic.misc.taglib.ConvertMapToJsonTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to convert a java map object to json object</description>
+		<attribute>
+			<name>value</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>List object</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>ecopart</name>
+		<tag-class>com.lapeyre.declic.commerce.ecopart.EcopartTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to get sum of ecopart associated to a catentry</description>
+		<attribute>
+			<name>partnumber</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Partnumber of catentry</description>
+		</attribute>
+		<attribute>
+			<name>usage</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Usage : 'Offer' or 'Display'</description>
+		</attribute>
+		<attribute>
+			<name>isProBTP</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>true for Pro BTP, false for Part or Ano</description>
+		</attribute>
+		<attribute>
+			<name>currency</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Currency Code</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>orderItemEcopart</name>
+		<tag-class>com.lapeyre.declic.commerce.ecopart.OrderItemEcopartTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to get sum of ecopart associated to an orderItem</description>
+		<attribute>
+			<name>orderItemId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>orderItemId of orderItem</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>typeArticleIcon</name>
+		<tag-class>com.lapeyre.declic.misc.taglib.TypeArticleIconTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to get css class suffix for a CMS article</description>
+		<attribute>
+			<name>types</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Types, comma separated</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>xOrderDetails</name>
+		<tag-class>com.lapeyre.declic.commerce.order.taglib.XOrderDetailsTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to get order price detail of an order</description>
+		<attribute>
+			<name>orderId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>orderId of order</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>xOrderSummary</name>
+		<tag-class>com.lapeyre.declic.commerce.order.taglib.XOrderSummaryTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to get order summary formatted data</description>
+		<attribute>
+			<name>orderDetails</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>orderDetails JSON Object obtained with xOrderDetails tag</description>
+		</attribute>
+		<attribute>
+			<name>pageType</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Conditionnally enable summary line output for different kind of pages, default is ALL and every summary lines is produced</description>
+		</attribute>
+		<attribute>
+			<name>pro</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Indicates whether the summary lines should be formatted for a "pro" customer</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>orderExternalAdjust</name>
+		<tag-class>com.lapeyre.declic.commerce.order.taglib.OrderExternalAdjustTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to get external adjusts associated to an order</description>
+		<attribute>
+			<name>orderId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>orderId of order</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>calculateShippingShopforAddress</name>
+		<tag-class>com.lapeyre.declic.commerce.order.taglib.CalculateShippingShopForAddressTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to get shipping shop for address</description>
+		<attribute>
+			<name>addressIds</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>list of addressId, separated by a comma</description>
+		</attribute>
+		<attribute>
+			<name>orderId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>orderId of order</description>
+		</attribute>
+		<attribute>
+			<name>storeId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>storeId</description>
+		</attribute>
+		<attribute>
+			<name>langId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>langId</description>
+		</attribute>
+		<attribute>
+			<name>userId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>userId</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>orderShipping</name>
+		<tag-class>com.lapeyre.declic.commerce.order.taglib.OrderShippingTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to get shipping info of order</description>
+		<attribute>
+			<name>orderId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>orderId of order</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>driveSchedule</name>
+		<tag-class>com.lapeyre.declic.commerce.order.taglib.DriveScheduleTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to get drive schedule info for shop</description>
+		<attribute>
+			<name>shopId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>shopId of shop</description>
+		</attribute>
+		<attribute>
+			<name>startDate</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>start date of the drive schedule (yyyyMMdd)</description>
+		</attribute>
+		<attribute>
+			<name>endDate</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>end date of the drive schedule (yyyyMMdd)</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>orderAvailabityByItem</name>
+		<tag-class>com.lapeyre.declic.commerce.order.taglib.OrderAvailabilityByItemTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to get items availabity by item</description>
+		<attribute>
+			<name>orderId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>orderId of order</description>
+		</attribute>
+		<attribute>
+			<name>shopId</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>shopId used to check availability</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>orderPromisedAvailabilityByItem</name>
+		<tag-class>com.lapeyre.declic.commerce.order.taglib.OrderPromisedAvailabilityByItemTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to get items promised availability by item</description>
+		<attribute>
+			<name>orderId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>orderId of order</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>calculatedPriceData</name>
+		<tag-class>com.lapeyre.declic.commerce.price.taglib.CalculatedPriceTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Tag to get calculated price date (from database directly)</description>
+		<attribute>
+			<name>productId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>productId</description>
+		</attribute>
+		<attribute>
+			<name>date</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>date to get price</description>
+		</attribute>
+		<attribute>
+			<name>isProBTP</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>true for Pro BTP, false for Part or Ano</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>dataGrid</name>
+		<tag-class>com.lapeyre.declic.misc.taglib.DataGridTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>Build a datagrid with datas in parameters</description>
+		<attribute>
+			<name>data</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>The datas</description>
+		</attribute>
+		<attribute>
+			<name>header</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>The header of the table</description>
+		</attribute>
+		<attribute>
+			<name>tableClass</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Class du tableau</description>
+		</attribute>
+		<attribute>
+			<name>headerRowClass</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Class de la ligne header</description>
+		</attribute>
+		<attribute>
+			<name>dataRowClass</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Class des ligne de données</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>contextRoot</name>
+		<tag-class>com.lapeyre.declic.misc.taglib.ContextRootTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Extracts the context root from the current request URL</description>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+	</tag>
+	<function>
+		<name>min</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>int min(int, int)</function-signature>
+	</function>
+	<function>
+		<name>min</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>double min(double, double)</function-signature>
+	</function>
+	<function>
+		<name>ceil</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>int ceil(java.lang.Number)</function-signature>
+	</function>
+	<function>
+		<name>floor</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>int floor(java.lang.Number)</function-signature>
+	</function>
+	<function>
+		<name>toNumber</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>java.lang.Number toNumber(java.lang.Object)</function-signature>
+	</function>
+	<function>
+		<name>fmtPhone</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>String fmtPhone(java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>fmtMessage</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>java.lang.String fmtMessage(java.lang.String, java.lang.Object)</function-signature>
+	</function>
+	<function>
+		<name>getProperty</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>java.lang.String getProperty(java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>concatUrls</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>String concatUrls(java.lang.String, java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>escapeJS</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>String escapeJS(java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>escapeHTML</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>String escapeHTML(java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>quote</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>String quote(java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>doubleQuote</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>String doubleQuote(java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>removeDoubleQuote</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>String removeDoubleQuote(java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>truncateHtml</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>java.lang.String truncateHtml(java.lang.String, int)</function-signature>
+	</function>
+	<function>
+		<name>sortCommandsByDate</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>java.util.List sortCommandsbyDate(java.util.List)</function-signature>
+	</function>
+	<function>
+		<name>join</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>java.lang.String join(java.util.List, java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>replaceCarriageReturn</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>java.lang.String replaceCarriageReturn(java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>extractVideoId</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>java.lang.String extractVideoId(java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>dayBasedCompare</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>int dayBasedCompare(java.util.Date, java.util.Date)</function-signature>
+	</function>
+	<function>
+		<name>replaceHost</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>java.lang.String replaceHost(java.lang.String, java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>getLibelles</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>org.apache.commons.json.JSONObject getLibelles(java.lang.String, java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>hasPageBefore</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>boolean hasPageBefore(int, int)</function-signature>
+	</function>
+	<function>
+		<name>hasPageAfter</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>boolean hasPageAfter(int, int, int)</function-signature>
+	</function>
+	<function>
+		<name>removeDiatrics</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>String[] removeDiatrics(java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>findKeyWordSuggestion</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>java.util.Map findKeyWordSuggestion(java.lang.String,java.lang.String,java.lang.String,java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>getMinMax</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>org.apache.commons.json.JSONObject getMinMax(java.util.List)</function-signature>
+	</function>
+	<function>
+		<name>getPaddedSku</name>
+		<function-class>com.lapeyre.declic.misc.taglib.EcoceaFunctions</function-class>
+		<function-signature>java.lang.String getPaddedSku(java.lang.String)</function-signature>
+	</function>
+</taglib>

@@ -1,0 +1,116 @@
+<message type="assetImport">
+	<header>
+		<sender>SAS_WRK</sender>
+		<SASid>Product-75604-uuid-e218981a-aaa0-11e5-afff-b9970018ab6e</SASid>
+		<extractDate>2015-12-25T03:09:03.854+01:00</extractDate>
+		<targetCatalog>current</targetCatalog>
+		<nbDataEntries>4045</nbDataEntries>
+		<credentials>
+			<login>importadmin</login>
+			<password>passw0rd</password>
+		</credentials>
+	</header>
+	<data>
+		<product>
+			<action>add</action>
+			<partnumber>FPC99999</partnumber>
+			<associatedAssetList>
+				<associatedAsset>
+					<identifier>GRIDIMAGES-FULLIMAGES-FPC2295761</identifier>
+					<usage>GRIDIMAGES_FULLIMAGE</usage>
+					<sequence>100000.0</sequence>
+					<fileUrl>/desktopList/206/797/201206797.jpg</fileUrl>
+					<label locale="fr">Bloc-porte Eclat Ch?ne plaqu? gamme Platine</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>USERMANUAL-FPC2295761</identifier>
+					<usage>USERMANUAL</usage>
+					<sequence>100001.0</sequence>
+					<fileUrl>/desktopList/206/797/201206797.jpg</fileUrl>
+					<label locale="fr">Guide de pose pour Bloc-porte Eclat Ch?ne plaqu? gamme Platine</label>
+					<shortDesc locale="fr">Guide de pose pour Bloc-porte Eclat Ch?ne plaqu? gamme Platine</shortDesc>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>COLLMAIN-FPC0003700-200615389-TEST</identifier>
+					<usage>ICON</usage>
+					<sequence>777.0</sequence>
+					<fileUrl>/picto/_bl/anc/Couleurs_au_choix_2015_fond_777blanc.jpg</fileUrl>
+					<label locale="fr">Couleurs_au_choix_2015_fond_blanc</label>
+					<shortDesc locale="fr">Test ajout de shortdesc existe paas</shortDesc>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>COLLMAIN-FPC0003700-200615389</identifier>
+					<usage>ICON</usage>
+					<sequence>777.0</sequence>
+					<fileUrl>/picto/_bl/anc/Couleurs_au_choix_2015_fond_777blanc.jpg</fileUrl>
+					<label locale="fr">Couleurs_au_choix_2015_fond_blanc</label>
+					<shortDesc locale="fr">Test ajout de shortdesc existe</shortDesc>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>PICTO-FPC2295761-Garantie-02-ans-Q</identifier>
+					<usage>ICON</usage>
+					<sequence>0.0</sequence>
+					<fileUrl>/picto/_an/s_q/Garantie_02_ans_Q.jpg</fileUrl>
+					<label locale="fr">Garantie_02_ans_Q.jpg</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>PICTO-FPC2295761-Isolation-acoustique-Q</identifier>
+					<usage>ICON</usage>
+					<sequence>0.0</sequence>
+					<fileUrl>/picto/iqu/e_q/Isolation_acoustique_Q.jpg</fileUrl>
+					<label locale="fr">Isolation_acoustique_Q</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>PICTO-FPC2295761-Isolation-thermique-Q</identifier>
+					<usage>ICON</usage>
+					<sequence>1.0</sequence>
+					<fileUrl>/picto/iqu/e_q/Isolation_thermique_Q.jpg</fileUrl>
+					<label locale="fr">Isolation_thermique_Q</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>PICTO-FPC2295761-atelier-Q</identifier>
+					<usage>ICON</usage>
+					<sequence>0.0</sequence>
+					<fileUrl>/picto/lie/r_q/atelier_Q.jpg</fileUrl>
+					<label locale="fr">Atelier</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>STANDARDMAIN-FPC2295761-201206797</identifier>
+					<usage>ANGLEIMAGES_FULLIMAGE</usage>
+					<sequence>0.0</sequence>
+					<fileUrl>/standardMain/206/797/201206797.jpg</fileUrl>
+					<label locale="fr">Porte d'int?rieur Platine plaqu?e ch?ne bross? clair Eclat vitrage s?rigraphi?</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>THUMBNAIL-FPC2295761-201206797</identifier>
+					<usage>ANGLEIMAGES_THUMBNAIL</usage>
+					<sequence>0.0</sequence>
+					<fileUrl>/thumbnail/206/797/201206797.jpg</fileUrl>
+					<label locale="fr">Porte d'int?rieur Platine plaqu?e ch?ne bross? clair Eclat vitrage s?rigraphi?</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+			</associatedAssetList>
+			<itemList>
+				<item>
+					<sku>999999</sku>					
+				</item>
+			</itemList>
+		</product>
+	</data>
+</message>

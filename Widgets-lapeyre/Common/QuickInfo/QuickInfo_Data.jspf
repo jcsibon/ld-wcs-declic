@@ -1,0 +1,58 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%--ECOCEA perf: si déja dans la map, pas besoin de rappeler le search --%>
+<c:if test="${!empty productId}">
+	<%-- Try to get it from our internal hashMap --%>
+	<c:set var="key1" value="${productId}+getCatalogEntryViewAllByID"/>
+	<c:set var="catalogEntryDetails" value="${cachedCatalogEntryDetailsMap[key1]}"/>
+	<c:if test="${empty catalogEntryDetails || empty catalogEntryDetails.sKUs}">
+		<wcf:rest var="catalogNavigationView" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byId/${productId}" >	
+			<wcf:param name="langId" value="${langId}"/>
+			<wcf:param name="currency" value="${env_currencyCode}"/>
+			<wcf:param name="responseFormat" value="json"/>		
+			<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+			<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+		</wcf:rest>
+		<c:set var="catalogEntryDetails" value="${catalogNavigationView.catalogEntryView[0]}"/>
+		<wcf:set target = "${cachedCatalogEntryDetailsMap}" key="${key1}" value="${catalogNavigationView.catalogEntryView[0]}"/>
+	</c:if>
+</c:if>
+
+<c:if test="${!empty catalogNavigationView && !empty catalogNavigationView.catalogEntryView[0]}">
+	<c:set var="catalogEntryDetails" value="${catalogNavigationView.catalogEntryView[0]}"/>
+</c:if>
+
+<c:set var="actualType" value="${fn:toLowerCase(catalogEntryDetails.catalogEntryTypeCode)}" />
+<c:set var="type" value="${fn:replace(actualType,'bean','')}" />
+<c:set var="entitledItems" value="${catalogEntryDetails.sKUs}"/>
+<c:set var="numberOfSKUs" value="${catalogEntryDetails.numberOfSKUs}"/>
+<c:set var="attributes" value="${catalogEntryDetails.attributes}"/>
+<c:set var="productAttachments" value="${catalogEntryDetails.attachments}"/>
+
+<c:set var="widgetIdentifier" value="StandardProductDisplayWidget"/>
+<c:if test="${catalogEntryDetails.type eq CATALOGUE_PAPIER_PRODUCT}">
+	<c:set var="widgetIdentifier" value="PaperCatalogProductDisplayWidget"/>
+</c:if>
+
+<wcf:url var="catEntryDisplayUrl" patternName="ProductURL" value="Product1">
+	<wcf:param name="catalogId" value="${catalogId}"/>
+	<wcf:param name="storeId" value="${storeId}"/>
+	<wcf:param name="productId" value="${catalogEntryDetails.uniqueID}"/>
+	<wcf:param name="langId" value="${langId}"/>
+	<wcf:param name="urlLangId" value="${urlLangId}" />
+</wcf:url>
+
+<c:set var="socialSharingURL" value="${catEntryDisplayUrl}" scope="request" />
+
+<ecocea:widgetPath var="standardProductDisplaywidgetPath" identifier="${widgetIdentifier}" />

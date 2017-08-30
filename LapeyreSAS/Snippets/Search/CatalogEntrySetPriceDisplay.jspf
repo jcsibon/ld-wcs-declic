@@ -1,0 +1,155 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<%--
+***** 
+Given a CatalogEntryView object, this snippet formats and sets a priceString variable.
+
+params: 
+
+Parameters required:
+        catalogIdEntry:		A CatalogNavigationViewType.catalogEntryView object representing a catalog entry object
+
+Output:
+	priceString: 		Containing the formatted price of the dynamic kit
+*****
+--%>
+
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.StringTokenizer" %>
+<%@ page import="java.util.regex.Matcher" %>
+<%@ page import="java.util.regex.Pattern" %>
+
+
+<%@ page import="com.ibm.commerce.command.CommandContext" %>
+<%@ page import="com.ibm.commerce.context.preview.PreviewContext" %>
+
+<c:remove var="priceString" />
+<c:remove var="indexedPrice" />
+<c:remove var="listPrice" />
+<c:remove var="rangePrice" />
+
+
+<%
+
+		request.setAttribute("calculatedPriceFlag","false");
+
+%>
+	<c:set var="pricesFromCatalogEntryDetails" value="${catalogIdEntry.price}" />
+	<c:if test="${env_inPreview && !env_storePreviewLink}">
+		<%
+		//cf. EnvironmentSetup.jspf: détermination de la date de preview
+			String datePreview = "";
+			CommandContext pmt_commandContext = (CommandContext) request.getAttribute("CommandContext");
+			PreviewContext pmt_previewContext = (PreviewContext) pmt_commandContext.getContext(PreviewContext.CONTEXT_NAME);
+			if(pmt_previewContext!=null){
+				Pattern pmt_p = Pattern.compile(".*\\[preview time = (.*) \\| isStatic = (.*) \\| other data = (.*) \\| dirty = (.*)\\]");
+				Matcher pmt_m = pmt_p.matcher(pmt_previewContext.toString());
+				if (pmt_m.matches()) {
+					datePreview = pmt_m.group(1);
+					if(datePreview!=null && !datePreview.equals("null") && !datePreview.isEmpty()){
+						SimpleDateFormat pmt_sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+						SimpleDateFormat target_sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss.S"); //format du tag
+						datePreview= target_sdf.format(pmt_sdf.parse(datePreview));
+					}else{
+						datePreview="";
+					}
+				}
+			}
+			request.setAttribute("datePreview",datePreview);
+		%>
+		<ecocea:calculatedPriceData var="pricesFromCatalogEntryDetails" productId="${catalogIdEntry.uniqueID}" date="${datePreview}" isProBTP="${extendedUserContext.isPro}" />
+	</c:if>
+ 	<c:forEach var="price" items="${pricesFromCatalogEntryDetails}" >
+			<%--Récupère le prix --%>
+			<c:choose>
+				<c:when test="${price.description == 'I'}">
+					<c:set var="indexedPrice" value="${price}" />
+					<fmt:parseNumber var="indexedPriceValueNumber" parseLocale="en_US" value="${indexedPrice.value}" />
+				</c:when>
+				<c:when test="${price.description == 'L'}">
+					<c:set var="listPrice" value="${price}" />
+					<fmt:parseNumber var="listPriceValueNumber"  parseLocale="en_US" value="${listPrice.value}" />
+				</c:when>
+			</c:choose>
+			
+			<%--Récupère l'ecopart associée --%>
+			<c:if test="${price.ecopart != 'null' && price.ecopart != undefined}">
+				<fmt:parseNumber var="ecopartPriceNumber" value="${price.ecopart}" parseLocale="en_US"/>
+			</c:if>
+			
+			<c:choose>
+				<c:when test="${price.usage eq 'Display' && ecopartPriceNumber gt 0}">
+					<c:set var="ecoPart" >
+						<fmt:formatNumber value="${price.ecopart}" type="currency" currencySymbol="${env_CurrencySymbolToFormat} ${extendedUserContext.isPro ? '<sup>HT</sup>' : ''}" maxFractionDigits="${env_currencyDecimal}"/>
+					</c:set>
+					<%--<ecocea:ecopart var="ecoPart" partnumber="${catalogIdEntry.partNumber}" usage="Display" isProBTP="${extendedUserContext.isPro}" currency="${price.currency}" />--%>
+				</c:when>
+				<c:when test="${price.usage eq 'Offer' && ecopartPriceNumber gt 0}">
+					<c:set var="ecoPartList" >
+						<fmt:formatNumber value="${price.ecopart}" type="currency" currencySymbol="${env_CurrencySymbolToFormat} ${extendedUserContext.isPro ? '<sup>HT</sup>' : ''}" maxFractionDigits="${env_currencyDecimal}"/>
+					</c:set>
+					<%-- <ecocea:ecopart var="ecoPartList" partnumber="${catalogIdEntry.partNumber}" usage="Offer" isProBTP="${extendedUserContext.isPro}" currency="${price.currency}" />--%>
+				</c:when>
+			</c:choose>
+	</c:forEach>
+
+	<c:if test="${not empty indexedPrice}" >
+		<c:if test="${not empty listPrice && listPriceValueNumber gt indexedPriceValueNumber}" >
+			<c:set var="strikedPriceString" value="${listPrice.value}"/>
+		</c:if>
+		<c:set var="offerPrice" value="${indexedPrice}"/>
+		<fmt:parseNumber var="offerPriceValueNumber" value="${offerPrice.value}" parseLocale="en_US"/>
+	</c:if>
+	
+
+	<c:choose>
+			<c:when test="${not empty minimumPriceString && not empty maximumPriceString}">
+				<c:set var="priceString" value="${minimumPriceString} - ${maximumPriceString}"/>
+			</c:when>
+			<c:otherwise>
+				<c:choose>
+					<c:when test="${not empty listPrice && listPriceValueNumber gt offerPriceValueNumber}">
+						<c:set var="strikedPriceString" value="${listPrice.value}"/>
+					</c:when>
+					<c:otherwise>
+						<c:remove var="listPrice"/>
+					</c:otherwise>
+				</c:choose>
+				
+				<c:set var="priceNumeric" value="${offerPrice}"/>
+				<c:set var="priceString" value="${offerPrice.value}"/>
+				
+			</c:otherwise>
+	</c:choose>
+	
+	<%-- START Marketing spot promotion display. ONLY FOR PART !! --%>
+		<ecocea:widgetPath var="emspotpath" identifier="EMarketingSpot" />
+		<c:if test="${catalogIdEntry.type eq 'STANDARD' && extendedUserContext.isPro ne true}">
+			<%out.flush();%>
+			<c:import url="${emspotpath}">
+				<c:param name="storeId" value="${storeId}" />
+				<c:param name="catalogId" value="${catalogId}" />
+				<c:param name="emsName" value="productPrice_RecoPromo" />
+				<c:param name="displayPreference" value="1"/>
+				<c:param name="productId" value="${catalogIdEntry.uniqueID }"/>
+				<c:param name="coeffConversionQuantite" value="${coeffConversionQuantite}"/>
+				<c:param name="coeffConversionPrix" value="${coeffConversionPrix}"/>				
+				<c:param name="offerPrice" value="${priceString}" />
+				<c:param name="displayPrice" value="${listPrice.value}" />
+				<c:param name="showPrices" value="false" />
+			</c:import>
+			<%out.flush();%>
+		</c:if>
+	<%-- END Marketing spot promotion display --%>

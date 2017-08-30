@@ -1,0 +1,49 @@
+<!-- BEGIN TunnelConfirmationHeader_UI.jspf -->
+<div class="row print-hidden">
+	<div class="col12 slot1 full-background" id="tunnelHeader" data-slot-id="1">
+		<ul class="etapes">
+			<li>
+				<a href="#">
+					<div>
+						<span>1</span>
+						${tunnelRecapCmdBreadcrumbLabel}
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<div>
+						<span>2</span>
+						${tunnelIdentificationBreadcrumbLabel}
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<div>
+						<span>3</span>
+						${tunnelLivraisonBreadcrumbLabel}
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<div>
+						<span>4</span>
+						${tunnelPaiementBreadcrumbLabel}
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<div class="current">
+						<span>5</span>
+						${tunnelConfirmationBreadcrumbLabel}
+					</div>
+				</a>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<!-- END TunnelConfirmationHeader_UI.jspf -->

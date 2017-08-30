@@ -1,0 +1,55 @@
+<%@ include file="/Widgets/Common/JSTLEnvironmentSetup.jspf" %>
+
+<%-- call CMS and make response available --%>
+
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.StringTokenizer" %>
+<%@ page import="java.util.regex.Matcher" %>
+<%@ page import="java.util.regex.Pattern" %>
+
+<%@ page import="com.ibm.commerce.command.CommandContext" %>
+<%@ page import="com.ibm.commerce.context.content.ContentContext" %>
+<%@ page import="com.ibm.commerce.context.preview.PreviewContext" %>
+<%@ page import="com.ibm.commerce.tools.segmentation.SegmentDataBean" %>
+
+<%
+//cf. EnvironmentSetup.jspf: détermination de la date de preview
+//TODO voir si on mutualise avec ContentContext ?
+ String hpmstart = "";
+CommandContext hpmt_commandContext = (CommandContext) request.getAttribute("CommandContext");
+PreviewContext hpmt_previewContext = (PreviewContext) hpmt_commandContext.getContext(PreviewContext.CONTEXT_NAME);
+if(hpmt_previewContext!=null){
+	Pattern pmt_p = Pattern.compile(".*\\[preview time = (.*) \\| isStatic = (.*) \\| other data = (.*) \\| dirty = (.*)\\]");
+	Matcher pmt_m = pmt_p.matcher(hpmt_previewContext.toString());
+	if (pmt_m.matches()) {
+		hpmstart = pmt_m.group(1);
+		if(hpmstart!=null && !hpmstart.equals("null") && !hpmstart.isEmpty()){
+			SimpleDateFormat pmt_sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+			SimpleDateFormat target_sdf = new SimpleDateFormat("yyyyMMddHHmm"); //format du CMS
+			hpmstart= target_sdf.format(pmt_sdf.parse(hpmstart));
+		}else{
+			hpmstart="";
+		}
+	}
+}
+request.setAttribute("hpmstart",hpmstart);
+%>
+<c:set var="hisMobile" scope="page" value="${EC_deviceAdapter.deviceFormatId == -21}" />
+
+<c:if test="${ !empty param.listeUnivers}">
+	<c:set var="listeUnivers" value="${param.listeUnivers}"/>
+</c:if>
+
+<%-- faire l'appel au CMs pour les élements Header/footer --%>
+<jsp:useBean id="headerContentHelper" class="com.lapeyre.declic.cms.ContentHelper" scope="request">
+	<jsp:setProperty name="headerContentHelper" property="typePage" value="/headerfooter" />
+	<jsp:setProperty name="headerContentHelper" property="id" value="${listeUnivers}" />
+	<jsp:setProperty name="headerContentHelper" property="complement" value="" />
+	
+	<jsp:setProperty name="headerContentHelper" property="isPreview" value="${env_inPreview?1:0}"/>
+	<jsp:setProperty name="headerContentHelper" property="date" value="${hpmstart}"/>	
+	<jsp:setProperty name="headerContentHelper" property="device" value="${hisMobile?'M':'D'}"/>
+	<jsp:setProperty name="headerContentHelper" property="target" value="${(userType eq 'G') ? 'ano' : extendedUserContext.isPro?'pro':'part'}"/>	
+</jsp:useBean>
+<% ((com.lapeyre.declic.cms.ContentHelper) request.getAttribute("headerContentHelper")).setContent();  //c'est cette ligne qui declenche l'appel du ws %>
+<% request.removeAttribute("hpmstart"); %>

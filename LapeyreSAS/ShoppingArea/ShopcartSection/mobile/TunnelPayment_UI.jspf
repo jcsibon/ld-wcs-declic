@@ -1,0 +1,451 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2007, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%@ page trimDirectiveWhitespaces="true" %>
+<!-- BEGIN TunnelPayment_UI.jspf -->
+<%@ include file="../TunnelPayment_Data.jspf" %>
+
+<%@ page language="java"
+  import="java.net.URLEncoder"
+  contentType="text/html; charset=UTF-8"
+  pageEncoding="UTF-8"%>
+<%!
+public String encodeURI(String value) throws Exception{
+    return URLEncoder.encode(value, "UTF-8")
+        /* .replace("+", "%20")
+        .replace("%2F", "/")
+        .replace("%3F", "?")
+        .replace("%26", "&amp;") 
+        .replace("%23", "#")
+        .replace("%7C", "|")
+        .replace("%3D", "=")
+        .replace("%3A", ":")
+        .replace("%21", "!")
+        .replace("%27", "'")
+        .replace("%28", "(")
+        .replace("%2A", "*")
+        .replace("%29", ")")
+        .replace("%7E", "~") */;
+}%> 
+
+
+<% 
+String content= (String)pageContext.findAttribute ("AcceptURL");
+   String AcceptURLEncoder= encodeURI(content);
+   pageContext.setAttribute("AcceptURLEncoder", AcceptURLEncoder, PageContext.PAGE_SCOPE);
+
+String ShoppingCartViewURLEncoder= (String)pageContext.findAttribute ("ShoppingCartViewURL");
+    ShoppingCartViewURLEncoder= encodeURI(ShoppingCartViewURLEncoder);
+   pageContext.setAttribute("ShoppingCartViewURLEncoder", ShoppingCartViewURLEncoder, PageContext.PAGE_SCOPE);
+%>
+<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/CheckoutArea/ShippingAndBillingServicesDeclaration.js?${versionNumber}"/>"></script>
+<script>
+	var modeEncoursValide = JSON.parse('${modeEncoursValide}');
+	var paiementParTraiteKOMessage = "<c:out value='${paiementParTraiteKOMessage}'/>";
+	var paiementParTraiteOKMessage = "<c:out value='${paiementParTraiteOKMessage}'/>";
+	var modePaiementPageSubTitle = "<c:out value='${modePaiementPageSubTitle}'/>";
+	var pagePaiementAmountIncorrectErrorMessage = "<c:out value='${pagePaiementAmountIncorrectErrorMessage}'/>";
+	var pagePaiementModeLivraisonIncorrectErrorMessage = "<c:out value='${pagePaiementModeLivraisonIncorrectErrorMessage}'/>";
+	var paymentServiceErrorMessage = "<c:out value='${paymentServiceErrorMessage}'/>";
+	var paymentServiceCarteNonDisponibleErrorMessage = "<c:out value='${paymentServiceCarteNonDisponibleErrorMessage}'/>";
+
+	var modeRetrait = '${modeRetrait}';
+	var modeDrive = '${modeDrive}';
+	var modeTransporter = '${modeTransporter}';
+	var modeColissimo = '${modeColissimo}';
+	var modeLivraisonCatalog = '${modeLivraisonCatalog}';
+	
+	var shippingMode = '${shippingMode}';
+	
+	var orderId = '${orderId}';
+	var paymentModeSelected = "";
+	
+	var totalTTC = ${totalTTCWithShipping};
+	var depositTTC = ${depositTTC};
+	var remainedTTC = ${remainedTTC};
+
+	function PIAdd(params){
+		params.storeId  = "${WCParam.storeId}";
+		params.catalogId  = "${WCParam.catalogId}";
+		params.langId  = "${WCParam.langId}";
+		
+		params.piAmount  = '' + totalTTC + '';
+		params.piAmount = params.piAmount.replace(',','.');
+		params.billing_address_id  = "${billingAddressId}";
+		params.requesttype  = "ajax";
+		params.authToken  = "${authToken}";
+		
+		return params;
+	}
+	
+	function submitPayment(){
+		if(paymentModeSelected == null || trim(paymentModeSelected).length == 0) {
+			$('#errorMessage').html('<fmt:message key="uncheckedPaiementModeErrorMessage" bundle="${widgetText}" />');
+			return;
+		}
+		
+		if(!$('#acceptCGV').is(':checked')) {
+			$('#errorMessage').html('<fmt:message key="uncheckedCGVErrorMessage" bundle="${widgetText}" />');
+			return;
+		}
+	
+		if(paymentModeSelected != null && trim(paymentModeSelected).length > 0) {
+			//action préalable (OrderPrepare / PIAdd)
+			var params = [];
+			params = this.PIAdd(params);
+			
+			params.addressId  = "${billingAddressId}";
+			params.payMethodId  = paymentModeSelected;
+			params.orderId  = "${orderId}";
+			params.ReturnURL  = "${AcceptURL}";
+			params.CancelURL  = "${ShoppingCartViewURL}";
+			
+			params.piAmount  = '' + totalTTC + '';
+			params.piAmount = params.piAmount.replace(',','.');
+			
+			var targ="/AjaxMercanetPreparePayment?"
+			+"addressId=${billingAddressId}"
+			+"&payMethodId="+paymentModeSelected
+			+"&orderId=${orderId}"
+			+"&ReturnURL=${AcceptURLEncoder}"
+			+"&CancelURL=${ShoppingCartViewURLEncoder}" 
+			
+			+"&storeId=${WCParam.storeId}"
+			+"&catalogId=${WCParam.catalogId}"
+			+"&langId=${WCParam.langId}"
+			+"&piAmount="+ params.piAmount
+			+"&billing_address_id=${billingAddressId}"
+			+"&requesttype=ajax"
+			+"&authToken=${authToken}";
+			
+			
+			if(paymentModeSelected == "AURORE"){
+// 				cursor_wait();
+// 	 			wc.service.invoke('AjaxMercanetPreparePayment',params);
+				window.location = targ;
+			}else{
+				var myframe = $("#paymentiframe");
+				console.log(myframe);
+				$("#paymentiframe").attr({'src': targ, 'height': '810px', 'width': '100%'});
+				
+			 	$('html, body').animate({
+			        scrollTop: $("#paymentiframe").offset().top-80
+			    }, 600);
+			}
+		}
+	}
+
+	function selectPaymentMode(target) {
+		var orderSummaryDepositAndRemain = $("#ACOMPTE_${orderId}, #SOLDE_${orderId}"),
+	                       payLaterInfos = $('#cardsInfos'),
+	                  payLaterInfosTitle = $('#cardsInfosTitle'),
+	                     paymentInfoLink = $('#paymentInfoLink');
+
+		if($(target).is(':checked')) {
+			$(".checkPaymentMode").each(function(index){
+				if(this.id != target.id) {
+					$(this).removeAttr('checked');
+				}
+			});
+			if(target.value == 'PayLater') {
+				payLaterInfos.show();
+				paymentInfoLink.hide();
+				if(modeEncoursValide) {
+					paymentModeSelected = target.value;
+					payLaterInfosTitle.html(paiementParTraiteOKMessage);
+					payLaterInfosTitle.removeClass("error");
+					totalTTC = ${totalTTC};
+				} else {
+					payLaterInfosTitle.html(paiementParTraiteKOMessage);
+					payLaterInfosTitle.addClass("error");
+					paymentModeSelected = '';	
+				}
+				orderSummaryDepositAndRemain.hide();
+				
+			} else {
+				 <c:choose>
+				 <c:when test="${remainedTTC != '0' }">
+					orderSummaryDepositAndRemain.show();
+					totalTTC = depositTTC;
+				</c:when>
+				<c:otherwise>
+					orderSummaryDepositAndRemain.hide();
+				</c:otherwise>
+				</c:choose>
+				payLaterInfos.hide();
+				paymentInfoLink.show();
+				paymentModeSelected = target.value;
+			}			
+			var newDataLayer=[];
+			dataLayer.forEach(function(element){
+				//si shipamount change
+				if(element["transaction_payment_methods"]!=undefined){
+					newDataLayer.push({"transaction_payment_methods" : target.value});
+				}else{
+					newDataLayer.push(element);
+				}
+			});
+			dataLayer=newDataLayer;
+		} else {
+			orderSummaryDepositAndRemain.hide();
+			payLaterInfos.hide();
+			paymentInfoLink.hide();
+			totalTTC = ${totalTTC};
+			paymentModeSelected = '';
+		}
+	}
+	
+	function openPaymentInfoPopin() {
+		console.log('openPaymentInfoPopin');
+		dijit.byId('paymentInfoPopin').show()
+	}
+	
+	function hideAll() {
+		$('#zonePaymentSelection').hide();
+		$('#zoneShopCart').hide();
+		$('#zonePaymentInfo').hide();
+	}
+	
+	function showHideShopCart() {
+		if($('#zonePaymentSelection').is(':visible')) {
+			hideAll();
+			$('#zoneShopCart').show();
+		} else {
+			hideAll();
+			$('#zonePaymentSelection').show();
+			$('#tunnelHeader').show();
+		}
+	}
+	
+	function showPaymentSelection() {
+		hideAll();
+		$('#zonePaymentSelection').show();
+	}
+	
+	function showPaymentInfo() {
+		hideAll();
+		$('#tunnelHeader').focus();
+		$('#zonePaymentInfo').show();
+		
+	}
+	
+	dojo.addOnLoad(function(){
+		$(".checkPaymentMode").each(function(index){
+			if($(this).is(':checked')) {
+				selectPaymentMode(this);
+			}
+		});
+	});
+</script>
+<div class="row tunnel" id="zonePaymentSelection">
+	<div class="col12 basketButton">
+		<a class="button" href="" onclick="showHideShopCart();return false;">
+		<fmt:message var="pagePaymentMobileButtonShowCartLabel" key="pagePaymentMobileButtonShowCartLabel" bundle="${widgetText}">
+			<fmt:param value="${orderQuantity}"/>
+		</fmt:message>
+		<c:if test="${orderQuantity gt 1}">
+			<fmt:message var="pagePaymentMobileButtonShowCartLabel" key="pagePaymentMobileButtonShowCartLabels" bundle="${widgetText}">
+				<fmt:param value="${orderQuantity}"/>
+			</fmt:message>
+		</c:if>
+		${pagePaymentMobileButtonShowCartLabel}
+		</a>
+    </div>
+	<div class="col12">
+		<span class="titleBlock"><fmt:message key="modePaiementPageTitle" bundle="${widgetText}"/></span>
+		<p class="price" id="modePaiementPageSubTitleMessage">
+				<fmt:formatNumber var="totalTTCformatted" value="${totalTTCWithShipping}" type="currency"  maxFractionDigits="${env_currencyDecimal}" currencySymbol="${env_CurrencySymbolToFormat}"/>
+				<fmt:message key="modePaiementPageSubTitle" bundle="${widgetText}">
+					<fmt:param value="${totalTTCformatted }" />
+				</fmt:message>
+				
+		</p> 
+		<div class="row">
+			<div class="paiementContainer">
+				<div class="cards">
+					<ul>
+						<c:if test="${modeEncoursVisible}">
+								<li>
+									<label for="card_lapeyre">
+										<img alt="Carte Lapeyre" src="${jspStoreImgDir}/images/card_lapeyre.png">
+										<input type="checkbox" id="card_lapeyre" class="checkLP checkPaymentMode" onclick="selectPaymentMode(this);" value="PayLater">
+										<div></div>
+									</label>
+								</li>
+						</c:if>
+						<li>
+							<label for="card_visa">
+								<img alt="Carte Visa" src="${jspStoreImgDir}/images/card_visa.png">
+								<input type="checkbox" id="card_visa" class="checkLP checkPaymentMode" onclick="selectPaymentMode(this);" value="VISA">
+								<div></div>
+							</label>
+						</li>
+						<li>
+							<label for="card_mastercard">
+								<img alt="Carte Mastercard" src="${jspStoreImgDir}/images/card_mastercard.png">
+								<input type="checkbox" id="card_mastercard" class="checkLP checkPaymentMode"  onclick="selectPaymentMode(this);" value="MASTERCARD">
+								<div></div>
+							</label>
+						</li>
+						<li>
+							<label for="card_cb">
+								<img alt="Carte CB" src="${jspStoreImgDir}/images/card_cb.png">
+								<input type="checkbox" id="card_cb" class="checkLP checkPaymentMode" onclick="selectPaymentMode(this);" value="CB">
+								<div></div>
+							</label>
+						</li>
+						<li>
+							<label for="card_aurore">
+								<img alt="AURORE" src="${jspStoreImgDir}/images/card_aurore.png">
+								<input type="checkbox" id="card_aurore" class="checkLP checkPaymentMode" onclick="selectPaymentMode(this);" value="AURORE">
+								<div></div>
+							</label>
+						</li>
+						<li>
+							<label for="card_amex">
+								<img alt="Carte AMEX" src="${jspStoreImgDir}/images/card_amex.png">
+								<input type="checkbox" id="card_amex" class="checkLP checkPaymentMode" onclick="selectPaymentMode(this);" value="AMEX">
+								<div></div>
+							</label>
+						</li>
+					</ul>
+				</div>
+				<div class="cardsInfos" id="cardsInfos" style="display:none;">
+					<p class="title" id="cardsInfosTitle"><fmt:message key="paiementParTraiteKOMessage" bundle="${widgetText}"/></p>
+					<p><fmt:message key="paiementParTraiteDescription" bundle="${widgetText}"/></p>
+				</div>
+			</div>
+			<div class="alignCenter col12 left" id="paymentInfoLink">
+				<a class="paymentInfoLink" href="" onclick="showPaymentInfo();return false;" ><fmt:message key="infoMoyenPaiementLienkLabel" bundle="${widgetText}"/></a>
+			</div>
+			<div class="blockCheck">
+				<label for="acceptCGV">
+					<input type="checkbox" id="acceptCGV" class="checkLP">
+					<div></div>
+					<fmt:message key="acceptCGVFieldLabel1" bundle="${widgetText}"/>
+					<a class="lapeyreLink" href="javascript:void(0);" onclick="javascript:window.open('${cgvURL}?omitHeader=1');return false;">
+							<fmt:message key="acceptCGVFieldLabel2" bundle="${widgetText}"/>
+					</a>
+					<br />
+					<fmt:message key="acceptCGVFieldLabel3" bundle="${widgetText}"/>
+				</label>
+			</div>
+		</div>
+		<input type="hidden" name="AcceptURL" value="${AcceptURL}" />	
+		<input type="hidden" name="ShoppingCartViewURL" value="${ShoppingCartViewURL}" />	
+		<div id="sipsForm" style="display:none;"></div>
+		<div id="errorMessage" class="col12 error alignCenter">
+			<c:if test="${!empty codeErreurPaiement}">
+				<fmt:message key="paymentRefusedErrorMessage" bundle="${widgetText}"/><br/>
+				${libelleErreurPaiement[0]}
+			</c:if>
+		</div>
+		
+		<div class="ctaContainer bcolumn_100">
+			<a class="button green" href="#" onclick="submitPayment();return false;"><fmt:message key="pagePaiementSubmitButtonLabel" bundle="${widgetText}"/></a>
+		</div>
+		<div class="sep col3 bcol4"></div>
+		<div class="row">
+			<div class="bcol12 greyBackground">
+				<c:if test="${!empty billingAddressId && !empty billingAddress}">
+					<span class="titleBlock"><fmt:message key="pagePaiementbillingAddressBlocTitle" bundle="${widgetText}"/></span>
+					<div class="shopContainer pagePayment">
+						<c:set var="prefix" value="billingAddress"/>
+						<c:set var="selected" value="false"/>
+						<c:set var="selectable" value="false"/>
+						<c:set var="disable" value="false"/>
+						<c:set var="editable" value="false"/>
+						<c:set var="isBillingAddress" value="true"/>
+						<c:set var="contact" value="${billingAddress}"/>
+						<%@ include file="../Common/BlocAdresse/BlocAdresse_UI.jsp" %>
+					</div>
+				</c:if>
+			</div>
+			<div class="bcol12 greyBackground">
+				<c:choose>
+					<c:when test="${shippingMode eq modeRetrait || shippingMode eq modeDrive}">
+						<c:if test="${!empty shippingShopId && !empty shippingShop}">
+							<span class="titleBlock"><fmt:message key="pagePaiementShippingAddressBlocTitle" bundle="${widgetText}"/></span>
+							<div class="shopContainer pagePayment">
+								<c:set var="prefix" value=""/>
+								<c:set var="selectable" value="false"/>
+								<c:set var="selected" value="false"/>
+								<c:set var="hideStoreHoursInfo" value="true"/>
+								<c:set var="shop" value="${shippingShop}"/>
+								<%@ include file="../Common/BlocMagasin/BlocMagasin_UI.jsp" %>
+							</div>
+						</c:if>
+					</c:when>
+					<c:otherwise>
+						<c:if test="${!empty shippingAddressId && !empty shippingAddress}">
+							<h2 class="titleBlock"><fmt:message key="pagePaiementShippingAddressBlocTitle" bundle="${widgetText}"/></h2>
+							<div class="shopContainer pagePayment">
+								<c:set var="prefix" value="shippingAddress"/>
+							<c:set var="selected" value="false"/>
+							<c:set var="selectable" value="false"/>
+							<c:set var="disable" value="false"/>
+							<c:set var="editable" value="false"/>
+							<c:set var="contact" value="${shippingAddress}"/>
+							<%@ include file="../Common/BlocAdresse/BlocAdresse_UI.jsp" %>
+							</div>
+						</c:if>
+					</c:otherwise>
+				</c:choose>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row tunnel" id="zoneShopCart" style="display:none;">
+	<div class="col12 basketButton">
+		<a class="button backButton" href="" onclick="showPaymentSelection(); return false;"><fmt:message key="retour" bundle="${widgetText}" /></a>
+    </div>
+	<div class="col12 left apercuPanier">
+		<jsp:include page="../TunnelRecapPanier.jsp">
+			<jsp:param name="tunnelStep" value="4"/>
+			<jsp:param name="pageType" value="PAIEMENT" />
+		</jsp:include>
+	</div>
+</div>
+
+<div class="row tunnel" id="zonePaymentInfo" style="display:none;">
+	<div class="col12 basketButton">
+		<a class="button backButton" href="" onclick="showPaymentSelection(); return false;"><fmt:message key="retour" bundle="${widgetText}" /></a>
+    </div>
+	<div class="col12 left">
+		<div class="row alignCenter">
+			<h2 class="titleBlock">
+				<fmt:message bundle="${widgetText}" key="infoCartePopinTitle" />
+			</h2>
+			<div>
+				<fmt:message bundle="${widgetText}" key="infoCartePopinBody" />
+			</div>
+			<br>
+			<div>
+				<a onclick="javascript:showPaymentSelection();return false;" href="#" class="button green"><fmt:message bundle="${widgetText}" key="infoCartePopinButtonLabel" /></a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- ZONE POPIN -->
+<%@ include file="../Common/PaymentInfoPopin.jsp" %>
+<iframe id="paymentiframe" src="" height="0px" width="0px" name="iframeName" align="center">
+	<p>You need an iframes capable browser to view this content.</p>
+</iframe>
+
+<form method="POST" action="https://url.reponse.manuelle.finale.commerçant" target="_parent"> 
+ 
+</form> 
+
+<!-- END TunnelPayment_UI.jspf -->

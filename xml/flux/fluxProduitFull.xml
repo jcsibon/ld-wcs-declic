@@ -1,0 +1,1492 @@
+<message type="productImport">
+	<header>
+		<sender>SAS_WRK</sender>
+		<SASid>Product-75604-uuid-e218981a-aaa0-11e5-afff-b9970018ab6e</SASid>
+		<extractDate>2015-12-25T03:09:03.854+01:00</extractDate>
+		<targetCatalog>current</targetCatalog>
+		<nbDataEntries>4045</nbDataEntries>
+		<credentials>
+			<login>importadmin</login>
+			<password>passw0rd</password>
+		</credentials>
+	</header>
+	<data>
+		<product>
+			<action>add</action>
+			<partnumber>FPC2295761</partnumber>
+			<type>STANDARD</type>
+			<published locale="fr">true</published>
+			<label locale="fr">Bloc-porte Eclat Ch?ne plaqu? gamme Platine JFE</label>
+			<shortDesc locale="fr"/>
+			<longDesc locale="fr">- Porte rev?tue d'un placage ch?ne bross? en surface.&lt;br/&gt;- Bloc-porte ? rive droite avec joint d'isolation noir.&lt;br/&gt;- Huisserie en MDF.&lt;br/&gt;- Epaisseur de la porte 40 mm.&lt;br/&gt;- Mod?le propos? en largeur 73 cm.&lt;br/&gt;- Vitrage s?rigraphi?.&lt;br/&gt;- Serrure ? cl?.&lt;br/&gt;- Huisserie ?p. 90 mm.&lt;br/&gt;- Fiches invisibles noir mat r?glables.&lt;br/&gt;- Dimensions totales : ajouter + 4 cm en hauteur, et + 6,2 cm en largeur.&lt;br/&gt;- Fabriqu? en France.&lt;br/&gt;&lt;br/&gt;- Propos?e aussi en largeur : 83 cm. &lt;br/&gt;- Poign?e non comprise.</longDesc>
+			<additionalDesc1 locale="fr">Laissez entrer la lumi?re dans vos pi?ces via le bloc-porte ?clat plaqu? ch?ne propos? dans la gamme Platine. Fabriqu? en France, il comporte un vitrage s?rigraphi? et existe en largeurs 73 et 83 cm.</additionalDesc1>
+			<additionalDesc2 locale="fr"/>
+			<brandPartnumber/>
+			<brandName/>
+			<imageThumbnail locale="fr">/thumbnail/206/797/201206797.jpg</imageThumbnail>
+			<imageFull locale="fr">/standardMain/206/797/201206797.jpg</imageFull>
+			<categoriesParentList>
+				<categoryParent>
+					<categoryIdentifier>portes-battantes_CCN0169</categoryIdentifier>
+				</categoryParent>
+			</categoriesParentList>
+			<seo>
+				<urlKeyword locale="fr">bloc-porte-eclat-chene-plaque-gamme-platine-FPC2295761</urlKeyword>
+				<pageTitle locale="fr">Bloc-porte Eclat Ch?ne plaqu? gamme Platine - Lapeyre</pageTitle>
+				<metaDesc locale="fr">Laissez entrer la lumi?re dans vos pi?ces via le bloc-porte ?clat plaqu? ch?ne propos? dans la gamme Platine. Fabriqu? en France, il comporte un vitrage s?rigraphi? et existe en largeurs 73 et 83 cm.</metaDesc>
+				<metaKeyword locale="fr"/>
+			</seo>
+			<associatedAssetList>
+				<associatedAsset>
+					<identifier>GRIDIMAGES-FULLIMAGES-FPC2295761</identifier>
+					<usage>GRIDIMAGES_FULLIMAGE</usage>
+					<sequence>100000.0</sequence>
+					<fileUrl>/desktopList/206/797/201206797.jpg</fileUrl>
+					<label locale="fr">Bloc-porte Eclat Ch?ne plaqu? gamme Platine</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>USERMANUAL-FPC2295761</identifier>
+					<usage>USERMANUAL</usage>
+					<sequence>100001.0</sequence>
+					<fileUrl>/desktopList/206/797/201206797.jpg</fileUrl>
+					<label locale="fr">Guide de pose pour Bloc-porte Eclat Ch?ne plaqu? gamme Platine</label>
+					<shortDesc locale="fr">Guide de pose pour Bloc-porte Eclat Ch?ne plaqu? gamme Platine</shortDesc>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>COLLMAIN-FPC0003700-200615389-TEST</identifier>
+					<usage>ICON</usage>
+					<sequence>777.0</sequence>
+					<fileUrl>/picto/_bl/anc/Couleurs_au_choix_2015_fond_777blanc.jpg</fileUrl>
+					<label locale="fr">Couleurs_au_choix_2015_fond_blanc</label>
+					<shortDesc locale="fr">Test ajout de shortdesc existe paas</shortDesc>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>COLLMAIN-FPC0003700-200615389</identifier>
+					<usage>ICON</usage>
+					<sequence>777.0</sequence>
+					<fileUrl>/picto/_bl/anc/Couleurs_au_choix_2015_fond_777blanc.jpg</fileUrl>
+					<label locale="fr">Couleurs_au_choix_2015_fond_blanc</label>
+					<shortDesc locale="fr">Test ajout de shortdesc existe</shortDesc>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>PICTO-FPC2295761-Garantie-02-ans-Q</identifier>
+					<usage>ICON</usage>
+					<sequence>0.0</sequence>
+					<fileUrl>/picto/_an/s_q/Garantie_02_ans_Q.jpg</fileUrl>
+					<label locale="fr">Garantie_02_ans_Q.jpg</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>PICTO-FPC2295761-Isolation-acoustique-Q</identifier>
+					<usage>ICON</usage>
+					<sequence>0.0</sequence>
+					<fileUrl>/picto/iqu/e_q/Isolation_acoustique_Q.jpg</fileUrl>
+					<label locale="fr">Isolation_acoustique_Q</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>PICTO-FPC2295761-Isolation-thermique-Q</identifier>
+					<usage>ICON</usage>
+					<sequence>1.0</sequence>
+					<fileUrl>/picto/iqu/e_q/Isolation_thermique_Q.jpg</fileUrl>
+					<label locale="fr">Isolation_thermique_Q</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>PICTO-FPC2295761-atelier-Q</identifier>
+					<usage>ICON</usage>
+					<sequence>0.0</sequence>
+					<fileUrl>/picto/lie/r_q/atelier_Q.jpg</fileUrl>
+					<label locale="fr">Atelier</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>STANDARDMAIN-FPC2295761-201206797</identifier>
+					<usage>ANGLEIMAGES_FULLIMAGE</usage>
+					<sequence>0.0</sequence>
+					<fileUrl>/standardMain/206/797/201206797.jpg</fileUrl>
+					<label locale="fr">Porte d'int?rieur Platine plaqu?e ch?ne bross? clair Eclat vitrage s?rigraphi?</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>THUMBNAIL-FPC2295761-201206797</identifier>
+					<usage>ANGLEIMAGES_THUMBNAIL</usage>
+					<sequence>0.0</sequence>
+					<fileUrl>/thumbnail/206/797/201206797.jpg</fileUrl>
+					<label locale="fr">Porte d'int?rieur Platine plaqu?e ch?ne bross? clair Eclat vitrage s?rigraphi?</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr"/>
+				</associatedAsset>
+			</associatedAssetList>
+			<attributeValueList>
+				<attributeValue>
+					<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-HAUTEUR</attrIdentifier>
+					<attrSequence>1.0</attrSequence>
+					<attrUsage>1</attrUsage>
+				</attributeValue>
+				<attributeValue>
+					<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-LARGEUR</attrIdentifier>
+					<attrSequence>2.0</attrSequence>
+					<attrUsage>1</attrUsage>
+				</attributeValue>
+				<attributeValue>
+					<attrIdentifier>CCU0004-NAT-17-001-SECTION-HUISSERIE2</attrIdentifier>
+					<attrSequence>3.0</attrSequence>
+					<attrUsage>1</attrUsage>
+				</attributeValue>
+				<attributeValue>
+					<attrIdentifier>CCU0004-NAT-17-001-SENS-OUVERTURE</attrIdentifier>
+					<attrSequence>4.0</attrSequence>
+					<attrUsage>1</attrUsage>
+				</attributeValue>
+				<attributeValue>
+					<attrIdentifier>CCU0001-DIMENSIONS-COMMUNES-DIM-LARGEUR</attrIdentifier>
+					<attrSequence>0.0</attrSequence>
+					<attrUsage>1</attrUsage>
+				</attributeValue>
+				<attributeValue>
+					<attrIdentifier>codeEan</attrIdentifier>
+					<attrSequence>0.0</attrSequence>
+					<attrUsage>2</attrUsage>
+					<valueString locale="fr">3552131776851</valueString>
+				</attributeValue>
+				<attributeValue>
+					<attrIdentifier>colissimo</attrIdentifier>
+					<attrSequence>0.0</attrSequence>
+					<attrUsage>2</attrUsage>
+					<valueDecimal locale="fr">0</valueDecimal>
+				</attributeValue>
+				<attributeValue>
+					<attrIdentifier>priceLabel</attrIdentifier>
+					<attrSequence>0.0</attrSequence>
+					<attrUsage>2</attrUsage>
+					<valueString locale="fr">Prix pour la dimension H 204,0 x L 73,0 cm</valueString>
+				</attributeValue>
+			</attributeValueList>
+			<itemList>
+				<item>
+					<sku>2402551</sku>
+					<isDefault>true</isDefault>
+					<published locale="fr">true</published>
+					<label locale="fr">Bloc-porte ECLAT Huisserie 90 - H.204 x l.73 gauche</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr">- Porte rev?tue d'un placage ch?ne bross? en surface.&lt;br/&gt;- Bloc-porte ? rive droite avec joint d'isolation noir.&lt;br/&gt;- Huisserie en MDF.&lt;br/&gt;- Epaisseur de la porte 40 mm.&lt;br/&gt;- Mod?le propos? en largeur 73 cm.&lt;br/&gt;- Vitrage s?rigraphi?.&lt;br/&gt;- Serrure ? cl?.&lt;br/&gt;- Huisserie ?p. 90 mm.&lt;br/&gt;- Fiches invisibles noir mat r?glables.&lt;br/&gt;- Dimensions totales : ajouter + 4 cm en hauteur, et + 6,2 cm en largeur.&lt;br/&gt;- Fabriqu? en France.&lt;br/&gt;&lt;br/&gt;- Propos?e aussi en largeur : 83 cm. &lt;br/&gt;- Poign?e non comprise.</longDesc>
+					<additionalDesc1 locale="fr"/>
+					<additionalDesc2 locale="fr"/>
+					<imageThumbnail locale="fr">/thumbnail/206/797/201206797.jpg</imageThumbnail>
+					<imageFull locale="fr">/standardMain/206/797/201206797.jpg</imageFull>
+					<seoItem>
+						<urlKeyword locale="fr">bloc-porte-eclat-huisserie-90-h-204-x-l-73-gauche-2402551</urlKeyword>
+					</seoItem>
+					<attributeValueList>
+						<attributeValue>
+							<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-HAUTEUR</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-HAUTEUR-204</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-LARGEUR</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-LARGEUR-83</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-PROFONDEUR</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-PROFONDEUR-9</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-VOLUME</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-VOLUME-59.57</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0001-DIMENSIONS-COMMUNES-DIM-LARGEUR</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier >CCU0001-DIMENSIONS-COMMUNES-DIM-LARGEUR-32.2</valueIdentifier>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-FAM-17-FINITION</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-FAM-17-FINITION-SY1</valueIdentifier>
+							<valueString locale="fr">Ch?ne plaqu? bross?</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-FAM-17-MATERIAU</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-FAM-17-MATERIAU-K15</valueIdentifier>
+							<valueString locale="fr">Ch?ne plaqu?</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-NAT-17-001-EPAISSEUR-PORTE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-NAT-17-001-EPAISSEUR-PORTE-40</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-NAT-17-001-SECTION-HUISSERIE2</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CCU0004-NAT-17-001-SECTION-HUISSERIE2-93x51</valueIdentifier>
+							<valueString locale="fr">93x51</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-NAT-17-001-SENS-OUVERTURE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CCU0004-NAT-17-001-SENS-OUVERTURE-G</valueIdentifier>
+							<valueString locale="fr">Gauche</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNE-COMM-ART-CRE-DATE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">20130809 00:00:00</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNE-COMM-ART-TYPE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">004</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-3-COMM-ASPECT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>SY1</valueIdentifier>
+							<valueString locale="fr">Ch?ne plaqu? bross?</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-3-COMM-STD-SM-STDOPT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>004</valueIdentifier>
+							<valueString locale="fr">Standard</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-3-COMM-TYPE-MATERIAU</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>015</valueIdentifier>
+							<valueString locale="fr">Bois</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-3-COMM-TYPE-PDT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>001</valueIdentifier>
+							<valueString locale="fr">Principal</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>DIMENSIONS-COMMUNES-DIM-LARGEUREmballe</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">82</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>DIMENSIONS-COMMUNES-DIM-POIDS</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">36</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>DIMENSIONS-COMMUNES-DIM-PROFONDEUREmballe</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">10</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>DIMENSIONS-COMMUNES-DIM-hauteuremballe</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">215</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>FAM-17-MODELE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>O78</valueIdentifier>
+							<valueString locale="fr">Eclat</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>NAT-17-001-CHANT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>K61</valueIdentifier>
+							<valueString locale="fr">Rive droite</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>NAT-17-001-GAMME-SPECIFIQUE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>V47</valueIdentifier>
+							<valueString locale="fr">Portes int?rieures</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>NAT-17-001-NB-VANTAUX</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">1</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>NAT-17-001-PRODUIT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>703</valueIdentifier>
+							<valueString locale="fr">Bloc-porte</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>SPECIF-RESO-FRANCE-COMM-DAT-COMM</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">20140301 00:00:00</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>SPECIF-RESO-FRANCE-COMM-FIN-COMMER</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">20160220 00:00:00</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>achatLocal</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>articleExpo</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>categorieGoogle</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">Portes</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>codeEan</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">3552131776851</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>codeObsolescence</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">1</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>codeObsolescence-DATE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">20150922 00:00:00</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>colissimo</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>contrainteColisage</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">0</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>diffusionWeb</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">1</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>isRemisable</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">1</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>libelleCatalogue</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">MENUISERIES</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>offreDeg</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>offrePro</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>poids</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">37</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>priceLabel</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">Prix pour la dimension H 204,0 x L 73,0 cm</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>renoPlus</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteSecondaire</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteSecondaireLibelle</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVente</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVenteLegale</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVenteLegaleLibelle</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVenteLibelle</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+					</attributeValueList>
+				</item>
+				<item>
+					<sku>2402552</sku>
+					<isDefault>false</isDefault>
+					<published locale="fr">true</published>
+					<label locale="fr">Bloc-porte ECLAT Huisserie 90 - H.204 x l.73 droit</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr">- Porte rev?tue d'un placage ch?ne bross? en surface.&lt;br/&gt;- Bloc-porte ? rive droite avec joint d'isolation noir.&lt;br/&gt;- Huisserie en MDF.&lt;br/&gt;- Epaisseur de la porte 40 mm.&lt;br/&gt;- Mod?le propos? en largeur 73 cm.&lt;br/&gt;- Vitrage s?rigraphi?.&lt;br/&gt;- Serrure ? cl?.&lt;br/&gt;- Huisserie ?p. 90 mm.&lt;br/&gt;- Fiches invisibles noir mat r?glables.&lt;br/&gt;- Dimensions totales : ajouter + 4 cm en hauteur, et + 6,2 cm en largeur.&lt;br/&gt;- Fabriqu? en France.&lt;br/&gt;&lt;br/&gt;- Propos?e aussi en largeur : 83 cm. &lt;br/&gt;- Poign?e non comprise.</longDesc>
+					<additionalDesc1 locale="fr"/>
+					<additionalDesc2 locale="fr"/>
+					<imageThumbnail locale="fr">/thumbnail/206/797/201206797.jpg</imageThumbnail>
+					<imageFull locale="fr">/standardMain/206/797/201206797.jpg</imageFull>
+					<seoItem>
+						<urlKeyword locale="fr">bloc-porte-eclat-huisserie-90-h-204-x-l-73-droit-2402552</urlKeyword>
+					</seoItem>
+					<attributeValueList>
+						<attributeValue>
+							<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-HAUTEUR</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-HAUTEUR-204</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-LARGEUR</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-LARGEUR-73</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-PROFONDEUR</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-PROFONDEUR-9</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0001-DIMENSIONS-COMMUNES-DIM-LARGEUR</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier >CCU0001-DIMENSIONS-COMMUNES-DIM-LARGEUR-32.7</valueIdentifier>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-VOLUME</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-VOLUME-59.57</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-FAM-17-FINITION</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-FAM-17-FINITION-SY1</valueIdentifier>
+							<valueString locale="fr">Ch?ne plaqu? bross?</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-FAM-17-MATERIAU</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-FAM-17-MATERIAU-K15</valueIdentifier>
+							<valueString locale="fr">Ch?ne plaqu?</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-NAT-17-001-EPAISSEUR-PORTE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-NAT-17-001-EPAISSEUR-PORTE-40</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-NAT-17-001-SECTION-HUISSERIE2</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CCU0004-NAT-17-001-SECTION-HUISSERIE2-93x51</valueIdentifier>
+							<valueString locale="fr">93x51</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-NAT-17-001-SENS-OUVERTURE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CCU0004-NAT-17-001-SENS-OUVERTURE-D</valueIdentifier>
+							<valueString locale="fr">Droite</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNE-COMM-ART-CRE-DATE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">20130809 00:00:00</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNE-COMM-ART-TYPE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">004</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-3-COMM-ASPECT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>SY1</valueIdentifier>
+							<valueString locale="fr">Ch?ne plaqu? bross?</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-3-COMM-STD-SM-STDOPT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>004</valueIdentifier>
+							<valueString locale="fr">Standard</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-3-COMM-TYPE-MATERIAU</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>015</valueIdentifier>
+							<valueString locale="fr">Bois</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-3-COMM-TYPE-PDT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>001</valueIdentifier>
+							<valueString locale="fr">Principal</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>DIMENSIONS-COMMUNES-DIM-LARGEUREmballe</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">82</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>DIMENSIONS-COMMUNES-DIM-POIDS</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">36</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>DIMENSIONS-COMMUNES-DIM-PROFONDEUREmballe</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">10</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>DIMENSIONS-COMMUNES-DIM-hauteuremballe</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">215</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>FAM-17-MODELE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>O78</valueIdentifier>
+							<valueString locale="fr">Eclat</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>NAT-17-001-CHANT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>K61</valueIdentifier>
+							<valueString locale="fr">Rive droite</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>NAT-17-001-GAMME-SPECIFIQUE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>V47</valueIdentifier>
+							<valueString locale="fr">Portes int?rieures</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>NAT-17-001-NB-VANTAUX</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">1</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>NAT-17-001-PRODUIT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>703</valueIdentifier>
+							<valueString locale="fr">Bloc-porte</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>SPECIF-RESO-FRANCE-COMM-DAT-COMM</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">20140301 00:00:00</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>SPECIF-RESO-FRANCE-COMM-FIN-COMMER</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">20160220 00:00:00</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>achatLocal</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>articleExpo</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>categorieGoogle</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">Portes</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>codeEan</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">3552131776868</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>codeObsolescence</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">1</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>codeObsolescence-DATE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">20150922 00:00:00</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>colissimo</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>contrainteColisage</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">0</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>diffusionWeb</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">1</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>isRemisable</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">1</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>libelleCatalogue</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">MENUISERIES</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>offreDeg</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>offrePro</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>poids</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">37</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>priceLabel</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">Prix pour la dimension H 204,0 x L 73,0 cm</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>renoPlus</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteSecondaire</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteSecondaireLibelle</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVente</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVenteLegale</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVenteLegaleLibelle</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVenteLibelle</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+					</attributeValueList>
+				</item>
+				<item>
+					<sku>2402561</sku>
+					<isDefault>false</isDefault>
+					<published locale="fr">true</published>
+					<label locale="fr">Bloc-porte ECLAT Huisserie 90 - H.204 x l.83 gauche</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr">- Porte rev?tue d'un placage ch?ne bross? en surface.&lt;br/&gt;- Bloc-porte ? rive droite avec joint d'isolation noir.&lt;br/&gt;- Huisserie en MDF.&lt;br/&gt;- Epaisseur de la porte 40 mm.&lt;br/&gt;- Mod?le propos? en largeur 73 cm.&lt;br/&gt;- Vitrage s?rigraphi?.&lt;br/&gt;- Serrure ? cl?.&lt;br/&gt;- Huisserie ?p. 90 mm.&lt;br/&gt;- Fiches invisibles noir mat r?glables.&lt;br/&gt;- Dimensions totales : ajouter + 4 cm en hauteur, et + 6,2 cm en largeur.&lt;br/&gt;- Fabriqu? en France.&lt;br/&gt;&lt;br/&gt;- Propos?e aussi en largeur : 83 cm. &lt;br/&gt;- Poign?e non comprise.</longDesc>
+					<additionalDesc1 locale="fr"/>
+					<additionalDesc2 locale="fr"/>
+					<imageThumbnail locale="fr">/thumbnail/206/797/201206797.jpg</imageThumbnail>
+					<imageFull locale="fr">/standardMain/206/797/201206797.jpg</imageFull>
+					<seoItem>
+						<urlKeyword locale="fr">bloc-porte-eclat-huisserie-90-h-204-x-l-83-gauche-2402561</urlKeyword>
+					</seoItem>
+					<attributeValueList>
+						<attributeValue>
+							<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-HAUTEUR</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-HAUTEUR-204</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-LARGEUR</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-LARGEUR-83</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-PROFONDEUR</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-PROFONDEUR-9</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-VOLUME</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-VOLUME-67.73</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-FAM-17-FINITION</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-FAM-17-FINITION-SY1</valueIdentifier>
+							<valueString locale="fr">Ch?ne plaqu? bross?</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-FAM-17-MATERIAU</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-FAM-17-MATERIAU-K15</valueIdentifier>
+							<valueString locale="fr">Ch?ne plaqu?</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-NAT-17-001-EPAISSEUR-PORTE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-NAT-17-001-EPAISSEUR-PORTE-40</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0001-DIMENSIONS-COMMUNES-DIM-LARGEUR</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier >CCU0001-DIMENSIONS-COMMUNES-DIM-LARGEUR-33</valueIdentifier>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-NAT-17-001-SECTION-HUISSERIE2</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CCU0004-NAT-17-001-SECTION-HUISSERIE2-93x51</valueIdentifier>
+							<valueString locale="fr">93x51</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-NAT-17-001-SENS-OUVERTURE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CCU0004-NAT-17-001-SENS-OUVERTURE-G</valueIdentifier>
+							<valueString locale="fr">Gauche</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNE-COMM-ART-CRE-DATE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">20130809 00:00:00</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNE-COMM-ART-TYPE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">004</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-3-COMM-ASPECT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>SY1</valueIdentifier>
+							<valueString locale="fr">Ch?ne plaqu? bross?</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-3-COMM-STD-SM-STDOPT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>004</valueIdentifier>
+							<valueString locale="fr">Standard</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-3-COMM-TYPE-MATERIAU</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>015</valueIdentifier>
+							<valueString locale="fr">Bois</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-3-COMM-TYPE-PDT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>001</valueIdentifier>
+							<valueString locale="fr">Principal</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>DIMENSIONS-COMMUNES-DIM-LARGEUREmballe</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">92</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>DIMENSIONS-COMMUNES-DIM-POIDS</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">40</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>DIMENSIONS-COMMUNES-DIM-PROFONDEUREmballe</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">10</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>DIMENSIONS-COMMUNES-DIM-hauteuremballe</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">215</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>FAM-17-MODELE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>O78</valueIdentifier>
+							<valueString locale="fr">Eclat</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>NAT-17-001-CHANT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>K61</valueIdentifier>
+							<valueString locale="fr">Rive droite</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>NAT-17-001-GAMME-SPECIFIQUE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>V47</valueIdentifier>
+							<valueString locale="fr">Portes int?rieures</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>NAT-17-001-NB-VANTAUX</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">1</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>NAT-17-001-PRODUIT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>703</valueIdentifier>
+							<valueString locale="fr">Bloc-porte</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>SPECIF-RESO-FRANCE-COMM-DAT-COMM</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">20140301 00:00:00</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>SPECIF-RESO-FRANCE-COMM-FIN-COMMER</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">20160220 00:00:00</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>achatLocal</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>articleExpo</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>categorieGoogle</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">Portes</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>codeEan</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">3552131775335</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>codeObsolescence</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">1</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>codeObsolescence-DATE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">20150922 00:00:00</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>colissimo</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>contrainteColisage</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">0</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>diffusionWeb</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">1</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>isRemisable</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">1</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>libelleCatalogue</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">MENUISERIES</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>offreDeg</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>offrePro</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>poids</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">41</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>priceLabel</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">Prix pour la dimension H 204,0 x L 83,0 cm</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>renoPlus</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteSecondaire</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteSecondaireLibelle</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVente</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVenteLegale</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVenteLegaleLibelle</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVenteLibelle</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+					</attributeValueList>
+				</item>
+				<item>
+					<sku>2402562</sku>
+					<isDefault>false</isDefault>
+					<published locale="fr">true</published>
+					<label locale="fr">Bloc-porte ECLAT Huisserie 90 - H.204 x l.83 droit</label>
+					<shortDesc locale="fr"/>
+					<longDesc locale="fr">- Porte rev?tue d'un placage ch?ne bross? en surface.&lt;br/&gt;- Bloc-porte ? rive droite avec joint d'isolation noir.&lt;br/&gt;- Huisserie en MDF.&lt;br/&gt;- Epaisseur de la porte 40 mm.&lt;br/&gt;- Mod?le propos? en largeur 73 cm.&lt;br/&gt;- Vitrage s?rigraphi?.&lt;br/&gt;- Serrure ? cl?.&lt;br/&gt;- Huisserie ?p. 90 mm.&lt;br/&gt;- Fiches invisibles noir mat r?glables.&lt;br/&gt;- Dimensions totales : ajouter + 4 cm en hauteur, et + 6,2 cm en largeur.&lt;br/&gt;- Fabriqu? en France.&lt;br/&gt;&lt;br/&gt;- Propos?e aussi en largeur : 83 cm. &lt;br/&gt;- Poign?e non comprise.</longDesc>
+					<additionalDesc1 locale="fr"/>
+					<additionalDesc2 locale="fr"/>
+					<imageThumbnail locale="fr">/thumbnail/206/797/201206797.jpg</imageThumbnail>
+					<imageFull locale="fr">/standardMain/206/797/201206797.jpg</imageFull>
+					<seoItem>
+						<urlKeyword locale="fr">bloc-porte-eclat-huisserie-90-h-204-x-l-83-droit-2402562</urlKeyword>
+					</seoItem>
+					<attributeValueList>
+						<attributeValue>
+							<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-HAUTEUR</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-HAUTEUR-204</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-LARGEUR</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-LARGEUR-83</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-PROFONDEUR</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-PROFONDEUR-9</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-VOLUME</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-DIMENSIONS-COMMUNES-DIM-VOLUME-67.73</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0001-DIMENSIONS-COMMUNES-DIM-LARGEUR</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier >CCU0001-DIMENSIONS-COMMUNES-DIM-LARGEUR-35</valueIdentifier>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-FAM-17-FINITION</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-FAM-17-FINITION-SY1</valueIdentifier>
+							<valueString locale="fr">Ch?ne plaqu? bross?</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-FAM-17-MATERIAU</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-FAM-17-MATERIAU-K15</valueIdentifier>
+							<valueString locale="fr">Ch?ne plaqu?</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-NAT-17-001-EPAISSEUR-PORTE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>CCU0004-NAT-17-001-EPAISSEUR-PORTE-40</valueIdentifier>
+							<valueString locale="fr"/>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-NAT-17-001-SECTION-HUISSERIE2</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CCU0004-NAT-17-001-SECTION-HUISSERIE2-93x51</valueIdentifier>
+							<valueString locale="fr">93x51</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>CCU0004-NAT-17-001-SENS-OUVERTURE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CCU0004-NAT-17-001-SENS-OUVERTURE-D</valueIdentifier>
+							<valueString locale="fr">Droite</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNE-COMM-ART-CRE-DATE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">20130809 00:00:00</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNE-COMM-ART-TYPE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">004</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-3-COMM-ASPECT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>SY1</valueIdentifier>
+							<valueString locale="fr">Ch?ne plaqu? bross?</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-3-COMM-STD-SM-STDOPT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>004</valueIdentifier>
+							<valueString locale="fr">Standard</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-3-COMM-TYPE-MATERIAU</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>015</valueIdentifier>
+							<valueString locale="fr">Bois</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-3-COMM-TYPE-PDT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>001</valueIdentifier>
+							<valueString locale="fr">Principal</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>DIMENSIONS-COMMUNES-DIM-LARGEUREmballe</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">92</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>DIMENSIONS-COMMUNES-DIM-POIDS</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">40</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>DIMENSIONS-COMMUNES-DIM-PROFONDEUREmballe</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">10</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>DIMENSIONS-COMMUNES-DIM-hauteuremballe</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">215</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>FAM-17-MODELE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>O78</valueIdentifier>
+							<valueString locale="fr">Eclat</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>NAT-17-001-CHANT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>K61</valueIdentifier>
+							<valueString locale="fr">Rive droite</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>NAT-17-001-GAMME-SPECIFIQUE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>V47</valueIdentifier>
+							<valueString locale="fr">Portes int?rieures</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>NAT-17-001-NB-VANTAUX</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">1</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>NAT-17-001-PRODUIT</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>703</valueIdentifier>
+							<valueString locale="fr">Bloc-porte</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>SPECIF-RESO-FRANCE-COMM-DAT-COMM</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">20140301 00:00:00</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>SPECIF-RESO-FRANCE-COMM-FIN-COMMER</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">20160220 00:00:00</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>achatLocal</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>articleExpo</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>categorieGoogle</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">Portes</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>codeEan</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">3552131776875</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>codeObsolescence</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">1</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>codeObsolescence-DATE</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">20150922 00:00:00</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>colissimo</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>contrainteColisage</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">0</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>diffusionWeb</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">1</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>isRemisable</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">1</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>libelleCatalogue</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">MENUISERIES</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>offreDeg</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>offrePro</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>poids</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">41</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>priceLabel</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">Prix pour la dimension H 204,0 x L 83,0 cm</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>renoPlus</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueDecimal locale="fr">0</valueDecimal>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteSecondaire</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteSecondaireLibelle</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVente</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVenteLegale</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVenteLegaleLibelle</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVenteLibelle</attrIdentifier>
+							<attrSequence>0.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+					</attributeValueList>
+				</item>
+			</itemList>
+		</product>
+	</data>
+</message>

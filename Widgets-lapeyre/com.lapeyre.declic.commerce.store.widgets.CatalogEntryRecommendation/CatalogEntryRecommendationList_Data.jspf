@@ -1,0 +1,98 @@
+<%--
+simplified CatalogEntryList_Data.jspf
+--%>
+
+<c:set var="pageView" value="grid"/>
+<c:set var="otherViews" value="false" />
+
+<c:set var="env_resultsPerRow" value="4" scope="request"/>
+
+<c:set var="initPageView" value="${param.initPageView }" />
+<c:if test="${empty initPageView }" >
+	<c:set var="initPageView" value="${pageView}" />
+</c:if>
+
+<wcf:url var="ProductListingViewURL" value="ProductListingView" type="Ajax">
+    <wcf:param name="langId" value="${langId}"/>
+	<wcf:param name="storeId" value="${storeId}"/>
+	<wcf:param name="catalogId" value="${catalogId}"/>
+	<wcf:param name="advancedSearch" value="${WCParam.advancedSearch}"/>
+	<wcf:param name="sType" value="SimpleSearch"/>
+	<wcf:param name="categoryId" value="${WCParam.categoryId}"/>
+	<wcf:param name="searchType" value="${searchType}"/>
+	<wcf:param name="facet" value="${WCParam.facet}"/>
+	<wcf:param name="searchTerm" value="${intentSearchTerm}" />
+	<wcf:param name="metaData" value="${metaData}"/>
+	<wcf:param name="resultCatEntryType" value="${WCParam.resultCatEntryType}"/>
+	<wcf:param name="filterFacet" value="${WCParam.filterFacet}"/>
+	<wcf:param name="manufacturer" value="${WCParam.manufacturer}"/>
+	<wcf:param name="emsName" value="${param.emsName}" />
+	<wcf:param name="gridPosition" value="${param.gridPosition}" />
+	<wcf:param name="resultsPerPage" value="${pageSize}" />
+	<wcf:param name="disableProductCompare" value="${disableProductCompare}" />
+	<wcf:param name="ajaxStoreImageDir" value="${jspStoreImgDir}" />
+	<wcf:param name="filterTerm" value="${WCParam.filterTerm}" />
+	<c:if test="${!empty isCustomSearchTermFieldName}" >
+		<wcf:param name="isCustomSearchTermFieldName" value="${isCustomSearchTermFieldName}" />
+		<wcf:param name="FacetCustom" value="${FacetCustom}" />
+	</c:if>
+	<c:if test="${env_inPreview && !env_storePreviewLink}">
+		<wcf:param name="initSortOrder" value="${initSortOrder}" />
+		<wcf:param name="initPageView" value="${initPageView}" />
+		<wcf:param name="pgl_widgetName" value="${param.pgl_widgetName}" />
+		<wcf:param name="pgl_widgetId" value="${param.pgl_widgetId}" />
+		<wcf:param name="pgl_widgetSlotId" value="${param.pgl_widgetSlotId}"/>
+		<wcf:param name="pgl_widgetSeqeunce" value="${param.pgl_widgetSeqeunce}"/>
+		<wcf:param name="pgl_widgetDefName" value="${param.pgl_widgetDefName}"/>
+	</c:if>
+	<wcf:param name="ddkey" value="ProductListingView${widgetSuffix}"/>
+</wcf:url>
+ 
+<c:set var="env_grid_pagination_count" value = "${8}" />
+<c:set var="endIndex" value = "${pageSize + beginIndex}"/>
+
+<c:set var="totalCount" value="${catalogNavigationView1.recordSetTotal}" scope="request"/>
+
+<%-- divide to calculate page number and round down --%>
+<c:set var="pageNum" value = "${(endIndex div pageSize) - 1}" />
+<fmt:formatNumber var="pageNum" maxFractionDigits="0" value="${pageNum}" />
+
+<c:set var="endIndex" value = "${pageSize + beginIndex}"/>
+<c:if test="${endIndex > totalCount}">
+	<c:set var="endIndex" value = "${totalCount}"/>
+</c:if>
+<%-- totalCount is set in SearchSetup.jspf file.. --%>
+<fmt:parseNumber var="total" value="${totalCount}" parseLocale="en_US"/> <%-- Get a float value from totalCount which is a string --%>
+
+<c:set  var="totalPages"  value = "${total / pageSize * 1.0}"/>
+<%-- Get a float value from totalPages which is a string --%>
+<fmt:parseNumber var="totalPages" value="${totalPages}" integerOnly="false" parseLocale="en_US"/>
+
+<%-- do a ceil if totalPages contains fraction digits --%>
+<c:set var="totalPages" value = "${totalPages + (1 - (totalPages % 1)) % 1}"/>
+
+<c:set var="currentPage" value = "${( beginIndex + 1) / pageSize}" />
+<%-- Get a float value from currentPage which is a string --%>
+<fmt:parseNumber var="currentPage" value="${currentPage}" integerOnly="false" parseLocale="en_US"/>
+<%-- do a ceil if currentPage contains fraction digits --%>
+<c:set var="currentPage" value = "${currentPage + (1 - (currentPage % 1)) % 1}"/>
+
+<%-- Get a float value from currentPage which is a string --%>
+<fmt:parseNumber var="currentPage" value="${currentPage}" integerOnly="false" parseLocale="en_US"/>
+<%-- currentPage=${currentPage}/${totalPages}...(${pageSize} per page)<br/> --%>
+<%-- Get number of items to be displayed in this page --%>
+<fmt:parseNumber var="numOfItemsInPage" value="${endIndex - beginIndex}" integerOnly="false" parseLocale="en_US"/>
+
+<%-- If we are using grid mode, then we need to know the total number of rows to display --%>
+<c:set var="totalRows"  value="${numOfItemsInPage / env_resultsPerRow}"/>
+
+<%-- Get a float value from totalRows which is a string --%>
+<fmt:parseNumber var="totalRows" value="${totalRows}" integerOnly="false" parseLocale="en_US"/>
+
+<%-- do a ceil if totalRows contains fraction digits --%>
+<c:set var="totalRows" value = "${totalRows + (1 - (totalRows % 1)) % 1}"/>
+
+<%-- This will be passed as params to compare page to create the best SEO product url possible --%>
+<%-- <c:set var="categoryIds" value="{top_category: '${WCParam.top_category}', parent_category_rn: '${WCParam.parent_category_rn}', categoryId: '${WCParam.categoryId}'}" scope="request"/>--%>
+<c:set var="columnCountByWidth_Grid" value="${'{0:1,250:2,720:3,960:4}'}"/>
+

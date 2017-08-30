@@ -1,0 +1,66 @@
+/*-------------------------------------------------------------*\
+    $RESPONSIVE
+    Responsive style
+\*-------------------------------------------------------------*/
+
+/* Desktop */
+@media screen and (min-width: 1200px) {
+	
+	.titleBanner {
+		font-size: 2.8rem;
+	}
+	
+	.sousTitreBanner {
+		padding: 0 15%;
+	    margin-top: 40px;
+		font-size: 1.3rem;
+	}
+	
+	.mea-univers-column {
+		width: 33%;	
+	}
+}
+
+/* Tablet */
+@media screen and (max-width: 1199px) {
+
+	.titleBanner {
+		font-size: 2.8rem;
+	}
+	
+	.sousTitreBanner {
+		padding: 0 15%;
+	    margin-top: 40px;
+		font-size: 1.3rem;
+	}
+	
+	.allProductsButtton {
+		width: 20%;	
+	}
+	
+	.mea-univers-column {
+    	width: 50%;
+	}
+}
+
+/* Mobile */
+@media screen and (max-width: 767px) {
+	
+	.titleBanner {
+		font-size: 2rem;
+	}
+	
+	.sousTitreBanner {
+		padding: 0 5%;
+		margin-top: 20px;
+		font-size: 0.8rem;
+	}
+	
+	.allProductsButtton {
+		width: 100%;	
+	}
+	
+	.mea-univers-column {
+    	width: 100%;
+	}
+}

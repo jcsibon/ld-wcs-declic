@@ -1,0 +1,228 @@
+<div class="ficheInfosMag">
+<c:choose>
+	<c:when test="${onlySelect eq true}">
+		<div class="content">
+	        <div class="shopDropdown" id="shopDropdown">
+	        	<select id="shopSelect" class="full-width contactForm-select" >
+	        		<option value="-1" ><fmt:message key="LAP034_SELECT" bundle="${widgetText}" /></option>
+	        		<c:forEach var="shop" items="${activeShopsList}" >
+	        			<c:if test="${firstDefaultShop.id eq shop.id}">
+	        				<c:set var="selected" value=" selected" />
+	        			</c:if>
+						<option value="${shop.id}" data-shop-name="${shop.name}"${selected}>${shop.zipcode} - ${shop.name}</option>
+						<c:remove var="selected" />
+					</c:forEach>
+	        	</select>
+			</div>
+		</div>
+	</c:when>
+	<c:when test="${pageType eq 'ProductStandard'}">
+		<link ${microDataAvailabilityInStockAttributes}/>
+		<c:if test="${firstDefaultShop != null}">
+			<div class="productAvailability" id="firstDefaultShop_standardUI">
+				<span id="firstDefaultShop_infos" value="${firstDefaultShop.id}" data-shop-name="${firstDefaultShop.name}"></span>
+				<span id="availability_${firstDefaultShop.identifier}_standardUI"></span>
+				<span id="${firstDefaultShop.identifier}_standardUI" class="stock StockDispo">En stock</span> 
+				<span id="${firstDefaultShop.identifier}_custoUI"></span>
+				<span itemprop="name" class="ficheInfosMagPref shopName" id="shopName_${firstDefaultShop.identifier}_standardUI"><fmt:message key="availabilityatStoreLabel" bundle="${widgetText}" /> <a href="${firstDefaultShop.seoUrl}" class="hover_underline">${firstDefaultShop.name}</a></span>
+				<span itemprop="date" class="shopDate" id="shopDateDispo_${firstDefaultShop.identifier}_standardUI"></span>
+			</div>
+		</c:if>	
+		<span id="errorContainer"></span>
+				
+		<script id="itemAvaibilityScripts">
+			dojo.addOnLoad(function(){				
+				itemAvailabilityInPhysicalStores.initialize("${userType}");
+				/* Set event to send when default store set */
+				itemAvailabilityInPhysicalStores.setDefaultStoreSucceed("SetDefaultStoreSucceed");
+				
+				if(typeof(stockAvailability.onStockAvailabilityListeners) == 'undefined' || stockAvailability.onStockAvailabilityListeners == null && stockAvailability.onStockAvailabilityListeners.length == 0) {
+					stockAvailability.initialize();
+					stockAvailability.addOnComputeTaskReceivedListener(onComputeTaskHandler);
+					stockAvailability.addOnStockAvailabilityReceivedListener(onGetProductAvailabilityHandler);
+				}
+				
+			});
+			
+			function onComputeTaskHandler(catalogEntryID) {
+				$('#errorContainer').hide();
+				stockAvailability.setDatas(buildShopDataObject(catalogEntryID));
+				stockAvailability.askForAvailability();
+			}
+			
+			function buildShopDataObject(catalogEntryID) {
+				var shopIds = new Array();
+				if(shopIds.indexOf("${firstDefaultShop.identifier}") < 0) 
+					shopIds.push("${firstDefaultShop.identifier}");
+				shopIds = cleanArray(shopIds);
+				var product = new Object();
+				var field = "quantity";
+				if($("input[id^='colisage_" + catalogEntryID + "']").val() == 1){
+					field='surface';
+				}
+				var quantity = ($("input[id^='"+field+"_"+ catalogEntryID + "']").val() != null) ?$("input[id^='"+field+"_"+ catalogEntryID + "']").val() :"1";
+				var itemPartnumber = $("span[id^='product_SKU_" + catalogEntryID + "']").text(); 
+				if(itemPartnumber != null && itemPartnumber != '') product[itemPartnumber] = quantity;
+				return {"shopIds" : JSON.stringify(shopIds), "products" : JSON.stringify(product)};
+			}
+			
+			function onGetProductAvailabilityHandler(data) {
+		  		if(data != null && data != '') {		  			
+			  		var storeKeys = Object.keys(data);
+			  		var itemPartnumber = $("span[id^='product_SKU_${catalogEntryID}']").text();
+					for(var i = 0; i < storeKeys.length ; i++) {
+						var storeKey = storeKeys[i]; //shopId
+						var custoSpanId = storeKey + "_custoUI";  
+						var resultObject = data[storeKey]; //{partNumber:dateDispo,partNumber:dateDispo,partNumber:dateDispo}
+						storeKey += "_standardUI";
+						if(typeof resultObject == 'string' && resultObject == "ERR") {
+							$("#" + storeKey).text("${availabilityTechErr} ");
+							$("#" + custoSpanId).text("");
+							$("#" + storeKey).removeClass("StockDispo").removeClass('StockDispoLater').addClass("StockNonDispo");
+							$("#shopDateDispo_" + storeKey).text("");
+						} else {
+							var currentDate = new Date();
+							
+							var frFormattedCurrentDate = dojo.date.locale.format(currentDate, {
+								selector:"date", datePattern:"dd/MM/yyyy", locale:"fr-fr" 
+							});
+							
+							if(resultObject != null && itemPartnumber != null && itemPartnumber != '' && resultObject[itemPartnumber] != null) {
+								var dateDispo = resultObject[itemPartnumber];
+								if(dateDispo == 'today') {
+									$("#availability" + storeKey).text('<link itemprop="availability" href="${MICRO_DATA_INSTOCK}"/>');
+									$("#" + storeKey).text("${availableLabel} ");
+									$("#" + custoSpanId).text("");
+									$("#shopDateDispo_" + storeKey).text(" ${dateAvailable} "+frFormattedCurrentDate);
+									$("#" + storeKey).removeClass('StockDispoLater').removeClass('StockNonDispo').addClass("StockDispo");
+									$("#shopName_" + storeKey+" a").removeClass('StockDispoLater');
+								} else if(dateDispo == null || dateDispo == ""){
+									$("#" + storeKey).text("${unavailableLabel} ");
+									$("#" + storeKey).removeClass("StockDispo").removeClass('StockDispoLater').addClass("StockNonDispo");
+									$("#shopName_" + storeKey+" a").removeClass('StockDispoLater');
+									$("#shopDateDispo_" + storeKey).text("");
+								} else {
+									//check if dateDispo < j+1
+									dojo.require("dojo.date");
+									dojo.require("dojo.date.locale");
+									
+									frDate = dojo.date.locale.parse(dateDispo, {
+									    formatLength:'short', selector:'date', locale:'fr-fr'  //format of dateDispo is jj/MM/aaaa
+									});
+									
+									var frFormattedDate = dojo.date.locale.format(frDate, {
+										selector:"date", datePattern:"dd/MM/yyyy", locale:"fr-fr" 
+	
+									});
+									
+									var dayDiff= dojo.date.difference(currentDate,frDate, "day"); 
+									
+									if(dayDiff < 2) {
+										$("#availability" + storeKey).text('<link itemprop="availability" href="${MICRO_DATA_INSTOCK}"/>');
+											
+									} else {
+										$("#availability" + storeKey).text('<link itemprop="availability" href="${MICRO_DATA_PREORDER}"/>');
+									}
+									
+									if(dayDiff < 1) {
+										$("#" + storeKey).text("${availableLabel} ");
+										$("#" + custoSpanId).text("");
+										$("#" + storeKey).removeClass('StockDispoLater').removeClass('StockNonDispo').addClass("StockDispo");
+										$("#shopName_" + storeKey+" a").removeClass('StockDispoLater');
+										$("#shopDateDispo_" + storeKey).text(" ${dateAvailable} "+frFormattedDate);
+									}
+									else {
+										$("#" + storeKey).text("");
+										$("#" + custoSpanId).text("${availableLaterLabel} ");
+										$("#" + storeKey).removeClass('StockDispo').removeClass('StockNonDispo').addClass("StockDispoLater");
+										$("#shopName_" + storeKey+" a").addClass('StockDispoLater')
+										$("#shopDateDispo_" + storeKey).text(" ${dateAvailableLater} "+frFormattedDate);
+									}
+								}
+							}else{
+								$("#" + storeKey).text("${unavailableLabel} ");
+								$("#" + custoSpanId).text("");
+								$("#" + storeKey).removeClass("StockDispo").removeClass("StockDispoLater").addClass("StockNonDispo");
+								$("#shopName_" + storeKey+" a").removeClass('StockDispoLater');
+								$("#shopDateDispo_" + storeKey).text("");
+							}
+						}
+					}
+		  		} else {
+					$("#errorContainer").text("${unavailableLabel}");
+					$("#errorContainer").show();
+		  		}
+			}
+			
+			function cleanArray(array) {
+				var newArray = new Array();
+				for(var index = 0; index < array.length; index++) {
+					if(array[index] != "") {
+						newArray.push(array[index]);
+					}
+				}
+				return newArray;
+			}
+		</script>
+	</c:when>
+	
+	<c:when test="${pageType eq 'ProductCustom'}">
+	<div class="ficheProduitSMMSG">
+		<p class="ficheProduitSMLivraison"><fmt:message key="ficheProduitSMLivraisonLabel" bundle="${widgetText}" /></p>
+		<%-- <p class="ficheProduitSMMagasin"><fmt:message key="ficheProduitSMMagasinLabel" bundle="${widgetText}" /></p> --%>
+	</div>
+	<%-- <div class="ficheInfosMagDispo ficheProduitSMMSG">
+		<div class="ficheInfosMagPref">
+			<span ${microDataSellerAttributes}>
+				<span itemprop="name" class="shopName"><a class="hover_underline" href="${firstDefaultShop.seoUrl}">${firstDefaultShop.name}</a></span>
+			</span>
+			<link ${microDataAvailabilityInStoreAttributes} />
+			<div class="infosMagPrefCoordonnees">
+			<c:if test="${not empty firstDefaultShop.address1}">
+				${firstDefaultShop.address1}<br />
+			</c:if>
+			<c:if test="${not empty firstDefaultShop.address2}">
+				${firstDefaultShop.address2}<br />
+			</c:if>
+			<c:if test="${not empty firstDefaultShop.address3}">
+				${firstDefaultShop.address3}<br />
+			</c:if>
+			<c:if test="${not empty firstDefaultShop.address4}">
+				${firstDefaultShop.address4}<br />
+			</c:if>
+			${firstDefaultShop.zipcode} ${firstDefaultShop.city}<br />
+			<c:if test="${not empty firstDefaultShop.phone}">
+				<p class="phoneNumberMagasin"><c:out value="${ecocea:fmtPhone(firstDefaultShop.phone)}"/></p>
+			</c:if>
+			<c:if test="${not empty firstDefaultShop.email}">
+				<p><a class="hover_underline" href="mailto:${firstDefaultShop.email}">${firstDefaultShop.email}</a></p>
+			</c:if>
+			</div>
+		</div>
+	</div> 
+	<p class="changeStore"><fmt:message key="changeStoreButtonLabel" bundle="${widgetText}" /></p>--%>
+	<div class="content">
+        <div class="shopDropdown" id="shopDropdown">
+        	<select id="shopSelect" class="full-width contactForm-select" >
+        		<option value="-1" ><fmt:message key="LAP034_SELECT" bundle="${widgetText}" /></option>
+        		<c:forEach var="shop" items="${activeShopsList}" >
+        			<c:if test="${firstDefaultShop.id eq shop.id}">
+        				<c:set var="selected" value=" selected" />
+        			</c:if>
+					<option value="${shop.id}" data-shop-name="${shop.name}"${selected}>${shop.zipcode} - ${shop.name}</option>
+					<c:remove var="selected" />
+				</c:forEach>
+        	</select>
+		</div>
+	</div>
+	<script id="itemAvaibilityScripts">
+		dojo.addOnLoad(function(){
+			itemAvailabilityInPhysicalStores.initialize("${userType}");
+			itemAvailabilityInPhysicalStores.attach("shopSelect");
+			itemAvailabilityInPhysicalStores.setDefaultStoreSucceed("SetDefaultStoreSucceed");
+		});
+	</script>	
+</c:when>
+</c:choose>
+</div>
+

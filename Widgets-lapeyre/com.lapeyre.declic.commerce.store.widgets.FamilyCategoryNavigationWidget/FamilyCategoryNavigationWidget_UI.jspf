@@ -1,0 +1,55 @@
+<%-- ECOCEA: suite à l'evol sur le breadcrumb, on ne doit pas afficher le widget si la catégorie a une catégorie parente qui n'est pas publiée car la hierarchie est biaisée --%>
+<c:if test="${(!isMobile) && (!empty fullTopCategoryList)}">
+	
+	<%-- Categories section --%>
+	<div class="category-navigation" id="widget_left_nav${widgetSuffix}" role="navigation" aria-expanded="true">
+		<%-- Previous category --%>
+	   	<c:choose>
+		   	<c:when test="${!empty universeCategoryUrl}">	   			
+		   		<a href="${universeCategoryUrl}" class="category-previous">${universeCategoryName}</a>
+		   	</c:when>
+	   		<c:otherwise>
+	   			<a href="${parentCategoryUrl}" class="category-previous">${parentCategoryName}</a>
+	   		</c:otherwise>
+	   	</c:choose>
+	    <%-- Categories list --%>
+		<div class="category-navigation-list-container">
+			<c:if test="${isUniverse}">
+				<div class="section_list bottom_border">
+					<ul class="facetSelect">
+						<c:forEach var="topCategory" items="${fullTopCategoryList}" varStatus="aStatus">
+							<li class="singleFacet">
+								<a href="${topCategory[2]}"><c:out value="${topCategory[1]}"/></a>
+							</li>
+						</c:forEach>
+					</ul>
+				</div>
+	       	</c:if>
+					
+			<%-- Family subcategories --%>				
+			<c:if test="${!empty familySubCategories }">
+				<div id="search_facet_category<c:out value="${widgetSuffix}"/>">
+					<ul id="categoryFacetList${widgetSuffix}" class="category-navigation-list">
+						<c:forEach var="categoryFacetValues" items="${familySubCategories}" varStatus="aStatus" >
+							<li>	
+								<c:choose>
+									<c:when test="${categoryFacetValues[0] == currentCategoryID}">	
+			                        	<span class="category-current" id="SBN_<c:out value="${categoryFacetValues[0]}"/><c:out value="${widgetSuffix}"/>">
+			                        		<c:out value="${categoryFacetValues[1]}"/>
+			                        	</span>
+			                        </c:when>
+			                        <c:otherwise>
+			                        	 <a id="SBN_<c:out value="${categoryFacetValues[0]}"/><c:out value="${widgetSuffix}"/>" href="<c:out value="${categoryFacetValues[2]}" escapeXml="false"/>">
+				                        	<c:out value="${categoryFacetValues[1]}"/>
+				                        </a>
+			                        </c:otherwise>
+								</c:choose>	                        
+		                    </li>
+		                </c:forEach>
+					</ul>
+				</div>
+			</c:if>
+		</div>
+	</div>
+
+</c:if>

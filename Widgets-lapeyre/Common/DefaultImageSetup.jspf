@@ -1,0 +1,90 @@
+<%-- Constants for default image --%>
+<c:set var="DEFAULT_IMAGE" value="defaultImage.png"/>
+
+<%-- Constants for images dir --%>
+<c:set var="IMAGES_DIR" value="${jspStoreImgDir}images"/>
+
+<%-- Constants for processorIn --%>
+<c:set var="DESKTOP_LIST" value="desktopList"/>
+<c:set var="STANDARD_MAIN" value="standardMain"/>
+<c:set var="COLL_MAIN" value="collMain"/>
+<c:set var="COLL_DESKTOP_ZOOM" value="collDesktopZoom"/>
+<c:set var="DESKTOP_ZOOM" value="zoom1"/>
+<c:set var="MOBILE_LIST" value="mobileList"/>
+<c:set var="MOBILE_MAIN" value="mobileMain"/>
+<c:set var="MOBILE_ZOOM" value="mobileZoom"/>
+<c:set var="PERSO_DESKTOP" value="persoDesktop"/>
+<c:set var="PERSO_MOBILE" value="persoMobile"/>
+<c:set var="PICTO" value="picto"/>
+<c:set var="STANDARD_CAR" value="standardCar"/>
+<c:set var="STANDARD_MAIN" value="standardMain"/>
+<c:set var="THUMB_CAR" value="thumbCar"/>
+<c:set var="THUMBNAIL" value="thumbnail"/>
+<c:set var="ZOOM_CAR" value="zoomCar"/>
+<c:set var="ZOOM_HD" value="zoomHD"/>
+
+<wcf:useBean var="defaultImageMaps" classname="java.util.HashMap" scope="request"/>
+
+<wcf:set target="${defaultImageMaps}" key="GRID_ASSET_main_full" value="${IMAGES_DIR}/${DESKTOP_LIST}/${DEFAULT_IMAGE}"/>
+
+<wcf:set target="${defaultImageMaps}" key="STANDARD_main_full" value="${IMAGES_DIR}/${STANDARD_MAIN}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="STANDARD_list_full" value="${IMAGES_DIR}/${STANDARD_MAIN}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="STANDARD_list_thumbnail" value="${IMAGES_DIR}/${THUMBNAIL}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="STANDARD_main_list" value="${IMAGES_DIR}/${DESKTOP_LIST}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="STANDARD_main_thumbnail" value="${IMAGES_DIR}/${THUMBNAIL}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="STANDARD_main_zoom" value="${IMAGES_DIR}/${DESKTOP_ZOOM}/${DEFAULT_IMAGE}"/>
+
+<wcf:set target="${defaultImageMaps}" key="STANDARD_secondary_full" value="${IMAGES_DIR}/${STANDARD_MAIN}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="STANDARD_secondary_thumbnail" value="${IMAGES_DIR}/${THUMBNAIL}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="STANDARD_secondary_zoom" value="${IMAGES_DIR}/${DESKTOP_ZOOM}/${DEFAULT_IMAGE}"/>
+
+<wcf:set target="${defaultImageMaps}" key="CATALOGUE_PAPIER_main_full" value="${IMAGES_DIR}/${STANDARD_MAIN}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="CATALOGUE_PAPIER_list_full" value="${IMAGES_DIR}/${STANDARD_MAIN}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="CATALOGUE_PAPIER_list_thumbnail" value="${IMAGES_DIR}/${THUMBNAIL}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="CATALOGUE_PAPIER_main_list" value="${IMAGES_DIR}/${DESKTOP_LIST}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="CATALOGUE_PAPIER_main_thumbnail" value="${IMAGES_DIR}/${THUMBNAIL}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="CATALOGUE_PAPIER_main_zoom" value="${IMAGES_DIR}/${DESKTOP_ZOOM}/${DEFAULT_IMAGE}"/>
+
+<wcf:set target="${defaultImageMaps}" key="CATALOGUE_PAPIER_secondary_full" value="${IMAGES_DIR}/${STANDARD_MAIN}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="CATALOGUE_PAPIER_secondary_thumbnail" value="${IMAGES_DIR}/${THUMBNAIL}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="CATALOGUE_PAPIER_secondary_zoom" value="${IMAGES_DIR}/${DESKTOP_ZOOM}/${DEFAULT_IMAGE}"/>
+
+<wcf:set target="${defaultImageMaps}" key="SUR_MESURE_main_full" value="${IMAGES_DIR}/${COLL_MAIN}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="SUR_MESURE_list_full" value="${IMAGES_DIR}/${DESKTOP_LIST}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="SUR_MESURE_list_thumbnail" value="${IMAGES_DIR}/${COLL_MAIN}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="SUR_MESURE_main_list" value="${IMAGES_DIR}/${DESKTOP_LIST}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="SUR_MESURE_list_list" value="${IMAGES_DIR}/${DESKTOP_LIST}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="SUR_MESURE_main_thumbnail" value="${IMAGES_DIR}/${THUMBNAIL}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="SUR_MESURE_main_zoom" value="${IMAGES_DIR}/${COLL_DESKTOP_ZOOM}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="SUR_MESURE_collection_desc_zoom" value="${IMAGES_DIR}/${COLL_DESKTOP_ZOOM}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="SUR_MESURE_compo_type_full" value="${IMAGES_DIR}/${COLL_MAIN}/${DEFAULT_IMAGE}"/>
+
+<wcf:set target="${defaultImageMaps}" key="SUR_MESURE_secondary_full" value="${IMAGES_DIR}/${STANDARD_CAR}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="SUR_MESURE_secondary_thumbnail" value="${IMAGES_DIR}/${THUMB_CAR}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="SUR_MESURE_secondary_zoom" value="${IMAGES_DIR}/${ZOOM_CAR}/${DEFAULT_IMAGE}"/>
+
+<wcf:set target="${defaultImageMaps}" key="COLLECTION_main_full" value="${IMAGES_DIR}/${COLL_MAIN}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="COLLECTION_list_full" value="${IMAGES_DIR}/${DESKTOP_LIST}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="COLLECTION_list_thumbnail" value="${IMAGES_DIR}/${COLL_MAIN}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="COLLECTION_main_list" value="${IMAGES_DIR}/${DESKTOP_LIST}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="COLLECTION_list_list" value="${IMAGES_DIR}/${DESKTOP_LIST}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="COLLECTION_main_thumbnail" value="${IMAGES_DIR}/${THUMBNAIL}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="COLLECTION_main_zoom" value="${IMAGES_DIR}/${COLL_DESKTOP_ZOOM}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="COLLECTION_collection_desc_zoom" value="${IMAGES_DIR}/${COLL_DESKTOP_ZOOM}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="COLLECTION_compo_type_full" value="${IMAGES_DIR}/${COLL_MAIN}/${DEFAULT_IMAGE}"/>
+
+<wcf:set target="${defaultImageMaps}" key="COLLECTION_secondary_full" value="${IMAGES_DIR}/${STANDARD_CAR}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="COLLECTION_secondary_thumbnail" value="${IMAGES_DIR}/${THUMB_CAR}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="COLLECTION_secondary_zoom" value="${IMAGES_DIR}/${ZOOM_CAR}/${DEFAULT_IMAGE}"/>
+
+<wcf:set target="${defaultImageMaps}" key="ALL_picto_full" value="${IMAGES_DIR}/${PICTO}/${DEFAULT_IMAGE}"/>
+
+<wcf:set target="${defaultImageMaps}" key="ALL_brand_full" value="${IMAGES_DIR}/${DESKTOP_LIST}/${DEFAULT_IMAGE}"/>
+
+<wcf:set target="${defaultImageMaps}" key="Personnalisation_desktop" value="${IMAGES_DIR}/${PERSO_DESKTOP}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="Personnalisation_mobile" value="${IMAGES_DIR}/${PERSO_MOBILE}/${DEFAULT_IMAGE}"/>
+
+<wcf:set target="${defaultImageMaps}" key="HD_main_full" value="${IMAGES_DIR}/${DESKTOP_ZOOM}/${DEFAULT_IMAGE}"/>
+<wcf:set target="${defaultImageMaps}" key="HD_main_zoom" value="${IMAGES_DIR}/${ZOOM_HD}/${DEFAULT_IMAGE}"/>
+
+<wcf:set target="${defaultImageMaps}" key="CATEGORY_main_full" value="${IMAGES_DIR}/${DESKTOP_LIST}/${DEFAULT_IMAGE}"/>

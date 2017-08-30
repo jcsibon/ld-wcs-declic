@@ -1,0 +1,6 @@
+<%--  The following code is created as an example. Modify the generated code and add any additional required code.  --%>
+<c:if test="${isOnMobileDevice}">
+	<div id="OrderTrackingWidget" class="button_footer_line no_float" >
+		<a href="${orderTrackingListURL}" class="button"><fmt:message bundle='${widgetText}' key='suiviCommandeHomeMobileButtonLabel' /><span class="caret"></span></a>
+	</div>
+</c:if>

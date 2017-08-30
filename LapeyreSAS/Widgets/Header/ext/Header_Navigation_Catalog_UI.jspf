@@ -1,0 +1,457 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%@ page import="org.apache.commons.json.JSONObject" %>
+<c:set var="mobileSuffix" value="" />
+<c:if test="${isOnMobileDevice }">
+	<c:set var="mobileSuffix" value="_mobile" />
+</c:if>
+<div id="headerRow2" class="print-hidden container">
+		<div id="headerMobile-account" class="desktop-hidden mobileMenuButton">
+		        <c:choose>
+		            <c:when test="${userType == 'G'}">
+		                <a href="${fn:escapeXml(Logon_LogoutURL)}" >
+		                	<div class="picto myAccountPicto" id="guestAccount"></div><%-- cet id ser au header.js pour determiner si on doit gerer un hamburger moncompte  --%>
+		               	 	<span><fmt:message bundle="${storeText}" key="mobileCompteLabel"/></span>
+	                	</a>
+		            </c:when>
+		            <c:otherwise>
+		                <a  class="myAccount-burger-menu">
+		                	<div class="picto myAccountPicto"></div>
+		                	<span><ecocea:crop value="${firstName} ${lastName}" length="56" /></span>
+		                	<div class="picto plusPicto"></div>
+	                	</a>
+		            </c:otherwise>
+		        </c:choose>       
+		         <!-- <span>
+					<c:choose>
+						<c:when test="${userType == 'G'}">
+								<a class="hover_underline" id="signInOutQuickLink" href="${fn:escapeXml(Logon_LogoutURL)}" aria-haspopup="true">${SIGN_IN_OUT}</a>
+						</c:when>
+						<c:otherwise>
+							<a class="hover_underline" id="myAccountQuickLink" href="${fn:escapeXml(MyAccountURL)}" onmouseover="javascript:$('#monComptePopup').show();" aria-haspopup="true"><ecocea:crop value="${firstName} ${lastName}" length="56" /></a>
+						</c:otherwise>
+					</c:choose>
+				</span>-->
+		</div>
+		<div id="headerMobile-account-menu" class="hide-on-large-only">
+			<c:if test="${userType != 'G'}">
+				<%@ include file="../../../UserAreaDeclic/AccountSection/headerClientMenuList.jspf" %>
+			</c:if>
+		</div>
+		<div dojoType="wc.widget.RefreshArea" widgetId="drop_down_${department.uniqueID}" controllerId="departmentSubMenu_Controller" aria-labelledby="departmentsButton">
+			<ul id="departmentsMenu" role="menu" data-parent="header" aria-labelledby="departmentsButton">
+				<c:forEach var="department" items="${categoryHierarchy.catalogGroupView}">
+					<c:if test="${!empty department.fullImage}">
+						<astpush:assetPushUrl var="departmentFullImagePath" scope="page" urlRelative="${department.fullImage}" type="category" source="list" device="${device}" format="full"/>
+					</c:if>
+					<c:if test="${empty department.fullImage}">
+						<c:set var="keyDefaultImageMaps" value="CATEGORY_main_full"/>
+						<astpush:assetPushUrl var="departmentFullImagePath" scope="page" urlRelative="${defaultImageMaps[keyDefaultImageMaps]}" type="category" source="main" device="${device}" format="full" defaultUrl="true"/>
+					</c:if>
+				
+							<% try {
+								String uniqueId= (String) ((JSONObject) pageContext.getAttribute("department")).get("identifier");
+								com.lapeyre.declic.cms.ContentHelper contentHelper = (com.lapeyre.declic.cms.ContentHelper) request.getAttribute("headerContentHelper");
+								JSONObject meaUnivers = (JSONObject) contentHelper.getUniversContentById(uniqueId);
+								java.util.List<JSONObject> measHeaderTop = (java.util.List<JSONObject>) contentHelper.getMeasForHeaderCategory(uniqueId, "subMenuTop");
+								java.util.List<JSONObject> measHeaderBottom = (java.util.List<JSONObject>) contentHelper.getMeasForHeaderCategory(uniqueId, "subMenuBottom");
+								String menuCount = contentHelper.getContent().getJSONObject("result").getJSONObject("header").getString("menuCount");
+								pageContext.setAttribute("menuCount", menuCount);
+								pageContext.setAttribute("meaUnivers", meaUnivers);
+								pageContext.setAttribute("measHeaderTop", measHeaderTop);
+								pageContext.setAttribute("measHeaderBottom", measHeaderBottom);
+							}catch (Exception e) {
+								System.err.println("CMS indispo");
+							}
+							%>	
+							
+					<c:choose>
+					    <c:when test="${menuCount eq 0}">
+					        <c:set var="adjustMenuWidthClass" value="departmentMenu0" />
+					        <c:set var="adjustMenuButtonWidthClass" value="departmentButton0" />
+					    </c:when>
+					    <c:when test="${menuCount eq 1}">
+					        <c:set var="adjustMenuWidthClass" value="departmentMenu1" />
+					        <c:set var="adjustMenuButtonWidthClass" value="departmentButton1" />
+					    </c:when>
+					    <c:when test="${menuCount eq 2}">
+					        <c:set var="adjustMenuWidthClass" value="departmentMenu2" />
+					        <c:set var="adjustMenuButtonWidthClass" value="departmentButton2" />
+					    </c:when>
+					    <c:when test="${menuCount eq 3}">
+					        <c:set var="adjustMenuWidthClass" value="departmentMenu3" />
+					        <c:set var="adjustMenuButtonWidthClass" value="departmentButton3" />
+					    </c:when>
+					    <c:otherwise>
+					        <c:set var="adjustMenuWidthClass" value="departmentsMenu0" />
+					        <c:set var="adjustMenuButtonWidthClass" value="departmentButton0" />
+					    </c:otherwise>
+					</c:choose>
+							
+					<li id="departmentLinks_${department.uniqueID}" class="departmentLinks ${adjustMenuButtonWidthClass}" data-target="departmentMenu_${department.uniqueID}">
+						<a id="departmentButton_${department.uniqueID}" href="${fn:escapeXml(categoryURLMap[department.uniqueID])}" class="departmentButton ${adjustMenuButtonWidthClass} " role="menuitem" aria-haspopup="true">
+							<span><c:out value="${fn:toUpperCase(department.name)}"/></span>
+						</a>
+					
+						<div id="departmentMenu_${department.uniqueID}" class="departmentMenu ${adjustMenuWidthClass} container" ${!empty department.catalogGroupView ? 'role="menu"' : ''} data-target="departmentLinks_${department.uniqueID}" data-target="departmentsMenu" data-id="${department.uniqueID}" aria-label="${department.name}">
+							<div class="header desktop-hidden">
+									<span id="departmentLink_${department.uniqueID}" href="${fn:escapeXml(categoryURLMap[department.uniqueID])}" class="link desktop-hidden">
+										<c:out value="${fn:toUpperCase(department.name)}"/>
+										<div class="picto plusPicto"></div>
+									</span>
+							</div>
+							<div class="row">
+								<c:if test="${empty measHeaderTop || empty measHeaderBottom}">
+									<div class="mobile-hidden col s2">
+										<img alt="" src="${departmentFullImagePath}" class="responsive-img"/>
+									</div>
+								</c:if>
+							
+								<c:choose>
+									<c:when test="${!empty department.catalogGroupView}">
+										<div class="categoryList col l7 s12">
+											<div class="all-products-link">
+												<a id="departmentButton_${department.uniqueID}" href="${fn:escapeXml(categoryURLMap[department.uniqueID])}">
+													<span><fmt:message bundle="${storeText}" key="AllProductsLabel"/></span>
+												</a>
+											</div>
+											<c:forEach var="category" items="${department.catalogGroupView}" end="${subcategoryLimit - 1}">
+												<c:if test="${category.hiddenHeader eq false or not category.hiddenHeader}">
+													<div class="sous-univers-container">
+														<div class="sous-univers-header">
+															<c:out value="${category.name}"/>
+														</div>
+														<c:if test="${!empty category.catalogGroupView}">
+															<ul class="sous-univers-list">
+																<c:forEach var="subcategory" items="${category.catalogGroupView}">
+																	<c:if test="${subcategory.hiddenHeader eq false or not subcategory.hiddenHeader}">
+																		<li class="categoryLink"> 
+																			<c:set var="key" value="${department.uniqueID}_${category.uniqueID}_${subcategory.uniqueID}"/>
+																			<a id="categoryLink_${key}" href="${fn:escapeXml(categoryURLMap[key])}"><c:out value="${subcategory.shortDescription}"/></a>
+																		</li>
+																	</c:if>
+																</c:forEach>
+															</ul>
+														</c:if>
+													</div>
+												</c:if>
+											</c:forEach>
+										</div>
+									</c:when>
+									<c:otherwise>
+										<div class="categoryList col s3"></div>
+									</c:otherwise>
+								</c:choose>
+								
+								<c:set var="measTop" value="${measHeaderTop}" scope="request" />
+								<c:if test="${!empty measTop }"}>
+									<div class="categoryAside col m3">		
+										<c:import url = "/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.meaWidget/meaWidget.jsp">
+											<c:param name="isHeaderMea" value="true" />
+											<c:param name="emplacement" value="SubMenuLeft" />
+										</c:import>
+									</div>
+									<div class="gutter"></div>
+								</c:if>
+								
+								<c:set var="measBottom" value="${measHeaderBottom}" scope="request" />
+								<c:if test="${!empty measBottom }"}>
+									<div class="categoryAside col m3">	
+										<c:import url = "/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.meaWidget/meaWidget.jsp">
+											<c:param name="isHeaderMea" value="true" />
+											<c:param name="emplacement" value="SubMenuRight" />
+										</c:import>
+									</div>
+								</c:if>
+							</div>
+						</div>
+					</li>
+				</c:forEach>
+				
+				<%-- the "promotions" menu entry --%>	
+				<c:set var="menuPromoHeader" value="${headerContentHelper.content.result.header.menuOperationsCommerciales}"/>	
+				<c:if test="${menuPromoHeader != null}">
+				
+					<c:choose>
+					    <c:when test="${menuPromoHeader.menuColor != null}">
+					      	<c:set var="menuCssClass" value="nav-${menuPromoHeader.menuColor}" />
+					    </c:when>
+					    <c:otherwise>
+					        <c:set var="menuCssClass" value="" />
+					    </c:otherwise>
+					</c:choose>
+					
+					<% 
+						java.util.List<JSONObject> measPromosTop = ((com.lapeyre.declic.cms.ContentHelper) request.getAttribute("headerContentHelper")).getMeasForCustomMenuEntry("menuOperationsCommerciales", "meaTop");
+					    java.util.List<JSONObject> measPromosBottom = ((com.lapeyre.declic.cms.ContentHelper) request.getAttribute("headerContentHelper")).getMeasForCustomMenuEntry("menuOperationsCommerciales", "meaBottom");
+						pageContext.setAttribute("measPromosTop", measPromosTop);
+						pageContext.setAttribute("measPromosBottom", measPromosBottom);
+					%>
+
+					<li class="editorialLinks ${menuCssClass} ${adjustMenuButtonWidthClass}">
+	 					<c:if test="${!empty menuPromoHeader.image.url}">
+							<astpush:assetPushUrl var="promoImagePath" scope="page" urlRelative="${menuPromoHeader.image.url}" type="" source="list" device="${device}" format="full"/>
+						</c:if>
+						<c:if test="${empty menuPromoHeader.image.url}">
+							<c:set var="keyDefaultImageMaps" value="CATEGORY_main_full"/>
+							<astpush:assetPushUrl var="promoImagePath" scope="page" urlRelative="${defaultImageMaps[keyDefaultImageMaps]}" type="" source="main" device="${device}" format="full" defaultUrl="true"/>
+						</c:if>
+						
+						<c:set var="promosUrl"><c:out value="${menuPromoHeader.menuLink.lien}" /></c:set>
+						<%-- Checks if this menu entry has an associated "mega menu" --%>
+						<c:set var="hasMegaMenu" value="${menuPromoHeader.megaMenu}" />
+	 					<a id="departmentButton_promos" href="${promosUrl}" class="departmentButton ${adjustMenuButtonWidthClass}" role="menuitem" aria-haspopup="${hasMegaMenu}">
+	 						<span>${menuPromoHeader.menuLink.libelle}</span>
+	 					</a>
+						<div id="departmentMenu_promos" class="departmentMenu ${adjustMenuWidthClass} container" role="menu" data-parent="departmentsMenu" data-id="promos" aria-label="<c:out value="${fn:toUpperCase(menuPromoHeader.menuLink.libelle)}" />">
+							
+							<div class="header desktop-hidden">
+								<span id="departmentLink_promos" class="link desktop-hidden"><a href="${promosUrl}"><c:out value="${fn:toUpperCase(menuPromoHeader.menuLink.libelle)}" /></a></span>
+							</div>
+							<div class="row">
+								<c:if test="${empty measPromosTop || empty measPromosBottom}">
+									<div class="mobile-hidden left column_23-5 categoryIntro">
+										<img alt="${menuPromoHeader.image.alt}" src="${imagePathCMS}${menuPromoHeader.image.url}">
+									</div>
+									<div class="gutter"></div>
+								</c:if>
+									
+								<c:set var="menuList" value="${menuPromoHeader.elements}"/>
+								<c:if test="${!empty menuList}">
+									<div class="categoryList column_44">
+										<fmt:formatNumber var="halfSizeCatlist"  value="${fn:length(menuList)/2}" maxFractionDigits="0" />
+										<c:if test="${halfSizeCatlist gt 5}">
+											<c:set var="halfSizeCatlist" value="5"/>
+										</c:if>
+										<ul>
+										<c:forEach items="${menuList}" var="menu" varStatus="rang">
+											<li>
+		 										<a  href="${menu.lien}" class="link">${menu.libelle}</a>
+											</li>
+											<c:if test="${rang.index == halfSizeCatlist}"></ul><ul></c:if>
+										</c:forEach>
+										</ul>
+									</div>
+								</c:if>
+								<div class="gutter"></div>
+								<c:set var="measTop" value="${measPromosTop}" scope="request" />
+								<c:if test="${!empty measTop }">
+								    <div class="categoryAside column_23-5">
+										<c:import url = "/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.meaWidget/meaWidget.jsp">
+											<c:param name="isHeaderMea" value="true" />
+											<c:param name="emplacement" value="SubMenuLeft" />
+										</c:import>
+									</div>
+									<div class="gutter"></div>
+								</c:if>
+								
+								<c:set var="measBottom" value="${measPromosBottom}" scope="request" />
+								<c:if test="${!empty measBottom }">
+									<div class="categoryAside column_25">
+										<c:import url = "/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.meaWidget/meaWidget.jsp">
+											<c:param name="isHeaderMea" value="true" />
+											<c:param name="emplacement" value="SubMenuRight" />
+										</c:import>
+									</div>
+								</c:if>
+							</div>
+						</div>
+					</li>
+				</c:if>
+				
+				<%-- the "menu 3" menu entry --%>	
+				<c:set var="menu3Header" value="${headerContentHelper.content.result.header.menu3}"/>
+				<c:if test="${menu3Header != null}">
+					<c:choose>
+						<c:when test="${menu3Header.menuColor != null}">
+						    <c:set var="menuCssClass" value="nav-${menu3Header.menuColor}" />
+						</c:when>
+						<c:otherwise>
+						    <c:set var="menuCssClass" value="" />
+						</c:otherwise>
+					</c:choose>
+					<% 
+					    java.util.List<JSONObject> measMenu3Top = (java.util.List<JSONObject>) ((com.lapeyre.declic.cms.ContentHelper) request.getAttribute("headerContentHelper")).getMeasForCustomMenuEntry("menu3", "meaTop");
+					    java.util.List<JSONObject> measMenu3Bottom = (java.util.List<JSONObject>) ((com.lapeyre.declic.cms.ContentHelper) request.getAttribute("headerContentHelper")).getMeasForCustomMenuEntry("menu3", "meaBottom");
+						pageContext.setAttribute("measMenu3Top", measMenu3Top);
+						pageContext.setAttribute("measMenu3Bottom", measMenu3Bottom);
+					%>
+					
+					<li class="editorialLinks ${menuCssClass} ${adjustMenuButtonWidthClass}">
+					
+ 					<c:if test="${!empty menu3Header.image.url}">
+						<astpush:assetPushUrl var="magImagePath" scope="page" urlRelative="${menu3Header.image.url}" type="" source="list" device="${device}" format="full"/>
+					</c:if>
+					
+					<c:if test="${empty menu3Header.image.url}">
+						<c:set var="keyDefaultImageMaps" value="CATEGORY_main_full"/>
+						<astpush:assetPushUrl var="magImagePath" scope="page" urlRelative="${defaultImageMaps[keyDefaultImageMaps]}" type="" source="main" device="${device}" format="full" defaultUrl="true"/>
+					</c:if>
+						<c:set var="leMagUrl"><c:out value="${menu3Header.menuLink.lien}" /></c:set>
+						<%-- Checks if this menu entry has an associated "mega menu" --%>
+						<c:set var="hasMegaMenu" value="${menu3Header.megaMenu}" />
+ 						<a id="departmentButton_3" href="${leMagUrl}" class="departmentButton ${adjustMenuButtonWidthClass}" role="menuitem" aria-haspopup="${hasMegaMenu}">
+ 							<span>${fn:toUpperCase(menu3Header.menuLink.libelle)}</span>
+ 						</a>
+						<div id="departmentMenu_3" class="departmentMenu ${adjustMenuWidthClass} container" role="menu" data-parent="departmentsMenu" data-id="leMag" aria-label="<fmt:message bundle="${storeText}" key="CatalogueMenuMagLinkLabel${mobileSuffix }"/>">
+							<div class="header desktop-hidden">
+								<a id="departmentLink_leMag" href="${leMagUrl}" class="link desktop-hidden">
+									<c:out value="${fn:toUpperCase(menu3Header.menuLink.libelle)}" />
+								</a>
+							</div>
+							<div class="row">
+								<c:if test="${empty measMenu3Top || empty measMenu3Bottom}">
+									<div class="mobile-hidden left column_23-5 categoryIntro">
+										<img alt="${menu3Header.image.alt}" src="${imagePathCMS}${menu3Header.image.url}">
+									</div>
+									<div class="gutter"></div>
+								</c:if>
+								<c:set var="menuList" value="${menu3Header.elements}"/>
+								<c:if test="${!empty menuList}">
+									<div class="categoryList column_44">
+										<fmt:formatNumber var="halfSizeCatlist"  value="${fn:length(menuList)/2}" maxFractionDigits="0" />
+										<c:if test="${halfSizeCatlist gt 5}">
+											<c:set var="halfSizeCatlist" value="5"/>
+										</c:if>
+										<ul>
+										<c:forEach items="${menuList}" var="menu" varStatus="rang">
+											<li>
+	 											<a  href="${menu.lien}" class="link">${menu.libelle}</a>
+											</li>
+											<c:if test="${rang.index==halfSizeCatlist}"></ul><ul></c:if>
+										</c:forEach>
+										</ul>
+									</div>
+								</c:if>							
+								<c:set var="meas" value="${meas}" scope="request" />
+								<c:set var="measTop" value="${measMenu3Top}" scope="request" />
+								<c:if test="${!empty measTop }">
+								    <div class="categoryAside column_23-5">
+										<c:import url = "/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.meaWidget/meaWidget.jsp">
+											<c:param name="isHeaderMea" value="true" />
+											<c:param name="emplacement" value="SubMenuLeft" />
+										</c:import>
+									</div>
+									<div class="gutter"></div>
+								</c:if>
+								
+								<c:set var="measBottom" value="${measMenu3Bottom}" scope="request" />
+								<c:if test="${!empty measBottom }">
+									<div class="categoryAside column_25">
+										
+										<c:import url = "/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.meaWidget/meaWidget.jsp">
+											<c:param name="isHeaderMea" value="true" />
+											<c:param name="emplacement" value="SubMenuRight" />
+										</c:import>
+									</div>
+								</c:if>		
+							</div>					
+						</div>
+					</li>
+				</c:if>
+				
+				
+				<%-- the "magazine" menu entry --%>
+				<c:set var="menuMagHeader" value="${headerContentHelper.content.result.header.menuMag}"/>
+				
+				<c:if test="${menuMagHeader != null}">
+					<c:choose>
+						<c:when test="${menuMagHeader.menuColor != null}">
+						    <c:set var="menuCssClass" value="nav-${menuMagHeader.menuColor}" />
+						</c:when>
+						<c:otherwise>
+						    <c:set var="menuCssClass" value="nav-Vert" />
+						</c:otherwise>
+					</c:choose>
+					
+					<li id="editorialLinks_leMag" class="editorialLinks ${menuCssClass} ${adjustMenuButtonWidthClass}" data-target="departmentMenu_leMag">
+					<% 
+					    java.util.List<JSONObject> measMagTop = (java.util.List<JSONObject>) ((com.lapeyre.declic.cms.ContentHelper) request.getAttribute("headerContentHelper")).getMeasForCustomMenuEntry("menuMag", "meaTop");
+					    java.util.List<JSONObject> measMagBottom = (java.util.List<JSONObject>) ((com.lapeyre.declic.cms.ContentHelper) request.getAttribute("headerContentHelper")).getMeasForCustomMenuEntry("menuMag", "meaTop");
+						pageContext.setAttribute("measMagTop", measMagTop);
+						pageContext.setAttribute("measMagBottom", measMagBottom);
+					%>
+ 					<c:if test="${!empty menuMagHeader.image.url}">
+						<astpush:assetPushUrl var="magImagePath" scope="page" urlRelative="${menuMagHeader.image.url}" type="" source="list" device="${device}" format="full"/>
+					</c:if>
+					
+					<c:if test="${empty menuMagHeader.image.url}">
+						<c:set var="keyDefaultImageMaps" value="CATEGORY_main_full"/>
+						<astpush:assetPushUrl var="magImagePath" scope="page" urlRelative="${defaultImageMaps[keyDefaultImageMaps]}" type="" source="main" device="${device}" format="full" defaultUrl="true"/>
+					</c:if>
+						<c:set var="leMagUrl"><c:out value="${menuMagHeader.menuLink.lien}" /></c:set>
+						<%-- Checks if this menu entry has an associated "mega menu" --%>
+						<c:set var="hasMegaMenu" value="${menuMagHeader.megaMenu}" />
+ 						<a id="departmentButton_leMag" href="${leMagUrl}" class="departmentButton ${adjustMenuButtonWidthClass}" role="menuitem" aria-haspopup="${hasMegaMenu}">
+ 							<span>${menuMagHeader.menuLink.libelle}</span>
+ 						</a>
+	 					<div id="departmentMenu_leMag" class="departmentMenu ${adjustMenuWidthClass} container" role="menu" data-target="editorialLinks_leMag" data-parent="departmentsMenu" data-id="leMag" aria-label="<fmt:message bundle="${storeText}" key="CatalogueMenuMagLinkLabel${mobileSuffix }"/>">
+							<div class="header desktop-hidden">						
+									<a id="departmentLink_leMag" href="${leMagUrl}" class="link desktop-hidden">${fn:toUpperCase(menuMagHeader.menuLink.libelle)}</a>
+							</div>
+							<div class="row">
+								<c:if test="${empty measMagTop || empty measMagBottom}">
+									<div class="mobile-hidden left categoryIntro col s3">
+										<img alt="${menuMagHeader.image.alt}" src="${imagePathCMS}${menuMagHeader.image.url}">
+									</div>
+								</c:if>
+								
+								<c:set var="menuList" value="${menuMagHeader.elements}"/>
+								<c:if test="${!empty menuList}">
+									<div class="categoryList col s3">
+										<fmt:formatNumber var="halfSizeCatlist"  value="${fn:length(menuList)/2}" maxFractionDigits="0" />
+										<c:if test="${halfSizeCatlist gt 5}">
+											<c:set var="halfSizeCatlist" value="5"/>
+										</c:if>
+										<ul>
+										<c:forEach items="${menuList}" var="menu" varStatus="rang">
+											<li>
+	 											<a  href="${menu.lien}" class="link">${menu.libelle}</a>
+											</li>
+											<c:if test="${rang.index==halfSizeCatlist}"></ul><ul></c:if>
+										</c:forEach>
+										</ul>
+									</div>
+								</c:if>
+								<c:set var="meas" value="${meas}" scope="request" />				
+							    <div class="categoryAside col s3">
+							    	<c:set var="measTop" value="${measMagTop}" scope="request" />
+									<c:import url = "/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.meaWidget/meaWidget.jsp">
+										<c:param name="isHeaderMea" value="true" />
+										<c:param name="emplacement" value="SubMenuLeft" />
+									</c:import>
+								</div>
+								<div class="categoryAside col s3">
+									<c:set var="measBottom" value="${measMagBottom}" scope="request" />
+									<c:import url = "/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.meaWidget/meaWidget.jsp">
+										<c:param name="isHeaderMea" value="true" />
+										<c:param name="emplacement" value="SubMenuRight" />
+									</c:import>
+								</div>
+							</div>
+						</div>
+						
+					</li>
+				</c:if>
+				
+			</ul>
+			<div class="clearAll"></div>
+		</div>
+	</div>
+	
+	<div id="departmentsMenuContainer" class="mobile-hidden">
+		
+	</div>
+	
+	<script src="${jsAssetsDir}javascript/Widgets/header_navigation_catalog.js?${versionNumber}"></script>

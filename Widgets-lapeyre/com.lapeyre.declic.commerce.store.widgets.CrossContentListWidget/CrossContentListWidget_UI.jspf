@@ -1,0 +1,170 @@
+<script>
+		dojo.addOnLoad(function(){
+			updateFacetContentCounts();
+			SearchBasedNavigationDisplayJS.initContentUrl('${CrossContentListingViewURL}');
+			SearchBasedNavigationDisplayJS.updateContextProperties("searchBasedNavigation_context",{"pageViewContent": '<c:out value='${pageViewContent}'/>',"searchTerm": '<wcf:out value="${searchTerm}" escapeFormat="js"/>'});
+		});
+</script>
+
+<a id="ancreContent" href="#"></a>
+<div class="productListingWidget">
+		
+		<script>
+			dojo.addOnLoad(function(){
+				dojo.topic.subscribe("Facet_Add_Content", function(){
+						SearchBasedNavigationDisplayJS.appendFilterFacet(arguments[0],"content");
+						SearchBasedNavigationDisplayJS.doSearchFilter("content");
+					});
+				dojo.topic.subscribe("Facet_Remove_Content", function(){
+						SearchBasedNavigationDisplayJS.removeFilterFacet(arguments[0], "content");
+						SearchBasedNavigationDisplayJS.doSearchFilter("content");											
+				});
+				dojo.topic.subscribe("Facet_RemoveAll_Content", function(){
+					SearchBasedNavigationDisplayJS.clearAllFacets(true,"content");
+				});
+			});
+		</script>
+		
+		<div class="header_bar">
+			<div class="catentryListTitle">
+				<c:if test="${!empty WCParam.searchTerm || !empty WCParam.manufacturer}">
+					<span class=" hide-on-med-and-down">
+						<span id="totalCountSearchSummary">${totalContentCount}</span>
+						<fmt:message key = "LAP030_cross_content_matches"  bundle="${widgetText}" />
+						<span class="searchTermTitle">
+							"<c:out value='${!empty WCParam.searchTerm ? WCParam.searchTerm : WCParam.manufacturer}'/>"
+						</span>
+					</span>
+				</c:if>
+			</div>
+			<%-- Set variables used by pagination controls --%>
+			<c:set var="otherViewsEventName" value="toggleViewForContentEvent"/>
+			<c:set var="eventName" value="showResultsForPageNumber_content"/>
+			<script>
+				dojo.addOnLoad(function(){
+					dojo.subscribe("toggleViewForContentEvent",SearchBasedNavigationDisplayJS,"toggleViewForContent");
+					dojo.subscribe("showResultsForPageNumber_content",SearchBasedNavigationDisplayJS,"showResultsPageForContent");
+					<c:if test="${env_inPreview && !env_storePreviewLink}">
+					dojo.subscribe("CMPageRefreshEvent",function(){
+						var previewHeader = window.parent.frames[0];
+						if(previewHeader.isSpotsShown()) {
+							previewHeader.showESpots();previewHeader.showESpots();
+							}
+						});
+					</c:if>
+				});
+				
+				//0000236: [Règle de tri] les règles de tri doivent s'appliquer sur toutes les familles et ce pour une même session
+				function sortContentBySelectHandler(elt) {
+					setCurrentId('orderByContent');
+					dojo.cookie('contentSortBySelected', elt.value, {path:'/'});
+					SearchBasedNavigationDisplayJS.sortResults_content(elt.value);
+				}
+				
+				//0000237: [mode de vue] Le mode de vue (grille/liste) doit s'appliquer sur toutes familles et ce pour une même session 
+				function setContentPageViewInCookie(pageView) {
+					dojo.cookie('contentPreferedPageView', pageView, {path:'/'});
+				}
+									
+			</script>
+	
+			<div class="controls">
+				<c:set var="linkPrefix" value="categoryResults"/>
+				<c:if test = '${otherViews == "true"}'>
+					<div class="view_controls">
+					
+					<%-- Display grid view and list view icon.. grid mode being default--%>
+					<c:choose>
+						<c:when test="${pageViewContent == 'list'}">
+							<c:set var="linkId" value="WC_SearchBasedNavigationResults_content_pagination_link_grid_${linkPrefix}"/>
+							<div class="list_icon" role="button" aria-disabled="true" aria-label="<fmt:message key='PC_SWITCH_TO_LIST_VIEW' bundle='${widgetText}'/>" ></div>
+							<a alt="<fmt:message key='PC_SWITCH_TO_GRID_VIEW' bundle='${widgetText}'/>" role="button" class="grid_icon" id="${linkId}" href='javascript:setContentPageViewInCookie("grid");dojo.publish("${otherViewsEventName}",[{pageView:"grid",linkId:"${linkId}"}])' title="<fmt:message key='PC_SWITCH_TO_GRID_VIEW' bundle='${widgetText}'/>"></a>
+						</c:when>
+						<c:otherwise>
+							<c:set var="linkId" value="WC_SearchBasedNavigationResults_content_pagination_link_list_${linkPrefix}"/>
+							<a alt="<fmt:message key='PC_SWITCH_TO_LIST_VIEW' bundle='${widgetText}'/>" role="button" class="list_icon" id="${linkId}" href='javascript:setContentPageViewInCookie("list");dojo.publish("${otherViewsEventName}",[{pageView:"list",linkId:"${linkId}"}])' title="<fmt:message key='PC_SWITCH_TO_LIST_VIEW' bundle='${widgetText}'/>"></a>
+							<div class="grid_icon" role="button" aria-disabled="true" aria-label="<fmt:message key='PC_SWITCH_TO_GRID_VIEW' bundle='${widgetText}'/>" ></div>
+						</c:otherwise>
+					</c:choose>
+					</div>
+				</c:if>
+				<select id="orderByContent" class="dropdown-container" onChange="javaScript:sortContentBySelectHandler(this);">
+					<option <c:if test="${sortByContent == ''}">selected</c:if> value="0"><c:if test="${sortByContent == ''}"><fmt:message key="SN_SORT_BY" bundle="${widgetText}"/> : </c:if><fmt:message key="SN_NO_SORT" bundle="${widgetText}"/> </option>
+					<option <c:if test="${sortByContent == '1'}">selected</c:if> value="1"><c:if test="${sortByContent == '1'}"><fmt:message key="SN_SORT_BY" bundle="${widgetText}"/> : </c:if><fmt:message key="LAP028_SN_SORT_BY_TITLE" bundle="${widgetText}"/> </option>
+					<option <c:if test="${sortByContent == '2'}">selected</c:if> value="2"><c:if test="${sortByContent == '2'}"><fmt:message key="SN_SORT_BY" bundle="${widgetText}"/> : </c:if><fmt:message key="LAP029_SN_SORT_BY_DATE" bundle="${widgetText}"/> </option>
+				</select>
+				<div class="hide-on-large-only filterButton" id="filterButtonCrossContent">
+					<fmt:message bundle="${widgetText}" key="filterButtonLabel" /> 
+					<span class="filterQuantity"></span>
+				</div>
+			</div>
+
+		</div>
+		<div class="product_listing_container content_listing_container">
+			<c:if test="${totalContentCount > 0}">
+
+				<c:choose>
+					<%--Si mobile => force la vue grille --%>
+					<c:when test="${pageViewContent == 'list'  && !isOnMobileDevice}">
+						<ul class="list_mode grid" data-dojo-type="wc/widget/Grid" data-dojo-props="columnCountByWidth:${columnCountByWidth_List}">
+							<c:forEach var="xcontent" items="${xcontents}" varStatus="statut">
+								<%
+									request.setAttribute("editoElement",pageContext.getAttribute("xcontent"));
+								%>
+								<li>
+							 		<c:import url="/Widgets-lapeyre/Common/Editorial/teaserView_UI.jsp">
+								 		<c:param name="format" value="list" />
+								 	</c:import>
+							 	</li>
+							</c:forEach>
+						</ul>
+					</c:when>
+					<c:otherwise>
+						<ul class="grid_mode grid" data-dojo-type="wc/widget/Grid" data-dojo-props="columnCountByWidth:${columnCountByWidth_Grid}">
+							<c:forEach var="xcontent" items="${xcontents}" varStatus="statut">
+								<%
+									request.setAttribute("editoElement",pageContext.getAttribute("xcontent"));
+								%>
+								<li>
+								 	<c:import url="/Widgets-lapeyre/Common/Editorial/teaserView_UI.jsp">
+								 		<c:param name="format" value="grid" />
+								 	</c:import>
+							 	</li>
+							</c:forEach>
+						</ul>
+					</c:otherwise>
+				</c:choose>
+
+			</c:if>
+		</div>
+		<%@include file="/Widgets-lapeyre/Common/ECOPaginationControls.jspf" %>
+</div>
+<div id="facetContentCounts${widgetSuffix}">
+		<script>
+			function updateFacetContentCounts() {
+				//Les facettes sont cachées par défaut puis affichées dans SearchBasedNavigationDisplayJS.updateFacetContentCount()
+				dojo.query('li[class^="facet_content"]').style("display", "none");
+				dojo.query('div[class^="xfacet_section"]').style("display", "none");
+			
+				<c:set var="singlequote" value="'" />
+				<c:forEach var="facetField" items="${xcontentsFacet}" varStatus="counter">
+					<c:forEach var="item" items="${facetField['entries']}" varStatus="aStatus">
+						<c:set var="facetValue" value="${fn:replace(item['value'],'&','%26')}" />
+					 	<c:set var="facetValue" value="${fn:replace(facetValue,'=','%3D')}" />
+						<c:set var="facetId" value="${fn:toLowerCase(fn:replace(fn:trim(facetField['name']),' ','_'))}_${fn:toLowerCase(fn:replace(fn:trim(facetValue),' ','_'))}" />
+						
+						<c:set var="facetIdEscaped" value="${fn:replace(facetId,singlequote,'') }"/>
+					
+					
+						SearchBasedNavigationDisplayJS.updateFacetContentCount(
+							"${facetIdEscaped}",
+							<c:out value"${item.count}"/>, 
+							"${item.value}",
+							<c:out value="${counter.count}"/>
+							);
+					</c:forEach>
+				</c:forEach>
+				dojo.publish("FacetContentCount_updated", [{totalContentCount:<c:out value="${totalContentCount}"/>}]);
+			}
+		</script>
+	</div>

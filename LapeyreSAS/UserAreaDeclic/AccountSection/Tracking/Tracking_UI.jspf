@@ -1,0 +1,119 @@
+<!-- BEGIN  Tracking_UI.jspf-->
+<!doctype HTML>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="${shortLocale}" xml:lang="${shortLocale}">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>
+		<fmt:message bundle="${storeText}" key="${pageTrackingTitle}">
+			<c:forEach var="pageTrackingTitleParam" items="${pageTrackingTitleParams}">
+				<fmt:param value="${pageTrackingTitleParam}" />
+			</c:forEach>
+		</fmt:message>
+	</title>
+	<META NAME="robots" CONTENT="noindex,nofollow" />
+	<link rel="stylesheet" href="<c:out value="${jspStoreImgDir}${env_vfileStylesheet}?${versionNumber}"/>" type="text/css" />
+	<link rel="stylesheet" href="${jsAssetsDir}css/base.css?${versionNumber}" type="text/css" />
+		
+	<link rel="stylesheet" href="${jspStoreImgDir}UserAreaDeclic/css/style.css?${versionNumber}" type="text/css" />
+    <link rel="stylesheet" href="<c:out value="${jspStoreImgDir}css/print-lapeyre.css?${versionNumber}"/>" type="text/css"/>
+	<!--[if IE 8]>
+		    <link rel="stylesheet" type="text/css" href="${jspStoreImgDir}css/tunnel_ie8.css" />
+	<![endif]-->
+	<!--[if lt IE 10]>
+		    <link rel="stylesheet" type="text/css" href="${jspStoreImgDir}css/stylesIE9.css" />
+	<![endif]-->
+		
+	<%@ include file="../../../Common/CommonJSToInclude.jspf"%>
+	<script type="text/javascript" src="${jsAssetsDir}javascript/StoreCommonUtilities.js?${versionNumber}"></script>
+	<script type="text/javascript" src="${jsAssetsDir}javascript/CommonContextsDeclarations.js?${versionNumber}"></script>
+	<script type="text/javascript" src="${jsAssetsDir}javascript/CommonControllersDeclaration.js?${versionNumber}"></script>
+
+	<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/Configurator/ConfiguratorServicesDeclaration.js?${versionNumber}"/>"></script>
+	<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/CatalogArea/CategoryDisplay.js?${versionNumber}"/>"></script>
+	<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/ServicesDeclaration.js?${versionNumber}"/>"></script>
+</head>
+
+<body>
+	<%@ include file="../../../Common/CommonJSPFToInclude.jspf"%>
+
+	<div id="page">
+		<%out.flush();%>
+		<c:import url = "${env_jspStoreDir}Widgets/Header/Header.jsp" />
+		<%out.flush();%>
+			
+		
+		<div id="contentWrapper">
+			<div id="content" role="main">
+				<div class="rowContainer">
+                    <div class="row">
+                        <div data-slot-id="1" class="col12 slot1 mobile-hidden">
+							<%out.flush();%>
+							<fmt:message var="lastBreadCrumbItem" bundle="${storeText}" key="${pageTrackingTitle}">
+								<c:forEach var="pageTrackingTitleParam" items="${pageTrackingTitleParams}">
+									<fmt:param value="${pageTrackingTitleParam}" />
+								</c:forEach>
+							</fmt:message>
+							<wcf:useBean var="breadCrumbUrls" classname="java.util.ArrayList" />
+							<wcf:useBean var="breadCrumbLabels" classname="java.util.ArrayList" />
+							<c:forEach var="breadcrumb" items="${pageTrackingBreadCrumb}">
+								<c:set var="urlLabelPair" value="${fn:split(breadcrumb, ';')}" />
+								<c:if test="${fn:length(urlLabelPair) == 2}">
+									<wcf:set target="${breadCrumbUrls}" value="${urlLabelPair[0]}" />
+									<wcf:set target="${breadCrumbLabels}" value="${urlLabelPair[1]}" />
+								</c:if>				
+							</c:forEach>
+							<c:import url = "/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.BreadcrumbTrail/BreadcrumbTrail.jsp">
+								<c:param name="pageName" value="suiviCom" />
+								<c:param name="breadCrumbMonCompte" value="${userType eq 'R'}" />
+								<c:param name="breadCrumbMiddleUrls" value="${ecocea:join(breadCrumbUrls, ';')}" />
+								<c:param name="breadCrumbMiddleLabels" value="${ecocea:join(breadCrumbLabels, ';')}" />
+								<c:param name="lastBreadCrumbItemCompteClient" value="${lastBreadCrumbItem}" />
+							</c:import>
+							<%out.flush();%>
+                    	</div>
+                	 </div>
+                	 
+                	 <c:if test="${userType eq 'R' }">
+                	 	<c:set var="navMonCompteCurrentPage" value="${fn:contains(formPath, 'Order') ? 'myOrders':'myQuotations'}"/>
+                	 	<div class="row" id="${navMonCompteCurrentPage }Page">
+							<div id="navCompteClient" class="col3 mobile-hidden">
+								<%@ include file="../navClient.jspf" %>
+							</div>
+							<div class="col9 bcol12 mainContentWrapper">
+                	 </c:if>
+               		<c:choose>
+               			<c:when test="${TimeoutError}">
+							<div id="WStimeoutErrorContainer">
+								<fmt:message bundle="${storeText}" key="technicalErrorMessage" />
+							</div>                			
+               			</c:when>
+               			<c:otherwise>
+							<c:import url="${formPath}.jsp" />
+               			</c:otherwise>
+               		</c:choose>
+               		<c:if test="${userType eq 'R' }">
+                	 	
+                	 		</div>
+                	 	</div>
+                	 </c:if>
+				</div>
+			</div>
+		</div>
+		
+		<%out.flush();%>
+		<c:import url="${env_jspStoreDir}Widgets/Footer/Footer.jsp"/>
+		<%out.flush();%>
+	</div>
+	
+	<%out.flush();%>
+	<c:import url="../../../TagManager/TagManager.jsp" >
+		<c:param name="pageGroup" value="devisCommande" />
+		<c:param name="pageName" value="${tagManagerTemplate}" />
+	</c:import>
+	<%out.flush();%>
+	
+</body>
+</html>
+<!-- END  Tracking_UI.jspf-->

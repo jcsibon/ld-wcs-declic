@@ -1,0 +1,182 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<%@ include file="/Widgets/Common/PDP_CatalogEntryData.jspf" %>
+
+<c:set var="catalogEntryID" value="${catalogEntryDetails.uniqueID}" />
+<c:set var="shortDescription" value="${catalogEntryDetails.shortDescription}" />
+<c:set var="entitledItems" value="${catalogEntryDetails.sKUs}"/>
+<c:set var="numberOfSKUs" value="${catalogEntryDetails.numberOfSKUs}"/>
+<c:set var="productName" value="${catalogEntryDetails.name}" />
+<c:set var="productType" value="${catalogEntryDetails.type}" />
+<c:set var="displayType" value="${param.displayType}" />
+
+<c:if test="${numberOfSKUs eq 1}">
+	<c:set var="firstItemID" value="${entitledItems[0].uniqueID}"/>
+</c:if>
+<c:set var="attachments" value="${catalogEntryDetails.attachments}" />
+
+<%-- Declare map of ad ribbons for a particular catalog entry --%>
+<jsp:useBean id="adRibbonMap" class="java.util.LinkedHashMap" type="java.util.Map" scope="page" />
+
+<c:set var="attributesForRibon" value="${catalogEntryDetails.attributes}"/>
+<c:forEach var="attri" items="${attributesForRibon}">
+	<c:if test="${attri.storeDisplay eq true && attri.usage ne 'Defining'}">
+		<c:set var="adRibbonStyle" value="${attri.identifier}"/>
+		<c:set var="adRibbonText" value=""/>
+		<c:forEach var="e" items="${attri.values}">
+			<c:set var="adRibbonText" value="${e.value}"/>
+		</c:forEach>
+		<c:set target="${adRibbonMap}" property="${adRibbonStyle}" value="${adRibbonText}"/>
+	</c:if>
+</c:forEach>
+
+
+<c:set var="type" value="product" />
+
+<c:if test="${!empty catalogEntryDetails.thumbnail}">
+		<astpush:assetPushUrl var="thumbNail" scope="page" urlRelative="${catalogEntryDetails.thumbnail}" type="${catalogEntryDetails.type}" source="main" device="${device}" format="thumbnail"/>
+	</c:if>		
+
+	<c:if test="${!empty catalogEntryDetails.fullImage}">
+		<astpush:assetPushUrl var="fullImage" scope="page" urlRelative="${catalogEntryDetails.fullImage}" type="${catalogEntryDetails.type}" source="main" device="${device}" format="full"/>
+		<astpush:assetPushUrl var="zoomImage" scope="page" urlRelative="${catalogEntryDetails.fullImage}" type="${catalogEntryDetails.type}" source="main" device="${device}" format="zoom"/>
+</c:if>
+
+
+<%--
+Variable for Flex Flow options
+--%>
+<c:set var="miniShopCartEnabled" value="false"/>
+<flow:ifEnabled feature="miniShopCart">
+	<c:set var="miniShopCartEnabled" value="true"/>
+</flow:ifEnabled>
+
+<c:set var="compareEnabled" value="false"/>
+<flow:ifEnabled feature="ProductCompare">
+	<c:set var="compareEnabled" value="true"/>
+</flow:ifEnabled>
+
+<%--
+End
+--%>
+
+<wcf:url var="productDisplayUrl" patternName="ProductURL" value="Product2">
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	<wcf:param name="storeId" value="${WCParam.storeId}"/>
+	<wcf:param name="productId" value="${catalogEntryID}"/>
+	<wcf:param name="langId" value="${WCParam.langId}"/>
+	<wcf:param name="parent_category_rn" value="${WCParam.categoryId}"/>
+	<wcf:param name="categoryId" value="${WCParam.categoryId}"/>
+	<wcf:param name="top_category" value="${WCParam.top_category}"/>
+	<wcf:param name="urlLangId" value="${urlLangId}" />
+</wcf:url>
+
+<%--Default full image --%>
+<c:set var="keyDefaultImageMaps" value="${catalogEntryDetails.type}_main_full"/>
+<astpush:assetPushUrl var="defaultProductFullImage" scope="page" urlRelative="${defaultImageMaps[keyDefaultImageMaps]}" type="${catalogEntryDetails.type}" source="main" device="${device}" format="full" defaultUrl="true"/>
+
+<c:choose>
+	<c:when test="${!empty fullImage}">
+	
+		<c:set var="productFullImage" value="${fullImage}" scope="request"/>
+		<c:set var="canZoom" value="true" />
+		<c:if test="${isOnMobileDevice}">
+			<c:set var="canZoom" value="false" />
+		</c:if>
+	</c:when>
+	<c:otherwise>
+		<c:set var="canZoom" value="false" />
+		<c:set var="productFullImage" value="${defaultProductFullImage}"/>
+	</c:otherwise>
+</c:choose>
+
+<c:if test="${!empty catalogEntryID}">
+	<c:choose>
+		<c:when test="${numberOfSKUs > 1}">
+			<c:set var="dragType" value="product"/>
+			<c:set var="dnd_catalogEntryID" value="${catalogEntryID}"/>
+		</c:when>
+		<c:otherwise>
+			<c:set var="dragType" value="item"/>
+			<c:set var="dnd_catalogEntryID" value="${firstItemID}"/>
+		</c:otherwise>
+	</c:choose>
+</c:if>
+
+<jsp:useBean id="angleThumbnailAttachmentMap" class="java.util.HashMap" type="java.util.Map"/>
+<jsp:useBean id="angleThumbnailAttachmentNameMap" class="java.util.HashMap" type="java.util.Map"/>
+<jsp:useBean id="angleThumbnailAttachmentShortDescMap" class="java.util.HashMap" type="java.util.Map"/>	
+<jsp:useBean id="angleFullImageAttachmentMap" class="java.util.HashMap" type="java.util.Map"/>	
+<jsp:useBean id="angleZoomImageAttachmentMap" class="java.util.HashMap" type="java.util.Map"/>	
+<wcf:useBean var="vids" classname="java.util.LinkedList" />	
+
+<c:set var="thumbnailCount" value="0" />
+<c:set var="fullImageCount" value="0" />
+<c:forEach  var="attachment" items="${attachments}">
+	<c:if test="${'IMAGE_SIZE_40' eq attachment.usage}">
+		<c:set var="image40Attachment" value="${attachment}" />
+	</c:if>
+	<c:if test="${'ANGLEIMAGES_THUMBNAIL' eq attachment.usage}">
+		<astpush:assetPushUrl var="resolvedPath" urlRelative="${attachment.attachmentAssetPath}" type="${catalogEntryDetails.type}" source="main" device="${device}" format="thumbnail"/>
+		<c:set target="${angleThumbnailAttachmentMap}" property="${thumbnailCount}" value="${resolvedPath}"/>
+
+		<c:set target="${angleThumbnailAttachmentShortDescMap}" property="${thumbnailCount}" value="${attachment.shortdesc}"/>
+		<c:set target="${angleThumbnailAttachmentNameMap}" property="${thumbnailCount}" value="${attachment.name}"/>
+		<c:set var="thumbnailCount" value="${thumbnailCount + 1}" />
+	</c:if>
+	<c:if test="${'ANGLEIMAGES_FULLIMAGE' eq attachment.usage}">
+		<astpush:assetPushUrl var="resolvedPath" scope="page" urlRelative="${attachment.attachmentAssetPath}" type="${catalogEntryDetails.type}" source="main" device="${device}" format="full"/>
+		<astpush:assetPushUrl var="resolvedZoomPath" scope="page" urlRelative="${attachment.attachmentAssetPath}" type="${catalogEntryDetails.type}" source="main" device="${device}" format="zoom"/>
+				
+		<c:set target="${angleFullImageAttachmentMap}" property="${fullImageCount}" value="${resolvedPath}"/>
+		<c:set target="${angleZoomImageAttachmentMap}" property="${fullImageCount}" value="${resolvedZoomPath}"/>
+
+		<c:set var="fullImageCount" value="${fullImageCount + 1}" />
+	</c:if>
+	<c:if test="${attachment.usage eq YOUTUBE_VIDEO_ATCHMT}">
+        <wcf:set target="${vids}" value="${attachment}" />
+    </c:if>
+</c:forEach>
+
+<c:choose>
+	<c:when test="${!empty image40Attachment}">
+		<c:choose>
+			<c:when test="${(fn:startsWith(image40Attachment.attachmentAssetPath, 'http://') || fn:startsWith(image40Attachment.attachmentAssetPath, 'https://'))}">
+				<wcst:resolveContentURL var="productCompareImagePath" url="${image40Attachment.attachmentAssetPath}"/>
+			</c:when>
+			<c:otherwise>
+				<c:set var="productCompareImagePath" value="${env_imageContextPath}/${image40Attachment.attachmentAssetPath}" />
+			</c:otherwise>
+		</c:choose>
+	</c:when>
+	<c:when test="${!empty thumbNail}">
+		<c:set var="productCompareImagePath" value="${thumbNail}" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="keyDefaultImageMaps" value="${catalogEntryDetails.type}_main_thumbnail"/>
+		<astpush:assetPushUrl var="productCompareImagePath" scope="page" urlRelative="${defaultImageMaps[keyDefaultImageMaps]}" type="${catalogEntryDetails.type}" source="main" device="${device}" format="thumbnail" defaultUrl="true"/>
+	</c:otherwise>
+</c:choose>
+
+<c:set var="compareImageDescription" value="${fn:replace(shortDescription, search, replaceCmprStr)}"/>
+<c:set var="compareImageDescription" value="${fn:replace(compareImageDescription, search01, replaceCmprStr)}"/>
+<c:set var="widgetSuffix" value="" />
+<c:if test="${(!empty param.pgl_widgetSlotId) && (!empty param.pgl_widgetDefId) && (!empty param.pgl_widgetId)}">
+	<c:set var="widgetSuffix" value="_${param.pgl_widgetSlotId}_${param.pgl_widgetDefId}_${param.pgl_widgetId}" />
+</c:if>
+
+<%-- Data for Slider --%>
+<c:set var="numberOfThumbnailByPage" value="4" />
+<c:set var="heightOfAThumbnail" value="84" />

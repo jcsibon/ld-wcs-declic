@@ -1,0 +1,47 @@
+#quickLinksBarContainer {
+	background-color: #d21a2f; 
+}
+
+#departmentsMenu > li {
+	color: #cd0018;
+}
+
+.subscribeNewsletter {
+	background: #cd0018;
+}
+#footerWrapper:before {
+	display: block;
+	background: transparent url('../images/footerBarPro.png') no-repeat center top;
+	height: 12px;    
+	clear: both;
+    content: "";
+}
+div[id^="footerRow"] > .header,
+div[id^="footerRow"] > .section > ul, .section h4,
+#footer .section .title,
+div[id^="footerRow"] > .section > ul > li > a:hover {
+	color: #616161;
+}
+
+.departmentButton:hover,ul#departmentsMenu li:hover>.departmentButton {
+	color: rgba(205, 00, 24, 1);
+}
+
+.subscribeNewsletter #WC_Newsletter_Subscribe_Error label {
+	color: #fff;
+}
+
+
+.tracking.quotation .orderHeader .quantityTotal { width: 46%; padding: 0 10px; }
+.tracking.quotation .orderHeader .unitPrice     { width: 14%; padding:      0; }
+.tracking.quotation .orderHeader .quantity      { width: 13%; padding: 0 10px; }
+.tracking.quotation .orderHeader .vat   { width:  0%; padding: 0 10px; }
+.tracking.quotation .orderHeader .totalPrice    { width: 27%; padding: 0 10px; }
+
+
+.tracking.quotation .orderBody .productImage   { width: 13%; }
+.tracking.quotation .orderBody .productSummary { width: 33%; }
+.tracking.quotation .orderBody .unitPrice      { width: 14%; }
+.tracking.quotation .orderBody .quantity       { width: 13%; padding: 20px 10px 10px 10px;}
+.tracking.quotation .orderBody .vat    { width:  0%; }
+.tracking.quotation .orderBody .totalPrice     { width: 27%; }

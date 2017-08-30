@@ -1,0 +1,89 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<div id="<c:out value="${param.parentPage}"/>addtoShoppingListPopup" data-dojo-type="lapeyre/widget/Dialog" title="<fmt:message key='DIALOG_TITLE_CREATE_WISHLIST' bundle='${widgetText}' />" style="display:none;">
+	<div class="widget_site_popup">
+		<div class="content">
+			<div class="header">
+				<span><fmt:message key="LAP025_ADDTO_WISH_LIST" bundle="${widgetText}" /></span>
+				<a role="button" id="shoppingListItemAddedClose" href="javascript:void(0);" onclick="javascript:dijit.byId('<c:out value="${param.parentPage}"/>addtoShoppingListPopup').hide();return false;" class="close tlignore" title="<fmt:message key="SL_CLOSE" bundle="${widgetText}" />" aria-label="<fmt:message key="SL_CLOSE" bundle="${widgetText}"/>" ></a>
+				<div class="clear_float"></div>
+			</div>
+			<div class="body">
+				<c:choose>
+					<c:when test="${shoppingLists != null && !empty shoppingLists}">
+						<div id="existingShoppingList">
+					</c:when>
+					<c:otherwise>
+						<div id="existingShoppingList" style="display:none;">
+					</c:otherwise>
+				</c:choose>
+				
+					<fmt:message key="LAP026_CHOOSE_EXISTING_LIST" bundle="${widgetText}" />
+					<div class="<c:out value="${param.parentPage}"/>dropdownLP">
+						<select id="<c:out value="${param.parentPage}"/>existingListDP">
+						<c:forEach var="shoppingList" items="${shoppingLists}">
+							<%-- Escape unwanted XML characters in shopping list descriptions --%>
+							<c:set var="escListName"><c:out value="${shoppingList.description.name}" /></c:set>
+							<option value="${shoppingList.giftListIdentifier.uniqueID}">${escListName}</option>
+						</c:forEach>
+						</select>
+					</div>
+				</div>
+				<fmt:message key="LAP027_CREATE_NEW_LIST" bundle="${widgetText}" />
+				<input id="<c:out value="${param.parentPage}"/>newListName" type="text" size="35" maxlength="50" value="" onkeypress='if(event.keyCode==13){ shoppingListJS<c:out value="${param.parentPage}"/>.create(); dojo.stopEvent(event);}'/>
+				<div id="${param.parentPage}shoppingListErrorMessageArea" style="display:none">
+					<span id="${param.parentPage}shoppingListErrorMessageText" class="error"></span>
+				</div>
+			</div>
+			<div class="footer">
+				<div class="ctaContainer inline">
+					<a id="<c:out value="${param.parentPage}"/>createShoppingListPopup_cancel" href="javascript:void(0);"
+					<c:choose>
+						<c:when test="${param.parentPage == 'QuickInfo'}">
+							onclick="dijit.byId('<c:out value="${param.parentPage}"/>addtoShoppingListPopup').hide();QuickInfoJS.showDetails('<c:out value="${param.productId}"/>');" 	
+						</c:when>
+						<c:otherwise>
+							onclick="dijit.byId('<c:out value="${param.parentPage}"/>addtoShoppingListPopup').hide();" 
+						</c:otherwise>
+					</c:choose> 
+					class="button left" tabindex="3">
+						<fmt:message key="CANCEL" bundle="${widgetText}" />
+					</a>
+					
+					<a id="<c:out value="${param.parentPage}"/>createShoppingListPopup_save" onclick="javascript:createOrAdd();return false;" href="javascript:void(0);" class="button green left" tabindex="2">
+						<fmt:message key="SAVE" bundle="${widgetText}" />
+					</a>
+					<script>
+						function createOrAdd(){
+							var errArea= document.getElementById('${param.parentPage}shoppingListErrorMessageArea');
+							errArea.style.display='none';
+							var listIdSelect = $('#<c:out value="${param.parentPage}"/>existingListDP');
+							if(listIdSelect == null || $(listIdSelect).children().length == 0) {
+								listNameInput=document.getElementById("${param.parentPage}newListName");
+								if(listNameInput == null || listNameInput.value == null || listNameInput.value == '') {
+									errArea.innerHTML='<span id="${param.parentPage}shoppingListErrorMessageText" class="error">' + "<fmt:message key="ajoutWishlistMissingName" bundle="${widgetText}" />" + '</span>';
+									errArea.style.display='block';
+									return false;
+								}
+							}
+							wishList.createOrAddToList("${param.parentPage}newListName", '<c:out value="${param.parentPage}"/>existingListDP', '<c:out value="${param.orderItemId}"/>');
+						}
+					</script>
+				</div>
+				<div class="clear_float"></div>
+			</div>
+		</div>
+	</div>
+</div>

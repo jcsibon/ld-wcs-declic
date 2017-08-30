@@ -1,0 +1,272 @@
+<?xml version="1.0"	?>
+<!DOCTYPE cache	SYSTEM "cachespec.dtd">
+
+<!-- All Commerce default command caching rules have been relocated under InitializationServlet.war -->
+
+<cache>
+	<!-- Footer (newsletter + arbo) Mobile et Desktop-->
+	<cache-entry>
+        <class>servlet</class>
+        <name>/LapeyreSAS/Widgets/Footer/Footer.jsp</name>
+        <property name="save-attributes">true</property>
+		<property name="consume-subfragments">true</property>
+        <cache-id>
+        	<property name="ignore-get-post">true</property>
+        	
+			<component id="DC_storeId" type="attribute">
+				<required>false</required>
+			</component>
+			<component id="DC_lang" type="attribute">
+				<required>false</required>
+			</component>
+			<component id="DC_deviceFormatId" type="attribute">
+				<required>true</required>
+			</component>
+			<component id="isProBTP" type="attribute">
+				<required>true</required>
+			</component>
+			<component id="omitHeader" type="attribute">
+				<required>false</required>
+			</component>
+			
+			<inactivity>43200</inactivity>
+			<timeout>43200</timeout>
+			<priority>5</priority>	
+        </cache-id>
+
+<!--         Dependency Ids -->
+        <dependency-id>DC_userType
+			<component id="DC_userType" type="attribute"> 
+				<required>true</required> 
+			</component> 
+		</dependency-id>
+<!--         Ends Dependency Ids -->
+    </cache-entry>
+    
+    <!-- Ne surtout pas cacher Footer_BV.jsp qui utilise partNumber -->
+    <cache-entry>
+        <class>servlet</class>
+        <name>/LapeyreSAS/Widgets/Footer/Footer_BV.jsp</name>
+		<property name="do-not-consume">true</property>
+		<property name="do-not-cache">true</property>
+		<cache-id>
+        </cache-id>
+	</cache-entry>
+    
+
+    <!-- La jsp CookieConsentement.jsp ne doit jamais être cachée -->
+    <cache-entry>
+        <class>servlet</class>
+        <name>/LapeyreSAS/Widgets/Footer/ext/CookieConsentement.jsp</name>
+		<property name="do-not-consume">true</property>
+		<property name="do-not-cache">true</property>
+		<cache-id>
+        </cache-id>
+	</cache-entry>
+	 <!-- Mantis 2748: La jsp Footer_CMS_Content_UI.jsp ne doit pas être cachée car c'est le CMS qui gère sont cache -->
+    <cache-entry>
+        <class>servlet</class>
+        <name>/LapeyreSAS/Widgets/Footer/Footer_CMS_Content_UI.jspf</name>
+		<property name="do-not-consume">true</property>
+		<property name="do-not-cache">true</property>
+		<cache-id>
+        </cache-id>
+	</cache-entry>
+
+	
+	<!-- Bloc produit/item: vue list et grille pour Desktop uniquement-->
+	<cache-entry>
+        <class>servlet</class>
+        <name>/Widgets-lapeyre/Common/ECOCatalogEntry/CatalogEntryDisplay.jsp</name>
+        <property name="save-attributes">true</property>
+		<property name="consume-subfragments">true</property>
+
+        <cache-id>
+        	<property name="ignore-get-post">true</property>
+        	
+			<component id="DC_storeId" type="attribute">
+				<required>false</required>
+			</component>
+			<component id="DC_lang" type="attribute">
+				<required>false</required>
+			</component>
+			<component id="DC_deviceFormatId" type="attribute">
+				<required>true</required>
+				<!-- Desktop uniquement -->
+				<not-value>-21</not-value>
+			</component>
+			<component id="isProBTP" type="attribute">
+				<required>true</required>
+			</component>
+			
+			<component id="pageView" type="parameter">	
+				<required>true</required>
+			</component>
+			<component id="catEntryIdentifier" type="parameter">	
+				<required>true</required>
+			</component>
+			
+			<inactivity>43200</inactivity>
+			<timeout>43200</timeout>
+			<priority>2</priority>	
+        </cache-id>
+		<!-- Dependency Ids -->
+        <dependency-id>catEntryIdentifier 
+			<component id="catEntryIdentifier" type="parameter"> 
+				<required>true</required> 
+			</component> 
+		</dependency-id>
+        <!-- Ends Dependency Ids -->
+       
+    </cache-entry>
+    
+    <!-- Ne surtout pas cacher ShoppingList.jsp qui dépend du user -->
+    <cache-entry>
+        <class>servlet</class>
+        <name>/Widgets-lapeyre/Common/ShoppingList/ShoppingList.jsp</name>
+		<property name="do-not-consume">true</property>
+		<property name="do-not-cache">true</property>
+		<cache-id>
+        </cache-id>
+	</cache-entry>
+	
+	    <!-- Ne surtout pas cacher le script t2s on click qui dépend du contexte -->
+    <cache-entry>
+        <class>servlet</class>
+        <name>/Widgets-lapeyre/Common/ECOCatalogEntry/t2sOnclick.jsp</name>
+		<property name="do-not-consume">true</property>
+		<property name="do-not-cache">true</property>
+		<cache-id>
+        </cache-id>
+	</cache-entry>
+	
+	<!-- Page produit Standard (partie haute de la page) pour Desktop uniquement-->
+	<cache-entry>
+        <class>servlet</class>
+        <name>/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.StandardProductDisplayWidget/StandardProductDisplayWidget.jsp</name>
+        <property name="save-attributes">true</property>
+		<property name="consume-subfragments">true</property>
+
+        <cache-id>
+        	<property name="ignore-get-post">true</property>
+        	
+			<component id="DC_storeId" type="attribute">
+				<required>false</required>
+			</component>
+			<component id="DC_lang" type="attribute">
+				<required>false</required>
+			</component>
+			<component id="DC_deviceFormatId" type="attribute">
+				<required>true</required>
+				<!-- Desktop uniquement -->
+				<not-value>-21</not-value>
+			</component>
+			<component id="isProBTP" type="attribute">
+				<required>true</required>
+			</component>
+			<component id="productId" type="parameter">	
+				<required>true</required>
+			</component>
+			<component id="redirect" type="parameter">	 <!--  parametre pour avoir la popin de redirection uniquement quand il faut-->
+				<required>false</required>
+			</component>
+            
+			
+			<inactivity>43200</inactivity>
+			<timeout>43200</timeout>
+			<priority>3</priority>	
+        </cache-id>
+		<!-- Dependency Ids -->
+        <dependency-id>catEntryIdentifier 
+			<component id="productId" type="parameter"> 
+				<required>true</required> 
+			</component> 
+		</dependency-id>
+        <!-- Ends Dependency Ids -->
+       
+    </cache-entry>
+    
+    <!-- Ne surtout pas cacher ItemAvailabilityInPhysicalStoresWidget.jsp qui dépend des magasins de session du user -->
+    <cache-entry>
+        <class>servlet</class>
+        <name>/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.ItemAvailabilityInPhysicalStoresWidget/ItemAvailabilityInPhysicalStoresWidget.jsp</name>
+		<property name="do-not-consume">true</property>
+		<property name="do-not-cache">true</property>
+		<cache-id>
+        </cache-id>
+	</cache-entry>
+	
+	<!-- Contenu CMS de la Home (MEAs ...) => dépends du device, du userType (ano,pro,part)-->
+	<cache-entry>
+        <class>servlet</class>
+        <name>/LapeyreSAS/include/HomeContentContext.jsp</name>
+        <property name="save-attributes">true</property>
+		<property name="consume-subfragments">true</property>
+        <cache-id>
+        	<property name="ignore-get-post">true</property>
+        	
+			<component id="DC_userType" type="attribute">
+				<required>true</required>
+			</component>
+			<component id="DC_deviceFormatId" type="attribute">
+				<required>true</required>
+			</component>
+			<component id="isProBTP" type="attribute">
+				<required>true</required>
+			</component>
+			<inactivity>3600</inactivity> <!-- 1 hour -->
+			<timeout>3600</timeout> <!-- 1 hour -->
+			<priority>2</priority>	
+        </cache-id>
+
+	<!--         Dependency Ids -->
+        <dependency-id>DC_userType
+			<component id="DC_userType" type="attribute"> 
+				<required>true</required> 
+			</component> 
+		</dependency-id>
+	<!--         Ends Dependency Ids -->
+    </cache-entry>
+	
+	<!-- Contenu CMS du Header/Footer -->
+	<cache-entry>
+        <class>servlet</class>
+        <name>/LapeyreSAS/Widgets/Header/ext/HeaderContent_Data_Container.jsp</name>
+        <property name="save-attributes">true</property>
+		<property name="consume-subfragments">true</property>
+        <cache-id>
+        	<property name="ignore-get-post">true</property>
+        	
+			<component id="DC_userType" type="attribute">
+				<required>true</required>
+			</component>
+			<component id="DC_deviceFormatId" type="attribute">
+				<required>true</required>
+			</component>
+			<component id="isProBTP" type="attribute">
+				<required>true</required>
+			</component>
+			<inactivity>21600</inactivity> <!-- 6 hours -->
+			<timeout>21600</timeout> <!-- 6 hours -->
+			<priority>2</priority>	
+        </cache-id>
+
+	<!--         Dependency Ids -->
+        <dependency-id>DC_userType
+			<component id="DC_userType" type="attribute"> 
+				<required>true</required> 
+			</component> 
+		</dependency-id>
+	<!--         Ends Dependency Ids -->
+    </cache-entry>
+    
+    <!-- Ne surtout pas cacher EMarketingSpot.jsp qui dépend du context et du user -->
+    <cache-entry>
+        <class>servlet</class>
+        <name>/Widgets-lapeyre/Common/PriceDisplay/PriceDisplay.jspf</name>
+		<property name="do-not-consume">true</property>
+		<property name="do-not-cache">true</property>
+		<cache-id>
+        </cache-id>
+	</cache-entry>
+</cache>

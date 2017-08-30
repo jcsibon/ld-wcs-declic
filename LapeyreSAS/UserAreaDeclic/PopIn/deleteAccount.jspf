@@ -1,0 +1,39 @@
+<wcf:url var="DeleteURL" value="DeleteAccountCmd" scope="request">
+	<wcf:param name="langId" value="${WCParam.langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+</wcf:url>
+
+<c:if test="${empty person}">
+	<wcf:getData type="com.ibm.commerce.member.facade.datatypes.PersonType" var="person" expressionBuilder="findCurrentPerson">
+       <wcf:param name="accessProfile" value="IBM_All" />
+	</wcf:getData>
+</c:if>
+
+
+<div id="deleteAccountConf" data-dojo-type="lapeyre/widget/Dialog" style="display: none" title="<fmt:message bundle="${storeText}" key="deleteAccountPopinTitle"/>">
+	<div class="widget_site_popup">
+		<div class="content">
+			<div class="header">
+				<span><span><fmt:message bundle="${storeText}" key="deleteAccountPopinTitle"/></span> </span>
+				<a id="ComparePopupClose" class="close" href="javascript:hidePopup('deleteAccountConf');" onclick="dijit.byId('deleteAccountConf').hide();" title="CLOSE"></a>
+				<div class="clear_float"></div>
+			</div>
+			<div class="body">
+				<p><fmt:message bundle="${storeText}" key="deleteAccountPopinContent"/></p>
+				<form action="${DeleteURL}" name="DeleteAccountForm" id="DeleteAccountForm" method="POST">
+					<%-- Add an authentication token to avoid CSRF attacks --%>
+					<input type="hidden" name="authToken" value="${authToken}" id="WC_DeleteAccountForm_authToken_1"/>	
+					<input type="hidden" name="idAccount" value="${person.personIdentifier.uniqueID}" >
+				</form>
+			</div>
+			<div class="footer">
+				<div class="ctaContainer">
+					<a class="button green" href="javascript:document.DeleteAccountForm.submit(); hidePopup('deleteAccountConf')" tabindex="0" onclick="" title="OK"><fmt:message bundle="${storeText}" key="deleteAccountPopinConfirmButtonLabel"/></a>
+					<a class="button" href="javascript:hidePopup('deleteAccountConf')" title="<fmt:message bundle="${storeText}" key="deleteAddressPopinTitle"/>"><fmt:message bundle="${storeText}" key="deleteAccountPopinCancelButtonLabel"/></a>
+				</div>
+			</div>
+			<div class="clear_float"></div>
+		</div>
+	</div>
+</div>

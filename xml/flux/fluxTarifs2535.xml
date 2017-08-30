@@ -1,0 +1,82 @@
+<message type="priceImport">
+	<header>
+		<sender>SAS</sender><SASid>kok</SASid>
+		<extractDate>2014-10-14T09:34:54.264</extractDate>
+		<targetCatalog>current</targetCatalog>
+		<nbDataEntries>1</nbDataEntries>
+		<credentials>
+			<login>wcsadmin</login>
+			<password>passw0rd</password>
+		</credentials>
+	</header>
+	<data>
+		<itemPriceList>
+			<sku>AM-1000011</sku>
+			<priceList>
+				<price>
+					<part>
+						<startDate>2011-08-25T00:00:00.000</startDate>
+						<endDate>2016-08-31T00:00:00.000</endDate>
+						<standardPrice>
+							<unitPriceWithVAT currency="EUR">6000</unitPriceWithVAT>
+							<vatPercentage>20</vatPercentage>
+							<ecoPartList>
+								<ecoPart>
+									<typeEcoPart>REP</typeEcoPart>
+									<ecoPartLabel>Eco participation REP</ecoPartLabel>
+									<ecoAmountWithVAT currency="EUR">2.7</ecoAmountWithVAT>
+									<ecoItemCode>E122SD</ecoItemCode>
+								</ecoPart>
+							</ecoPartList>
+						</standardPrice>
+						<discountPriceList>
+							<discountPrice>
+								<unitPriceWithVAT currency="EUR">5000</unitPriceWithVAT>
+								<vatPercentage>20</vatPercentage>
+								<ecoPartList>
+									<ecoPart>
+										<typeEcoPart>REP</typeEcoPart>
+										<ecoPartLabel>Eco participation REP</ecoPartLabel>
+										<ecoAmountWithVAT currency="EUR">2.7</ecoAmountWithVAT>
+										<ecoItemCode>E122SD</ecoItemCode>
+									</ecoPart>
+								</ecoPartList>
+							</discountPrice>
+						</discountPriceList>
+					</part>
+					<pro>
+						<startDate>2011-08-25T00:00:00.000</startDate>
+						<endDate>2016-08-31T00:00:00.000</endDate>
+						<standardPrice>
+							<unitPriceWithVAT currency="EUR">5400</unitPriceWithVAT>
+							<vatPercentage>20</vatPercentage>
+							<ecoPartList>
+								<ecoPart>
+									<typeEcoPart>REP</typeEcoPart>
+									<ecoPartLabel>Eco participation REP</ecoPartLabel>
+									<ecoAmountWithVAT currency="EUR">2.1</ecoAmountWithVAT>
+									<ecoItemCode>E122SD</ecoItemCode>
+								</ecoPart>
+							</ecoPartList>
+						</standardPrice>
+						<discountPriceList>
+							<discountPrice>
+								<unitPriceWithVAT currency="EUR">4500</unitPriceWithVAT>
+								<vatPercentage>20</vatPercentage>
+								<ecoPartList>
+									<ecoPart>
+										<typeEcoPart>REP</typeEcoPart>
+										<ecoPartLabel>Eco participation REP</ecoPartLabel>
+										<ecoAmountWithVAT currency="EUR">2.1</ecoAmountWithVAT>
+										<ecoItemCode>E122SD</ecoItemCode>
+									</ecoPart>
+								</ecoPartList>
+							</discountPrice>
+						</discountPriceList>
+					</pro>
+				</price>
+				
+			</priceList>
+		</itemPriceList>
+	</data>		
+</message>

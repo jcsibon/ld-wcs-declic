@@ -1,0 +1,41 @@
+<wcf:url var="DeleteURLPopIn" value="AddressDelete" >
+	<wcf:param name="langId" value="${WCParam.langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+</wcf:url>
+
+<wcf:url var="AddressBookURLPopIn" value="AddressBookForm" scope="request">
+	<wcf:param name="langId" value="${WCParam.langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+</wcf:url>
+
+<div id="deleteAddressConf" data-dojo-type="lapeyre/widget/Dialog" style="display: none;" title="<fmt:message bundle="${storeText}" key="deleteAddressPopinTitle"/>" >
+	<div class="widget_site_popup">
+		<div class="content">
+			<div class="header">
+				<span class="bold blockTitle"><fmt:message bundle="${storeText}" key="deleteAddressPopinTitle"/></span>
+				<a id="ComparePopupClose" class="close" href="javascript:document.deleteAddressForm.addressId.value = '';hidePopup('deleteAddressConf');" title="<fmt:message bundle="${widgetText}" key="SL_CLOSE" />"></a>
+				<div class="clear_float"></div>
+			</div>
+			<div class="body">
+				<p><fmt:message bundle="${storeText}" key="deleteAddressPopinContent"/></p>
+				
+				<form action="${DeleteURLPopIn}" id="deleteAddressForm" name="deleteAddressForm" method="POST">
+					<%-- Add an authentication token to avoid CSRF attacks --%>
+					<input type="hidden" name="authToken" value="${authToken}" id="WC_DeleteAddressForm_FormInput_authToken_1"/>
+					<input type="hidden" name="addressId" />
+					<input type="hidden" name="URL" value="${AddressBookURLPopIn}" />
+					<input type="hidden" name="errorViewName" value="${AddressBookURLPopIn}" />
+				</form>
+			</div>
+			<div class="footer">
+				<div class="ctaContainer">
+					<a class="button green" tabindex="0" href="javascript:hidePopup('deleteAddressConf'); document.deleteAddressForm.submit();" title="OK"><fmt:message bundle="${storeText}" key="deleteAddressPopinConfirmButtonLabel"/></a>
+					<a class="button" href="javascript:document.deleteAddressForm.addressId.value = '';hidePopup('deleteAddressConf');"><fmt:message bundle="${storeText}" key="deleteAddressPopinCancelButtonLabel"/></a>
+				</div>
+			</div>
+			<div class="clear_float"></div>
+		</div>
+	</div>
+</div>

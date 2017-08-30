@@ -1,0 +1,42 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2009, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%@ page trimDirectiveWhitespaces="true" %>
+	<c:if test="${empty categoryIds}">
+		<c:set var="categoryIds" value="{top_category: '', parent_category_rn: '', categoryId: ''}" scope="request"/>
+	</c:if>
+	<div id="widget_product_comparison_popup" data-dojo-type="lapeyre/widget/Dialog" title="<fmt:message bundle="${storeText}" key='CP_HEADING'/>" style="display:none">
+		<div class="widget_site_popup">													
+			<!-- Main Content Area -->
+			<div class="content">
+				<div class="header">
+					<span><fmt:message bundle="${storeText}" key="CP_HEADING"/></span>
+					<a id="ComparePopupClose" class="close" href="javascript:hidePopup('widget_product_comparison_popup')"  title="<fmt:message bundle="${storeText}" key='CP_CLOSE'/>"></a>
+					<div class="clear_float"></div>
+				</div>
+				<div class="body">
+					<fmt:message bundle="${storeText}" key="CP_MESSAGE"/>
+				</div>
+				
+				<div class="footer">
+					<div class="ctaContainer">
+						<a id="ComparePopupOK" class="button green" tabindex="0" href="javascript:hidePopup('widget_product_comparison_popup')" onclick="shoppingActionsJS.compareProducts(${categoryIds});" title="<fmt:message bundle="${storeText}" key='CP_OK'/>">
+							<fmt:message bundle="${storeText}" key='CP_ACCESS_COMPARE'/>
+						</a>
+						<a href="javascript:shoppingActionsJS.initCompare('<c:out value="${param.fromPage}"/>'); shoppingActionsJS.countCompareProducts(); shoppingActionsJS.checkForCompare(); hidePopup('widget_product_comparison_popup')" class="button"><fmt:message bundle="${storeText}" key='CP_CLEAR_COMPARE'/></a>
+						<div class="clear_float"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>

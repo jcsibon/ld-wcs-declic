@@ -1,0 +1,11 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<%@page import="com.lapeyre.declic.commerce.context.ExtendedUserContext"%>
+<%@page import="com.ibm.commerce.command.CommandContext"%>
+<%
+      CommandContext cmdCtxt = (CommandContext)request.getAttribute(com.ibm.commerce.ejb.helpers.ECConstants.EC_COMMANDCONTEXT);
+      ExtendedUserContext extendedUserContext = (ExtendedUserContext)cmdCtxt.getContext(ExtendedUserContext.CONTEXT_NAME);
+      if(extendedUserContext != null && extendedUserContext.getIsPro() != null){
+             request.setAttribute("isProBTP",extendedUserContext.getIsPro().isEmpty() ? "false" : extendedUserContext.getIsPro());
+      }
+%>
+<c:set var="extendedUserContext" value="<%=extendedUserContext%>" scope="request"/>

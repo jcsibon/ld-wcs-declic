@@ -1,0 +1,73 @@
+<%@page import="java.util.Date"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.regex.*" %>
+<%@ include file="Common/DriveDisplay_Data.jspf" %>
+<c:set var="confirmResa" value="true"/>
+
+<wcbase:useBean id="fullShop" classname="com.lapeyre.declic.commerce.storelocator.beans.FullShopDataBean">
+	<c:set value="${m}" target="${fullShop}" property="identifier" />
+	<c:set value="${langId}" target="${fullShop}" property="languageId" />
+</wcbase:useBean>
+
+
+<c:set var="reservationCreneauDriveStep2Body" value="${fn:replace(reservationCreneauDriveStep2Body,'[numcommande]',c)}" />
+
+<c:set var="nameShop" value="Inconnu (${m})" />
+<c:set var="address1" value="" />
+<c:set var="address2" value="" />
+<c:set var="codepostal" value="" />
+<c:set var="ville" value="" />
+<c:set var="numtelephone" value="" />
+
+<c:if test="${!empty fullShop.name}">
+	<c:set var="nameShop" value="${fullShop.name}" />
+	<c:set var="address1" value="${fullShop.address1}" />
+	<c:set var="address2" value="${fullShop.address2}" />
+	<c:set var="codepostal" value="${fullShop.cp}" />
+	<c:set var="ville" value="${fullShop.city}" />
+	<c:set var="numtelephone" value="${fullShop.mainPhone}" />
+</c:if>
+<c:set var="reservationCreneauDriveStep2Body" value="${fn:replace(reservationCreneauDriveStep2Body,'[magasin]',nameShop)}" />
+<c:set var="reservationCreneauDriveStep2Body" value="${fn:replace(reservationCreneauDriveStep2Body,'[address1]',address1)}" />
+<c:set var="reservationCreneauDriveStep2Body" value="${fn:replace(reservationCreneauDriveStep2Body,'[address2]',address2)}" />
+<c:set var="reservationCreneauDriveStep2Body" value="${fn:replace(reservationCreneauDriveStep2Body,'[codepostal]',codepostal)}" />
+<c:set var="reservationCreneauDriveStep2Body" value="${fn:replace(reservationCreneauDriveStep2Body,'[ville]',ville)}" />	
+<c:set var="reservationCreneauDriveStep2Body" value="${fn:replace(reservationCreneauDriveStep2Body,'[numtelephone]',numtelephone)}" />
+
+<%
+	//Il n'est pas possible d'utiliser les regexp avec jstl
+	Date dateEnlevementFrom = null;
+	Date dateEnlevementTo = null;
+	
+	String formatDriveTimeWork = "yyyyMMdd_HHmm";
+	SimpleDateFormat sdf = new SimpleDateFormat(formatDriveTimeWork);
+	
+	String patternDriveScheduleIn = "((\\d{8})_\\d{4})(\\d{4})_\\d{2}";
+	Pattern p = Pattern.compile(patternDriveScheduleIn);
+	String driveSchedule = request.getParameter("driveSchedule");
+	if(driveSchedule!=null && "".equals(driveSchedule)){
+		Matcher m = p.matcher(driveSchedule);
+		if(m.matches()){
+			String dateEnlevementFromStr = m.group(1);
+			String dateEnlevementToStr = m.group(2)+"_"+m.group(3);
+			dateEnlevementFrom = sdf.parse(dateEnlevementFromStr);
+			dateEnlevementTo = sdf.parse(dateEnlevementToStr);
+			pageContext.setAttribute("dateEnlevementFrom",dateEnlevementFrom);
+			pageContext.setAttribute("dateEnlevementTo",dateEnlevementTo);
+		}
+	}
+%>
+<c:set var="dateEnlevement" value="" />
+<c:set var="heureEnlevementDebut" value="" />
+<c:set var="heureEnlevementFin" value="" />
+
+<c:if test="${!empty dateEnlevementFrom}">
+	<fmt:formatDate var="dateEnlevement" value="${dateEnlevementFrom}" pattern="d MMMM yyyy" />
+	<fmt:formatDate var="heureEnlevementDebut" value="${dateEnlevementFrom}" pattern="HH:mm" />
+</c:if>
+<c:if test="${!empty dateEnlevementTo}">
+	<fmt:formatDate var="heureEnlevementFin" value="${dateEnlevementTo}" pattern="HH:mm" />
+</c:if>
+<c:set var="reservationCreneauDriveStep2Body" value="${fn:replace(reservationCreneauDriveStep2Body,'[dateenlevement]',dateEnlevement)}" />
+<c:set var="reservationCreneauDriveStep2Body" value="${fn:replace(reservationCreneauDriveStep2Body,'[heureenlevementdebut]',heureEnlevementDebut)}" />
+<c:set var="reservationCreneauDriveStep2Body" value="${fn:replace(reservationCreneauDriveStep2Body,'[heureenlevementfin]',heureEnlevementFin)}" />

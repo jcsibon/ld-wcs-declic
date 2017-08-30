@@ -1,0 +1,214 @@
+<div class="ficheInfosMag">
+	<link ${microDataAvailabilityInStockAttributes}/>
+	<div class="row" id="availability_widget_ui">
+		<div class="col s12">	
+			<form id="setDefaultStoreForm">
+				<c:if test="${firstDefaultShop != null || secondDefaultShop != null || thirdDefaultShop != null}">
+						<div class="content row" id="itemAvailabilityStoresContainer">
+							<div class="col s12 nearestStoreDescription">
+								<span><fmt:message key="nearestStores" bundle="${widgetText}" /><span>
+							</div>
+							<c:if test="${firstDefaultShop != null}">
+								<div class="col s12 productAvailability" id="firstDefaultShop">
+									<input checked="checked" type="radio" name="storeChoice" data-shop-name="${firstDefaultShop.name}" value="${firstDefaultShop.id}">
+									<span id="availability_${firstDefaultShop.identifier}"></span>
+									<span id="${firstDefaultShop.identifier}" class="stock StockDispoLater StockDispo"></span> 
+									<span itemprop="name" class="ficheInfosMagPref shopName" id="shopName_${firstDefaultShop.identifier}"><fmt:message key="availabilityatStoreLabel" bundle="${widgetText}" /> <a href="${firstDefaultShop.seoUrl}" class="hover_underline">${firstDefaultShop.name}</a></span>
+									<span itemprop="date" class="shopDate" id="shopDateDispo_${firstDefaultShop.identifier}"></span>
+								</div>
+							</c:if>	
+							<c:if test="${secondDefaultShop != null}">	
+								<div class="col s12 productAvailability">
+									<input type="radio" name="storeChoice" data-shop-name="${secondDefaultShop.name}" value="${secondDefaultShop.id}">
+									<span id="availability_${secondDefaultShop.identifier}"></span>
+									<span id="${secondDefaultShop.identifier}" class="stock StockDispoLater StockDispo"></span>
+									<span itemprop="name" class="ficheInfosMagPref shopName" id="shopName_${secondDefaultShop.identifier}"><fmt:message key="availabilityatStoreLabel" bundle="${widgetText}" /> <a href="${secondDefaultShop.seoUrl}" class="hover_underline">${secondDefaultShop.name}</a></span>
+									<span itemprop="date" class="shopDate" id="shopDateDispo_${secondDefaultShop.identifier}"></span>
+								</div>
+							</c:if>
+							<c:if test="${thirdDefaultShop != null}" >		
+								<div class="col s12 productAvailability">			
+									<input type="radio" name="storeChoice" data-shop-name="${thirdDefaultShop.name}" value="${thirdDefaultShop.id}">
+									<span id="availability_${thirdDefaultShop.identifier}"></span>
+									<span id="${thirdDefaultShop.identifier}" class="stock StockDispoLater StockDispo"></span>
+									<span itemprop="name" class="ficheInfosMagPref shopName" id="shopName_${thirdDefaultShop.identifier}"><fmt:message key="availabilityatStoreLabel" bundle="${widgetText}" /> <a href="${thirdDefaultShop.seoUrl}">${thirdDefaultShop.name}</a></span>
+									<span itemprop="date" class="shopDate" id="shopDateDispo_${thirdDefaultShop.identifier}"></span>
+								</div>
+							</c:if>
+							<div class="col s12 productAvailability">			
+								<input id="otherShopRadio" type="radio" name="storeChoice" data-shop-name="-1" value="-1">
+								<span class="availabilityTitle"><fmt:message key="availabilitySelectStore" bundle="${widgetText}" /></span>
+							</div>
+						</div>				
+					<div class="clear_float attBorder"></div>
+				</c:if>
+				
+				<div class="content">
+			        <div class="shopDropdown">
+			        	<select id="shopSelect" class="full-width contactForm-select" >
+			        		<option value="-1" ><fmt:message key="LAP034_SELECT" bundle="${widgetText}" /></option>
+			        		<c:forEach var="shop" items="${activeShopsList}" >
+			        			<c:if test="${firstDefaultShop.id eq shop.id}">
+			        				<c:set var="selected" value=" selected" />
+			        			</c:if>
+								<option value="${shop.id}" data-shop-name="${shop.name}"${selected}>${shop.zipcode} - ${shop.name}</option>
+								<c:remove var="selected" />
+							</c:forEach>
+			        	</select>
+					</div>
+				</div>
+				<div class="footer">
+					<div class="ctaContainer">
+						<input type="submit" id="submitAppointment" onclick="dijit.byId('availabilityPopup').hide();" class="button orange col s4 offset-s4" value="<fmt:message bundle="${widgetText}" key="contactConfirmationPopinButtonLabel" />"> 
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+	<span id="errorContainer"></span>
+			
+	<script id="WCQuickInfoItemAvaibilityScripts">
+		dojo.addOnLoad(function(){				
+			itemAvailabilityInPhysicalStoreForPopin = new ItemAvailabilityInPhysicalStoresWidget();
+			
+			itemAvailabilityInPhysicalStoreForPopin.initialize("${userType}");
+			/* attach the form to set the default store selected in the radio "storeChoice" when submit the form */
+			itemAvailabilityInPhysicalStoreForPopin.attachForm("setDefaultStoreForm", "storeChoice", "shopSelect");
+			itemAvailabilityInPhysicalStoreForPopin.setDefaultStoreSucceed("SetDefaultStoreSucceed");
+			
+			
+			if(typeof(stockAvailability_Popin.onStockAvailabilityListeners) == 'undefined' || stockAvailability_Popin.onStockAvailabilityListeners == null && stockAvailability_Popin.onStockAvailabilityListeners.length == 0) {
+				stockAvailability_Popin.initialize();
+				stockAvailability_Popin.addOnComputeTaskReceivedListener(onComputeTaskInPopinHandler);
+				stockAvailability_Popin.addOnStockAvailabilityReceivedListener(onGetProductAvailabilityInPopinHandler);
+				stockAvailability_Popin.setUrl('GetProductAvailabilityByShopForQuickView');
+			}
+
+			/* If we have only one shop, we don't show the radio buttons */				
+			if($("#${secondDefaultShop.identifier}").length == 0){
+				$("#itemAvailabilityStoresContainer").remove();
+			}
+			
+			/* When click on selectt input, set the radio button to "autre magasin" */
+			$("#shopSelect").on("click", function(){
+				if($("#otherShopRadio").length > 0){
+					$("#otherShopRadio").prop("checked", true);
+				}
+			});
+			
+		});
+		
+		function buildShopDataObjectInPopIn(catalogEntryID) {
+			var shopIds = new Array();
+			if(shopIds.indexOf("${firstDefaultShop.identifier}") < 0) 
+				shopIds.push("${firstDefaultShop.identifier}");
+			if(shopIds.indexOf("${secondDefaultShop.identifier}") < 0)
+				shopIds.push("${secondDefaultShop.identifier}");
+			if(shopIds.indexOf("${thirdDefaultShop.identifier}") < 0)
+				shopIds.push("${thirdDefaultShop.identifier}");
+			shopIds = cleanArray(shopIds);
+			var product = new Object();
+			var field = "quantity";
+			if($("input[id^='colisage_" + catalogEntryID + "']").val() == 1){
+				field='surface';
+			}
+			var quantity = ($("input[id^='"+field+"_"+ catalogEntryID + "']").val() != null) ?$("input[id^='"+field+"_"+ catalogEntryID + "']").val() :"1";
+			var itemPartnumber = $("span[id^='product_SKU_" + catalogEntryID + "']").text(); 
+			if(itemPartnumber != null && itemPartnumber != '') product[itemPartnumber] = quantity;
+			return {"shopIds" : JSON.stringify(shopIds), "products" : JSON.stringify(product)};
+		}
+		
+		function onComputeTaskInPopinHandler(catalogEntryID) {
+			$('#errorContainer').hide();
+			stockAvailability_Popin.setDatas(buildShopDataObjectInPopIn(catalogEntryID));
+			stockAvailability_Popin.askForAvailability();
+		}
+		
+		function onGetProductAvailabilityInPopinHandler(data) {
+	  		if(data != null && data != '') {		  			
+		  		var storeKeys = Object.keys(data);
+		  		var itemPartnumber = $("span[id^='product_SKU_${catalogEntryID}']").text();
+				for(var i = 0; i < storeKeys.length ; i++) {
+					var storeKey = storeKeys[i]; //shopId
+					var resultObject = data[storeKey]; //{partNumber:dateDispo,partNumber:dateDispo,partNumber:dateDispo}
+					if(typeof resultObject == 'string' && resultObject == "ERR") {
+						$("#" + storeKey).text("${availabilityTechErr} ");
+						$("#" + storeKey).removeClass("StockDispo").removeClass('StockDispoLater').addClass("StockNonDispo");
+						$("#shopDateDispo_" + storeKey).text("");
+					} else {
+						var currentDate = new Date();
+						
+						var frFormattedCurrentDate = dojo.date.locale.format(currentDate, {
+							selector:"date", datePattern:"dd/MM/yyyy", locale:"fr-fr" 
+						});
+						
+						if(resultObject != null && itemPartnumber != null && itemPartnumber != '' && resultObject[itemPartnumber] != null) {
+							var dateDispo = resultObject[itemPartnumber];
+							if(dateDispo == 'today') {
+								$("#availability" + storeKey).text('<link itemprop="availability" href="${MICRO_DATA_INSTOCK}"/>');
+								$("#" + storeKey).text("${availableLabel} ");
+								$("#shopDateDispo_" + storeKey).text(" ${dateAvailable} "+frFormattedCurrentDate);
+								$("#" + storeKey).removeClass('StockDispoLater').removeClass('StockNonDispo').addClass("StockDispo");
+							} else if(dateDispo == null || dateDispo == ""){
+								$("#" + storeKey).text("${unavailableLabel} ");
+								$("#" + storeKey).removeClass("StockDispo").removeClass('StockDispoLater').addClass("StockNonDispo");
+								$("#shopDateDispo_" + storeKey).text("");
+							} else {
+								//check if dateDispo < j+1
+								dojo.require("dojo.date");
+								dojo.require("dojo.date.locale");
+								
+								frDate = dojo.date.locale.parse(dateDispo, {
+								    formatLength:'short', selector:'date', locale:'fr-fr'  //format of dateDispo is jj/MM/aaaa
+								});
+								
+								var frFormattedDate = dojo.date.locale.format(frDate, {
+									selector:"date", datePattern:"dd/MM/yyyy", locale:"fr-fr" 
+
+								});
+								
+								var dayDiff= dojo.date.difference(currentDate,frDate, "day"); 
+								
+								if(dayDiff < 2) {
+									$("#availability" + storeKey).text('<link itemprop="availability" href="${MICRO_DATA_INSTOCK}"/>');
+										
+								} else {
+									$("#availability" + storeKey).text('<link itemprop="availability" href="${MICRO_DATA_PREORDER}"/>');
+								}
+								
+								if(dayDiff < 1) {
+									$("#" + storeKey).text("${availableLabel} ");
+									$("#" + storeKey).removeClass('StockDispoLater').removeClass('StockNonDispo').addClass("StockDispo");
+									$("#shopDateDispo_" + storeKey).text(" ${dateAvailable} "+frFormattedDate);
+								}
+								else {
+									$("#" + storeKey).text("${availableLaterLabel} ");
+									$("#" + storeKey).removeClass('StockDispo').removeClass('StockNonDispo').addClass("StockDispoLater");
+									$("#shopDateDispo_" + storeKey).text(" ${dateAvailableLater} "+frFormattedDate);
+								}
+							}
+						}else{
+							$("#" + storeKey).text("${unavailableLabel} ");
+							$("#" + storeKey).removeClass("StockDispo").removeClass("StockDispoLater").addClass("StockNonDispo");
+							$("#shopDateDispo_" + storeKey).text("");
+						}
+					}
+				}
+	  		} else {
+				$("#errorContainer").text("${unavailableLabel}");
+				$("#errorContainer").show();
+	  		}
+		}
+		
+		function cleanArray(array) {
+			var newArray = new Array();
+			for(var index = 0; index < array.length; index++) {
+				if(array[index] != "") {
+					newArray.push(array[index]);
+				}
+			}
+			return newArray;
+		}
+	</script>
+</div>

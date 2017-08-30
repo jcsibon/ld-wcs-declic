@@ -1,0 +1,14 @@
+<%@ include file="TagManager_OrderDetails.jspf" %>
+
+<c:set var="basket_id" value="${GTM_orderId}" />
+<c:set var="basket_total" value="${GTM_orderTotal}"  />
+
+<c:set var="basket_tax" value="${GTM_orderTax}" />
+
+<c:set var="basket_products" value="${GMT_orderItems}" />
+<c:set var="basket_total_without_sf" value="${GTM_orderTotal}" /> <%-- Shipping pour un panier ?? --%>
+
+<c:set var="basket_discount" value="${GMT_orderTotalDiscount}" />
+
+<c:set var="basket_promo_codes" value="${GMT_orderPromoCodes}" />
+<c:set var="basket_products_number" value="${GMT_orderQty}" />

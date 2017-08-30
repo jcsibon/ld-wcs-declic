@@ -1,0 +1,180 @@
+<%-- s
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2007, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%> 
+<!-- BEGIN TunnelPayment_Data.jspf -->
+<%@page import="com.lapeyre.declic.configurations.ConfigTool"%>
+
+<c:if test="${!empty shippingShopId }">
+	<c:set var="shippingShopId" value="${shippingShopId[0] }"/>
+	<wcbase:useBean id="shippingShop" classname="com.lapeyre.declic.commerce.storelocator.beans.FullShopDataBean">
+		<c:set value="${shippingShopId}" target="${shippingShop}" property="stlocId" />
+		<c:set value="${langId}" target="${shippingShop}" property="languageId" />
+	</wcbase:useBean>
+</c:if>
+
+<c:if test="${!empty shippingAddressId}">
+	<c:set var="shippingAddressId" value="${shippingAddressId[0]}" scope="request"/>
+</c:if>
+
+<c:set var="billingAddressId" value="${billingAddressId[0]}" scope="request"/>
+<c:set var="totalShipping" value="${totalShipping[0]}" scope="request"/>
+<c:if test="${!empty totalShipping}">
+	<fmt:parseNumber var="totalShipping" value="${totalShipping}" parseLocale="en_US"  scope="request"/>
+</c:if>
+<c:set var="dispoProductMap" value="${dispoProductMap[0]}"/>
+<c:set var="shippingMode" value="${shippingMode}" scope="request"/>
+
+<c:if test="${empty person}" >
+ 	<wcf:getData type="com.ibm.commerce.member.facade.datatypes.PersonType" var="person" expressionBuilder="findCurrentPerson">
+	       <wcf:param name="accessProfile" value="IBM_All" />
+	</wcf:getData>
+</c:if>
+
+<c:set var="addressBookBean" value="${person.addressBook}"/>
+
+<c:set var="shippingAddress" value=""/>
+<c:set var="billingAddress" value=""/>
+<c:set var="contact" value="${person.contactInfo}"/>
+<c:if test="${billingAddressId eq contact.contactInfoIdentifier.uniqueID}">
+	<c:set var="billingAddress" value="${contact}"/>
+</c:if>
+<c:if test="${!empty shippingAddressId && shippingAddressId eq contact.contactInfoIdentifier.uniqueID}">
+	<c:set var="shippingAddress" value="${contact}"/>
+</c:if>
+
+<c:if test="${empty billingAddress || (!empty shippingAddressId && empty shippingAddress)}">
+	<c:forEach items="${addressBookBean.contact}" var="contact">
+		<c:if test="${billingAddressId eq contact.contactInfoIdentifier.uniqueID}">
+			<c:set var="billingAddress" value="${contact}"/>
+		</c:if>
+		<c:if test="${!empty shippingAddressId && shippingAddressId eq contact.contactInfoIdentifier.uniqueID}">
+			<c:set var="shippingAddress" value="${contact}"/>
+		</c:if>
+	</c:forEach>
+</c:if>
+
+		<%-- PunchoutPaymentCallBack --%>
+<wcf:url var="AcceptURL" value="MercanetNormalReturnURL" scope="request">
+	<wcf:param name="langId" value="${langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	<wcf:param name="paymentMethodName" value="SimplePunchout" />
+	<wcf:param name="shipmentTypeId" value="1" />
+	<wcf:param name="user" value="${CommandContext.userId}" />
+	<wcf:param name="addressId" value="${billingAddressId}" />
+</wcf:url>
+
+<wcf:url var="PunchoutURL" value="PunchoutPaymentCallBack" scope="request">
+	<wcf:param name="langId" value="${langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	<wcf:param name="paymentMethodName" value="SimplePunchout" />
+	<wcf:param name="shipmentTypeId" value="1" />
+	<wcf:param name="user" value="${CommandContext.userId}" />
+	<wcf:param name="addressId" value="${billingAddressId}" />
+</wcf:url>
+
+<wcf:url var="shopViewURL" value="TunnelShopCartView"></wcf:url>
+<%-- Build URL to shopping cart page type="Ajax" --%>
+<wcf:url var="ShoppingCartViewURL" value="MercanetNormalReturnURL" scope="request"> 
+  <wcf:param name="langId" value="${langId}" />
+  <wcf:param name="storeId" value="${storeId}" />
+  <wcf:param name="catalogId" value="${catalogId}" />
+  <wcf:param name="URL" value="${shopViewURL}" />
+  <wcf:param name="errorViewName" value="TunnelShopCartView" />
+  <wcf:param name="updatePrices" value="1" />
+  <wcf:param name="calculationUsageId" value="-1" />
+  <wcf:param name="orderId" value="." />
+  <wcf:param name="doConfigurationValidation" value="Y" />
+</wcf:url>
+
+<c:set var="modeEncoursVisible" value="false"/>
+<c:set var="modeEncoursValide" value="false"/>
+<%-- <c:if test="${extendedUserContext.isPro && !empty detailClient && !empty detailClient[0]}">
+	<ecocea:stringToJson var="detailClientJson" value="${detailClient[0]}"/>
+<% if("E1".equals(ConfigTool.VERSION_APPLI)){ %>
+	ECOCA: on convertit le plafondAutorise pour pouvoir faire des comparaisons du style > 0
+	<c:if test="${!empty detailClientJson.informationsPro.plafondAutorise }" >
+		<fmt:parseNumber var="plafondAutoriseNumber" value="${detailClientJson.informationsPro.plafondAutorise}" parseLocale="en_US"  scope="request"/>
+	</c:if>
+	<c:if test="${!empty detailClientJson.informationsPro && !empty detailClientJson.informationsPro.encoursGCTTC && !empty plafondAutoriseNumber && plafondAutoriseNumber > 0}">
+		<c:set var="modeEncoursVisible" value="true"/>
+		<c:if test="${(orderAmountValue_TTC + totalShipping + detailClientJson.informationsPro.encoursGCTTC) le plafondAutoriseNumber}">
+			<c:set var="modeEncoursValide" value="true"/>
+		</c:if>
+	</c:if>
+<% }else{ %>
+	P1_#6
+	ECOCA: on convertit le plafondConsolide pour pouvoir faire des comparaisons du style > 0
+	<c:if test="${!empty detailClientJson.encoursClient.plafondConsolide }" >
+		<fmt:parseNumber var="plafondConsolideNumber" value="${detailClientJson.encoursClient.plafondConsolide}" parseLocale="en_US"  scope="request"/>
+	</c:if>
+	<c:if test="${!empty detailClientJson.encoursClient && !empty detailClientJson.encoursClient.encoursGC && !empty detailClientJson.encoursClient.encoursSAP && !empty plafondConsolideNumber  && plafondConsolideNumber >0 && !empty detailClientJson.encoursClient.impaye}">
+		<c:if test="${detailClientJson.encoursClient.impaye=='false'}">
+			<c:set var="modeEncoursVisible" value="true"/>
+			<c:if test="${(orderAmountValue_TTC + totalShipping + detailClientJson.encoursClient.encoursGC + detailClientJson.encoursClient.encoursSAP) le plafondConsolideNumber}">
+				<c:set var="modeEncoursValide" value="true"/>
+			</c:if>
+		</c:if>
+	</c:if>
+<% } %>
+</c:if> --%>
+
+<c:if test="${!empty dispoProductMap }">
+	<ecocea:stringToJson var="dispoProductMapJson" value="${dispoProductMap}" scope="2"/>
+</c:if>
+
+<c:set var="totalTTC" value="${xOrderDetails.ORDERTOTALAMOUNT_TTC}" scope="request"/>
+<c:set var="totalTTCWithShipping" value="${xOrderDetails.ORDERTOTALAMOUNT_WITH_SHIPPING_TTC}" scope="request"/>
+<c:set var="depositTTC" value="${xOrderDetails.DEPOSIT_TO_PAY_TTC}" scope="request"/>
+<c:set var="remainedTTC" value="${xOrderDetails.TOTAL_REMAINED_TO_PAY_TTC}" scope="request"/>
+
+<%
+    if(request.getAttribute("excludedPostalCodeList") == null) {
+    	String excludedPostalCodeList = ConfigTool.getListValuePropertiesResource().getProperty("ExcludedPostalCode");
+    	request.setAttribute("excludedPostalCodeList",excludedPostalCodeList);
+    }
+    
+    //retrieve idMetier of shipping mode
+    if(request.getAttribute("modeRetrait") == null) {
+    	String modeRetrait = ConfigTool.getConfigurationPropertiesResource().getProperty("RetraitMagasinIdMetier");
+    	request.setAttribute("modeRetrait",modeRetrait);
+    }
+    if(request.getAttribute("modeDrive") == null) {
+    	String modeDrive = ConfigTool.getConfigurationPropertiesResource().getProperty("RetraitMagasinDriveIdMetier");
+    	request.setAttribute("modeDrive",modeDrive);
+    }
+    if(request.getAttribute("modeTransporter") == null) {
+    	String modeTransporter = ConfigTool.getConfigurationPropertiesResource().getProperty("LivraisonTransporterIdMetier");
+    	request.setAttribute("modeTransporter",modeTransporter);
+    }
+    if(request.getAttribute("modeColissimo") == null) {
+    	String modeColissimo = ConfigTool.getConfigurationPropertiesResource().getProperty("LivraisonColissimoIdMetier");
+    	request.setAttribute("modeColissimo",modeColissimo);
+    }
+    if(request.getAttribute("modeLivraisonCatalog") == null) {
+    	String modeLivraisonCatalog = ConfigTool.getConfigurationPropertiesResource().getProperty("LivraisonCatalogIdMetier");
+    	request.setAttribute("modeLivraisonCatalog",modeLivraisonCatalog);
+    }
+   %>
+<fmt:message var="modePaiementPageSubTitle" key="modePaiementPageSubTitle" bundle="${widgetText}" scope="request"/>
+<fmt:message var="paiementParTraiteKOMessage" key="paiementParTraiteKOMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="paiementParTraiteOKMessage" key="paiementParTraiteOKMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="pagePaiementAmountIncorrectErrorMessage" key="pagePaiementAmountIncorrectErrorMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="paymentServiceErrorMessage" key="paymentServiceErrorMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="pagePaiementModeLivraisonIncorrectErrorMessage" key="pagePaiementModeLivraisonIncorrectErrorMessage" bundle="${widgetText}" scope="request"/>
+
+<fmt:message var="paymentServiceCarteNonDisponibleErrorMessage" key="paymentServiceCarteNonDisponibleErrorMessage" bundle="${widgetText}" scope="request"/>
+
+
+<!-- END TunnelPayment_Data.jspf -->

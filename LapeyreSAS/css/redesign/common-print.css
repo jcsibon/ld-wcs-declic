@@ -1,0 +1,233 @@
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p,
+	blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn,
+	em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup,
+	tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table,
+	caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 1;
+	font-weight: inherit;
+	font-style: inherit;
+	vertical-align: baseline;
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: inherit;
+	color: inherit;
+}
+
+body {
+	line-height: 1.4em;
+	color: #4d4d4d;
+	background: #fff;
+	height: 100%;
+	width: 100%;
+	text-align: center;
+	max-width: 20cm;
+	margin: 0 auto;
+}
+
+h1, h2 {
+	color: #666;
+}
+
+a, a:visited {
+	text-decoration: none;
+}
+
+:focus {
+	outline: 1;
+}
+
+.row:after {
+	clear: both;
+	content: "";
+	display: block;
+}
+
+div.store_message {
+	position: absolute;
+	top: 0px;
+	left: 50%;
+	margin-left: -205px;
+	z-index: 9999;
+	width: 409px;
+	background-color: #ffa800;
+	display: none; /*Dev: To hide the message popup*/
+}
+
+div.widget_quick_info_popup>.middle {
+	width: 734px;
+}
+
+div.widget_quick_info_popup>.middle>.content_left_border {
+	background:
+		url("../images/colors/color1/widget_quick_info_popup/quick_info_border.png")
+		repeat-y scroll 0 0 transparent;
+	float: left;
+	padding-left: 3px;
+	width: 731px;
+}
+
+div.widget_quick_info_popup>.middle>.content_left_border>.content_right_border
+	{
+	/* DevStart: changed from transparent to white background, since the popup was transparent */
+	background:
+		url("../images/colors/color1/widget_quick_info_popup/quick_info_border.png")
+		repeat-y scroll 0 0 white; /* DevEnd */
+	background-position: right;
+	float: right;
+	padding-right: 3px;
+	width: 728px;
+}
+
+div.widget_quick_info_popup>.middle>.content_left_border>.content_right_border>.content
+	{
+	background-color: #ffffff;
+	margin: 15px;
+}
+
+.left {
+	float: left;
+}
+
+.right {
+	float: right;
+}
+
+.clear_float {
+	clear: both;
+}
+
+.bold {
+	font-weight: bold;
+}
+
+div#page {
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
+div#widget_minishopcart_popup, div#widget_minishopcart_popup_1 {
+	cursor: pointer;
+}
+
+div#footer {
+	width: 926px;
+	padding-top: 30px;
+	margin: 0px auto 30px auto;
+	overflow: hidden;
+	color: #ffffff;
+	cursor: default;
+}
+
+.spanacce {
+	height: 1px;
+	width: 1px;
+	position: absolute;
+	overflow: hidden;
+	top: -10px;
+}
+
+#progress_bar {
+	position: absolute;
+	z-index: 9999;
+	display: none;
+}
+
+#progress_bar_dialog {
+	position: absolute;
+	z-index: 9999;
+	/* DevStart: outline was coming for progress bar. * display:none; moved to inline css otherwise dialog.show() won't display the progress bar */
+	outline: 0; /* DevEnd */
+}
+
+#loading_popup {
+	width: 59px;
+}
+
+#loading_popup .top_left {
+	background-image: url('../images/colors/color1/popup_topleft.png');
+	background-repeat: no-repeat;
+	background-position: top;
+	height: 7px;
+	width: 8px;
+	float: left;
+}
+
+#loading_popup .top_right {
+	background-image: url('../images/colors/color1/popup_topright.png');
+	background-repeat: no-repeat;
+	background-position: top right;
+	height: 7px;
+	width: 51px;
+	float: left;
+}
+
+#loading_popup .header {
+	background-image:
+		url('../images/colors/color1/popup_center_tile_mini.png');
+	background-repeat: repeat-y;
+	text-align: right;
+	clear: left;
+}
+
+#loading_popup .bodycontent {
+	background-color: transparent;
+	background-image:
+		url('../images/colors/color1/popup_center_tile_mini.png');
+	background-repeat: repeat-y;
+	background-position: right;
+	padding: 0 5px 0 5px;
+	margin: 0;
+}
+
+#loading_popup .footer {
+	text-align: right;
+	height: 20px;
+	width: 59px;
+}
+
+#loading_popup .footer .bot_left {
+	background-image: url('../images/colors/color1/popup_botleft.png');
+	background-repeat: no-repeat;
+	background-position: bottom;
+	height: 11px;
+	width: 8px;
+	float: left;
+}
+
+#loading_popup .footer .bot_right {
+	background-image: url('../images/colors/color1/popup_botright.png');
+	background-repeat: no-repeat;
+	background-position: bottom right;
+	height: 11px;
+	width: 51px;
+	float: left;
+}
+
+.print-hidden {
+	display: none !important;
+}
+
+.print-hidden, .row.print-hidden {
+	display: none !important;
+}
+
+#headerMobile, #headerWidget, #footerWrapper, #widget_breadcrumb, .nav,
+	.editoBackground, .textContainer .separtor, .textContainer .ratingBar,
+	.epinglage, .shopContact, .shareSocialNetwork, .subscribeNewsletter,
+	.ctaContainer, .linkContainer, .linkContainer+.row,
+	#bodyNavigationMenuContainer, a[name="advices"]+div.collapsible.col12,
+	.ficheInfosMagDispo+p, .ficheInfosMagDispo+p+.content {
+	display: none !important;
+}
+
+#contentWrapper {
+	margin: 0 auto 1cm;
+	height: auto;
+}
+
+.row.mobile-hidden, .left.mobile-hidden {
+	display: block !important;
+}

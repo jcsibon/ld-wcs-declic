@@ -1,0 +1,43 @@
+<%--  The following code is created as an example. Modify the generated code and add any additional required code.  --%>
+<div class="content">
+	<div class="productListingWidget">
+		<div class="product_listing_container">
+			<ul class="grid_mode grid" data-dojo-type="wc/widget/Grid" data-dojo-props="columnCountByWidth:${columnCountByWidth_Grid}">
+				<c:forEach var="category" items="${categories}">
+					<li>
+						<div class="linkToArticle centeredText">
+						<!-- afficher l'image par défaut si category.fullimage est vide ou null -->
+						<c:choose>
+							<c:when test="${!empty category.fullImage && category.fullImage != null}">
+								<astpush:assetPushUrl var="categoryImgURL" scope="page" urlRelative="${category.fullImage}" type="CATEGORY" source="list" device="${device}" format="full"/>
+							</c:when>
+							<c:otherwise>
+								<c:set var="keyDefaultImageMaps" value="GRID_ASSET_main_full"/>
+								<astpush:assetPushUrl var="categoryImgURL" urlRelative="${defaultImageMaps[keyDefaultImageMaps]}" type="GRID_ASSET" source="main" device="${device}" format="full" defaultUrl="true"/>
+							</c:otherwise>
+						</c:choose>
+							<a class="hover_underline" href="${category.url}">
+								<div class="backgroundContainer">
+									<img alt="${category.name}" src="${categoryImgURL}" >
+									<h2 class="title">${category.name}</h2>
+								</div>
+							</a>
+						</div>				
+					</li>
+				</c:forEach>
+			</ul>
+		</div>
+	</div>
+	<div class="compareCheckboxLabels">
+	    <label><fmt:message key="LAP003_COMPARE_ADD" bundle="${widgetText}"/></label>
+	    <label>     
+	   	<fmt:message var="comparatorLabel" key="LAP004_COMPARE_ADDED" bundle="${widgetText}"/>
+	   	<fmt:message var="comparatorLabelWithLink" key="LAP004_COMPARE_ADDED_WITHLINK" bundle="${widgetText}"/>
+		<c:import url="/Widgets-lapeyre/Common/ECOComparatorControls.jsp">
+			<c:param name="asCheckbox" value="true"/>
+			<c:param name="comparatorLabel" value="${comparatorLabel}"/>
+			<c:param name="comparatorLabelWithLink" value="${comparatorLabelWithLink}"/>
+		</c:import>
+    	</label>
+	</div>
+</div>

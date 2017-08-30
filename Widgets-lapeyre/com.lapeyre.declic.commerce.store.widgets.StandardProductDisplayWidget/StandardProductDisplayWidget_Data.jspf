@@ -1,0 +1,158 @@
+<%--  Add your data related code here --%>
+<%@ include file="/Widgets/Common/PDP_CatalogEntryData.jspf" %>
+
+<ecocea:widgetPath var="socialNetworksWidgetPath" identifier="SocialNetworks" storeId="${storeId}"/>
+<ecocea:widgetPath var="fullImagewidgetPath" identifier="FullImage" />
+<ecocea:widgetPath var="definingAttributeswidgetsPath" identifier="DefiningAttributes" />
+<ecocea:widgetPath var="shopperActionswidgetPath" identifier="ShopperActions" />
+<ecocea:widgetPath var="itemAvailabilityInPhysicalStoreswidget" identifier="ItemAvailabilityInPhysicalStoresWidget" />
+<c:set var="sharePopupPath" value="/Widgets-lapeyre/Common/SharePopup/SharePopup.jsp" />
+
+<c:set var="singleQuote" value="'"/>
+<c:set var="escapeSingleQuote" value="&#39"/>
+<c:set var="ignoreQuickInfoEventListeners" value="true" scope="request" />
+
+<c:set var="name" value="${catalogEntryDetails.name}" />
+<c:set var="partnumber" value="${catalogEntryDetails.partNumber}" />
+<c:set var="partNumber" value="${catalogEntryDetails.partNumber}" scope="request"/>
+<c:set var="productId" value="${catalogEntryDetails.uniqueID}"/>
+<c:set var="manufacturerName" value="${catalogEntryDetails.manufacturer}" />
+<c:set var="shortDesc" value="${catalogEntryDetails.shortDescription}" />
+<c:set var="longDesc" value="${catalogEntryDetails.longDescription}" />
+<c:set var="auxDesc1" value="${catalogEntryDetails.auxDescription1}" />
+<c:set var="attachments" value="${catalogEntryDetails.attachments}" />
+<c:set var="isOnSpecial" value="${catalogEntryDetails.isOnSpecial}" />
+<c:set var="showCompareBox" value="true" />
+<c:set var="displayType" value="${param.displayType}" />
+
+<wcf:url var="ProductDisplayURL" patternName="ProductURL" value="Product1">
+	<wcf:param name="langId" value="${langId}" />
+	<wcf:param name="storeId" value="${storeId}" />
+	<wcf:param name="catalogId" value="${catalogId}" />
+	<wcf:param name="productId" value="${catalogEntryDetails.uniqueID}" />
+	<wcf:param name="urlLangId" value="${urlLangId}" />
+</wcf:url>
+<c:if test="${empty catalogNavigationViewBOD && displayType eq '_popup'}">
+	<wcf:getData type="com.ibm.commerce.catalog.facade.datatypes.CatalogNavigationViewType" var="catalogNavigationViewBOD" 
+		expressionBuilder="getCatalogEntryViewSummaryByID" varShowVerb="showCatalogNavigationView" maxItems="1" recordSetStartNumber="0">
+		<wcf:param name="accessProfile" value="IBM_Store_Summary_SEO"/>
+		<wcf:param name="searchProfile" value=""/>
+		<wcf:param name="UniqueID" value="${productId}"/>
+		<wcf:contextData name="storeId" data="${storeId}" />
+		<wcf:contextData name="catalogId" data="${catalogId}" />
+	</wcf:getData>
+</c:if>
+<c:if test="${displayType eq '_popup'}">
+	<c:set var="urlToShare" value="${ProductDisplayURL}"/>
+	<c:set var="titleToShare" value="${catalogNavigationViewBOD.catalogEntryView[0].title}" />
+	<c:set var="metaDescriptionToShare" value="${catalogNavigationViewBOD.catalogEntryView[0].metaDescription}" />
+</c:if>
+
+<c:set var="pageType" value="ProductStandard" scope="request" />
+
+<wcf:useBean var="pictos" classname="java.util.LinkedList" scope="request" />
+<wcf:useBean var="brands" classname="java.util.LinkedList" />
+<wcf:useBean var="vids" classname="java.util.LinkedList" />
+
+<c:forEach var="attachment" items="${attachments}">
+	<c:if test="${attachment.usage eq ICON_ATCHMT}">
+		<wcf:set target="${pictos}" value="${attachment}" />
+	</c:if>
+	<c:if test="${attachment.usage eq BRAND_LOGO_ATCHMT }">
+		<wcf:set target="${brands}" value="${attachment}" />
+	</c:if>
+	<c:if test="${attachment.usage eq YOUTUBE_VIDEO_ATCHMT}">
+		<wcf:set target="${vids}" value="${attachment}" />
+	</c:if>
+</c:forEach>
+
+<c:remove var="coeffConversionQuantite" scope="request"/>
+<c:remove var="uniteVenteLegaleLabel" scope="request"/>
+<c:remove var="contrainteColisage" scope="request"/>
+<c:set var="attributes" value="${catalogEntryDetails.attributes}" />
+<c:set var="COEFF_QUANTITE" value="<%=com.lapeyre.declic.commerce.messaging.commands.attributes.AttributeConstants.COEFF_QUANTITE %>" />
+<c:set var="COEFF_PRIX" value="<%=com.lapeyre.declic.commerce.messaging.commands.attributes.AttributeConstants.COEFF_PRIX %>" />
+<c:set var="UNITE_VENTE_LEGALE_CODE" value="<%=com.lapeyre.declic.commerce.messaging.commands.attributes.AttributeConstants.UNITE_VENTE_LEGALE_CODE %>" />
+<c:set var="CONTRAINTE_COLISAGE" value="<%=com.lapeyre.declic.commerce.messaging.commands.attributes.AttributeConstants.CONTRAINTE_COLISAGE %>" />
+<c:forEach var="attr" items="${attributes}">
+	<c:if test="${attr.identifier eq GOOGLE_CATEGORY_ATTRIBUTE_NAME}">
+		<c:set var="googleCategory" value="${attr.name}" scope="request"/>
+	</c:if>
+		<c:choose>
+			<c:when test="${attr.identifier eq COEFF_QUANTITE}">
+				<c:set var="coeffConversionQuantite" value="${attr.values[0].value}" scope="request"/>
+			</c:when>
+			<c:when test="${attr.identifier eq COEFF_PRIX}">
+				<c:set var="coeffConversionPrix" value="${attr.values[0].value}" scope="request"/>
+			</c:when>
+			<c:when test="${attr.identifier eq UNITE_VENTE_LEGALE_CODE}">
+				<c:set var="uniteVenteLegale" value="${attr.values[0].value}" scope="request"/>
+			</c:when>
+			<c:when test="${attr.identifier eq CONTRAINTE_COLISAGE}">
+				<c:set var="contrainteColisage" value="${attr.values[0].value}" scope="request"/>
+			</c:when>
+			<c:when test="${attr.usage eq 'Descriptive' && attr.identifier eq 'isSoldes'}">
+           	 	<c:set var="soldeFlagProduct" value="${attr.values[0].value}" scope="request" />
+    		</c:when>
+			<c:when test="${attr.identifier eq 'atoutPrix'}">
+           	 	<c:set var="atoutPrix" value="${attr.values[0].value}" scope="request" />
+    		</c:when>
+		</c:choose>
+</c:forEach>
+ 
+
+<%--If the item is already selected (in the url for example) we preselect this one instead of the default one --%>
+<c:choose>
+	<c:when test="${not empty itemSelectedId}">
+		<c:forEach var="sku" items="${catalogEntryDetails.sKUs}">
+			<c:if test="${sku.uniqueID eq itemSelectedId}">
+				<c:set var="defaultSku" value="${sku}" scope="request"/>
+			</c:if>
+		</c:forEach>
+		<c:if test="${empty defaultSku}">
+			<c:forEach var="sku" items="${catalogEntryDetails.sKUs}">
+				<c:if test="${sku.isDefault eq 1}">
+					<c:set var="defaultSku" value="${sku}" scope="request"/>
+				</c:if>
+			</c:forEach>
+		</c:if>		
+	</c:when>
+	<c:otherwise>
+		<c:forEach var="sku" items="${catalogEntryDetails.sKUs}">
+			<c:if test="${sku.isDefault eq 1}">
+				<c:set var="defaultSku" value="${sku}" scope="request"/>
+			</c:if>
+		</c:forEach>
+	</c:otherwise>
+</c:choose>
+		
+
+<c:forEach var="prix" items="${catalogEntryDetails.price}">
+	<c:if test="${(prix.usage eq 'Offer') and (!empty prix.value)}">
+		<c:set var="productAvailable" value="true" scope="request"/>
+	</c:if>
+</c:forEach>
+
+<c:if test="${productAvailable}">
+	<c:set var="microDataOfferAttributes" value="itemprop=\"offers\" itemscope itemtype=\"${MICRO_DATA_OFFER}\"" />
+</c:if>
+
+
+<wcf:useBean var="defaultSkuAttributes" classname="java.util.LinkedList" scope="request"/>
+<c:forEach var="attr" items="${defaultSku.attributes}">
+	<c:if test="${attr.usage eq 'Defining'}">
+		<jsp:useBean id="defaultSkuAttributesKeyValue" class="java.util.HashMap" scope="request"/>
+		<c:set target="${defaultSkuAttributesKeyValue}" value="${fn:replace(attr.identifier,singleQuote,escapeSingleQuote)}" property="identifier" />
+		<c:set target="${defaultSkuAttributesKeyValue}" value="${fn:replace(attr.values[0].identifier,singleQuote,escapeSingleQuote)}" property="value" />
+		<wcf:set target="${defaultSkuAttributes}" value="${defaultSkuAttributesKeyValue}" />
+		<c:remove var="defaultSkuAttributesKeyValue" />
+	</c:if>
+	<c:if test="${attr.identifier eq 'priceLabel'}">
+		<c:set var="priceLabelDefault" value="${attr.values[0].value}" />
+	</c:if>
+	<c:if test="${attr.identifier eq 'isShippingAllowed'}">
+		<c:set var="isShippingAllowed" value="${attr.values[0].value}" scope="request" />
+	</c:if>
+</c:forEach>
+
+<ecocea:listToJson value="${defaultSkuAttributes}" var="defaultSkuAttrsJSON" />

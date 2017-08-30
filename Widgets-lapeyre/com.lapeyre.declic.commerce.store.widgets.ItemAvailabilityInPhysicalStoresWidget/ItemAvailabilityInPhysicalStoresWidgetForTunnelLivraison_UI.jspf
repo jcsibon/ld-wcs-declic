@@ -1,0 +1,39 @@
+<fmt:message var="orderGlobalAvailabilityMessage" key="orderGlobalAvailabilityMessage" bundle="${widgetText}" />
+<fmt:message var="indispoProduitInfoBulleErrorMessage" key="indispoProduitInfoBulleErrorMessage" bundle="${widgetText}" />
+<fmt:message var="orderItemavailabilityInStockLabel" key="orderItemavailabilityInStockLabel" bundle="${widgetText}" />
+
+		<div class="dropdownLP">
+        	<select id="tunnelLivraisonSelect" class="full-width contactForm-select" >
+        		<option value="-1" ><fmt:message key="LAP034_SELECT" bundle="${widgetText}" /></option>
+        		<c:forEach var="shop" items="${activeShopsList}" >
+        			<c:if test="${ shop.retrait}">
+        			<c:if test="${firstDefaultShop.id eq shop.id}">
+        				<c:set var="selected" value=" selected" />
+        			</c:if>
+					<option value="${shop.id}" data-shop-name="${shop.name}"${selected}>${shop.zipcode} - ${shop.name}</option>
+					<c:remove var="selected" />
+					</c:if>
+				</c:forEach>
+        	</select>
+		</div>
+	<script id="tunnelLivraisonItemAvaibilityScripts">
+		dojo.addOnLoad(function(){
+			if(itemAvailabilityInPhysicalStoresForTunnelLivraison) {
+				resetRequest();
+				itemAvailabilityInPhysicalStoresForTunnelLivraison.initialize("${userType}");
+				itemAvailabilityInPhysicalStoresForTunnelLivraison.attach("tunnelLivraisonSelect");
+				itemAvailabilityInPhysicalStoresForTunnelLivraison.setDefaultStoreSucceed('SetDefaultStoreSucceedOnPageLivraison');
+			
+				$(itemAvailabilityInPhysicalStoresForTunnelLivraison).on("SetDefaultStoreSucceedOnPageLivraison", function(){
+					//update default store in header
+					wc.render.getRefreshControllerById('HeaderStoreLocationRefreshArea');
+					wc.render.updateContext("HeaderStoreLocation_Context");
+					
+					//wc.render.getRefreshControllerById('itemAvailabilityRefreshAreaInTunnelLivraisonController');
+					//wc.render.updateContext("TunnelLivraisonItemAvailablity_Context", {pageType :"TunnelLivraison"});
+					
+					window.location.reload();
+				});
+			}
+		});
+	</script>

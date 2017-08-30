@@ -1,0 +1,577 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<!-- START CatalogEntryDisplay_ListView_UI.jsp -->
+<c:if test="${isOnMobileDevice}" >
+	<c:set var="COEFF_QUANTITE" value="<%=com.lapeyre.declic.commerce.messaging.commands.attributes.AttributeConstants.COEFF_QUANTITE %>" />
+	<c:set var="COEFF_PRIX" value="<%=com.lapeyre.declic.commerce.messaging.commands.attributes.AttributeConstants.COEFF_PRIX %>" />
+	<c:set var="UNITE_SECONDAIRE_CODE" value="<%=com.lapeyre.declic.commerce.messaging.commands.attributes.AttributeConstants.UNITE_SECONDAIRE_CODE %>" />
+	<c:set var="UNITE_VENTE_LEGALE_CODE" value="<%=com.lapeyre.declic.commerce.messaging.commands.attributes.AttributeConstants.UNITE_VENTE_LEGALE_CODE %>" />
+	<c:set var="PRICE_LABEL" value="<%=com.lapeyre.declic.commerce.messaging.commands.attributes.AttributeConstants.PRICE_LABEL %>" />
+	<c:set var="CONTRAINTE_COLISAGE" value="<%=com.lapeyre.declic.commerce.messaging.commands.attributes.AttributeConstants.CONTRAINTE_COLISAGE %>" />
+	
+	<c:remove var="uniteSecondaire" scope="request" />
+	<c:remove var="uniteVenteLegale" scope="request" />
+	<c:remove var="contrainteColisage" scope="request" />
+	<c:forEach var="attr" items="${attributes}">
+		
+		<c:choose>
+			<c:when test="${attr.identifier eq UNITE_SECONDAIRE_CODE}">
+				<c:set var="uniteSecondaire" value="${attr.values[0].value}" scope="request"/>
+			</c:when>
+			<c:when test="${attr.identifier eq UNITE_VENTE_LEGALE_CODE}">
+				<c:set var="uniteVenteLegale" value="${attr.values[0].value}" scope="request"/>
+			</c:when>
+			<c:when test="${attr.identifier eq CONTRAINTE_COLISAGE}">
+				<c:set var="contrainteColisage" value="${attr.values[0].value}" scope="request"/>
+			</c:when>
+		</c:choose>
+	</c:forEach>
+</c:if>
+
+<c:if test="${empty storeText}">
+	<fmt:setBundle basename="/${sdb.jspStoreDir}/storetext_v2" var="storeText" scope="request"/>
+</c:if>
+
+<%-- showCompareBox will be set to true by default. Pass the value as param to override the value. --%>
+<flow:ifEnabled feature="Analytics">
+<c:if test="${fn:contains(catEntryDisplayUrl, '?')}">
+	<c:set var="cmcrurl" value="${fn:replace(cmcrurl, '?', '&')}" />
+	<c:if test="${!empty cmcrurl}"> 
+		<c:set var="cmcrurl_productImageLink" value="${cmcrurl}-productImageLink"/>
+		<c:set var="cmcrurl_productNameLink" value="${cmcrurl}-productNameLink"/>
+		<c:set var="cmcrurl_productFullDetails" value="${cmcrurl}-productFullDetailsLink"/>
+	</c:if>
+</c:if>
+</flow:ifEnabled>
+<c:choose>
+	<c:when test="${disableProductCompare == 'false'}">
+		<c:set var="showCompareBox" value="true" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="showCompareBox" value="false" />
+	</c:otherwise>
+</c:choose>
+<c:if test="${isOnMobileDevice || type eq 'package' || type eq 'bundle' || type eq 'dynamickit'}">
+	<c:set var="showCompareBox" value="false" />
+</c:if>
+<c:set var="displayPriceRange" value="true" />
+<c:if test="${hasAssociations}" >
+	<c:set var="showCompareBox" value="false" />
+</c:if>
+
+<div id="product_image_list_${catalogEntryID}" class=" left product_image  <c:if test="${hasAssociations}" > product_image_merch</c:if><c:if test="${isOnSpecial}" > promo </c:if> <c:if test="${soldeFlagProduct eq 1 || soldeFlagProduct eq 1.0  }"> soldes</c:if>"
+		<c:if test="${showCompareBox eq 'true'}">
+			onmouseout="if(dojo.byId('comparebox_${catalogEntryID}') && !dojo.byId('comparebox_${catalogEntryID}').checked){
+				hideSection('compare_${catalogEntryID}');
+			}"
+		</c:if>>
+			<a id="CatalogEntryDisplayLink_${catalogEntryID}" href="${fn:escapeXml(catEntryDisplayUrl)}${fn:escapeXml(cmcrurl_productImageLink)}" title="${catalogEntryDetails.name}" aria-label="${catalogEntryDetails.name}"
+				<c:if test="${showCompareBox eq 'true'}">
+					onkeydown="if(!dojo.byId('comparebox_${catalogEntryID}').checked){shiftTabHideSection('compare_${catalogEntryID}',event);}"
+					onfocus="showSection('compare_${catalogEntryID}');"
+				</c:if> title="${catalogEntryDetails.name}">
+				<img itemprop="image" id="productThumbNailImage_${catalogEntryID}" src="${productFullImage}" onerror="this.src='/wcsstore/LapeyreSAS/images/desktopList/defaultImage.png'" alt="${catalogEntryDetails.name}" border="0"/>
+				<c:forEach var="adRibbon" items="${adRibbonMap}">
+					<c:set var="adRibbonStyle" value="RibbonAdDefault ${fn:replace(adRibbon.key , '\"' , '_')}" />
+					<div class="${fn:escapeXml(adRibbonStyle)}">${adRibbon.value}</div>
+				</c:forEach>
+			</a>
+			<%out.flush();%>
+			<c:if test="${!isOnMobileDevice && catEntryType != CATALOGUE_PAPIER_PRODUCT}">
+				<c:import url = "/Widgets-lapeyre/Common/ShoppingList/ShoppingList.jsp">
+					<c:param name="productId" value="${catalogEntryID}" />
+					<c:param name="defaultProductSkuID" value="${defaultProductSkuID}" />
+					<c:param name="display" value="overlay" />
+				</c:import>
+			</c:if>
+			<%out.flush();%>
+</div>
+<c:if test="${hasAssociations}" >
+	<div id="product_name_${catalogEntryID}" class="product_name_merch">
+		<c:if test="${not empty searchScore}">
+			<div class="searchScore">[<fmt:message key='SEARCH_SCORE' bundle='${widgetText}'/> <c:out value="${searchScore}"/>]</div>
+		</c:if>
+			<a id="CatalogEntryViewDetailsLink_${catalogEntryID}" href="${fn:escapeXml(catEntryDisplayUrl)}${fn:escapeXml(cmcrurl_productNameLink)}">${catalogEntryDetails.name}</a>
+		</div>
+</c:if>
+<c:if test="${hasAssociations}" >
+	<div class="productDescDropMerch collapsible" aria-expanded="false" role="group" aria-label="<fmt:message key='COLLAPSE_EXPAND_WIDGET_TITLE' bundle='${widgetText}'/>" id="productDescDropGroup_${catalogEntryID}" >
+	   <a href="#" role="button" tabindex="0" class="toggle" aria-controls="productDescDropGroup_${catalogEntryID}">
+	      <div class="arrow" id="mainESpotDescTog_${catalogEntryID}"></div>
+	      <div class="showDetails"><fmt:message key='MA_BUY_NOW' bundle='${widgetText}'/></div>
+	   </a>
+	   <div id="ProductESpotDetails_${catalogEntryID}" class="closed content" style="">	
+</c:if>
+	<div class="left product_info">
+		<div class="product_main_infos left product_price_options">
+		<%--on fixe la hauteur à 80 px --%>
+		<div class="">
+			<c:if test="${!hasAssociations}" >
+				<div id="product_name_${catalogEntryID}" class="product_name">
+					<c:if test="${not empty searchScore}">
+						<div class="searchScore">[<fmt:message key='SEARCH_SCORE' bundle='${widgetText}'/> <c:out value="${searchScore}"/>]</div>
+					</c:if>
+					<a class="hover_underline" title="${catalogEntryDetails.name}" aria-hidden="true" tabindex="-1" id="CatalogEntryViewDetailsLink_${catalogEntryID}" href="${fn:escapeXml(catEntryDisplayUrl)}${fn:escapeXml(cmcrurl_productNameLink)}">
+						<h2 itemprop="name"><ecocea:crop value="${catalogEntryDetails.name}" length="80" /></h2>
+						<c:if test="${catEntryType eq STANDARD_PRODUCT && !empty priceLabelDefaultSku} ">
+							<span id="priceLabel_${catalogEntryID}">
+								${priceLabelDefaultSku}
+							</span>
+						</c:if>
+					</a>
+					<meta itemprop="productId" content="${partNumber}" />
+					<meta itemprop="manufacturer" content="${MICRO_DATA_MANUFACTURER}" />
+					<meta itemprop="itemCondition" content="NewCondition" />
+					<meta itemprop="url" content="${fn:escapeXml(catEntryDisplayUrl)}${fn:escapeXml(cmcrurl_productNameLink)}" />
+					<meta itemprop="sku" content="${sku.partNumber}" />
+					
+					<%--Additional properties--%>
+					<c:forEach var="additionalProperty" items="${microDataAdditionalProperties}">
+						<span itemprop="additionalProperty"  itemprop="additionalProperty" itemscope itemtype="${MICRO_DATA_PROPERTYVALUE}" >
+							<meta itemprop="name" content="${additionalProperty.key}" />
+							<meta itemprop="value" content="${additionalProperty.value.value}" />
+							<c:if test="${not fn:endsWith(additionalProperty.value.image1path, 'none.png')}">
+								<astpush:assetPushUrl var="additionalPropertyImage" urlRelative="${additionalProperty.value.image1path}" type="${catalogEntryDetails.type}" source="" device="${device}" format="thumbnail"/>
+								<meta itemprop="image" content="${additionalPropertyImage}" />
+							</c:if>
+						</span>
+					</c:forEach>
+				</div>
+			</c:if>
+			<c:if test="${hasAssociations}" >
+				<div class="product_description">
+					<span id="product_SKU_${fn:escapeXml(catalogEntryID)}" class="sku"><fmt:message key='BD_SKU' bundle='${widgetText}'/>: ${catalogEntryDetails.partNumber}</span>
+				</div>
+			</c:if>
+			<div id="BVRRInlineRating-${sku.partNumber}" class="productRating"></div>
+			<div class="product_description">
+					<c:choose>
+						<c:when test="${catEntryType eq STANDARD_PRODUCT}">
+							<p id="priceLabel_${catalogEntryID}">
+								<c:out value="${priceLabelDefaultSku}" />
+							</p>
+						</c:when>
+						<c:when test="${catEntryType eq SUR_MESURE_PRODUCT}">
+							<%-- On affiche rien pour les produits sur mesure --%>
+						</c:when>
+						<c:otherwise>
+							<p id="product_shortdescription_${catalogEntryID}">
+								<c:out value="${catalogEntryDetails.shortDescription}" />
+							</p>
+						</c:otherwise>
+					</c:choose>
+				
+				<div class="clear_float"></div>
+			</div>
+		
+		</div>
+		<c:if test="${catEntryType eq STANDARD_PRODUCT || catEntryType eq COLLECTION_PRODUCT}">
+			<c:if test="${!isOnMobileDevice}"> <%-- Mantis 0001067 : On réduit le traitement en mobile --%>	
+				<div class="mobile-hidden">
+				
+				<c:choose>
+					<%--ECOCEA: utilisation de la map definingAttributeList --%>
+					<c:when test="${numberOfSKUs == 1}">
+						<c:forEach var="attribute" items="${definingAttributeList}" varStatus="aStatus" >
+							<c:set var="attributeName" value="${fn:replace(attribute[0],replaceStr01,search01)}" />
+							<c:set var="attributeValues" value="${attribute[1]}" />
+							<c:set var="displayValue" value="${attribute[2]}" />
+							<div class="header color_swatch_label" id="swatch_selection_label_entitledItem_${fn:escapeXml(catalogEntryID)}_${fn:escapeXml(attributeIdentifier)}">
+								${attributeName}
+							</div>
+							<div class="item_spacer_3px"></div>
+								<c:if test="${empty displayValue}">
+								<div class="product_color_swatches">
+									<div class="color_swatch_list">
+										<div id="swatch_entitledItem_${fn:escapeXml(catalogEntryID)}_${fn:escapeXml(attributeIdentifier)}" class="color_swatch_selected">
+											<c:out value="${fn:replace(attributeValues, replaceStr01, search01)}"/>
+										</div>
+									</div>
+								</div>
+								</c:if>
+								<c:out value="${displayValue}"/>
+							<script type="text/javascript">
+								dojo.addOnLoad(function() {
+									shoppingActionsJS.setSelectedAttribute("${fn:escapeXml(attributeName)}","${fn:escapeXml(attributeValues)}", "entitledItem_${fn:escapeXml(catalogEntryID)}", "productThumbNailImage_${fn:escapeXml(catalogEntryID)}", "ItemImage");
+								});
+							</script>
+							<c:if test="${!aStatus.last}">
+								<div class="item_spacer_3px"></div>
+							</c:if>
+						</c:forEach>
+					</c:when>
+					<%--ECOCEA: utilisation de la map swatchAttrList --%>
+					<c:otherwise>
+							<c:if test="${!empty swatchAttrList}">
+								<span class="comboList"><fmt:message key="LAP031_MY_OPTIONS_LABEL" bundle="${widgetText}" /></span>
+								<c:set var="defaultSelected" value="false"/>
+
+								<div class="definingAttributes">
+								<c:forEach var="attribute" items="${swatchAttrList}" varStatus="aStatus" >
+									<c:set var="swatchName" value="${attribute[0]}" />
+									<c:set var="swatchValues" value="${attribute[1]}" />
+									<c:set var="swatchImages" value="${attribute[2]}" />
+									<%--ECOCEA --%>
+									<c:set var="attributeIdentifier" value="${attribute[3]}"/>
+									<c:set var="swatchValueIdentifier" value="${attribute[4]}"/>
+									<div class="header color_swatch_label" id="swatch_selection_label_entitledItem_${fn:escapeXml(catalogEntryID)}_${fn:escapeXml(attributeIdentifier)}" ><c:out value="${swatchName}"/></div>
+									<div class="item_spacer_3px"></div>
+									<div class="product_color_swatches">
+
+										<c:set var="hasOnlyGenericSwatchImage" value="true" />
+										<c:forEach var="swatchImage" items="${swatchImages}">
+											<c:if test="${not fn:contains(swatchImage, 'swatch_generic') and hasOnlyGenericSwatchImage}">
+												<c:set var="hasOnlyGenericSwatchImage" value="false" />
+											</c:if>
+										</c:forEach>
+
+										<c:set var="backslash" value="\\\\"/>
+										<c:set var="replace" value=""/>
+
+
+										<c:if test="${hasOnlyGenericSwatchImage}">
+											<div class="dropdown-toggle with-caret">
+												<select
+													class="swatch-list"
+													onchange="shoppingActionsJS.swatchListChanged(event, '${fn:escapeXml(attributeIdentifier)}', '${fn:escapeXml(catalogEntryID)}', '${fn:escapeXml(attrIdentifiers)}', 'productThumbNailImage_${fn:escapeXml(catalogEntryID)}', 'ItemImage', ${userType eq 'R'}, ${displayPriceRange}, false)">
+													<c:forEach var="swatchValue" items="${swatchValues}" varStatus="vStatus">
+														<c:set var="swatchValue" value="${fn:replace(swatchValue, backslash, replace)}"/>
+														<option
+															id="swatch_option_entitledItem_${fn:escapeXml(catalogEntryID)}_${attributeIdentifier}_${fn:escapeXml(swatchValueIdentifier[vStatus.index])}"
+															class="swatch-list-item"
+															value="${fn:escapeXml(swatchValueIdentifier[vStatus.index])}">
+															<c:out value='${swatchValue}'/>
+														</option>
+													</c:forEach>
+												</select>
+											</div>
+										</c:if>
+
+										<span class="spanacce" id="swatch_ACCE_description_${fn:escapeXml(catalogEntryID)}_${fn:escapeXml(fn:replace(swatchName, ' ', '-'))}"><fmt:message key="ACCE_Region_Price_Update" bundle="${widgetText}"/></span>
+										<div class="color_swatch_list"role="radiogroup" aria-label="${fn:escapeXml(swatchName)}" aria-describedby="swatch_ACCE_description_${fn:escapeXml(catalogEntryID)}_${fn:escapeXml(fn:replace(swatchName, ' ', '-'))}">
+											<ul 
+												id="swatch-list-${fn:escapeXml(catalogEntryID)}-${fn:escapeXml(attributeIdentifier)}"
+												class="${hasOnlyGenericSwatchImage? 'hidden' : ''}">
+												
+												<c:forEach var="swatchValue" items="${swatchValues}" varStatus="vStatus">
+													<c:set var="swatchValue" value="${fn:replace(swatchValue, backslash, replace)}"/>
+													<c:set var="index" value="${fn:trim(vStatus.count-1)}" />
+													<li>
+														<c:set var="swatchHrefAttr">
+															shoppingActionsJS.selectSwatch("${fn:escapeXml(attributeIdentifier)}","${fn:escapeXml(swatchValueIdentifier[index])}","entitledItem_${fn:escapeXml(catalogEntryID)}","${fn:escapeXml(attrIdentifiers)}","productThumbNailImage_${fn:escapeXml(catalogEntryID)}","ItemImage");
+															shoppingActionsJS.changePrice("entitledItem_${fn:escapeXml(catalogEntryID)}",false,${displayPriceRange},"${fn:escapeXml(catalogEntryID)}");
+															shoppingActionsJS.updateSurface("entitledItem_${fn:escapeXml(catalogEntryID)}", "${fn:escapeXml(catalogEntryID)}");
+														</c:set>
+														<c:if test="${userType eq 'R'}">
+															<c:set var="swatchHrefAttr">
+															${swatchHrefAttr}
+															shoppingActionsJS.changeWishListButton("entitledItem_${fn:escapeXml(catalogEntryID)}", "${fn:escapeXml(catalogEntryID)}");
+															</c:set>
+														</c:if>
+														<a id="swatch_link_entitledItem_${fn:escapeXml(catalogEntryID)}_${attributeIdentifier}_${fn:escapeXml(swatchValueIdentifier[index])}" 
+														   role="radio" aria-setsize="${fn:length(swatchValues)}" aria-posinset="${vStatus.count}" aria-checked="false"
+														   title="${fn:escapeXml(swatchValue)}" href='javascript:${swatchHrefAttr}'>
+															<c:choose>
+																<c:when test="${fn:contains(swatchImages[index], '/swatch_generic')}">
+																	<div id="swatch_entitledItem_<c:out value='${catalogEntryID}'/>_<c:out value='${attributeIdentifier}'/>_<c:out value='${swatchValueIdentifier[index]}'/>" title="<c:out value='${swatchValue}'/>" class="color_swatch button">
+																		<%-- id="swatch_entitledItem_<c:out value='${catalogEntryID}'/>_<c:out value='${swatchValue}'/>" --%>
+																		<img aria-hidden="true" alt="<c:out value='${swatchValue}'/>" src="" style="width:0px;height:0px;display:none;" />
+																		<%--<span class="spanacce"><c:out value='${swatchValue}'/></span>--%>
+																		<c:out value='${swatchValue}'/>
+																		<%-- 
+																		<span style="DISPLAY: INLINE-BLOCK;position:absolute;top:2px;left:0px;width:100%;font-size:12px;white-space: nowrap;"><c:out value='${swatchValue}'/></span>
+																		--%>
+																		<%-- FBA - End --%>
+																	</div>
+																</c:when>
+																<c:otherwise>
+																	<span id="swatchSpanDisable_entitledItem_${fn:escapeXml(catalogEntryID)}_${fn:escapeXml(attributeIdentifier)}_${fn:escapeXml(swatchValueIdentifier[index])}" ></span>
+																		<img id="swatch_entitledItem_${fn:escapeXml(catalogEntryID)}_${fn:escapeXml(attributeIdentifier)}_${fn:escapeXml(swatchValueIdentifier[index])}" alt="${fn:escapeXml(swatchValue)}" src="${fn:escapeXml(swatchImages[index])}" class="color_swatch <c:if test='${aStatus.last}'>last_swatch</c:if>" aria-hidden="true"/>
+																	<span class="spanacce"><c:out value='${swatchValue}'/></span>
+																</c:otherwise>
+															</c:choose>
+														</a>
+													</li>
+													<c:if test="${!defaultSelected}">
+														<c:set var="defaultAttributeName" value="${attributeIdentifier}"/>
+														<c:set var="defaultAttributeValue" value="${swatchValueIdentifier[index]}"/>
+														<c:set var="defaultSelected" value="true"/>
+													</c:if>									
+													<script type="text/javascript">			
+															shoppingActionsJS.addToAllSwatchsArray("${fn:escapeXml(attributeIdentifier)}","${fn:escapeXml(swatchValueIdentifier[index])}","${fn:escapeXml(swatchImages[index])}","entitledItem_${fn:escapeXml(catalogEntryID)}","ItemImage");
+													</script>
+													<a id="swatch_array_${fn:escapeXml(catalogEntryID)}_${vStatus.count}_${fn:escapeXml(fn:replace(attributeIdentifier, ' ', '-'))}_${fn:escapeXml(fn:replace(swatchValueIdentifier[index], ' ', '-'))}" class="nodisplay" href='javascript:shoppingActionsJS.addToAllSwatchsArray("${fn:escapeXml(attributeIdentifier)}","${fn:escapeXml(swatchValueIdentifier[index])}","${fn:escapeXml(swatchImages[index])}","entitledItem_${fn:escapeXml(catalogEntryID)}");'></a>
+												</c:forEach>
+											</ul>
+										</div>
+									</div>
+									<c:if test="${!aStatus.last}">
+										<div class="item_spacer_3px"></div>
+									</c:if>
+								</c:forEach>
+								</div>
+								<c:if test="${defaultSelected == 'true'}">
+									<script type="text/javascript">
+										dojo.addOnLoad(function(){
+											var defaultSkuAttributesArray = new Array();
+											<c:forEach var="defAttr" items="${defaultSkuAttributes}">
+												var defAttrObject = new Object();
+												defAttrObject.identifier = '${fn:escapeXml(defAttr.identifier)}';
+												defAttrObject.value = '${fn:escapeXml(defAttr.value)}';
+												defaultSkuAttributesArray.push(defAttrObject);
+											</c:forEach>
+											if(defaultSkuAttributesArray.length != 0){
+												shoppingActionsJS.setSKUImageId("productThumbNailImage_${fn:escapeXml(catalogEntryID)}");
+												for(var i = 0; i < defaultSkuAttributesArray.length; i++) {
+													shoppingActionsJS.setSelectedAttribute(defaultSkuAttributesArray[i].identifier,defaultSkuAttributesArray[i].value,"entitledItem_${fn:escapeXml(catalogEntryID)}","${fn:escapeXml(attrIdentifiers)}");
+												}
+												for(var i = 0; i < defaultSkuAttributesArray.length; i++) {
+													shoppingActionsJS.selectSwatch(defaultSkuAttributesArray[i].identifier,defaultSkuAttributesArray[i].value,"entitledItem_${fn:escapeXml(catalogEntryID)}","${fn:escapeXml(attrIdentifiers)}","productThumbNailImage_${fn:escapeXml(catalogEntryID)}","ItemImage");
+												}
+											}
+										});
+									</script>
+									<a id="swatch_setSkuImage_${fn:escapeXml(catalogEntryID)}_${vStatus.count}" class="nodisplay" href='javascript:shoppingActionsJS.setSKUImageId("productThumbNailImage_${fn:escapeXml(catalogEntryID)}");'></a>
+									<c:forEach var="defAttr" items="${defaultSkuAttributes}" varStatus="innerStatus">
+										<a id="swatch_selectDefault_${fn:escapeXml(catalogEntryID)}_${vStatus.count}_${innerStatus.count}" class="nodisplay" href='javascript:shoppingActionsJS.setSelectedAttribute("${fn:escapeXml(defAttr.identifier)}","${fn:escapeXml(defAttr.value)}","entitledItem_${fn:escapeXml(catalogEntryID)}");'></a>
+									</c:forEach>
+									<c:forEach var="defAttr" items="${defaultSkuAttributes}" varStatus="innerStatus">
+										<a id="swatch_selectDefault1_${fn:escapeXml(catalogEntryID)}_${vStatus.count}_${innerStatus.count}_1" class="nodisplay" href='javascript:shoppingActionsJS.selectSwatch("${fn:escapeXml(defAttr.identifier)}","${fn:escapeXml(defAttr.value)}","entitledItem_${fn:escapeXml(catalogEntryID)}","${fn:escapeXml(attrIdentifiers)}","productThumbNailImage_${fn:escapeXml(catalogEntryID)}","ItemImage");'></a>
+									</c:forEach>
+								</c:if>
+							</c:if>				
+					</c:otherwise>
+				</c:choose>
+				</div>
+			</c:if>
+		</c:if>
+		<input type="hidden" id="ProductInfoName_${catalogEntryID}" value="${fn:escapeXml(catalogEntryDetails.name)}"/>
+		<input type="hidden" id="ProductInfoImage_${catalogEntryID}" value="${fn:escapeXml(productFullImage)}"/>
+		</div>
+		
+		<div class="product_price_options left" ${microDataAttributesOffer}>
+
+		<c:if test="${catEntryType eq STANDARD_PRODUCT || catEntryType eq COLLECTION_PRODUCT}">
+			<%--pour les produits standards et les produits de collection, on fixe la hauteur du bloc --%>
+			<div class="priceContainer">
+		</c:if>
+		
+		<%@ include file="/Widgets-lapeyre/Common/PriceDisplay/PriceDisplay.jspf" %>
+		<c:if test="${productAvailable}">
+			<c:choose>
+				<c:when test="${catEntryType eq COLLECTION_PRODUCT || catEntryType eq SUR_MESURE_PRODUCT}">
+					<meta itemprop="availability" content="InStoreOnly" />
+				</c:when>
+				<c:otherwise>
+					<meta itemprop="availability" content="InStock" />
+				</c:otherwise>
+			</c:choose>
+		</c:if>
+		
+		<%-- 
+			0001090: [Famille] - L'éco-part ne doit pas être affichée en mode liste 
+			0001078: [Search produit] - Affichage de l'éco-part
+		--%>
+		<%--
+		<c:choose>
+			<c:when test="${ecoPart eq '' || ecoPart == undefined}">
+				<div class="ecoPartContainer" id="ecoPartContainer_${fn:escapeXml(catalogEntryID)}" style="display: none;">
+					<fmt:message key="ecoPartIncludingLabel" bundle="${widgetText}" /> : <span>${ecoPart}</span>
+				</div>
+			</c:when>
+			<c:otherwise>
+				<div class="ecoPartContainer" id="ecoPartContainer_${fn:escapeXml(catalogEntryID)}">
+					<fmt:message key="ecoPartIncludingLabel" bundle="${widgetText}" /> : <span>${ecoPart}</span>
+				</div>
+			</c:otherwise>
+		</c:choose>
+		 --%>
+		 		
+		<c:if test="${catEntryType eq STANDARD_PRODUCT || catEntryType eq COLLECTION_PRODUCT}">
+			</div>
+		</c:if>
+		
+		<c:if test="${catEntryType eq COLLECTION_PRODUCT}">
+			<div class="product_collection_label ctaContainer">
+				<c:if test="${!empty offerPrice}">
+					<div>${priceLabelDefaultSku}</div>
+				</c:if>
+			</div>
+		</c:if>
+		
+		<c:if test="${!isOnMobileDevice}">		 <%-- Mantis 0001067 : On réduit le chargement en mobile --%>
+			<div class="ctaContainer mobile-hidden">
+				<c:if test="${(!empty entitledItems && fn:length(entitledItems) > 0) && (type == 'item' || type == 'package' || type == 'product' || type == 'dynamickit') && catEntryType != SUR_MESURE_PRODUCT && catEntryType != COLLECTION_PRODUCT && catEntryType != CATALOGUE_PAPIER_PRODUCT}" >
+					<div class="product_quantity_addtolist">
+						<div class="product_quantity">
+							<div class="quantity_section" id="qtySurface_<c:out value='${catalogEntryID}'/>"></div>
+							<div class="quantity_section noselect">
+								<label for="quantity_<c:out value='${catalogEntryID}'/>" class="header"><fmt:message key="PD_QTY" bundle="${widgetText}"/></label>
+								<div class="qty_controls_container">
+									<span class="qtyButton leftPosition" onclick="javascript:var quantityInput = document.getElementById('quantity_<c:out value='${catalogEntryID}'/>'); if(quantityInput != null) {var curQty = parseInt(quantityInput.value); if(curQty > 1) {quantityInput.value = curQty - 1;QuickInfoJS.updateSurface(<c:out value='${catalogEntryID}'/>);}}">-</span>
+									<input onpaste="return false;"
+									       onkeypress="return checkNumericInput(event);"
+										   name="quantity_<c:out value='${catalogEntryID}'/>" id="quantity_<c:out value='${catalogEntryID}'/>" type="tel" class="quantity_input" value="1" onchange="javascript:QuickInfoJS.updateSurface(<c:out value='${catalogEntryID}'/>);productDisplayJS.notifyQuantityChange(this.value,<c:out value='${catalogEntryID}'/>);">
+									<span class="qtyButton rightPosition" onclick="javascript:var quantityInput = document.getElementById('quantity_<c:out value='${catalogEntryID}'/>'); if(quantityInput != null) {var curQty = parseInt(quantityInput.value);curQty = isNaN(curQty) ? 0 : curQty;quantityInput.value = curQty + 1;QuickInfoJS.updateSurface(<c:out value='${catalogEntryID}'/>);}">+</span>
+								</div>
+							</div>
+							<div class="clear_float"></div>
+						</div>
+					</div>
+				</c:if>
+				<c:if test="${catEntryType eq CATALOGUE_PAPIER_PRODUCT}">
+					<input id="quantity_${fn:escapeXml(catalogEntryID)}" type="hidden" value="1"/>
+				</c:if>
+				<c:choose>
+						<c:when test="${catEntryType ne COLLECTION_PRODUCT}">
+						<flow:ifDisabled feature="HidePurchaseButton">
+							<c:choose>											
+								<c:when test="${type == 'dynamickit' && showDynamicKit == 'true'}">
+									<%@ include file="CatalogEntryDisplayForDynamicKits_ImageView.jspf" %>
+								</c:when>
+								<c:when test="${type == 'item' || type == 'package' || type == 'product'}">
+									<c:if test="${!hasAssociations}" >
+										<div class="ctaContainer mobile-hidden">
+										<c:choose>
+											<c:when test="${catEntryType eq SUR_MESURE_PRODUCT}">
+												<a href="${storeLocatorURL}" class="button trouverMonMagasinBtn"><fmt:message key="ficheProduitSMStoreLocButtonLabel" bundle="${widgetText}" /></a>
+											</c:when>
+											<c:when test="${catEntryType eq COLLECTION_PRODUCT}">
+											<c:choose>
+												<c:when test="${hasCollectionRelationship}">
+												<wcf:url var="CollectionSearchDisplayURL" value="CollectionSearchDisplay">
+													<wcf:param name="storeId" value="${storeId}" />
+													<wcf:param name="catalogId" value="${catalogId}" />
+													<wcf:param name="productId" value="${catEntryIdentifier}" />
+													<wcf:param name="categoryId" value="${WCParam.categoryId}" />
+												</wcf:url>
+												<a href="${CollectionSearchDisplayURL}" class="button orange achatEnligneCollectionBtn"><fmt:message key="ficheProduitCollectionListeMeublesButtonLabel" bundle="${widgetText}" /></a>
+												</c:when>
+												<c:otherwise>
+												<a href="${storeLocatorURL}" class="button trouverMonMagasinBtn"><fmt:message key="ficheProduitCollectionStoreLocButtonLabel" bundle="${widgetText}" /></a>
+												</c:otherwise>
+											</c:choose>
+											</c:when>
+											
+											<%--produit standard ou catalogue papier --%>
+											<c:otherwise>
+												<c:choose>
+													<c:when test="${empty entitledItems || fn:length(entitledItems) eq 0}">
+														<div class="button disabled">
+															<fmt:message key="PD_UNAVAILABLE" bundle="${widgetText}"/>
+														</div>
+													</c:when>
+													<c:otherwise>
+														<div id="listViewAdd2CartUnavailable_${fn:escapeXml(catalogEntryID)}" class="button orange disabled" <c:if test="${requestScope.productAvailable eq 'true'}">style="display:none;"</c:if>>
+															<fmt:message key="PD_UNAVAILABLE" bundle="${widgetText}"/>
+														</div>
+														<a id="listViewAdd2Cart_${fn:escapeXml(catalogEntryID)}" href="javascript:setCurrentId('listViewAdd2Cart_${fn:escapeXml(catalogEntryID)}');shoppingActionsJS.Add2ShopCartAjax('entitledItem_${fn:escapeXml(catalogEntryID)}',document.getElementById('quantity_${fn:escapeXml(catalogEntryID)}').value, false)" onKeyPress="javascript:MessageHelper.setFocusElement('listViewAdd2Cart_${fn:escapeXml(catalogEntryID)}');" class="button achatEnLigneBtn" wairole="button" role="button" title="<fmt:message key='ADD_TO_CART' bundle='${widgetText}' />" <c:if test="${requestScope.productAvailable ne 'true'}">style="display:none;"</c:if>>
+															<fmt:message key="addToCartStandardButtonLabel" bundle="${widgetText}"/>
+														</a>
+														<c:if test="${catEntryType eq CATALOGUE_PAPIER_PRODUCT}">
+															<a href="${storeLocatorURL}" class="button trouverMonMagasinBtn"><fmt:message key="ficheProduitCatalogueStoreLocButtonLabel" bundle="${widgetText}" /></a>
+														</c:if>
+													</c:otherwise>
+												</c:choose>
+											</c:otherwise>
+										</c:choose>
+										</div>
+									</c:if>
+									<c:if test="${hasAssociations}" >								
+										<div class="ctaContainer mobile-hidden">
+											<c:choose>
+												<c:when test="${catEntryType eq SUR_MESURE_PRODUCT}">
+													<a href="${storeLocatorURL}" class="button trouverMonMagasinBtn"><fmt:message key="ficheProduitSMStoreLocButtonLabel" bundle="${widgetText}" /></a>
+												</c:when>
+												<c:otherwise>
+												<a id="addBothToCartBtn_${fn:escapeXml(catalogEntryID)}" href="javascript:setCurrentId('addBothToCartBtn_${fn:escapeXml(catalogEntryID)}');MerchandisingAssociationJS.addBoth2ShopCart('entitledItem_<c:out value='${productDetailsPageCatalogEntryID}'/>','entitledItem_${fn:escapeXml(catalogEntryID)}',document.getElementById('quantity_${fn:escapeXml(catalogEntryID)}').value,${associationIndex});" class="button primary" wairole="button" role="button" title="<fmt:message key="MA_ADD_BOTH_TO_CART" bundle="${widgetText}"/>">
+													<fmt:message key="MA_ADD_BOTH_TO_CART" bundle="${widgetText}"/>
+												</a>
+												</c:otherwise>
+											</c:choose>
+												<%out.flush();%>
+												<c:if test="${catEntryType != CATALOGUE_PAPIER_PRODUCT}"> <%-- 0001139: [Comparateur] - Un catalogue papier ne doit pas pouvoir être ajouté à la liste d'achat --%>
+													<c:import url = "/Widgets-lapeyre/Common/ShoppingList/ShoppingList.jsp">
+														<c:param name="productId" value="${catalogEntryID}" />
+														<c:param name="defaultProductSkuID" value="${defaultProductSkuID}" />
+													</c:import>
+												</c:if>
+												<%out.flush();%>
+										</div>
+									</c:if>
+								</c:when>
+								<c:otherwise>						
+									<c:if test="${hasAssociations}" >								
+										<div class="ctaContainer mobile-hidden">
+											<a id="viewFullDetailsLink_${fn:escapeXml(catalogEntryID)}" href="${fn:escapeXml(catEntryDisplayUrl)}${fn:escapeXml(cmcrurl_productFullDetailsLink)}" class="button primary" wairole="button" role="button" title="<fmt:message key="QI_VIEW_FULL_DETAILS" bundle="${widgetText}"/>">
+												<fmt:message key="QI_VIEW_FULL_DETAILS" bundle="${widgetText}"/>
+											</a>
+											<%out.flush();%>
+												<c:if test="${catEntryType != CATALOGUE_PAPIER_PRODUCT}"> <%-- 0001139: [Comparateur] - Un catalogue papier ne doit pas pouvoir être ajouté à la liste d'achat --%>
+													<c:import url = "/Widgets-lapeyre/Common/ShoppingList/ShoppingList.jsp">
+														<c:param name="productId" value="${catalogEntryID}" />
+														<c:param name="defaultProductSkuID" value="${defaultProductSkuID}" />
+													</c:import>
+												</c:if>
+											<%out.flush();%>
+										</div>
+									</c:if>
+								</c:otherwise>
+							</c:choose>
+						</flow:ifDisabled> 
+					</c:when>
+					<c:when test="${catEntryType eq COLLECTION_PRODUCT}">
+						<c:choose>
+							<c:when test="${hasCollectionRelationship}">
+							<wcf:url var="CollectionSearchDisplayURL" value="CollectionSearchDisplay">
+								<wcf:param name="storeId" value="${storeId}" />
+								<wcf:param name="catalogId" value="${catalogId}" />
+								<wcf:param name="productId" value="${catEntryIdentifier}" />
+								<wcf:param name="categoryId" value="${WCParam.categoryId}" />
+							</wcf:url>
+							<a href="${CollectionSearchDisplayURL}" class="button orange achatEnligneCollectionBtn"><fmt:message key="ficheProduitCollectionListeMeublesButtonLabel" bundle="${widgetText}" /></a>
+							</c:when>
+							<c:otherwise>
+							<a href="${storeLocatorURL}" class="button trouverMonMagasinBtn"><fmt:message key="ficheProduitCollectionStoreLocButtonLabel" bundle="${widgetText}" /></a>
+							</c:otherwise>
+						</c:choose>
+						<%out.flush();%>
+							<c:import url = "/Widgets-lapeyre/Common/ShoppingList/ShoppingList.jsp">
+								<c:param name="productId" value="${catalogEntryID}" />
+								<c:param name="defaultProductSkuID" value="${defaultProductSkuID}" />
+							</c:import>
+						<%out.flush();%>
+					</c:when>
+				</c:choose>
+				
+				<c:if test="${showCompareBox eq 'true'}">
+					<div id="compareContainer_${catalogEntryID}">
+						<%out.flush();%>
+							<c:import url = "/LapeyreSAS/Widgets/AddRemoveCompareProductDisplay/AddRemoveCompareProductDisplay.jsp">
+								<c:param name="productId" value="${catalogEntryID}" />
+								<c:param name="catalogEntryId" value="${defaultProductSkuID}" />
+							</c:import>
+						<%out.flush();%>
+					</div>
+				</c:if>
+			</div>
+		</c:if>
+		</div>
+	</div>
+<c:if test="${hasAssociations}">
+		</div>
+	</div>	
+</c:if>
+<!-- END CatalogEntryDisplay_ListView_UI.jsp -->

@@ -1,0 +1,78 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<!-- BEGIN ProductContentRecommendationWidget_Horizontal_UI.jspf -->
+	<c:forEach var="entryMap1" items="${requestScope.msaDatasProductContentMap}">
+		<c:set var="activityIdForDisplayTitle" value="${entryMap1.key}"/>
+		<c:forEach var="entryMap2" items="${entryMap1.value}">
+			<c:set var="emsWidgetSuffix" value="${widgetSuffix}_${entryMap1.key}_${entryMap2.key}"/>
+			
+			<fmt:message key="PC_PREVIOUS_PAGE" bundle="${widgetText}" var="PC_PREVIOUS_PAGE"/>
+			<fmt:message key="PC_NEXT_PAGE" bundle="${widgetText}" var="PC_NEXT_PAGE"/>
+			<fmt:message key="PC_MOVE_TO_PAGE_{0}" bundle="${widgetText}" var="PC_MOVE_TO_PAGE"/>
+			<fmt:message key="ES_RECOMMENDED_PRODUCTS" bundle="${widgetText}" var="ES_RECOMMENDED_PRODUCTS" />
+			
+			<c:choose>
+				<c:when test="${!empty titleContentTypeMap || ! empty espotTitle}">
+					<c:set var="ariaAttributes"> role="${marketingSpotDatas.behavior == 2 ? 'marquee' : 'region'}" aria-labelledby="title${emsWidgetSuffix}"</c:set>
+				</c:when>
+				<c:when test="${marketingSpotDatas.behavior == 2}" >
+					<c:set var="ariaAttributes"> role="marquee" aria-label="${ES_RECOMMENDED_PRODUCTS}"</c:set>
+				</c:when>
+				<c:otherwise>
+					<c:set var="ariaAttributes"></c:set>
+				</c:otherwise>
+			</c:choose>
+			<div id="catalogEntryRecommendationWidget${emsWidgetSuffix}" class="catalogEntryRecommendationWidget carousel clip-true padding-true background-${background} border-${border}" data-dojo-type="wc/widget/WCCarousel" data-dojo-props="columnCountByWidth:${columnCountByWidth}"${ariaAttributes}>
+				<c:if test="${eSpotTitleIncluded == null || empty eSpotTitleIncluded[emsName]}" >
+					<div id="title${emsWidgetSuffix}"><%@include file="../Common/ESpot/ESpotTitle_UI.jspf"%></div>
+				</c:if>
+				<div class="content" data-dojo-attach-point="content">
+					<ul data-dojo-attach-point="ul">
+						<c:forEach var="marketingSpotData" items="${entryMap2.value}">	
+								<c:if test="${marketingSpotData.dataType eq 'CatalogEntryId'}">
+									<li class="widgetProductContent_catEntry grid_mode grid" itemscope itemtype="${MICRO_DATA_PRODUCT}">
+										<%@include file="ProductContentRecommendationEntryDisplay.jspf"%>
+									</li>
+								</c:if>
+								<c:if test="${marketingSpotData.dataType eq 'MarketingContent'}">
+									<c:forEach var="contentKey" items="${contentKeyMap}">
+										<c:if test="${contentKey.value eq marketingSpotData.uniqueID}">
+											<c:set var="key" value="${contentKey.key}"/>
+											<li class="widgetProductContent_content">
+												<%@include file="/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.ContentRecommendation/Content_UI.jspf"%>
+											</li>
+										</c:if>
+									</c:forEach>
+								</c:if>
+						</c:forEach>	
+					</ul>
+				</div>
+				<a id="prevPageButton${emsWidgetSuffix}" href="#" class="prevPageButton" data-dojo-attach-point="prevPageButton" role="button" aria-label="${PC_PREVIOUS_PAGE}" alt="${PC_PREVIOUS_PAGE}"></a>
+				<a id="nextPageButton${emsWidgetSuffix}" href="#" class="nextPageButton" data-dojo-attach-point="nextPageButton" role="button" aria-label="${PC_NEXT_PAGE}" alt="${PC_NEXT_PAGE}"></a>
+				<flow:ifEnabled feature="RemoteWidget">
+					<c:if test="${param.showFeed}">
+						<%out.flush();%>
+						<c:import url="/Widgets/Common/ESpot/FeedAndRemoteWidgetDisplay.jsp">
+							<c:param name="feedURL" value="${eMarketingFeedURL}"/>
+							<c:param name="widgetPrefix" value="${widgetPrefix}"/>
+						</c:import>
+						<%out.flush();%>
+					</c:if>
+				</flow:ifEnabled>
+			</div>
+		</c:forEach>
+
+	</c:forEach>
+
+<!-- END ProductContentRecommendationWidget_Horizontal_UI.jspf -->

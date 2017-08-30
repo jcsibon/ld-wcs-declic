@@ -1,0 +1,493 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2013, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<!-- BEGIN FacetNavigation_MobileView_UI.jsp -->
+<div class="addListButton">
+	<a role="button" class="button" name="facetButton" href="javaScript:shoppingActionsJS.showWCDialogPopup('widget_mobile_facet_popup');$('#slider').nstSlider('refresh');" aria-label="<fmt:message key='FACET_LABEL' bundle='${widgetText}'/>"><fmt:message key="FACET_LABEL" bundle="${widgetText}"/></a>
+</div>
+<div id="widget_mobile_facet_popup" data-dojo-type="lapeyre/widget/Dialog" closeOnTimeOut="false" title="Zone de Tri" style="display:block;visibility:hidden;">
+	<div class="widget_site_popup">
+		<div class="content" style="width: auto !important;">
+			<div class="header">
+				<span><fmt:message key="FACET_POPUP_TITLE" bundle="${widgetText}"/></span>
+				<a id="FacetPopupClose" class="close" href="javascript:hidePopup('widget_mobile_facet_popup');" title="<fmt:message bundle="${storeText}" key='CP_CLOSE'/>"></a>
+				<div class="clear_float"></div>
+			</div>
+			<div class="body">
+				<div id="widget_left_nav<c:out value="${widgetSuffix}"/>">
+					<c:if test="${f != 0}">
+						<div class="row facetContainer">
+							<div class="col12"  id="facetOptions<c:out value="${widgetSuffix}"/>">
+								<div class="facetWidget collapsible selectedFacetBloc" id="AppliedFacetContainer" role="navigation" aria-label="<fmt:message key="LN_SEARCH_FACET_WIDGET" bundle="${widgetText}"/>" aria-expanded="true">
+									<span class="toggle facetTitle" role="button" tabIndex="0" aria-controls="facet_nav_collapsible<c:out value="${widgetSuffix}"/>" aria-label="<fmt:message key="LAP005_YOUR_SELECTION" bundle="${widgetText}"/>" aria-describedby="facet_widget_acce_desc"><fmt:message key="LAP005_YOUR_SELECTION" bundle="${widgetText}"/></span>
+									<span id="facet_widget_acce_desc" class="spanacce"><fmt:message key="COLLAPSE_EXPAND_WIDGET_TITLE" bundle="${widgetText}" /></span>
+									<div class="clearFloat"></div>
+									<div class="content">
+										<div id="facetFilterListWrapper"></div>
+										<a class="button" role="button" href="#" aria-label="<fmt:message key="LAP006_CLEAR_SELECTION" bundle="${widgetText}"/>" id="clear_all_filter" style="display:none" onclick="dojo.topic.publish('Facet_RemoveAll'); return false;">
+											<fmt:message key="LAP006_CLEAR_SELECTION" bundle="${widgetText}"/>
+										</a>
+									</div>
+								</div>						
+								<form id="productsFacets">
+									<script>
+									function initSBNavConstants() {
+										SearchBasedNavigationDisplayJS.initConstants(
+											"<fmt:message key='LN_SEARCH_FACET_REMOVE' bundle='${widgetText}'/>",
+											"<fmt:message key='LN_SEARCH_FACET_SHOW_ALL' bundle='${widgetText}'/>",
+											"<fmt:message key='LN_SEARCH_FACET_SHOW_LESS' bundle='${widgetText}'/>",
+											"<c:out value='${env_currencyCode}'/>");
+									};
+									if (window.addEventListener) {
+										window.addEventListener("load", function() {initSBNavConstants();}, false);
+									} else {
+										window.attachEvent("load", function() {initSBNavConstants();});
+									}
+									</script>
+									
+									<c:if test="${!empty facetArray}">
+										<c:forEach var="facetList" items="${facetArray}" varStatus="facetCounter">
+											<c:set var="facetClass" value="optionContainer"/>
+											<c:if test="${facetList[2] == true && fn:toUpperCase(facetList[0]) ne 'EN PROMOTION' || !facetValues[4] && fn:toUpperCase(facetList[0]) ne 'EN PROMOTION'}">
+												<c:set var="facetClass" value="${facetClass} singleFacet"/>
+											</c:if>
+											<c:if test="${fn:toUpperCase(facetList[0]) eq 'PRIX'}">
+												<c:set var="facetClass" value="${facetClass} facetPrice facetSlider_${facetList[0]} show"/>
+											</c:if>
+											<c:if test="${fn:toUpperCase(facetList[0]) eq 'EN PROMOTION'}">
+												<c:set var="facetClass" value="${facetClass} show"/>
+											</c:if>
+											
+											<c:set var="facetSection" value="${!empty(facetList[5]) ? facetList[5] : facetCounter.index}"/>
+											<c:set var="facetSectionElement" value="${facetList[2] == true ? '' : facetSection}"/>
+											
+											<%-- Check if facet Prix must be hidden --%>
+											<c:set var="sectionPriceFacetMustBeHidden" value="${fn:toUpperCase(facetList[0]) eq 'PRIX' && !mustDisplayPriceDisplay}" />
+											
+											<%-- Check if facet Promotion must be hidden --%>
+											<c:set var="sectionIsOnSpecialFacetMustBeHidden" value="false" />
+											<c:forEach var="facetValues" items="${facetList[1]}" varStatus="aStatus" >
+												<c:if test="${fn:startsWith(facetValues[2], 'isOnSpecial')}">
+													<c:set var="isOnSpecialFacet" value="true"/>
+													<c:set var="sectionIsOnSpecialFacetMustBeHidden" value="${isOnSpecialFacet && !fn:containsIgnoreCase(facetValues[2],'true')}" />
+												</c:if>
+											</c:forEach>
+											
+											<%-- Check if facet CatalogGroupHierarchy must be hidden  --%>
+											<c:set var="sectionCatalogGroupHierarchyMustBeHidden" value="${facetSection eq 'parentCatgroup_id_search' and not empty categoryId}" />						
+											<c:set var="sectionInitiallyHiddenStyle" value="${facetSection eq 'parentCatgroup_id_search' or not empty categoryId ? '' : ''}" />
+											<c:set var="sectionDataHierarchyAttribute" value="${facetSection eq 'parentCatgroup_id_search' ? 'data-hierarchy' : ''}" />
+											
+											<c:set var="isSlider" value="${facetList[6]}"/>
+											
+											<c:if test="${!sectionPriceFacetMustBeHidden && !sectionIsOnSpecialFacetMustBeHidden && !sectionCatalogGroupHierarchyMustBeHidden}">
+											<c:if test="${CustomSearchTermFieldName ne 'promotionSearch' || fn:toUpperCase(facetList[0]) ne 'EN PROMOTION'}">												
+												<div 
+													id="section_${facetSection}<c:out value="${widgetSuffix}"/>"
+													class="xsection_${facetSection} ${facetClass}"
+													style="${sectionInitiallyHiddenStyle}"
+													data-facet-section ${sectionDataHierarchyAttribute}
+													>
+													
+													<div class="collapsible facetArea ${facetClass}" aria-label="${facetList[0]}" role="navigation" aria-expanded="true">
+														<span class="toggle facetTitle" role="button" tabIndex="0" aria-label="${facetList[0]}" aria-describedby="category_widget_acce_desc">${facetList[0]}</span>
+						                             				<span id="category_widget_acce_desc" class="spanacce">Press enter to collapse or expand the menu.</span>
+						                             				<div class="content">
+															<script>
+																SearchBasedNavigationDisplayJS.uniqueParentArray['${fn:replace(facetList[0],"'","\\'")}'] = 0;
+																SearchBasedNavigationDisplayJS.widgetId = '${widgetSuffix}';
+															</script>
+															<div
+																id="section_list_${facetSection}<c:out value="${widgetSuffix}"/>"
+																class="facetSelectContainer"
+																role="group"
+																aria-expanded="true"
+																aria-labelledby="section_button_${facetSection}<c:out value="${widgetSuffix}"/>">
+																
+																
+																<c:choose>
+																	<c:when test="${facetSection eq 'parentCatgroup_id_search'}">
+																	
+																		<ul class="facetSelect">
+					
+																			<input type="hidden" id="facetParentLabel_${facetSection}" value="${fn:toLowerCase(facetList[0])}" />
+					
+																			<c:set var="priceFacet" value="false"/>
+																			<c:set var="FacetValueCountIncrementer" value="1" scope="page" />
+																			<c:forEach var="node" items="${catalogGroupHierarchy.depthFirstCatalogGroupNodes}">
+					
+																				<script type="text/javascript">
+																					SearchBasedNavigationDisplayJS.facetIdsArray.push("${node.id}");
+																					SearchBasedNavigationDisplayJS.facetIdsParentArray.push("${node.parent.id}");
+																				</script>
+					
+																				<c:set var="classValue" value="xfacet_${node.id} hierarchyFacet level-${node.level}"/>
+																				<%-- allValuesReturned --%>
+																				<c:if test="${not empty facetValues[4]}"> 
+																					<c:set var="classValue" value="${classValue} singleFacet"/>
+																				</c:if>
+																				<c:if test="${empty facetValues[4]}">
+																					<c:set var="classValue" value="${classValue} noSwatchFacet"/>
+																				</c:if>
+																				<c:if test="${node.level eq 1}">
+																					<c:set var="styleValue" value=""/>
+																				</c:if>
+																				<c:if test="${node.level gt 1}">
+																					<c:set var="styleValue" value="style=display:none;"/>
+																				</c:if>
+																				<li
+																					id="facet_${node.id}"
+																					class="${classValue}"
+																					data-hierarchy-level="${node.level}"
+																					data-has-results="true"
+																					${styleValue}>
+																					
+																					<input
+																						type="hidden"
+																						id="facetSection_${node.id}"
+																						value="${facetSection}"
+																						autocomplete="off"
+																						/>
+					
+																					<c:set var="onclickValue" value="" />
+																					<c:set var="onkeypressValue" value="" />
+																					<c:if test="${node.level gt 1}">
+																						<c:set var="onclickValue" value="
+																							if (this.disabled == false) {
+																								if (this.checked) { 
+																									dojo.topic.publish('Facet_Add', '${node.id}');
+																								} else {
+																									dojo.topic.publish('Facet_Remove', '${node.id}');
+																								}
+																							} else {
+																								this.checked = false
+																							}"
+																						/>
+																						<c:set var="onkeypressValue" value="
+																							if (event.keyCode == dojo.keys.ENTER) {
+																								this.checked =! this.checked;
+																								if (this.checked) {
+																									dojo.topic.publish('Facet_Add', '${node.id}');
+																								} else {
+																									dojo.topic.publish('Facet_Remove', '${node.id}');
+																								}
+																							}"
+																						/>
+																					</c:if>
+																					<input
+																						tabindex="-1"
+																						class="nodisplay"
+																						type="checkbox"
+																						aria-labelledby="${node.id}_ACCE_Label"
+																						id="${node.id}"
+																						value="${facetSection}:${WCParam.catalogId}_${node.id}"
+																						onclick="${onclickValue}"
+																						onkeypress="${onkeypressValue}"
+																						/>
+																					
+																					<c:set var="onclickValue" value="" />
+																					<c:if test="${node.level gt 1}">
+																						<c:set var="onclickValue" value="javascript:setCurrentId('${node.id}');" />
+																					</c:if>
+																					<a
+																						role="button"
+																						aria-labelledby="${node.id}_ACCE_Label"
+																						id="facetButton_Facet4_-1004_11306_460_Cuisine"
+																						class="facetbutton"
+																						href="#"
+																						data-for="${node.id}"
+																						onclick="${onclickValue}">
+																						
+																					
+																						<span class="spanacce">
+																							<label for="${node.id}" aria-label="checkbox">Valeur de facette</label>
+																						</span>
+																						
+																						<c:choose>
+																							<c:when test="${node.level eq 1}">
+																								<span class="hierachyToggle" data-toggle-indicator>+</span>
+																							</c:when>
+																							<c:otherwise>
+																								<div class="checkBox">
+																									<div class="checkmark"></div>
+																								</div>
+																							</c:otherwise>
+																						</c:choose>
+					
+																						<span class="outline">
+																							<span id="facetLabel_${node.id}">
+																								<c:out value="${node.name}" />
+																								<span class="facetCountContainer">
+																									(<span id="facet_count${node.id}" data-facet-count>${node.count}</span>)
+																								</span>
+																							</span>
+																						</span>
+																							
+																						<span class="spanacce" id="${node.id}_ACCE_Label">
+																							<c:out value="${node.name}" /> <span class="facetCountContainer" id="${node.id}_ACCE_Label_Count">${node.count}</span>
+																						</span>
+																					</a>
+																				</li>
+																			</c:forEach>
+																		</ul>
+																		<script type="text/javascript">
+																			$(document).ready(function() {
+																				$('[data-hierarchy-level=1]').on('click', SearchBasedNavigationDisplayJS.toggleShallowHierarchy);
+																			});
+																		</script>
+																	</c:when>
+																	
+																	<c:otherwise>
+																		<ul  <c:if test="${isSlider}">id="slidervaluelist_${facetSection}"</c:if> class="facetSelect color_swatch_list" <c:if test="${isSlider}">style="display:none;"</c:if>>																		
+																			<input type="hidden" id="facetParentLabel_${facetSection}" value="${fn:toLowerCase(facetList[0])}" />
+																			<c:set var="priceFacet" value="false"/>
+																			<c:set var="isOnSpecialFacet" value="false"/>
+																			<c:set var="FacetValueCountIncrementer" value="1" scope="page" />
+																			<c:forEach var="facetValues" items="${facetList[1]}" varStatus="aStatus" >
+																					<c:if test="${fn:startsWith(facetValues[2], 'price_') || fn:startsWith(facetValues[2], 'pricePro_')}">
+																						<c:set var="priceFacet" value="true"/>
+																					</c:if>
+																					<c:if test="${fn:startsWith(facetValues[2], 'isOnSpecial')}">
+																						<c:set var="isOnSpecialFacet" value="true"/>
+																					</c:if>
+																					<c:if test="${!priceFacet}">
+																						<c:set var="facetId" value="${facetValues[3]}"/>
+																						<script>
+																							SearchBasedNavigationDisplayJS.facetIdsArray.push("${facetId}");
+																							SearchBasedNavigationDisplayJS.facetIdsParentArray.push("${facetList[0]}");
+																						</script>
+																						<c:set var="singleFacetClass" value="${!empty facetValues[4] ? 'singleFacet' : ''}"/>
+																						<c:if test="${!isSlider || facetValues[1]!=0}">
+																							<c:if test="${!isOnSpecialFacet || (isOnSpecialFacet && fn:containsIgnoreCase(facetValues[2],'true'))}">
+																								<li id="facet_${facetId}" class="xfacet_${facetId} <c:if test="${empty facetValues[4]}">noSwatchFacet</c:if> ${singleFacetClass}">
+																									<input type="hidden" id="facetSection_${facetId}" value="${facetSection}" />
+																									<input tabindex="-1" class="nodisplay" type="checkbox" aria-labelledby="${facetId}_ACCE_Label" id="${facetId}" value="<c:out value='${facetValues[2]}' escapeXml='false'/>"
+																										onclick="if(this.disabled == false){if(this.checked){dojo.topic.publish('Facet_Add', '${facetId}');}else{dojo.topic.publish('Facet_Remove', '${facetId}')};}else{this.checked = false};"
+																										onkeypress="if(event.keyCode == dojo.keys.ENTER) {this.checked=!this.checked;if(this.checked){dojo.topic.publish('Facet_Add', '${facetId}');}else{dojo.topic.publish('Facet_Remove', '${facetId}');}}"
+																										<c:if test="${facetValues[1] == 0}">disabled</c:if>></input>
+																									<c:choose>
+																										<c:when test="${isOnSpecialFacet && fn:containsIgnoreCase(facetValues[2],'true')}">
+																											<a role="${empty facetValues[4] && facetList[2] == true ? 'checkbox' : 'button'}" aria-labelledby ="${facetId}_ACCE_Label" id="facetButton${widgetSuffix}_${facetValues[1]}_${fn:replace(facetValues[0], ' ', '_')}" class="facetbutton button green isOnSpecialFacet" href="#" data-for="${facetId}" onclick="javascript:setCurrentId('${facetId}');">
+																												<fmt:message var="btnOnSpecialLabel" key="LAP015_FACET_ISONSPECIAL_DISPLAY_LABEL" bundle="${widgetText}"/>
+																										</c:when>
+																										<c:otherwise>
+																											<a role="${empty facetValues[4] && facetList[2] == true ? 'checkbox' : 'button'}" aria-labelledby ="${facetId}_ACCE_Label" id="facetButton${widgetSuffix}_${facetValues[1]}_${fn:replace(facetValues[0], ' ', '_')}" class="facetbutton" href="#" data-for="${facetId}" onclick="javascript:setCurrentId('${facetId}');">
+																										</c:otherwise>
+																									</c:choose>
+																										<span class="spanacce"><label for="${facetId}" aria-label="checkbox"><fmt:message key="LN_SEARCH_FACET_VALUE" bundle="${widgetText}"/></label></span>
+																										<c:choose>
+																											<c:when test="${!empty facetValues[4]}">
+																											<astpush:assetPushUrl var="imageUrl" scope="page" urlRelative="${facetValues[4]}" type="category" source="main" device="mobile" format="full"/>
+																												<span class="swatch">
+																													<span class="outline">
+																													<span id="facetLabel_${facetId}">
+																															<c:choose>
+																															<c:when test="${fn:contains(facetValues[4], '/swatch_generic')}">
+																																<div class="color_swatch button" title="${facetValues[0]}">
+																																	<%-- <img src="${facetValues[4]}" title="${facetValues[0]}" alt="${facetValues[0]}"/>--%>
+																																	${facetValues[0]}
+																																</div>
+																															</c:when>
+																															<c:otherwise>
+																																<img src="${imageUrl}" title="${facetValues[0]}" alt="${facetValues[0]}" class="color_swatch"/>
+																															</c:otherwise>
+																															</c:choose>
+																														</span>
+																														<div class="facetCountContainer">(<span id="facet_count${facetId}"><c:out value="${facetValues[1]}"/></span>)</div>
+																													</span>
+																												</span>
+																											</c:when>
+																											<c:otherwise>
+																												<div class="checkBox">
+																													<div class="checkmark"></div>
+																												</div>
+																												<span class="outline">
+																													<span id="facetLabel_${facetId}"><c:out value="${(isOnSpecialFacet && fn:containsIgnoreCase(facetValues[2],'true'))?btnOnSpecialLabel : facetValues[0]}" escapeXml="false"/>
+																															<div class="facetCountContainer" ${isOnSpecialFacet?'style="display:none;"':''}>(<span id="facet_count${facetId}"><c:out value="${facetValues[1]}"/></span>)</div>
+																														</span>
+																												</span>
+																											</c:otherwise>
+																										</c:choose>
+																										<span class="spanacce" id="${facetId}_ACCE_Label">${facetValues[0]} <div class="facetCountContainer" id="${facetId}_ACCE_Label_Count">(<c:out value="${facetValues[1]}"/>)</div></span>
+																									</a>
+																								</li>
+																							</c:if>
+																						</c:if>
+																					</c:if>
+																				</c:forEach>
+																			<div class="clear_float"></div>
+																		</ul>
+																	</c:otherwise>
+																	
+																</c:choose>
+																
+																<c:if test="${isSlider}">
+																	<c:set var="sliderId" value="${facetSection}"/><%-- ${facetList[0]} --%>
+																	<c:set var="minmax" value="${ecocea:getMinMax(facetList[1])}" />
+																	<c:set var="facetFilterMin" value="${minmax.min}" />
+																	<c:set var="facetFilterMax" value="${minmax.max}" />
+																
+																	<div id="range_input_${sliderId}" class="RangeSlider">
+																		<div class="layout-slider">
+																			<input type="hidden" id="slidervalue_${sliderId}" type="slider" name="price" value="${facetFilterMin};${facetFilterMax}"/>
+																			
+																			<c:if test="${not empty param.minPrice}">
+																				<c:set var="facetFilterMin" value="${param.minPrice}" />
+																			</c:if>
+																			<c:if test="${not empty param.maxPrice}">
+																				<c:set var="facetFilterMax" value="${param.maxPrice}" />
+																			</c:if>
+																			<c:if test="${facetFilterMin == facetFilterMax}" >
+																				<c:set var="facetFilterMax" value="${facetFilterMax+1}" />
+																			</c:if>
+																							
+																			<div id="slider_${sliderId}" class="nstSlider" data-range_min="${facetFilterMin}" data-range_max="${facetFilterMax}" data-cur_min="${facetFilterMin}" data-cur_max="${facetFilterMax}">
+																			    <div class="bar" id="bar_${sliderId}"></div>
+																			    <div class="leftGrip" id="leftGrip_${sliderId}"><span class="leftGripValue" id="leftGripValue_${sliderId}"></span></div>
+																				<div class="rightGrip" id="rightGrip_${sliderId}"><span class="rightGripValue" id="rightGripValue_${sliderId}"></span></div>
+																			</div>
+																			<script>
+																				var facetNavSlider_${sliderId} = new FacetNavigationSlider("${sliderId}");
+																				facetNavSlider_${sliderId}.init($("#slider_${sliderId}"), '${facetFilterMin};${facetFilterMax}', ''); <%-- 2e arg ${priceFacetFilterRange} --%>
+																				facetNavSlider_${sliderId}.bindEvent();
+																				facetNavSlider_${sliderId}.reset();
+																				$(".xsection_${sliderId}").hide();
+																			</script>
+																		</div>
+																		<input type="hidden" id="FacetLabelSlider_${sliderId}" value="${fn:toLowerCase(facetList[0])}" />
+																		<input id="low_slider_input_${sliderId}" role="hidden" type="hidden" />
+																		<input id="high_slider_input_${sliderId}" role="hidden" type="hidden" />
+																		<input type="hidden" aria-hidden="true" id="low_slider_value_${sliderId}" name="low_slider_value" value=""/>
+																		<input type="hidden" aria-hidden="true" id="high_slider_value_${sliderId}" name="high_slider_value" value=""/>
+																	</div>
+																</c:if>
+															
+																<c:if test="${priceFacet}">
+																	<div id="price_range_input" class="priceRangeSlider">
+																		<div class="layout-slider">
+																			<input type="hidden" id="priceSlider" type="slider" name="price" value="${priceFacetFilterRange}"/>
+																			<c:set var="priceFacetFilterMin" value="0" />
+																			<c:if test="${not empty param.minPrice}">
+																				<c:set var="priceFacetFilterMin" value="${param.minPrice}" />
+																			</c:if>
+																			<c:if test="${not empty param.maxPrice}">
+																				<c:set var="priceFacetFilterMax" value="${param.maxPrice}" />
+																			</c:if>
+																			<c:if test="${priceFacetFilterMax == priceFacetFilterMin}" >
+																				<c:set var="priceFacetFilterMax" value="${priceFacetFilterMax+1}" />
+																			</c:if>
+																							
+																			<div id="slider" class="nstSlider" data-range_min="${priceFacetFilterMin}" data-range_max="${priceFacetFilterMax}" data-cur_min="${priceFacetFilterMin}" data-cur_max="${priceFacetFilterMax}">
+																			    <div class="bar"  id="bar"></div>
+																			    <div class="leftGrip" id="leftGrip"><span class="leftGripValue"  id="leftGripValue"></span></div>
+																				<div class="rightGrip" id="rightGrip"><span class="rightGripValue"  id="rightGripValue"></span></div>
+																			</div>
+																			<script type="text/javascript">
+																				var facetNavSlider = new FacetNavigationSlider("");
+																				facetNavSlider.init($("#slider"), '${priceFacetFilterRange}', ' \u20AC');
+																				facetNavSlider.bindEvent();
+																			</script>
+																		</div>
+																		<input type="hidden" id="FacetLabelSlider" value="${fn:toLowerCase(facetList[0])}" />
+																		<input id="low_slider_input" role="hidden" type="hidden" /> <%-- low_price_input  --%>
+																		<input id="high_slider_input" role="hidden" type="hidden" />
+																		<input type="hidden" aria-hidden="true" id="low_slider_value" name="low_slider_value" value=""/>
+																		<input type="hidden" aria-hidden="true" id="high_slider_value" name="high_slider_value" value=""/>
+																	</div>
+																</c:if>
+						
+																<c:if test="${!isSlider && facetList[4] == false}">
+																	<ul class="facetSelect" id="more_<c:out value='${facetSection}' escapeXml='false'/>"><li><div class="clear_float"></div></li></ul>
+																	<div class="showMeMore" id="morebutton_<c:out value='${facetSection}' escapeXml='false'/>">
+																		<input title="MORE" type="checkbox" aria-labelledby="showMoreLabel_${facetSection}" id="morelink_${facetSection}" name="morelink_${facetSection}" value="<c:out value='${facetSection}' escapeXml='false'/>:-1" onclick="javascript: SearchBasedNavigationDisplayJS.toggleShowMore(this, '<c:out value='${facetSection}' escapeXml='false'/>', '');" />
+																		<div></div>
+																		<label for="morelink_${facetSection}" id="showMoreLabel_${facetSection}">
+																			<fmt:message key="LN_SEARCH_FACET_SHOW_ALL" bundle="${widgetText}"/>
+																		</label>
+																	</div>
+																</c:if>
+															</div>
+														</div>
+													</div>
+												</div>
+											</c:if>
+											</c:if>
+											
+										</c:forEach>
+									</c:if>
+								</form>
+							</div>
+						</div>
+					</c:if>
+					<%-- <c:if test="${requestScope.pageGroup == 'Search' && f == 0}">
+						<div class="row facetContainer">
+							<div class="col12" id="facetOptions">
+								<div class="facetWidget collapsible" role="section" aria-expanded="true">
+									<div class="header">
+										<div class="title toggle" role="button" tabindex="0">
+											<fmt:message key="LN_SEARCH_NO_FURTHER_REFINEMENT" bundle="${widgetText}"/>
+										</div>
+										<div class="clearFloat"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</c:if> --%>
+				</div>
+			</div>
+			<div class="footer"></div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	require(["dojo/on", "dojo/query"], function(on, query) {
+		on(document, "a.facetbutton:click", function(event) {
+			event.preventDefault();
+			var isTopLevelElementInHierarchy = query(this).parent('[data-hierarchy-level=1]').length > 0;
+			if (isTopLevelElementInHierarchy) {
+				return;
+			}
+			var checkbox = document.getElementById(this.getAttribute("data-for"));
+			checkbox.checked = !checkbox.checked;
+			if (this.getAttribute("role") == "checkbox") {
+				this.setAttribute("aria-checked", checkbox.checked);
+			}
+			checkbox.onclick();
+	   });
+	});
+
+	var _searchBasedNavigationFacetContext = new Array();
+	
+	<c:forEach var="breadcrumb" items="${globalbreadcrumbs.breadCrumbTrailEntryView}">
+		<c:if test="${breadcrumb.type_ != 'FACET_ENTRY_CATEGORY'}">
+			_searchBasedNavigationFacetContext.push("<c:out value="${breadcrumb.value}"/>");
+		</c:if>
+	</c:forEach>
+
+	require(["dojo/domReady!"], function(){
+		setTimeout("SearchBasedNavigationDisplayJS.restoreHistoryContext();", 200);
+		//0001177: [Zone de facette] Apr�s une selection de facette, les facettes retourn�es ne sont pas coh�rentes
+		// r�cup�rer des �l�ments pour le bouton "Afficher tous"
+		setTimeout("SearchBasedNavigationDisplayJS.getAllProductForShowMore();", 200);
+	});
+
+
+	window.onpopstate = function(event) {
+		setTimeout("SearchBasedNavigationDisplayJS.restoreHistoryContext();", 200);
+	};
+	$("#widget_mobile_facet_popup").hide().css("visibility", "visible"); <%-- hack pour que le slider soit bien �valu� : on laisse display block mais visibility:hidden le temps de l'init, et ici on r�tablit --%>
+</script>
+
+<!-- END FacetNavigation_MobileView_UI.jsp -->

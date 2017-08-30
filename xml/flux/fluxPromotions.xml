@@ -1,0 +1,26 @@
+<message type="promotionImport">
+	<header>
+		<sender>SAS</sender>
+		<extractDate>2014-10-14T09:34:54.00</extractDate>
+		<targetCatalog>current</targetCatalog>
+		<nbDataEntries>1</nbDataEntries>
+		<credentials>
+			<login>wcsadmin</login>
+			<password>abcd5678</password>
+		</credentials>
+	</header>
+	<data>
+		<promotionList>
+			<promotion>
+				<action>update</action>
+				<partnumber>2252060</partnumber>
+				<isOnSpecial>true</isOnSpecial>
+			</promotion>
+			<promotion>
+				<action>update</action>
+				<partnumber>2252030</partnumber>
+				<isOnSpecial>true</isOnSpecial>
+			</promotion>
+		</promotionList>
+	</data>
+</message>

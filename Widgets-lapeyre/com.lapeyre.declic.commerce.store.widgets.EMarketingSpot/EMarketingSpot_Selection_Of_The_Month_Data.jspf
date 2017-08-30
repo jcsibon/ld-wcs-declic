@@ -1,0 +1,271 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%@ page trimDirectiveWhitespaces="true" %>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.Iterator"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.Collections"%>
+<%@page import="java.util.Comparator"%>
+<%@page import="com.lapeyre.declic.configurations.ConfigTool"%>
+<%@page import="com.ibm.commerce.marketing.facade.datatypes.impl.BaseMarketingSpotActivityDataTypeImpl"%>
+
+<c:set var="useDefaultData" value="false"/>
+<c:set value="ClickInfo" var="clickInfoCommand" />
+
+<c:if test="${fn:length(marketingSpotDatas.baseMarketingSpotActivityData) > 0 }">
+	<c:set var="data" value="${marketingSpotDatas.baseMarketingSpotActivityData[0]}"/>
+	<c:if test="${data.activityIdentifier.uniqueID eq '0'}">
+		<c:set var="useDefaultData" value="true"/>
+	</c:if>
+</c:if>
+
+<jsp:useBean id="emspotSelectionOfTheMonthBackgroundURLMap" class="java.util.LinkedHashMap" type="java.util.Map" scope="request"/>
+<jsp:useBean id="emspotSelectionOfTheMonthBackgroundMobileURLMap" class="java.util.LinkedHashMap" type="java.util.Map" scope="request"/>
+<jsp:useBean id="emspotSelectionOfTheMonthButtonLabelMap" class="java.util.LinkedHashMap" type="java.util.Map" scope="request"/>
+<jsp:useBean id="emspotSelectionOfTheMonthURLMap" class="java.util.LinkedHashMap" type="java.util.Map" scope="request"/>
+
+<c:forEach var="marketingSpotData" items="${marketingSpotDatas.baseMarketingSpotActivityData}" varStatus="status3">
+    <c:if test='${marketingSpotData.dataType eq "MarketingContent"}'>
+    	<c:set var="activityId" value="${marketingSpotData.activityIdentifier.uniqueID}"/>
+    	<c:set var="label" value="${marketingSpotData.marketingContent.marketingContentDescription[0].marketingText}"/>
+    	<c:if test="${marketingSpotData.marketingContent.marketingContentFormat.name == 'File'}">
+                <%--
+                  *
+                  * For handling language specific assets and descriptions
+                  *
+                --%>
+                <c:set var="attachment" value="${marketingSpotData.marketingContent.attachment}"/>
+                <c:set var="foundLanguage" value="false"/>
+               
+                <%-- Store the index of the asset for the current language in the array --%>
+                <c:set var="assetIndex" value="0"/>
+                
+                <%-- Check if there are any attachment assets --%>
+                <c:if test="${fn:length(attachment.attachmentAsset) > 0}">
+                    <%-- Go through each asset and scan the list of languages specified --%>
+                    <%-- Take the first asset found with the current selected language --%>
+                    <%-- If no language specific asset is found, use the first asset as the default --%>
+                    <c:forEach var="i" begin="0" end="${fn:length(attachment.attachmentAsset)-1}">
+                        <c:forEach var="language" items="${attachment.attachmentAsset[i].language}">
+                            <c:if test="${(language == langId) && (!foundLanguage)}">
+                                <c:set var="foundLanguage" value="true"/>
+                                <c:set var="assetIndex" value="${i}"/>
+                            </c:if>
+                        </c:forEach>
+                    </c:forEach>
+                </c:if>
+                
+                <c:set var="foundLanguage" value="false"/>
+                <%-- Store the index of the attachment description for the current language in the array --%>
+                <c:set var="descriptionIndex" value="0"/>
+
+                <%-- Check if there are any attachment descriptions --%>
+                <c:if test="${fn:length(attachment.attachmentDescription) > 0}">
+                    <%-- Go through each description and find the description associated with the current language --%>
+                    <%-- If no language specific description is found, use the default English description --%>
+                    <c:forEach var="i" begin="0" end="${fn:length(attachment.attachmentDescription)-1}">
+                        <c:forEach var="language" items="${attachment.attachmentDescription[i].language}">
+                            <c:if test="${(language == langId) && (!foundLanguage)}">
+                                <c:set var="foundLanguage" value="true"/>
+                                <c:set var="descriptionIndex" value="${i}"/>
+                            </c:if>
+                        </c:forEach>
+                    </c:forEach>
+                </c:if>
+                
+                <c:set var="contentMimeType" value="${marketingSpotData.marketingContent.mimeType}"/>
+                <c:set var="assetMimeType" value="${attachment.attachmentAsset[assetIndex].mimeType}"/>
+                <c:if test="${(empty contentMimeType) && 
+                	(fn:endsWith(attachment.attachmentAsset[assetIndex].attachmentAssetPath, '.gif') ||
+                	 fn:endsWith(attachment.attachmentAsset[assetIndex].attachmentAssetPath, '.jpg') ||
+                	 fn:endsWith(attachment.attachmentAsset[assetIndex].attachmentAssetPath, '.jpeg') ||
+                	 fn:endsWith(attachment.attachmentAsset[assetIndex].attachmentAssetPath, '.png')	)}">
+                	 <c:set var="contentMimeType" value="image"/>
+                </c:if>
+                <c:if test="${(empty contentMimeType) && (fn:endsWith(attachment.attachmentAsset[assetIndex].attachmentAssetPath, '.swf') )}">
+                	<c:set var="contentMimeType" value="application"/>
+                	<c:set var="assetMimeType" value="application/x-shockwave-flash"/>
+                </c:if>
+                
+                <c:set var="contentPath" value=""/>
+                <c:choose>
+                	<c:when test="${(fn:startsWith(attachment.attachmentAsset[assetIndex].attachmentAssetPath, 'http://') ||
+                		fn:startsWith(attachment.attachmentAsset[assetIndex].attachmentAssetPath, 'https://')	)}">
+						<c:if test="${env_inPreview && !env_storePreviewLink && fn:startsWith(attachment.attachmentAsset[assetIndex].attachmentAssetPath, 'http://[cmsHost]')}">
+							<c:set var="attachmentId" value="${attachment.attachmentIdentifier.uniqueID}"/>
+							<c:set var="attachmentIdentifier" value="${attachment.attachmentIdentifier.externalIdentifier.identifier}"/>
+							<c:set var="attachmentAssetObjectPath" value="AttachmentAssetWithURLType[assetId=${attachment.attachmentAsset[assetIndex].attachmentAssetIdentifier.uniqueID}]"/>
+							<c:url var="clickToEditURL" value="/cmc/EditBusinessObject" context="/">
+								<c:param name="toolId" value="attachmentManagement"/>
+								<c:param name="storeId" value="${storeId}"/>
+								<c:param name="languageId" value="${langId}"/>
+								<c:param name="storeSelection" value="eSite"/>
+								<c:param name="searchType" value="FindAttachments"/>
+								<c:param name="searchOption.searchText" value="${attachmentIdentifier}"/>
+								<c:param name="searchOption.searchUniqueId" value="${attachmentId}"/>
+								<c:param name="openOption.childObjectPath" value="${attachmentAssetObjectPath}"/>
+								<c:param name="openOption.propertyName" value="path"/>
+								<c:param name="openOption.punchOutEditServiceId" value="edit"/>
+							</c:url>
+							<c:set target="${contentClickToEditURLMap}" property="${currentRowCount}" value="${clickToEditURL}"/>
+						</c:if>
+                		<c:set var="contentPath" value="${attachment.attachmentAsset[assetIndex].attachmentAssetPath}"/>
+                		<wcst:resolveContentURL var="contentPath" url="${contentPath}" mimeTypeVar="resolvedMimeType" mimeSubtypeVar="resolvedMimeSubtype" includeHostName="${prependFullURL}"/>
+                		<c:if test="${!empty resolvedMimeType}">
+                			<c:set var="contentMimeType" value="${resolvedMimeType}"/>
+                			<c:if test="${!empty resolvedMimeSubtype}">
+		                		<c:set var="assetMimeType" value="${resolvedMimeType}/${resolvedMimeSubtype}"/>
+		                	</c:if>
+                		</c:if>
+                	</c:when>
+                	<c:when test="${empty attachment.attachmentAsset[assetIndex].rootDirectory}">
+                		<c:set var="contentPath" value="${hostPath}${attachment.attachmentAsset[assetIndex].attachmentAssetPath}"/>
+                	</c:when>
+                	<c:otherwise>
+                		<c:set var="contentPath" value="${hostPath}${env_imageContextPath}/${attachment.attachmentAsset[assetIndex].rootDirectory}/${attachment.attachmentAsset[assetIndex].attachmentAssetPath}"/>
+                	</c:otherwise>
+                </c:choose>	
+                
+                <c:if test="${(contentMimeType eq 'image') || (contentMimeType eq 'images')}">
+                	<c:set var="attachmentName" value="${marketingSpotData.name}"/>
+                	<c:choose>
+	                	<c:when test='${(!empty attachmentName) && 	(fn:endsWith(attachmentName, "_Mobile"))}'>
+	                		<c:set target="${emspotSelectionOfTheMonthBackgroundMobileURLMap}" property="${activityId}" value="${contentPath}"/>
+	                	</c:when>
+	                	<c:otherwise>
+	                		<c:set target="${emspotSelectionOfTheMonthBackgroundURLMap}" property="${activityId}" value="${contentPath}"/>
+	                	</c:otherwise>
+                	</c:choose>
+                </c:if>
+                
+                <c:if test="${empty emspotSelectionOfTheMonthButtonLabelMap[activityId]}">
+                	<c:set target="${emspotSelectionOfTheMonthButtonLabelMap}" property="${activityId}" value="${label}"/>
+                </c:if>
+                
+                <%--
+		          *
+		          * Set up the URL to call when the image or text is clicked.
+		          *
+		        --%>
+				<c:set var="contentClickUrl" value="${param.contentClickUrl}"/>
+				<c:if test = "${empty contentClickUrl}">
+					<c:url value="${marketingSpotData.marketingContent.url}" var="contentClickUrl">
+						<c:if test="${!empty param.errorViewName}" >
+							<c:param name="errorViewName" value="${param.errorViewName}" />
+							<c:if test="${!empty param.orderId}">
+								<c:param name="orderId" value="${param.orderId}"/>
+							</c:if>
+						</c:if>
+					</c:url>
+				</c:if>
+		
+		        <c:url value="${clickInfoCommand}" var="ClickInfoURL">
+		            <c:param name="evtype" value="CpgnClick" />
+		            <c:param name="mpe_id" value="${marketingSpotDatas.marketingSpotIdentifier.uniqueID}" />
+		            <c:param name="intv_id" value="${marketingSpotData.activityIdentifier.uniqueID}" />
+		            <c:param name="storeId" value="${storeId}" />
+		            <c:param name="catalogId" value="${catalogId}" />
+		            <c:param name="langId" value="${langId}" />
+		            <c:forEach var="expResult" items="${marketingSpotData.experimentResult}" begin="0" end="0">
+		                    <c:param name="experimentId" value="${expResult.experiment.uniqueID}" />
+		                    <c:param name="testElementId" value="${expResult.testElement.uniqueID}" />
+		                    <c:param name="expDataType" value="${marketingSpotData.dataType}" />
+		                    <c:param name="expDataUniqueID" value="${marketingSpotData.uniqueID}" />
+		            </c:forEach>
+		            <c:param name="URL" value="${contentClickUrl}" />
+		        </c:url>
+        
+                <c:if test="${!empty marketingSpotData.marketingContent.url}">
+					<c:set target="${emspotSelectionOfTheMonthURLMap}" property="${activityId}" value="${contentClickUrl}" />
+					<c:if test="${fn:contains(ClickInfoURL, '://') || fn:startsWith(ClickInfoURL, '/')}">
+						<c:if test="${empty emspotSelectionOfTheMonthURLMap[activityId]}">
+                			<c:set target="${emspotSelectionOfTheMonthURLMap}" property="${activityId}" value="${ClickInfoURL}"/>
+                		</c:if>
+					</c:if>
+				</c:if>
+        </c:if>        
+    </c:if>
+</c:forEach>
+
+<%-- Utiliser url par défaut si nécessaire --%>
+<c:forEach var="marketingSpotData" items="${marketingSpotDatas.baseMarketingSpotActivityData}" varStatus="status3">
+    <c:if test='${marketingSpotData.dataType eq "MarketingContent"}'>
+    	<c:set var="activityId" value="${marketingSpotData.activityIdentifier.uniqueID}"/>
+    	<c:if test="${empty emspotSelectionOfTheMonthURLMap[activityId]}">
+    	
+    	 	<%--
+	          *
+	          * Set up the URL to call when the image or text is clicked.
+	          *
+	        --%>
+			<c:set var="contentClickUrl" value="${param.contentClickUrl}"/>
+			<c:if test = "${empty contentClickUrl}">
+				<c:url value="${emspotSelectionOfMonthDefaultURL}" var="contentClickUrl">
+					<c:if test="${!empty param.errorViewName}" >
+						<c:param name="errorViewName" value="${param.errorViewName}" />
+						<c:if test="${!empty param.orderId}">
+							<c:param name="orderId" value="${param.orderId}"/>
+						</c:if>
+					</c:if>
+				</c:url>
+			</c:if>
+			
+    		<c:url value="${clickInfoCommand}" var="ClickInfoURL">
+			    <c:param name="evtype" value="CpgnClick" />
+			    <c:param name="mpe_id" value="${marketingSpotDatas.marketingSpotIdentifier.uniqueID}" />
+			    <c:param name="intv_id" value="${marketingSpotData.activityIdentifier.uniqueID}" />
+			    <c:param name="storeId" value="${storeId}" />
+			    <c:param name="catalogId" value="${catalogId}" />
+			    <c:param name="langId" value="${langId}" />
+			    <c:forEach var="expResult" items="${marketingSpotData.experimentResult}" begin="0" end="0">
+			            <c:param name="experimentId" value="${expResult.experiment.uniqueID}" />
+			            <c:param name="testElementId" value="${expResult.testElement.uniqueID}" />
+			            <c:param name="expDataType" value="${marketingSpotData.dataType}" />
+			            <c:param name="expDataUniqueID" value="${marketingSpotData.uniqueID}" />
+			    </c:forEach>
+			    <c:param name="URL" value="${emspotSelectionOfMonthDefaultURL}" />
+			</c:url>
+			
+			<c:set target="${emspotSelectionOfTheMonthURLMap}" property="${activityId}" value="${ClickInfoURL}"/>
+		</c:if>
+    </c:if>
+</c:forEach>   
+	
+<c:set var="baseMarketingSpotActivityDatas" value="${marketingSpotDatas.baseMarketingSpotActivityData}"/> 
+
+<%
+	boolean useDefaultData = Boolean.parseBoolean((String) pageContext.getAttribute("useDefaultData"));
+	List<BaseMarketingSpotActivityDataTypeImpl> msaDatasList = (List<BaseMarketingSpotActivityDataTypeImpl>) pageContext.getAttribute("baseMarketingSpotActivityDatas");
+	Map<String,List<BaseMarketingSpotActivityDataTypeImpl>> msaDatasProductsMap = new HashMap<String,List<BaseMarketingSpotActivityDataTypeImpl>>();
+	
+	Iterator<BaseMarketingSpotActivityDataTypeImpl> it = msaDatasList.iterator();
+	while(it.hasNext()) {
+		BaseMarketingSpotActivityDataTypeImpl msaData = it.next();
+		String dataType = (String) msaData.getDataType();
+		if(dataType.equalsIgnoreCase("CatalogEntryId") || dataType.equalsIgnoreCase("CatalogEntry")) {
+			
+			if(!msaDatasProductsMap.containsKey((String)msaData.getActivityIdentifier().getUniqueID())) {
+				List<BaseMarketingSpotActivityDataTypeImpl> l = new ArrayList<BaseMarketingSpotActivityDataTypeImpl>();
+				msaDatasProductsMap.put((String)msaData.getActivityIdentifier().getUniqueID(),l);
+			}
+			
+			List<BaseMarketingSpotActivityDataTypeImpl> list = msaDatasProductsMap.get(msaData.getActivityIdentifier().getUniqueID());
+			list.add(msaData);
+		}
+	}
+   
+	request.setAttribute("msaDatasProductsMap", msaDatasProductsMap);
+ %>

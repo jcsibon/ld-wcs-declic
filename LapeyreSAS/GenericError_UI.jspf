@@ -1,0 +1,227 @@
+<!-- BEGIN GenericError_UI.jsp -->
+<%@ page trimDirectiveWhitespaces="true" %>
+<c:choose>
+<c:when test="${errorBean.messageKey eq '_ERR_CMD_CMD_NOT_FOUND'}">
+<%-- <wcf:url var="homePageUrl" patternName="HomePageURLWithLang" value="TopCategories1"> --%>
+<%-- 	<wcf:param name="langId" value="${langId}" /> --%>
+<%-- 	<wcf:param name="storeId" value="${storeId}" /> --%>
+<%-- 	<wcf:param name="catalogId" value="${catalogId}" /> --%>
+<%-- 	<wcf:param name="urlLangId" value="${urlLangId}" /> --%>
+<%-- </wcf:url>  --%>
+<%-- ECOCEA : SEO URL not used while store & lang are overrided with IHS --%>
+<c:set var="homePageUrl" value="/" scope="request"/>
+<%out.flush();%>
+	<c:import url="/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.BreadcrumbTrail/BreadcrumbTrail.jsp">
+		<c:param name="storeId" value="${WCParam.storeId}" />
+		<c:param name="catalogId" value="${catalogId}" />
+		<c:param name="langId" value="${langId}" />
+	</c:import>
+<%out.flush();%>
+	<%@ include file="/error404_content.jsp" %>
+
+</c:when>
+<c:when test="${(errorBean.messageKey eq '_ERR_CMS_USER_NOT_GRANTED' || errorBean.messageKey eq '_ERR_USER_AUTHORITY') && userType ne 'G'}">
+<%-- <wcf:url var="homePageUrl" patternName="HomePageURLWithLang" value="TopCategories1"> --%>
+<%-- 	<wcf:param name="langId" value="${langId}" /> --%>
+<%-- 	<wcf:param name="storeId" value="${storeId}" /> --%>
+<%-- 	<wcf:param name="catalogId" value="${catalogId}" /> --%>
+<%-- 	<wcf:param name="urlLangId" value="${urlLangId}" /> --%>
+<%-- </wcf:url>  --%>
+<%-- ECOCEA : SEO URL not used while store & lang are overrided with IHS --%>
+<c:set var="homePageUrl" value="/" scope="request"/>
+<%out.flush();%>
+	<c:import url="/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.BreadcrumbTrail/BreadcrumbTrail.jsp">
+		<c:param name="storeId" value="${WCParam.storeId}" />
+		<c:param name="catalogId" value="${catalogId}" />
+		<c:param name="langId" value="${langId}" />
+	</c:import>
+<%out.flush();%>
+	<div class="notfoundErrorBlock">
+		<span><fmt:message key="pageForbiddenCode" bundle="${storeText}" /></span>
+		<span><fmt:message key="pageForbiddenLabel" bundle="${storeText}" /></span>
+		<p><fmt:message key="pageForbiddenDesc" bundle="${storeText}" /></p>
+		<p><fmt:message key="pageForbiddenTryLater" bundle="${storeText}" /></p>
+		<a href="${homePageUrl}" class="button"><fmt:message key="pageForbiddenReturnToHome" bundle="${storeText}" /></a>
+	</div>
+</c:when>
+<c:otherwise>
+	<!-- Main Content Start -->
+	<div id="content_wrapper_border" role="main">
+		<!-- Content Start -->
+		<div id="box" class="my_account generic_error_container">
+			<div id="errorPage">
+				<c:choose>
+					<c:when test="${errorBean.messageKey eq '_ERR_USER_AUTHORITY'}">
+				<h1 class="myaccount_header"><fmt:message bundle="${storeText}" key="LAP041_AUTHENTICATION_REQUIRED"/></h1>
+					</c:when>
+					<c:when test="${errorBean.messageKey eq '_ERR_INVALID_COOKIE'}">
+				<h1 class="myaccount_header"><fmt:message bundle="${storeText}" key="sessionExpiredLabel"/></h1>
+					</c:when>
+					<c:otherwise>
+				<h1 class="myaccount_header"><fmt:message bundle="${storeText}" key="ERROR_TITLE"/></h1>
+					</c:otherwise>
+				</c:choose>
+			</div>
+				
+			<div id="WC_GenericError_5" class="content">
+				<div id="WC_GenericError_6" class="info">
+					<c:choose>
+						<c:when test="${errorBean.messageKey != null}">
+							<c:choose>
+								<c:when test="${errorBean.messageKey eq '_ERR_CMS_USER_NOT_GRANTED'}">
+									<c:choose>
+										<c:when test="${userType eq 'G'}">
+											<span><fmt:message bundle="${storeText}" key="AUTHORIZATION_ERROR1" /></span>
+											<br />
+											<br />
+											<div id="WC_GenericError_7">	
+												<div class="ctaContainer">
+													<a href="#" onClick="javascript:redirectToSignOn(); return false;" class="button greenSmall" id="WC_GenericError_Link_1">
+														<fmt:message bundle="${storeText}" key="Logon_Title" />
+													</a>
+												</div>
+											</div>
+										</c:when>
+										<c:otherwise>
+											<span><fmt:message bundle="${storeText}" key="AUTHORIZATION_ERROR2" /></span>
+										</c:otherwise>
+									</c:choose>
+								</c:when>
+								<c:when test="${errorBean.messageKey eq '_ERR_USER_AUTHORITY'}">
+									<c:choose>
+										<c:when test="${userType eq 'G'}">
+											<span><fmt:message bundle="${storeText}" key="AUTHORIZATION_ERROR1" /></span>
+											<br />
+											<br />
+											<div id="WC_GenericError_7">	
+												<div class="ctaContainer">
+													<a href="#" onClick="javascript:redirectToSignOn(); return false;" class="button greenSmall" id="WC_GenericError_Link_1">
+														<fmt:message bundle="${storeText}" key="Logon_Title" />
+													</a>
+												</div>
+											</div>
+										</c:when>
+										<c:otherwise>
+											<span><fmt:message bundle="${storeText}" key="AUTHORIZATION_ERROR2" /></span>
+										</c:otherwise>
+									</c:choose>
+								</c:when>
+
+								<c:when test="${errorBean.messageKey eq '_ERR_BAD_STORE_STATE'}">
+									<span class="warning"><fmt:message bundle="${storeText}" key="GENERICERR_TEXT4" /></span>
+								</c:when>
+								
+								<c:when test="${errorBean.messageKey eq '_ERR_INVALID_COOKIE' 
+								|| CommandContext.commandName eq 'CookieErrorView' 
+								|| CommandContext.commandName eq 'TunnelCommandAddressValidation'
+								|| CommandContext.commandName eq 'TunnelCommandShippingView' 
+								|| CommandContext.commandName eq 'ValidateTunnelShipping' 
+								|| CommandContext.commandName eq 'TunnelCommandPaymentView' }">
+									<span><fmt:message bundle="${storeText}" key="sessionExpiredMessage" /></span>
+									<br />
+									<br />
+									<div id="WC_GenericError_7" class="row col6 bcol12 centered">
+										<div class="ctaContainer inline">
+											<c:choose>
+												<c:when test="${CommandContext.commandName eq 'CookieErrorView'}">
+													<%--Si on est sur la page d'erreur CookieErrorView il ne faut pas rediriger sur cette page apres login, on force la redirection sur la home --%>
+													<a href="#" onClick="javascript:redirectToSignOn('/'); return false;" class="left button greenSmall bcol12" id="WC_GenericError_Link_1">
+														<fmt:message bundle="${storeText}" key="Logon_Title" />
+													</a>
+													<%--Si on vient du tunnel on doit rediriger vers la home (page accessible non loggué)--%>
+													<a href="/" class="left button">
+														<span><fmt:message bundle="${storeText}" key="LAP045_IGNORE_AND_CONTINUE"/></span>
+													</a>
+												</c:when>
+												<c:when test="${CommandContext.commandName eq 'TunnelCommandShippingView' 
+																|| CommandContext.commandName eq 'TunnelCommandAddressValidation'
+																|| CommandContext.commandName eq 'ValidateTunnelShipping'
+																|| CommandContext.commandName eq 'TunnelCommandPaymentView'}">
+													<%--Si on vient du tunnel on doit rediriger vers la page livraison--%>
+													<a href="#" onClick="javascript:redirectToSignOn('TunnelCommandShippingView','Tunnel'); return false;" class="button greenSmall left bcol12" id="WC_GenericError_Link_1">
+														<fmt:message bundle="${storeText}" key="Logon_Title" />
+													</a>
+													<%--Si on vient du tunnel on doit rediriger vers la home (page accessible non loggué)--%>
+													<a href="/" class="button left bcol12">
+														<span><fmt:message bundle="${storeText}" key="LAP045_IGNORE_AND_CONTINUE"/></span>
+													</a>
+												</c:when>
+												<c:otherwise>
+													<a href="#" onClick="javascript:redirectToSignOn(); return false;" class="button greenSmall left" id="WC_GenericError_Link_1">
+														<fmt:message bundle="${storeText}" key="Logon_Title" />
+													</a>
+													<%--Reload current page --%>
+													<a href="javascript:window.location.reload(true);" class="button">
+														<span><fmt:message bundle="${storeText}" key="LAP045_IGNORE_AND_CONTINUE"/></span>
+													</a>
+												</c:otherwise>
+											</c:choose>
+											
+													
+										</div>
+										<div class="clearFloat"></div>
+									</div>
+								</c:when>
+
+								<c:when test="${errorBean.messageKey eq '_ERR_CATENTRY_NOT_EXISTING_IN_STORE' || errorBean.messageKey eq '_ERR_PROD_NOT_PUBLISHED' || errorBean.messageKey eq '_ERR_RETRIEVE_PRICE.1002'}">
+									<span><fmt:message bundle="${storeText}" key="PRODUCT_ERROR" /></span>
+								</c:when>
+								
+								<c:when test="${errorBean.messageKey eq '_ERR_CAT_NOT_PUBLISHED'}">
+									<span><fmt:message bundle="${storeText}" key="CATEGORY_ERROR" /></span>
+								</c:when>
+								
+								<c:otherwise>
+									<flow:ifEnabled feature="ProductionServer">
+										<span >
+										<fmt:message bundle="${storeText}" key="GENERICERR_MAINTEXT">                                     
+											<fmt:param><fmt:message bundle="${storeText}" key="GENERICERR_CONTACT_US" /></fmt:param>
+										</fmt:message>
+										</span>
+										<br />
+									</flow:ifEnabled>
+									<flow:ifDisabled feature="ProductionServer">
+										<span><fmt:message bundle="${storeText}" key="GENERICERR_TEXT2" /></span>
+										<br /><br />
+										<span class="genericError_message">
+											<c:if test="${!empty errorMessage}">
+												<c:out value="${errorMessage}"/>
+											</c:if>
+										</span>
+									</flow:ifDisabled>
+								</c:otherwise>
+							</c:choose>
+						</c:when>
+
+						<c:otherwise>
+							<flow:ifEnabled feature="ProductionServer">
+								<span >
+								<fmt:message bundle="${storeText}" key="GENERICERR_MAINTEXT">                                     
+									<fmt:param><fmt:message bundle="${storeText}" key="GENERICERR_CONTACT_US" /></fmt:param>
+								</fmt:message>
+								</span>
+								<br />
+							</flow:ifEnabled>
+							<flow:ifDisabled feature="ProductionServer">
+								<span><fmt:message bundle="${storeText}" key="GENERICERR_TEXT2" /></span>
+							</flow:ifDisabled>								
+						</c:otherwise>
+
+					</c:choose>
+					</div>
+				</div>
+							
+				<div id="WC_GenericError_8" class="footer">
+					<div id="WC_GenericError_9" class="left_corner"></div>
+					<div id="WC_GenericError_10" class="left"></div>
+					<div id="WC_GenericError_11" class="right_corner"></div>
+				</div>
+			</div>
+		</div>
+		<!-- Content End -->
+	</div>
+	<!-- Main Content End -->
+	</c:otherwise>
+</c:choose>	
+
+<!-- END GenericError_UI.jsp -->

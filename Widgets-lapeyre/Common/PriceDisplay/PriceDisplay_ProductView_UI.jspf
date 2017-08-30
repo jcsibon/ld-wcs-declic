@@ -1,0 +1,201 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<c:if test="${empty catalogEntryID && !empty catEntryIdentifier}">
+	<c:set var="catalogEntryID" value="${catEntryIdentifier}" />
+</c:if>
+<c:if test="${empty catalogEntryID && !empty WCParam.productId}">
+	<c:set var="catalogEntryID" value="${fn:escapeXml(WCParam.productId)}" />
+</c:if>
+
+
+<div class="fichePrix discount" id="fichePrix">
+	<div id="price_display_<c:out value='${catalogEntryID}'/>">
+	
+		<c:if test="${not empty priceValidUntil}">
+			<meta itemprop="priceValidUntil" content="${priceValidUntil}" />
+		</c:if>
+			
+		<c:choose>
+			<%-- Pas de prix --%>
+			<c:when test="${!empty emptyPriceString}">
+				
+				<%-- "A partir de" :  Affich� au chargement de la page (Si sur mesure: cle de trad, si collection: priceLabel) --%>
+				<c:if test"${catalogEntryDetails.type ne 'COLLECTION'}">
+					<span class="priceFrom_viewPage" id="priceFrom_viewPage_${catalogEntryID}">
+						<div id="priceFromDiv_${catalogEntryID}" class="priceFromDiv" style="display: none;"><c:out value="${priceFrom}"/></div>
+					</span>		
+				</c:if>
+				
+				<%--Masqu� au chargement de la page --%>
+				<span id="blockListPrice_viewPage_${catalogEntryID}" class="old_price_value" style="display: none;">
+					<span id="listPrice_viewPage_${catalogEntryID}" style="display: none;"><c:out value="${displayPriceString}" escapeXml="false"/></span>
+					<c:if test="${extendedUserContext.isPro eq true}">
+							<span id="supHTOldPriceProductPage_viewPage_${catalogEntryID}" class="supHTOldPriceProductPage" style="display: none;">HT</span>
+					</c:if>
+				</span>
+				 
+				<%--Affich� au chargement de la page avec le label du prix indisponible. En revanche le symbole HT n'est pas affich�--%>
+				<span id="blockOfferPrice_viewPage_${catalogEntryID}" class="${priceClass}">
+					<span id="offerPrice_viewPage_${catalogEntryID}"><c:out value="${emptyPriceString}" escapeXml="false"/></span>
+					<c:if test="${extendedUserContext.isPro eq true}">
+							<sup id="supHTPriceProductPage_viewPage_${catalogEntryID}" class="supHTPriceProductPage" style="display: none;">HT</sup>
+					</c:if>
+					<sup class="asterix" id="asterix_viewPage_${catalogEntryID}" style="display: none;">*</sup>
+					<c:if test="${ !empty uniteSecondaire && !empty uniteVenteLegale && fn:toLowerCase(uniteSecondaire) ne fn:toLowerCase(uniteVenteLegale) }">
+						<c:set var="libellesUnit" value="${ecocea:getLibelles(uniteVenteLegale,contrainteColisage)}" scope="request" />
+						<span class="uniteVenteLabel" id="uniteVenteLabel_${catalogEntryID}">le ${libellesUnit.uniteVenteLegaleLabel}</span>
+					</c:if>
+				</span>
+				
+				<input type="hidden" id="ProductInfoPrice_viewPage_${catalogEntryID}" value=""/>
+				</div>
+				
+				<%--Masqu� au chargement de la page --%>
+					<div class="cguDisplay" id="cguDisplayContainer_viewPage_${catalogEntryID}" style="display: none;">
+						<div id="promoDescription_${viewList}${catalogEntryID}" style="display: none;"></div>
+						
+						<%--The ${cgvURL} is defined in Header_Data.jspf --%>
+						<a class="hover_underline" href="javascript:void(0);" onclick="javascript:window.open('${cgvURL}?omitHeader=1', '_blank', 'toolbar=yes, scrollbars=yes, resizable=yes, width=820, height=400'); return false;">* <fmt:message key="cgvLinkLabel" bundle="${widgetText}" /></a>
+						
+					</div>
+		
+				
+				<input type="hidden" value="${isOnSpecial}" id="isOnSpecialHiddenInput_viewPage_${catalogEntryID}" />
+				
+			</c:when>
+			
+			
+			<%-- Prix normal --%>
+			<c:when test="${!listPriced || (empty displayPrice || displayPrice <= offerPrice)}">
+					
+				<%-- "A partir de" :  Affich� au chargement de la page (Si sur mesure: cle de trad, si collection: priceLabel) --%>
+				
+					<c:choose>
+						<c:when test"${catalogEntryDetails.type eq 'COLLECTION'}">
+							<%-- <span class="priceFrom_viewPage" id="priceFrom_viewPage_${catalogEntryID}">
+								<div id="priceLabel_${catalogEntryID}"><c:out value="${priceLabel}"/></div>
+							</span>			 --%>			
+						</c:when>
+						<c:when test"${catalogEntryDetails.type eq 'SUR_MESURE'}">
+							<span class="priceFrom_viewPage" id="priceFrom_viewPage_${catalogEntryID}">
+								<div id="priceFromDiv_${catalogEntryID}" class="priceFromDiv"><c:out value="${priceFrom}"/></div>
+							</span>
+						</c:when>
+					</c:choose>
+				</span>
+				
+				
+				<%--Masqu� au chargement de la page --%>
+				<span id="blockListPrice_viewPage_${catalogEntryID}" class="old_price_value" >
+					<span id="listPrice_viewPage_${catalogEntryID}" style="display: none;"><c:out value="${displayPriceString}" escapeXml="false"/></span>
+					<c:if test="${extendedUserContext.isPro eq true}">
+							<span id="supHTOldPriceProductPage_viewPage_${catalogEntryID}" class="supHTOldPriceProductPage" style="display: none;">HT</span>
+					</c:if>
+				</span>
+				
+				<%--Affich� au chargement de la page --%>
+				<span id="blockOfferPrice_viewPage_${catalogEntryID}" class="${priceClass}">
+					<span id="offerPrice_viewPage_${catalogEntryID}" itemprop="price" content="${offerPriceNumeric}"><c:out value="${offerPriceString}"  escapeXml="false"/></span>
+					<c:if test="${extendedUserContext.isPro eq true}">
+								<sup id="supHTPriceProductPage_viewPage_${catalogEntryID}" class="supHTPriceProductPage">HT</sup>
+					</c:if>
+					<sup class="asterix" id="asterix_viewPage_${catalogEntryID}" style="display: none;">*</sup>
+					<c:if test="${ !empty uniteSecondaire && !empty uniteVenteLegale && fn:toLowerCase(uniteSecondaire) ne fn:toLowerCase(uniteVenteLegale) }">
+						<c:set var="libellesUnit" value="${ecocea:getLibelles(uniteVenteLegale,contrainteColisage)}" scope="request" />
+						<span class="uniteVenteLabel" id="uniteVenteLabel_${catalogEntryID}">le ${libellesUnit.uniteVenteLegaleLabel}</span>
+					</c:if>
+				</span>
+				
+				<input type="hidden" id="ProductInfoPrice_viewPage_${catalogEntryID}" value="${fn:escapeXml(offerPrice)}"/>
+				</div>
+				
+				<%--Masqu� au chargement de la page --%>
+				<div class="cguDisplay" id="cguDisplayContainer_viewPage_${catalogEntryID}" style="display: none;">
+					<div id="promoDescription_${viewList}${catalogEntryID}" style="display: none;"></div>
+					<%--The ${cgvURL} is defined in Header_Data.jspf --%>
+					<a class="hover_underline" href="javascript:void(0);" onclick="javascript:window.open('${cgvURL}?omitHeader=1', '_blank', 'toolbar=yes, scrollbars=yes, resizable=yes, width=820, height=400'); return false;">* <fmt:message key="cgvLinkLabel" bundle="${widgetText}" /></a>
+				</div>
+				
+				<input type="hidden" value="${isOnSpecial}" id="isOnSpecialHiddenInput_viewPage_${catalogEntryID}" />
+				
+			</c:when>
+			
+			<%--Prix barr� --%>
+			<c:otherwise>
+				<c:if test="${uniteVenteLegale!=null }">
+					<c:set var="hiddenField" value="style='display:none'" />
+				</c:if>
+					
+				<%-- "A partir de" :  Affich� au chargement de la page (Si sur mesure: cle de trad, si collection: priceLabel) --%>
+				
+					<c:choose>
+						<c:when test"${catalogEntryDetails.type eq 'COLLECTION'}">
+							<span class="priceFrom_viewPage" id="priceFrom_viewPage_${catalogEntryID}" ${hiddenField} >
+								<div id="priceLabel_${catalogEntryID}"><c:out value="${priceLabel}"/></div>						
+							</span>
+						</c:when>
+						<c:when test"${catalogEntryDetails.type eq 'SUR_MESURE'}">
+							<span class="priceFrom_viewPage" id="priceFrom_viewPage_${catalogEntryID}" ${hiddenField} >
+								<div id="priceFromDiv_${catalogEntryID}" class="priceFromDiv"><c:out value="${priceFrom}"/></div>
+							</span>
+						</c:when>
+					</c:choose>
+				</span>
+				
+				<%--Affich� au chargement de la page --%>
+				<span id="blockListPrice_viewPage_${catalogEntryID}" class="old_price_value">
+					<span id="listPrice_viewPage_${catalogEntryID}"><c:out value="${displayPriceString}" escapeXml="false"/></span>
+					<c:if test="${extendedUserContext.isPro eq true}">
+						<span id="supHTOldPriceProductPage_viewPage_${catalogEntryID}" class="supHTOldPriceProductPage">HT</span>
+					</c:if>
+				</span>
+				
+				<%--Affich� au chargement de la page --%>
+				<span id="blockOfferPrice_viewPage_${catalogEntryID}" class="${priceClass}">
+					<span id="offerPrice_viewPage_${catalogEntryID}" class="${priceClass} price-promo" itemprop="price" content="${offerPriceNumeric}"><c:out value="${offerPriceString}"  escapeXml="false"/></span>
+					<c:if test="${extendedUserContext.isPro eq true}">
+								<sup id="supHTPriceProductPage_viewPage_${catalogEntryID}" class="supHTPriceProductPage" >HT</sup>
+					</c:if>
+					<sup class="asterix" id="asterix_viewPage_${catalogEntryID}">*</sup>
+					<c:if test="${ !empty uniteSecondaire && !empty uniteVenteLegale && fn:toLowerCase(uniteSecondaire) ne fn:toLowerCase(uniteVenteLegale) }">
+						<c:set var="libellesUnit" value="${ecocea:getLibelles(uniteVenteLegale,contrainteColisage)}" scope="request" />
+						<span class="uniteVenteLabel" id="uniteVenteLabel_${catalogEntryID}">le ${libellesUnit.uniteVenteLegaleLabel}</span>
+					</c:if>
+				</span>
+				
+				<input type="hidden" id="ProductInfoPrice_viewPage_${catalogEntryID}" value="${fn:escapeXml(offerPrice)}"/>
+				</div>
+				
+				<%--Affich� au chargement de la page --%>
+				<div class="cguDisplay" id="cguDisplayContainer_viewPage_${catalogEntryID}">
+					<div id="promoDescription_${catalogEntryID}" <c:if test="${empty finalPromoPrice}">style="display: none;"</c:if> >
+					
+						<c:if test="${not empty finalPromoPrice}">
+							<c:forEach items="${promoPricesListToDisplay}" var="promoPricesMapToDisplay" varStatus="status">
+								<div>${promoPricesMapToDisplay.promo_price_description}</div>
+							</c:forEach>
+						</c:if>
+						
+					</div>
+				
+					<%--The ${cgvURL} is defined in Header_Data.jspf --%>
+					<a class="hover_underline" href="javascript:void(0);" onclick="javascript:window.open('${cgvURL}?omitHeader=1', '_blank', 'toolbar=yes, scrollbars=yes, resizable=yes, width=820, height=400'); return false;">* <fmt:message key="cgvLinkLabel" bundle="${widgetText}" /></a>
+				</div>
+				
+				<input type="hidden" value="${isOnSpecial}" id="isOnSpecialHiddenInput_viewPage_${catalogEntryID}" />
+				
+			</c:otherwise>
+		</c:choose>
+</div>

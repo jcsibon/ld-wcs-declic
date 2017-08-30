@@ -1,0 +1,84 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<c:if test="${tunnelStep eq '5'}">
+	<c:set var="orderIdGTM" value="${WCParam.orderId}" />
+	<c:set var="GTM_getOrderForConfirmation" value="true" />
+	<%@ include file="TagManager_OrderDetails.jspf" %>
+	
+	<c:if test="${!empty order}">
+		<c:forEach items="${order.orderPaymentInfo.paymentInstruction[0].protocolData}" var="protocolData">
+			<c:if test="${protocolData.name eq 'payment_method'}">
+				<c:set var="GTM_paymentMode" value="${protocolData.value}" />
+			</c:if>
+		</c:forEach>
+	</c:if>	
+	<c:remove var="GTM_getOrderForConfirmation" />
+</c:if>
+<c:if test="${tunnelStep eq '3' || tunnelStep eq '4' || tunnelStep eq '5'}">
+	<c:if test="${empty orderShippingData}">
+		<ecocea:orderShipping var="orderShippingData" orderId="${orderId}" />
+	</c:if>
+	<c:if test="${!empty orderShippingData}" >
+		<c:set var="GTM_shippingMode" value="${orderShippingData.shippingMode_idClient}" />
+		<c:set var="GTM_shipping" value="${orderShippingData.totalShipping_ttc + orderShippingData.totalAdjust_ttc}" />
+		<c:set var="GTM_orderTotal" value="${GTM_orderTotal + GTM_shipping}" />
+		
+		<c:set var="GTM_orderTax" value="${GTM_orderTax + orderShippingData.totalAdjust_ttc -  orderShippingData.totalAdjust_ht + orderShippingData.totalShipping_ttc -  orderShippingData.totalShipping_ht}" />
+		<fmt:formatNumber var="GTM_orderTax" value="${GTM_orderTax}" maxFractionDigits="${env_currencyDecimal}" />
+		<fmt:parseNumber var="GTM_orderTax" value="${GTM_orderTax}"  />
+	</c:if>	
+	<c:if test="${person != null}">
+		<c:set var="GTM_orderEmail" value="${person.contactInfo.emailAddress1.value}"/>
+	</c:if>
+</c:if>
+<c:choose>
+	<c:when test="${tunnelStep eq '1'}">
+		<c:set var="pageTemplate" value="panier" />
+	</c:when>
+	<c:when test="${tunnelStep eq '2'}">
+		<c:set var="pageTemplate" value="identification" />
+	</c:when>
+	<c:when test="${tunnelStep eq '3'}">
+		<c:set var="pageTemplate" value="livraison" />
+	</c:when>
+	<c:when test="${tunnelStep eq '4'}">
+		<c:set var="pageTemplate" value="paiement" />
+	</c:when>
+	<c:when test="${tunnelStep eq '5'}">
+		<c:set var="pageTemplate" value="confirmation" />
+	</c:when>
+</c:choose>
+<c:if test="${tunnelStep eq '5'}">
+	<c:set var="transactionId" value="${GTM_orderId}" />
+</c:if>
+
+<c:set var="transactionTotal" value="${GTM_orderTotal}"  />
+
+<c:set var="transactionShipping" value="${GTM_shipping}" />
+
+<c:set var="transactionTax" value="${GTM_orderTax}" />		
+
+<c:set var="transactionProducts" value="${GMT_orderItems}" />
+<c:set var="transactionProductsEE" value="${EE_orderItems}" />
+
+<c:set var="transactionTotal_without_sf" value="${GMT_orderTotalWithoutSf}" />
+<c:set var="transactionAffiliation" value="Lapeyre" />
+<c:set var="transactionDiscount_ati" value="${GMT_orderTotalDiscount}" />
+
+<c:set var="transaction_promo_codes" value="${GMT_orderPromoCodes}" />
+
+<c:set var="transaction_payment_methods" value="${GTM_paymentMode}" />
+<c:set var="transaction_shipping_method" value="${GTM_shippingMode}" />
+
+<c:choose>
+	<c:when test="${tunnelStep eq '5'}">
+		<c:set var="transaction_newcustomer" value="${newCustomer=='true'?'oui':'non'}" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="transaction_newcustomer" value="" />
+	</c:otherwise>
+</c:choose>
+<c:set var="transaction_email" value="${GTM_orderEmail}" />
+
+<c:set var="transaction_products_number" value="${GMT_orderQty}" />
+
+<c:set var="transaction_store_id" value="${extendedUserContext.defaultStores[0].identifier}" />

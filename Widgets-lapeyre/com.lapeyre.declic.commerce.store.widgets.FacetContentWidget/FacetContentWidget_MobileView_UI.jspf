@@ -1,0 +1,200 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2013, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<!-- BEGIN FacetContent_MobileView_UI.jsp -->
+<div class="addListButton">
+	<a role="button" class="button" name="facetButton" href="javaScript:shoppingActionsJS.showWCDialogPopup('widget_mobile_facet_content_popup');" aria-label="<fmt:message key='FACET_LABEL' bundle='${widgetText}'/>"><fmt:message key="FACET_LABEL" bundle="${widgetText}"/></a>
+</div>
+<div id="widget_mobile_facet_content_popup" dojoType="dijit.Dialog" closeOnTimeOut="false" title="Zone de Tri" style="display:none;">
+	<div class="widget_site_popup">
+		<div class="content" style="width: auto !important;">
+			<div class="header">
+				<span><fmt:message key="FACET_POPUP_TITLE" bundle="${widgetText}"/></span>
+				<a id="FacetContentPopupClose" class="close" href="javascript:void(0);" onclick="dijit.byId('widget_mobile_facet_content_popup').hide();" title="<fmt:message bundle="${storeText}" key='CP_CLOSE'/>"></a>
+				<div class="clear_float"></div>
+			</div>
+			<div class="body">
+				<div id="widget_left_nav<c:out value="${widgetSuffix}"/>">
+					<c:if test="${f != 0}">
+						<div class="row facetContainer">
+							<div class="col12"  id="facetOptions<c:out value="${widgetSuffix}"/>">
+								<div class="facetWidget collapsible selectedFacetBloc" id="contentAppliedFacetContainer" role="navigation" aria-label="<fmt:message key="LN_SEARCH_FACET_WIDGET" bundle="${widgetText}"/>" aria-expanded="true">
+									<span class="toggle facetTitle" role="button" tabIndex="0" aria-controls="facet_nav_collapsible<c:out value="${widgetSuffix}"/>" aria-label="<fmt:message key="LAP005_YOUR_SELECTION" bundle="${widgetText}"/>" aria-describedby="facet_widget_acce_desc"><fmt:message key="LAP005_YOUR_SELECTION" bundle="${widgetText}"/></span>
+									<span id="facet_widget_acce_desc" class="spanacce"><fmt:message key="COLLAPSE_EXPAND_WIDGET_TITLE" bundle="${widgetText}" /></span>
+									<div class="clearFloat"></div>
+									<div class="content">
+										<div id="facetContentFilterListWrapper"></div>
+										<a class="button" role="button" href="#" aria-label="<fmt:message key="LAP006_CLEAR_SELECTION" bundle="${widgetText}"/>" id="clear_allcontent_filter" style="display:none" onclick="dojo.topic.publish('Facet_RemoveAll_Content'); return false;">
+											<fmt:message key="LAP006_CLEAR_SELECTION" bundle="${widgetText}"/>
+										</a>
+									</div>
+								</div>						
+								<form id="contentsFacets">
+									<script>
+									function initSBNavConstants() {
+										SearchBasedNavigationDisplayJS.initConstants(
+											"<fmt:message key='LN_SEARCH_FACET_REMOVE' bundle='${widgetText}'/>",
+											"<fmt:message key='LN_SEARCH_FACET_SHOW_ALL' bundle='${widgetText}'/>",
+											"<fmt:message key='LN_SEARCH_FACET_SHOW_LESS' bundle='${widgetText}'/>",
+											"<c:out value='${env_currencyCode}'/>");
+									};
+									if (window.addEventListener) {
+										window.addEventListener("load", function() {initSBNavConstants();}, false);
+									} else {
+										window.attachEvent("load", function() {initSBNavConstants();});
+									}
+									</script>
+									<c:if test="${!empty facetArray}">
+<!-- 						On parcours la liste -->
+						<c:forEach var="facetList" items="${facetArray}" varStatus="facetCounter">
+						<%--VAR : 
+						OLD FacetList = Liste des Facets 
+						[0] : name
+						[1] : liste des éléments de la Facet
+						[2] : Autorise multiple valeurs sélectionnées 
+						[3] : Nombre de valeur max
+						[4] : true si toutes les valeurs sont affichées
+						[5] : "value" 
+						
+						FacetList = Liste des Facets 
+						[4] : name
+						[3] : label (affiché)
+						[2] : max_display
+						[1] : allValuesReturned 
+						[0] : entries
+						--%>
+							<c:set var="singlequote" value="'"/>
+							<c:set var="facetClass" value="optionContainer singleFacet" />
+							<c:set var="facetSection" value="${facetCounter.index}" />
+							<c:set var="facetSection2" value="${facetList.name}" />
+											<div id="section_content_${facetSection}<c:out value="${widgetSuffix}"/>" class="xfacet_section_${facetSection} ${facetClass}">
+												<div class="collapsible facetArea ${facetClass}" aria-label="${facetList['label']}" role="navigation" aria-expanded="true">
+													<%--titre de la Facet --%>
+													<span class="toggle facetTitle" role="button" tabIndex="0" aria-label="${facetList['label']}" aria-describedby="category_widget_acce_desc">${facetList['label']}</span>
+					                             				<span id="category_widget_acce_desc" class="spanacce">Press enter to collapse or expand the menu.</span>
+					                             				<div class="content">
+					                             		<c:set var="facetName" value="${fn:escapeXml(facetList['name'])}"/>
+														<script>
+																SearchBasedNavigationDisplayJS.uniqueParentArray['${facetName}'] = 0;
+															SearchBasedNavigationDisplayJS.widgetId = '${widgetSuffix}';
+														</script>
+														<div id="section_content_list_${facetSection}<c:out value="${widgetSuffix}"/>" class="facetSelectContainer" role="group" aria-expanded="true" aria-labelledby="section_button_${facetSection}<c:out value="${widgetSuffix}"/>">
+					
+															<ul class="facetSelect">
+																<c:set var="FacetValueCountIncrementer" value="1" scope="page" />
+																<input type="hidden" id="facetParentLabel_${facetSection2}" value="${facetList['label']}" />
+																<c:forEach var="facetValues" items="${facetList['entries']}" varStatus="aStatus">
+												<%-- VAR 
+												FacetValues = Liste des éléments d'une Facet
+												[0] : label
+												[1] : count
+												 --%>
+												 	<c:set var="facetValue" value="${fn:replace(facetValues['value'],'&','%26')}" />
+												 	<c:set var="facetValue" value="${fn:replace(facetValue,'=','%3D')}" />
+													<c:set var="facetId" value="${fn:toLowerCase(fn:replace(fn:trim(facetList['name']),' ','_'))}_${fn:toLowerCase(fn:replace(fn:trim(facetValue),' ','_'))}" />
+													<c:set var="facetIdEscaped" value="${fn:replace(facetId,singlequote,'') }"/>
+													<script>
+															SearchBasedNavigationDisplayJS.facetContentIdsArray.push("${facetIdEscaped}");
+															SearchBasedNavigationDisplayJS.facetContentIdsParentArray.push("${facetList['label']}");
+														</script>
+																			<c:set var="singleFacetClass" value="${!empty facetValues[4] ? 'singleFacet' : ''}"/>
+					
+																			<li id="facet_content_${facetId}<c:out value="${widgetSuffix}"/>" class="facet_content_${facetIdEscaped} ${singleFacetClass} singleFacet">
+																				
+																				<input tabindex="-1" class="nodisplay" type="checkbox" aria-labelledby="${facetIdEscaped}_ACCE_Label" id="${facetIdEscaped}" value="<c:out value='${facetValue}' escapeXml='false'/>"
+																					onclick="if(this.disabled == false){if(this.checked){dojo.topic.publish('Facet_Add_Content', '${facetIdEscaped}');}else{dojo.topic.publish('Facet_Remove_Content', '${facetIdEscaped}')};}else{this.checked = false};"
+																					onkeypress="if(event.keyCode == dojo.keys.ENTER) {this.checked=!this.checked;if(this.checked){dojo.topic.publish('Facet_Add_Content', '${facetIdEscaped}');}else{dojo.topic.publish('Facet_Remove_Content', '${facetIdEscaped}');}}"
+																					<c:if test="${facetValues['count'] == 0}">disabled</c:if></input>
+																					<input type="hidden" id="facetParentName_${facetIdEscaped}" value="${facetList['name']}" />
+																					<input type="hidden" id="facetSection_${facetIdEscaped}" value="${facetSection2}" />
+																				<a role="checkbox" aria-labelledby ="${facetIdEscaped}_ACCE_Label" id="facetContentButton${widgetSuffix}_${facetValues['count']}_${fn:toLowerCase(fn:replace(fn:replace(facetValue,singlequote,''), ' ', '_'))}" class="facetbuttoncontent checkLP" href="#" data-for="${facetIdEscaped}" onclick="javascript:setCurrentId('${facetIdEscaped}');">
+																					<span class="spanacce">
+																						<label for="${facetIdEscaped}" aria-label="checkbox"><fmt:message key="LN_SEARCH_FACET_VALUE" bundle="${widgetText}"/></label>
+																					</span>
+																					<div class="checkBox"></div> 
+																					<span id="facetLabel_${facetIdEscaped}"><c:out value="${facetValues['value']}" escapeXml="false" />
+																						<span class="facetCountContainer" id="facet_count${facetIdEscaped}">(<c:out value="${facetValues['count']}"/>)</span>
+																					</span>
+						<%-- 														<div></div>
+																					<span id="facetLabel_${facetId}"><c:out value="${facetValues['value']}" escapeXml="false" /></span><div class="facetCountContainer">(<span id="facet_count${facetId}"><c:out value="${facetValues['count']}"/></span>)</div> --%>
+																				</a>
+																			</li>
+																	</c:forEach>
+																<div class="clear_float"></div>
+															</ul>
+															<!--  Si il reste des valeurs à afficher -->
+															<c:if test="${facetList['allValuesReturned'] == false}">
+																<ul class="facetSelect" id="more_<c:out value='${facetSection}' escapeXml='false'/>"><li><div class="clear_float"></div></li></ul>
+																<div class="showMore" id="morebutton_<c:out value='${facetSection}' escapeXml='false'/>">
+																	<input title="MORE" type="checkbox" aria-labelledby="showMoreLabel_${facetSection}" id="morelink_${facetSection}" name="morelink_${facetSection}" value="<c:out value='${facetSection}' escapeXml='false'/>:-1" onclick="javascript: SearchBasedNavigationDisplayJS.toggleShowMore(this, '<c:out value='${facetSection}' escapeXml='false'/>', 'content'));"/>
+																	<label for="morelink_${facetSection}" id="showMoreLabel_${facetSection}">
+																		<fmt:message key="LN_SEARCH_FACET_SHOW_ALL" bundle="${widgetText}"/>
+																	</label>
+																</div>
+															</c:if>
+														</div>
+													</div>
+												</div>
+											</div>
+										</c:forEach>
+									</c:if>
+								</form>
+							</div>
+						</div>
+					</c:if>
+					<%-- <c:if test="${requestScope.pageGroup == 'Search' && f == 0}">
+						<div class="row facetContainer">
+							<div class="col12" id="facetOptions">
+								<div class="facetWidget collapsible" role="section" aria-expanded="true">
+									<div class="header">
+										<div class="title toggle" role="button" tabindex="0">
+											<fmt:message key="LN_SEARCH_NO_FURTHER_REFINEMENT" bundle="${widgetText}"/>
+										</div>
+										<div class="clearFloat"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</c:if> --%>
+				</div>
+			</div>
+			<div class="footer"></div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	require(["dojo/on"], function(on) {
+		on(document, "a.facetbuttoncontent:click", function(event) {
+			var checkbox = document.getElementById(this.getAttribute("data-for"));
+			checkbox.checked = !checkbox.checked;
+			if (this.getAttribute("role") == "checkbox") {
+				this.setAttribute("aria-checked", checkbox.checked);
+			}
+			checkbox.onclick();
+			event.preventDefault();
+	   });
+	});
+
+	require(["dojo/domReady!"], function(){
+		setTimeout("SearchBasedNavigationDisplayJS.restoreHistoryContext();", 200);
+	});
+
+
+	window.onpopstate = function(event) {
+		setTimeout("SearchBasedNavigationDisplayJS.restoreHistoryContext();", 200);
+	};
+</script>
+
+<!-- END FacetNavigation_MobileView_UI.jsp -->

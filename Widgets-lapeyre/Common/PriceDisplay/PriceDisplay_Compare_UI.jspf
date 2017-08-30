@@ -1,0 +1,94 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+  
+  
+  
+  Cette JSP est utilisée uniquement pour la page comparateur. Les prix affichés sont ceux du produit uniquement (pas de résolution d'item), donc pas de changement de prix par al suite en AJAX.
+  On peut se permettre de définir les prix ici, ils ne bougeront pas.
+  
+ =================================================================
+--%>
+
+<c:if test="${empty catalogEntryID && !empty catEntryIdentifier}">
+	<c:set var="catalogEntryID" value="${catEntryIdentifier}" />
+</c:if>
+<c:if test="${empty catalogEntryID && !empty WCParam.productId}">
+	<c:set var="catalogEntryID" value="${fn:escapeXml(WCParam.productId)}" />
+</c:if>
+
+<c:set var="spacelessEmsName_Price" value=""/>
+<c:if test="${!empty param.emsName && param.emsName != null && param.pageView == 'miniGrid'}">
+	<c:set var="spacelessEmsName_Price" value="${fn:replace(param.emsName, ' ', '')}"/>
+</c:if>
+	<c:choose>
+		<%-- Si il n'y a pas de prix --%>
+		<c:when test="${!empty emptyPriceString}">
+			<span id="offerPrice_Comparator_${catalogEntryID}" class="noPrice" itemprop="price"> 
+				<c:out value="${emptyPriceString}"  escapeXml="false"/>
+			</span>
+		</c:when>
+		
+		
+		<%-- Si il n'y a pas de listPrice ou si le listPrice est inférieur ou égal au offerPrice --%>
+		<c:when test="${(!listPriced || (empty displayPrice || displayPrice <= offerPrice))}">
+			<span class="old_price">
+				<%--Bloc vide pour garder l'alignement --%>
+			</span>
+			
+			<span class="price">
+				<span id="offerPrice_Comparator_${spacelessEmsName_Price}${catalogEntryID}" itemprop="price">
+					<c:out value="${offerPriceString}"  escapeXml="false"/>
+				</span>
+				<c:if test="${extendedUserContext.isPro eq true}">
+						<sup class="supHTPriceComparePage">HT</sup>
+				</c:if>
+			</span>
+			<input type="hidden" id="ProductInfoPrice_Comparator_${spacelessEmsName_Price}${catalogEntryID}" value="${offerPrice}"/>
+		</c:when>
+		
+		<%--Sinon il y a un listPrice et un offerPrice --%>
+		<c:otherwise>
+			<span class="old_price">
+				<span id="listPrice_Comparator_${spacelessEmsName_Price}${catalogEntryID}" >
+					<c:out value="${displayPriceString}" escapeXml="false"/>
+				</span>
+				<c:if test="${extendedUserContext.isPro eq true}">
+						<span class="supHTOldPriceComparePage">HT</span>
+				</c:if>
+			</span>
+			<span class="price">
+				<span id="offerPrice_Comparator_${spacelessEmsName_Price}${catalogEntryID}" itemprop="price">
+					<c:out value="${offerPriceString}"  escapeXml="false"/>
+				</span>
+				<c:if test="${extendedUserContext.isPro eq true}">
+						<sup class="supHTPriceComparePage">HT</sup>
+				</c:if>
+				<sup class="asterix" id="asterix_viewPage_${catalogEntryID}">*</sup>
+			</span>
+
+			<div class="cguDisplay" id="cguDisplayContainer_viewPage_${catalogEntryID}">
+				<div class="promoDescription" id="promoDescription_${catalogEntryID}" <c:if test="${empty finalPromoPrice}">style="display: none;"</c:if> >
+				
+					<c:if test="${not empty finalPromoPrice}">
+						<c:forEach items="${promoPricesListToDisplay}" var="promoPricesMapToDisplay" varStatus="status">
+							<div>${promoPricesMapToDisplay.promo_price_description}</div>
+						</c:forEach>
+					</c:if>
+					
+				</div>			
+				<%--The ${cgvURL} is defined in Header_Data.jspf --%>
+				<a class="hover_underline" href="javascript:void(0);" onclick="javascript:window.open('${cgvURL}?omitHeader=1', '_blank', 'toolbar=yes, scrollbars=yes, resizable=yes, width=820, height=400'); return false;">* <fmt:message key="cgvLinkLabel" bundle="${widgetText}" /></a>
+			</div>
+			<input type="hidden" id="ProductInfoPrice_Comparator_${spacelessEmsName_Price}${catalogEntryID}" value="${offerPrice}"/>
+	</c:otherwise>
+</c:choose>
+

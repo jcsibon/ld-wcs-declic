@@ -1,0 +1,108 @@
+<script>
+	shoppingListJS<c:out value="${param.parentPage}"/> = new ShoppingListJS(${storeParams}, ${catEntryParams}, {${shoppingListNames}}, "shoppingListJS<c:out value="${param.parentPage}"/>");
+	
+	dojo.topic.subscribe("DefiningAttributes_Resolved", function(catEntryId, productId) {
+		eval("shoppingListJS<c:out value="${param.parentPage}"/>.setItemId(catEntryId, productId);");
+	});
+	
+	dojo.topic.subscribe("QuickInfo_attributesChanged", function(catEntryAttributes) {
+		eval("shoppingListJS<c:out value="${param.parentPage}"/>.setCatEntryAttributes(catEntryAttributes);");
+	});
+	
+	dojo.topic.subscribe("ShoppingListItem_Added", function() {
+		eval("shoppingListJS<c:out value="${param.parentPage}"/>.deleteItemFromCart();");
+		eval("shoppingListJS<c:out value="${param.parentPage}"/>.setItemId(-1, null);");
+	});
+	
+	dojo.topic.subscribe("Quantity_Changed", function(catEntryQuantityObject) {
+		eval("shoppingListJS<c:out value="${param.parentPage}"/>.setCatEntryQuantity(catEntryQuantityObject);");
+	});
+	
+	dojo.topic.subscribe("ShoppingList_Changed", function(serviceResponse) {
+		eval("shoppingListJS<c:out value="${param.parentPage}"/>.updateShoppingListAndAddItem(serviceResponse);");
+		if(dojo.byId('existingShoppingList')) {
+			dojo.style('existingShoppingList', 'display', 'block');
+		} 
+	});
+	
+	dojo.topic.subscribe("ShopplinList_AttributesDefining_Changed", function(catentryId, productId) {
+		eval("shoppingListJS<c:out value="${param.parentPage}"/>.setItemBufferId(catentryId, productId);");
+	});
+	
+</script>
+<c:choose>
+	<c:when test="${!empty param.display && param.display eq 'overlay' }">
+		<div id="shoppingListScript_<c:out value="${param.parentPage}"/>" style="display:none;">
+			if(typeof(shoppingListJS<c:out value="${param.parentPage}"/>) == "undefined" || shoppingListJS<c:out value="${param.parentPage}"/> == null || !shoppingListJS<c:out value="${param.parentPage}"/>) {
+				shoppingListJS<c:out value="${param.parentPage}"/> = new ShoppingListJS(${storeParams}, ${catEntryParams}, {${shoppingListNames}}, "shoppingListJS<c:out value="${param.parentPage}"/>");
+			}
+		</div>
+		
+		<div id="<c:out value="${param.parentPage}"/>addToShoppingListOverlay" onKeyPress="javascript:MessageHelper.setFocusElement('<c:out value="${param.parentPage}"/>addToShoppingList');" > 
+			<a id="<c:out value="${param.parentPage}"/>addToShoppingList_${uniqueID}" href="#" onclick="
+				<c:choose>
+					<c:when test="${userType eq 'G'}">
+						<c:choose>
+							<c:when test="${!empty displayType && (displayType eq '_popup' || displayType[0] eq '_popup')}">
+								wishList.goLogin('${itemIDWishlistDisplayUrl}','wishlist'); return false;
+							</c:when>
+							<c:otherwise>
+								wishList.goLogin('${itemIDWishlistDisplayUrl}','wishlist'); return false;
+							</c:otherwise>
+						</c:choose>
+					</c:when>
+					<c:otherwise>
+						wishList.openAddPopin('${defaultShoppingListId}','${itemIDWishlist}'); return false;
+					</c:otherwise>
+				</c:choose>
+				" class="product-wishlist-button" title="<fmt:message key="addToWishlistStandardButtonLabel" bundle="${widgetText}" />">
+				<%-- <c:if test="${param.parentPage eq 'QuickInfo'}"><div class="left_border"></div></c:if> --%>
+				<c:choose>
+					<c:when test="${param.parentPage eq 'QuickInfo'}">
+						<div class="content">
+					</c:when>
+					<c:otherwise>
+						<div class="shoppping_list_content">
+					</c:otherwise>
+				</c:choose>
+					
+				</div>
+				<c:if test="${param.parentPage eq 'QuickInfo'}"><div class="right_border"></div></c:if>
+			</a>
+		</div>
+	</c:when>
+	<c:otherwise>	
+		<div id="shoppingListScript_<c:out value="${param.parentPage}"/>" style="display:none;">
+			if(typeof(shoppingListJS<c:out value="${param.parentPage}"/>) == "undefined" || shoppingListJS<c:out value="${param.parentPage}"/> == null || !shoppingListJS<c:out value="${param.parentPage}"/>) {
+				shoppingListJS<c:out value="${param.parentPage}"/> = new ShoppingListJS(${storeParams}, ${catEntryParams}, {${shoppingListNames}}, "shoppingListJS<c:out value="${param.parentPage}"/>");
+			}
+		</div>
+		
+		<div id="<c:out value="${param.parentPage}"/>addToShoppingListBtn" onKeyPress="javascript:MessageHelper.setFocusElement('<c:out value="${param.parentPage}"/>addToShoppingList');" > 
+			<a id="<c:out value="${param.parentPage}"/>addToShoppingList_${uniqueID}" href="#" onclick="
+				<c:choose>
+					<c:when test="${userType eq 'G'}">
+						<c:choose>
+							<c:when test="${!empty displayType && (displayType eq '_popup' || displayType[0] eq '_popup')}">
+								wishList.goLogin('${itemIDWishlistDisplayUrl}','wishlist'); return false;
+							</c:when>
+							<c:otherwise>
+								wishList.goLogin('${itemIDWishlistDisplayUrl}','wishlist'); return false;
+							</c:otherwise>
+						</c:choose>
+					</c:when>
+					<c:otherwise>
+						wishList.openAddPopin('${defaultShoppingListId}','${itemIDWishlist}'); return false;
+					</c:otherwise>
+				</c:choose>
+				" class="product-wishlist-button" role="button">
+			</a>
+		</div>
+	</c:otherwise>
+</c:choose>
+
+<script>
+	dojo.addOnLoad(function(){
+		wishList.initialize(shoppingListJS${param.parentPage});
+	});
+</script>

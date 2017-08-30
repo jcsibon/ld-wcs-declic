@@ -1,0 +1,93 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%@ page import="com.ibm.commerce.member.facade.datatypes.PersonType" %>
+<%@ taglib uri="http://commerce.ibm.com/foundation" prefix="wcf" %>
+<%@taglib uri="http://commerce.ibm.com/coremetrics" prefix="cm"%>
+<%@page import="com.ibm.commerce.bi.BIConfigRegistry"%>
+<%@page import="com.ibm.commerce.command.CommandContext"%>
+<%@page import="com.ibm.commerce.server.ECConstants"%>
+<flow:ifEnabled feature="Analytics">
+	<%
+	CommandContext commandContext = (CommandContext) request.getAttribute(ECConstants.EC_COMMANDCONTEXT);
+	Integer storeId = commandContext.getStoreId();
+	pageContext.setAttribute("hostedVar", BIConfigRegistry.getInstance().useHostedLibraries(storeId));
+	%>
+	<script src="${jsAssetsDir}javascript/Analytics.js?${versionNumber}"></script>
+	<script>
+	dojo.addOnLoad(function() {
+		analyticsJS.storeId = "${storeId}";
+		analyticsJS.catalogId = "${catalogId}";
+		analyticsJS.loadShopCartHandler();
+		analyticsJS.loadPagingHandler();
+		analyticsJS.loadProductQuickInfoHandler("productIdQuickInfo");
+		analyticsJS.loadStoreLocatorPageViews();
+		analyticsJS.loadWishlistHandler();
+		dojo.require("wc.analytics.CoremetricsEventListener");
+		(new wc.analytics.CoremetricsEventListener()).load(${hostedVar});
+	});
+	</script>
+</flow:ifEnabled>
+<script>var isGuest = ${userType == 'G'};</script>
+
+<script src="${jsAssetsDir}javascript/Widgets/header_light.js?${versionNumber}"></script>
+
+<script>
+	$('body, html').css('margin', '0 auto 0 auto');
+	$('#content').css('background', 'none');
+	$('#fullBackground').css('background', 'none');
+</script>
+
+<div id="header" role="banner" class="container headerLight">
+	<div id="headerRow1" class="container">
+		<div class="logoLight">
+			<div class="contentRecommendationWidget">
+				<div class="left_espot centered">
+					<c:choose>
+						<c:when test="${extendedUserContext.isPro eq true}">
+							<a href="${env_TopCategoriesDisplayURL}"><img width="150px" height="60px" src="${jspStoreImgDir}images/logo_pro.png" /></a>
+						</c:when>
+						<c:otherwise>
+							<a href="${env_TopCategoriesDisplayURL}"><img src="${jspStoreImgDir}images/redesign/logo.png" /></a>
+						</c:otherwise>
+					</c:choose>
+				</div>
+			</div>
+		</div>
+		<%-- TODO ici dropdown --%>
+		<div class="dropdownLP">
+			<select onchange="location = this.options[this.selectedIndex].value;" id="dropDownMenuCategories">
+				<option value="#">Nos univers</option>
+				<c:forEach var="department" items="${categoryHierarchy.catalogGroupView}">
+					<option
+						id="" value="${fn:escapeXml(categoryURLMap[department.uniqueID])}">
+						<c:out value="${department.name}"/>
+					</option>
+				</c:forEach>
+			</select>
+		</div>						
+		<div id="MiniShopCartDisplay" class="right vCenteredHeaderContainer print-hidden">
+			<div class="vCenteredHeaderBlock">
+				<%out.flush();%><c:import url="${env_jspStoreDir}Widgets/MiniShopCartDisplay/MiniShopCartDisplayRefresh.jsp"/><%out.flush();%>
+				<script type="text/javascript">
+					$(document).ready(function(){
+						handleMiniCartHover();
+					});
+				</script>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Fin headerRow1 -->	
+
+

@@ -1,0 +1,245 @@
+/**
+ *				TABLE OF CONTENTS
+ *
+ * GLOBAL.......................... Global style
+ * SUBSCRIPTION.................... Subscription story
+ * CMS_CONTENT..................... CMS Content story
+ */ 
+
+
+/*-------------------------------------------------------------*\
+    $GLOBAL
+    Global style
+\*-------------------------------------------------------------*/
+
+footer {
+	background-color: #3e3c3d;
+	color: #fff;
+	font-size: 14px;
+	position: relative;
+}
+footer hr {
+	border: 1px solid #4c494a;
+}
+
+footer ul {
+	list-style: none;
+	padding: 0;
+}
+
+footer ul li {
+	display: inline-block;
+}
+
+
+/*-------------------------------------------------------------*\
+    $SUBSCRIPTION
+    Subscription story
+\*-------------------------------------------------------------*/
+
+/* Subscription */
+
+.subscription {
+	padding-top: 30px;
+}
+.subscription {
+	background-color: #dc1228;
+	padding-bottom: 20px;
+}
+
+.subscription-title {
+	text-transform: uppercase;
+	padding-bottom: 10px;
+}
+.subscription-form {
+	margin-top: 20px;	
+}
+
+input[type="email"].subscription-input {
+	border-radius: 2px 0 0 2px;
+	padding: 5px 10px;
+	border: none;
+}
+
+.subscription-button {
+	background: #fe8100;
+    border: none;
+    padding: 0 20px;
+    height: 28px;
+    margin-left: -10px;
+    border-radius: 0 2px 2px 0;
+    font-weight: bold;
+}
+
+input[type="email"].subscription-input, .subscription-button {
+	box-sizing: border-box;
+	height:35px;
+}
+
+.subscription label.error {
+	color: #fff;
+}
+
+.subscription hr {
+	border: 1px solid #e23d4e;
+}
+
+#subscribeNewsletterErrorMessageArea {
+	padding: 0;
+    margin-top: 15px;
+}
+
+/* Social networks */
+
+.shareSocialNetwork {
+	margin: 10px 0;	
+}
+
+.shareSocialNetwork ul li {
+	padding: 0 !important;
+}
+
+.shareSocialNetwork > ul {
+	display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+	display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+	display: -ms-flexbox; /* TWEENER - IE 10 */
+	display: -webkit-flex; /* NEW - Chrome */
+	display: flex; /* NEW, Spec - Opera 12.1, Firefox 20+ */
+	display: -webkit-flex;
+	justify-content: space-between;
+}
+
+.shareSocialNetwork>ul>li>a {
+	margin: 0px auto;
+	display: inline-block;
+	width: 100%;
+}
+
+.shareSocialNetwork>ul>li>a {
+	margin: 0px auto;
+	display: inline-block;
+	width: 100%;
+	padding: 5px 0 0 3px;
+}
+
+.shareSocialNetwork>ul>li>a div {
+	background: url("../../images/shareIcons.png") no-repeat;
+	height: 22px;
+	margin: 0px auto;
+	width: 30px;
+}
+
+.shareSocialNetworkBlack>ul>li>a div {
+	background: url("../../images/shareIconsBlack.png") no-repeat;
+	height: 30px;
+	width: 30px;
+	margin: 0px auto;
+}
+
+.shareSocialNetwork>ul>li.facebookShare a div {
+	background-position: -8px -5px;
+}
+
+.shareSocialNetworkBlack>ul>li.facebookShare a div {
+	background-position: 4px 1px;
+}
+
+.shareSocialNetwork>ul>li.pinterestShare a div {
+	background-position: -8px -485px;
+}
+
+.shareSocialNetworkBlack>ul>li.pinterestShare a div {
+	background-position: -2px -140px;
+}
+
+.shareSocialNetwork>ul>li.youtubeShare a div {
+	background-position: -8px -390px;
+}
+
+.shareSocialNetworkBlack>ul>li.youtubeShare a div {
+	background-position: -8px -390px;
+}
+
+.shareSocialNetwork>ul>li.twitterShare a div {
+	background-position: -8px -293px;
+}
+
+.shareSocialNetworkBlack>ul>li.twitterShare a div {
+	background-position: 0px -107px;
+}
+
+.shareSocialNetwork>ul>li.instagramShare a div {
+	background-position: -8px -102px;
+}
+
+.shareSocialNetworkBlack>ul>li.instagramShare a div {
+	background-position: 0px -102px;
+}
+
+.shareSocialNetworkBlack>ul>li.emailShare a div {
+	background-position: 0px -170px;
+}
+
+.shareSocialNetworkBlack>ul>li.instagramShare a div {
+	background-position: 0px -73px;
+}
+
+.ficheSocialNetworks ul{
+	list-style: none;
+	display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+	display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+	display: -ms-flexbox; /* TWEENER - IE 10 */
+	display: -webkit-flex; /* NEW - Chrome */
+	display: flex; /* NEW, Spec - Opera 12.1, Firefox 20+ */
+	display: -webkit-flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0;
+}
+
+/*-------------------------------------------------------------*\
+    $CMS_CONTENT
+    CMS Content story
+\*-------------------------------------------------------------*/
+
+.footer-list-cms {
+	margin-top: 20px;
+}
+
+.footer-bottom {
+	padding: 20px 0;
+	margin-bottom: 0;
+}
+
+.footer-mid {
+	padding: 40px 0;
+}
+
+.footer-mid li {
+	padding: 5px 0;
+	width: 100%;
+}
+
+.footer-mid a:hover, .footer-bottom a:hover {
+	text-decoration: underline;
+}
+
+.footer-section:last-of-type {
+	color: #909090;
+}
+
+.footer-header {
+	font-weight: bold;
+	text-transform: uppercase;
+	margin-bottom: 8px;
+}
+
+.footer-bottom-links {
+	text-align: right;
+}
+
+#footerCMSContent {
+	background-color: #3e3c3d;
+    color: #fff;
+    font-size: 14px;
+}

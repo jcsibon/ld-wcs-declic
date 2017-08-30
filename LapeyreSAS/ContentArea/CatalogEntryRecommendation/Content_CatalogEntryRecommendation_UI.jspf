@@ -1,0 +1,28 @@
+<c:if test="${fn:length(associatedProducts) > 0}">
+    <c:set var="maxPerRow" value="4" />
+	<c:if test="${empty useProcductCMSTitle}" >
+		<span class="titleBlock"><fmt:message key="relatedProductsBlockTitle" bundle="${widgetText}" /></span>
+	</c:if>
+	<div class="content">
+		<div id="catalogEntryRecommendationWidget" class="catalogEntryRecommendationWidget carousel clip-true padding-true background-false border-false" data-dojo-type="wc/widget/WCCarousel" data-dojo-props="columnCountByWidth:{0:1,420:2,630:3,750:4}">
+			<div class="content" data-dojo-attach-point="content">
+				<ul data-dojo-attach-point="ul">
+					<c:forEach var="produit" items="${associatedProducts}" varStatus="statut">
+						<c:set var="singleProduct" value="${produit}" />
+						<c:if test="${associatedProducts > maxPerRow}">
+							<li>
+						</c:if>
+							<%@include file="/Widgets-lapeyre/Common/ECOCatalogEntry/CatalogEntry_EditoGridView_UI.jsp" %>
+						<c:if test="${associatedProducts > maxPerRow}">
+							</li>
+						</c:if>
+						<c:remove var="singleProduct" />
+					</c:forEach>
+				</ul>
+			</div>
+			<a id="prevPageButton" href="#" class="prevPageButton" data-dojo-attach-point="prevPageButton" role="button" aria-label="<fmt:message key="LAP013_EDITO_CARROUSEL_PREVIOUS" bundle="${widgetText}" />" alt="<fmt:message key="LAP013_EDITO_CARROUSEL_PREVIOUS" bundle="${widgetText}" />"></a>
+			<a id="nextPageButton" href="#" class="nextPageButton" data-dojo-attach-point="nextPageButton" role="button" aria-label="<fmt:message key="LAP012_EDITO_CARROUSEL_NEXT" bundle="${widgetText}" />" alt="<fmt:message key="LAP012_EDITO_CARROUSEL_NEXT" bundle="${widgetText}" />"></a>
+		</div>
+	</div>
+	<hr class="horizontalDivider" />
+</c:if>

@@ -1,0 +1,29 @@
+<div data-dojo-type="lapeyre/widget/Dialog" id="addedFavoriteShop" style="display: none;">
+	<div class="widget_site_popup">
+		<div class="content">
+			<div class="header">
+				<span>
+					<fmt:message key="ajoutMagasinPreferePopinTitle" bundle="${storeText}" />
+				</span>
+				<a role="button" id="addedFavoriteShop_close" href="javascript:hidePopup('addedFavoriteShop')" aria-label="<fmt:message bundle="${storeText}" key="SL_CLOSE" />" title="<fmt:message bundle="${storeText}" key="SL_CLOSE" />" class="close tlignore" tabindex="4" title="<fmt:message key="SL_CLOSE" bundle="${storeText}" />"></a>
+				<div class="clear_float"></div>
+			</div>
+			<div class="body">
+				<div class="shopContainer">
+					<div class="shopBlock" id="addedFavoriteShop_shopBlockMain">
+					</div>
+				</div>
+			</div>
+			<div class="footer">
+				<div class="ctaContainer inline">
+					<a id="addedFavoriteShop_voirFiche" href="#" class="left button" tabindex="0">
+						<fmt:message key="ajoutMagasinPreferePopinGoToFicheMagButtonLabel" bundle="${storeText}" />
+					</a>
+					<a id="addedFavoriteShop_ok" href="javascript:hidePopup('addedFavoriteShop')" class="button green left" tabindex="1">
+						<fmt:message key="ajoutMagasinPreferePopinOK" bundle="${storeText}" />
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

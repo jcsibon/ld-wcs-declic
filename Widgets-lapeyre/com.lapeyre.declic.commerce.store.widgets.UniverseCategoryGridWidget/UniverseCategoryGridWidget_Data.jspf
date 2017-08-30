@@ -1,0 +1,59 @@
+<%--  Add your data related code here --%>
+<wcf:rest var="categoryHierarchy" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/categoryview/byParentCategory/${categoryId}" format="json" >
+	<c:if test="${!empty WCParam.langId}">
+	<wcf:param name="langId" value="${WCParam.langId}"/>
+	</c:if>
+	<c:if test="${empty WCParam.langId}">
+	<wcf:param name="langId" value="${langId}"/>
+	</c:if>
+	<wcf:param name="responseFormat" value="json"/>		
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	<wcf:param name="depthAndLimit" value="-1"/>
+</wcf:rest>
+
+<wcf:useBean var="categories" classname="java.util.ArrayList" />
+
+<c:forEach var="topCategory" items="${categoryHierarchy.catalogGroupView}" varStatus="status">
+ 	<wcf:useBean var="topCategoryMapping" classname="java.util.HashMap"/>
+ 	<c:set var="productCount" value="0"/>
+ 	
+ 	<c:choose>
+ 	<c:when test="${empty universeCategoryID || universeCategoryID == WCParam.categoryId}">
+		<wcf:url var="CategoryDisplayURL" patternName="CanonicalCategoryURL" value="Category3" > 
+			<wcf:param name="langId" value="${WCParam.langId}" />
+			<wcf:param name="storeId" value="${WCParam.storeId}" />
+			<wcf:param name="catalogId" value="${WCParam.catalogId}" />				
+			<wcf:param name="categoryId" value="${topCategory.uniqueID}" />	
+			<wcf:param name="top_category" value="${WCParam.categoryId}" />	
+			<wcf:param name="beginIndex" value="0" />
+			<wcf:param name="urlLangId" value="-2" />
+		</wcf:url>
+	</c:when>
+	<c:otherwise>
+	
+	 	<wcf:url var="CategoryDisplayURL" patternName="CanonicalCategoryURL" value="Category3" >
+			<wcf:param name="langId" value="${WCParam.langId}" />
+			<wcf:param name="storeId" value="${WCParam.storeId}" />
+			<wcf:param name="catalogId" value="${WCParam.catalogId}" />				
+			<wcf:param name="categoryId" value="${topCategory.uniqueID}" />	
+			<wcf:param name="parent_category_rn" value="${WCParam.categoryId}"/>
+			<wcf:param name="top_category" value="${universeCategoryID}" />	
+			<wcf:param name="beginIndex" value="0" />
+			<wcf:param name="urlLangId" value="-2" />
+		</wcf:url>
+	</c:otherwise>
+	</c:choose>	
+
+	<wcf:set target="${topCategoryMapping}" key="name" value="${topCategory.name}" />	   	 
+	<wcf:set target="${topCategoryMapping}" key="thumbnail" value="${topCategory.thumbnail}" />	   	 
+ 	<wcf:set target="${topCategoryMapping}" key="url" value="${CategoryDisplayURL}" />
+ 	<wcf:set target="${topCategoryMapping}" key="fullImage" value="${topCategory.fullImage}" />
+	<wcf:set target="${categories}" value="${topCategoryMapping}" />					
+	<c:remove var="topCategoryMapping"/>	
+									
+</c:forEach>
+
+
+<%-- <c:set var="columnCountByWidth_Grid" value="${!empty param.columnCountByWidth ? param.columnCountByWidth : '{0:1,230:2,640:3,730:4,940:5,1207:6}'}"/> --%>
+
+<c:set var="columnCountByWidth_Grid" value="${!empty param.columnCountByWidth ? param.columnCountByWidth : '{0:1,430:2,640:3,850:4}'}"/>

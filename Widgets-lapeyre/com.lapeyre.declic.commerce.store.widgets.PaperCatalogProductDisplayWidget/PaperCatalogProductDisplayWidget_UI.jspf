@@ -1,0 +1,58 @@
+<!-- BEGIN PaperCatalogProductDisplayWidget_UI.jsp -->
+<script type="text/javascript" src="${jspStoreImgDir}../Widgets-lapeyre/Common/ECOCatalogEntry/javascript/ProductDisplay.js?${versionNumber}"></script>
+<script type="text/javascript" src="${jspStoreImgDir}../Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.PDP_FullImage/javascript/ProductFullImage.js?${versionNumber}"></script>
+<script type="text/javascript" src="${jsAssetsDir}javascript/Widgets/ShoppingList/ShoppingList.js?${versionNumber}"></script>
+<script type="text/javascript" src="${jsAssetsDir}javascript/Widgets/ShoppingList/ShoppingListServicesDeclaration.js?${versionNumber}"></script>
+<div id="catalogFicheProduitHead">
+	<div class="bcol12 col9 ccol9 left" id="ficheProduitHeadLeftCol">
+		<div class="ficheTitle">
+			<h1 role="heading" aria-level="1" class="main_header" title="<c:out value="${name}" escapeXml="false"/>" itemprop="name"><c:out value="${name}" escapeXml="false"/></h1>
+			<c:if test="${!empty shortDesc }"><h2 class="ficheSubTitle" title="${shortDesc}">${shortDesc}</h2></c:if>
+			<meta itemprop="productID" content="${partNumber}" />
+			<meta itemprop="sku" content="${defaultSku.partNumber}" />
+	        <meta itemprop="manufacturer" content="${MICRO_DATA_MANUFACTURER}" />
+		</div>
+		<div class="row" id="ficheContent">
+			<div class="bcol12 ficheImage" id="ficheImage">
+				<%out.flush(); %>
+					<c:import url="${fullImagewidgetPath}">
+						<c:param name="displayType" value="" />
+						<c:param name="widgetCeption" value="true" />
+					</c:import>
+				<%out.flush(); %>
+			</div>
+			<div class="ficheDesc mobile-hidden" itemprop="description">
+				<p>${auxDesc1}</p>
+			</div>
+		</div>
+	</div>
+	<div class="bcol12 col3 ccol3 right" id="ficheAside" ${microDataOfferAttributes}>
+		<meta itemprop="category" content="${googleCategory}" />
+		<link itemprop="itemCondition" content="${MICRO_DATA_NEW_CONDITION}" />
+		<%@ include file="/Widgets-lapeyre/Common/PriceDisplay/PriceDisplay.jspf" %>
+		<div class="ficheActions">
+			<%-- <div class="ficheLivraison"><img src="${jspStoreImgDir}images/ficheLivraisonPic.png" alt="<fmt:message key="ficheProduitCatalogueLivraisonLabel" bundle="${widgetText}" />" /><p><fmt:message key="ficheProduitCatalogueLivraisonLabel" bundle="${widgetText}" /></p></div> --%>
+			<div class="ficheDispo">
+				<img src="${jspStoreImgDir}images/ficheDispoPic.png" alt="<fmt:message key="ficheProduitCatalogueDispoMagasinLabel" bundle="${widgetText}" />" />
+				<p itemprop="availability" content="${MICRO_DATA_INSTOCK}" bundle="${widgetText}" /><fmt:message key="ficheProduitCatalogueDispoMagasinLabel" bundle="${widgetText}" /></p>
+			</div>
+			<%out.flush(); %>
+				<c:import url="${shopperActionswidgetPath}" >
+					<c:param name="widgetCeption" value="true" />
+				</c:import>
+			<%out.flush(); %>
+			<c:if test="${!isOnMobileDevice }">
+			<%out.flush(); %>
+				<c:import url="${socialNetworksWidgetPath}">
+					<c:param name="classToApply" value="ficheSocialNetworks shareSocialNetwork" />
+					<c:param name="rootPath" value="${jspStoreImgDir}" />
+				</c:import>
+			<%out.flush(); %>
+			</c:if>
+		</div>
+	</div>
+</div>
+<span itemprop="brand" itemscope itemtype="${MICRO_DATA_ORGANIZATION}" style="display:none;">
+	<span itemprop="name">${MICRO_DATA_MANUFACTURER}</span>
+</span>
+<!-- END PaperCatalogProductDisplayWidget_UI.jsp -->

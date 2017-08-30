@@ -1,0 +1,55 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<c:if test="${!pageloaded_DeleteProjectShopListPopupJSPF}">
+	<div id="<c:out value="${param.parentPage}"/>DeleteProjectShoppingListPopup" dojoType="lapeyre/widget/Dialog" title="<fmt:message bundle="${storeText}" key='surMesureProjectDeletePopinTitle' />" style="display:none;">
+		<div class="widget_site_popup">
+						<div class="content">
+							<div class="header">
+								<span><fmt:message bundle="${storeText}" key="surMesureProjectDeletePopinTitle" /></span>
+								<a role="button" id="${param.parentPage}DeleteProjectShoppingListPopup_close" href="javascript:void(0);" aria-label="<fmt:message bundle="${storeText}" key="SL_CLOSE" />" title="<fmt:message bundle="${storeText}" key="SL_CLOSE" />"
+										onclick="dijit.byId('<c:out value="${param.parentPage}"/>DeleteProjectShoppingListPopup').hide();"
+								class="close tlignore" tabindex="4" title="<fmt:message bundle="${storeText}" key="SL_CLOSE" />"></a>
+								<div class="clear_float"></div>
+							</div>
+							<div class="body">
+								<div class="item_spacer_10px"></div>
+								<p><fmt:message bundle="${storeText}" key="surMesureProjectDeletePopinBody" /></p>
+								<div class="item_spacer_10px"></div>
+								<div id="DeleteProjectShoppingListErrorMessageArea" style="display:none">
+									<span id="DeleteProjectShoppingListErrorMessageText" class="error"><fmt:message bundle="${storeText}" key="surMesureProjectDeleteTechnicalErrorMessage" /></span>
+								</div>
+							</div>
+							<div class="footer">
+								<div class="ctaContainer">
+									<a id="<c:out value="${param.parentPage}"/>DeleteProjectShoppingListPopup_delete" href="javascript: shoppingListJS<c:out value="${param.parentPage}"/>.deleteProject();" class="button green tlignore" tabindex="2">
+										<div class="left_border"></div>
+										<span id="<c:out value="${param.parentPage}"/>DeleteProjectShoppingListPopup_div_delete" class="button_text"><fmt:message bundle="${storeText}" key="surMesureProjectDeletePopinValidateButtonLabel" /></span>
+										<div class="right_border"></div>
+									</a>
+									<a id="<c:out value="${param.parentPage}"/>DeleteProjectShoppingListPopup_cancel" href="javascript:void(0);"
+											onclick="dijit.byId('<c:out value="${param.parentPage}"/>DeleteProjectShoppingListPopup').hide();" 
+									class="button tlignore" tabindex="3">
+										<div class="left_border"></div>
+										<span class="button_text"><fmt:message bundle="${storeText}" key="surMesureProjectDeletePopinCancelButtonLabel" /></span>
+										<div class="right_border"></div>
+									</a>
+								</div>
+							</div>
+							
+						</div>
+			<div class="clear_float"></div>
+		</div>
+	</div>
+	<c:set var="pageloaded_DeleteProjectShopListPopupJSPF" value="true" scope="request"/>
+</c:if>

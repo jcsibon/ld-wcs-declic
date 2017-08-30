@@ -1,0 +1,144 @@
+<seourl:seoUrlConfiguration
+ xmlns:seourl="http://www.ibm.com/xmlns/prod/commerce/foundation/SEO/URLPattern"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.ibm.com/xmlns/prod/commerce/foundation/
+     SEO/URLPattern wc-seo-url-pattern.xsd">
+
+	<!-- FAQ URL like this:  http://localhost/webapp/wcs/stores/servlet/faq -->
+	
+	<seourl:seoUrlPatternDef name="HelpPageURL">
+		<seourl:seoUrlPattern viewName="HelpPageView">/HelpPageToken</seourl:seoUrlPattern> 
+		<seourl:paramToUrlMapping>
+			<seourl:mapping name="HelpPageToken" value="HelpPageToken"/>
+		</seourl:paramToUrlMapping>
+		<seourl:usageDef CMCPrefix="true">
+			<seourl:usage device="browser">
+				<seourl:target>HelpPage</seourl:target>
+			</seourl:usage>
+		</seourl:usageDef>
+	</seourl:seoUrlPatternDef>
+	
+	<!-- Contact page URL like this:  http://localhost/webapp/wcs/stores/servlet/fr/10101/contact -->
+	
+	<seourl:seoUrlPatternDef name="ContactPageURL">
+		<seourl:seoUrlPattern viewName="ContactPageView">/ContactPageToken</seourl:seoUrlPattern>  
+		<seourl:paramToUrlMapping>
+			<seourl:mapping name="ContactPageToken" value="ContactPageToken"/>
+		</seourl:paramToUrlMapping>
+		<seourl:usageDef CMCPrefix="true">
+			<seourl:usage device="browser">
+				<seourl:target>ContactPage</seourl:target>
+			</seourl:usage>
+		</seourl:usageDef>
+	</seourl:seoUrlPatternDef>
+	
+<!-- 	Start defining URL patterns -->
+<!-- 	Home page URL, like this:  TopCategories1 - http://localhost/shop/en/madisons  -->
+<!-- 	replacement for TopCategories1 in old mapping --> 
+<!-- 	<seourl:seoUrlPatternDef name="HomePageURLWithLang"> -->
+<!-- 		<seourl:seoUrlPattern viewName="TopCategoriesDisplay"></seourl:seoUrlPattern>   -->
+<!-- 		<seourl:urlToParamMapping> -->
+<!-- 			<seourl:mapping name="pageName" value="HomePage"/> -->
+<!-- 			<seourl:mapping name="pageGroup" value="Content"/> -->
+<!-- 		</seourl:urlToParamMapping> -->
+<!-- 		<seourl:usageDef> -->
+<!-- 			<seourl:usage device="browser"> -->
+<!-- 				<seourl:target>Home</seourl:target> -->
+<!-- 			</seourl:usage> -->
+<!-- 		</seourl:usageDef> -->
+<!-- 	</seourl:seoUrlPatternDef> -->
+
+<!-- 	Home page URL, like this:  TopCategories - http://localhost/shop/madisons (canonical) -->
+<!-- 	<seourl:seoUrlPatternDef name="HomePageURL"> -->
+<!-- 		<seourl:seoUrlPattern viewName="TopCategoriesDisplay">/</seourl:seoUrlPattern>   -->
+<!-- 		<seourl:urlToParamMapping> -->
+<!-- 			<seourl:mapping name="pageName" value="HomePage"/> -->
+<!-- 			<seourl:mapping name="pageGroup" value="Content"/> -->
+<!-- 		</seourl:urlToParamMapping> -->
+<!-- 		<seourl:paramToUrlMapping> -->
+<!-- 			<seourl:mapping name="StoreToken" value="?storeId?"/> -->
+<!-- 			<seourl:mapping name="CatalogToken" value="?catalogId?"/> -->
+<!-- 		</seourl:paramToUrlMapping> -->
+<!-- 		<seourl:usageDef> -->
+<!-- 			<seourl:usage device="browser"> -->
+<!-- 				<seourl:target>Home</seourl:target> -->
+<!-- 			</seourl:usage> -->
+<!-- 		</seourl:usageDef> -->
+<!-- 	</seourl:seoUrlPatternDef> -->
+
+	<!-- Privacy URL like this:  PrivacyPolicy	http://localhost/shop/en/madisons/privacy-policy-registration (canonical)
+	replacement for PrivacyPolicy in old mapping -->
+	<seourl:seoUrlPatternDef name="PrivacyRegistrationURL">
+		<seourl:seoUrlPattern viewName="GenericStaticContentPageLayoutView">/PrivacyRegistrationToken</seourl:seoUrlPattern>  
+		<seourl:urlToParamMapping>
+			<seourl:mapping name="omitHeader" value="1"/>
+			<seourl:mapping name="pageName" value="PrivacyPolicyPage"/>
+		</seourl:urlToParamMapping>
+		<seourl:paramToUrlMapping>
+			<seourl:mapping name="PrivacyRegistrationToken" value="Privacy-Policy-Registration"/>
+		</seourl:paramToUrlMapping>
+		<seourl:usageDef>
+			<seourl:usage device="browser">
+				<seourl:target>StaticPages</seourl:target>
+			</seourl:usage>
+		</seourl:usageDef>
+	</seourl:seoUrlPatternDef>
+	
+	<seourl:seoUrlPatternDef name="StaticPagesPattern">
+     <seourl:seoUrlPattern viewName="GenericStaticContentPageLayoutView">/StaticPagesToken</seourl:seoUrlPattern> 
+     <seourl:urlToParamMapping>
+         <seourl:mapping name="pageId" value="?StaticPagesToken?"/>
+         <seourl:mapping name="pageGroup" value="Content"/>
+     </seourl:urlToParamMapping>
+     <seourl:paramToUrlMapping>
+          <seourl:mapping name="StaticPagesToken" value="?pageId?"/>
+     </seourl:paramToUrlMapping>
+     <seourl:usageDef CMCPrefix="true">
+          <seourl:usage device="browser">
+               <seourl:target>StaticPages</seourl:target>
+          </seourl:usage>
+     </seourl:usageDef>
+	</seourl:seoUrlPatternDef>
+
+	<seourl:seoUrlPatternDef name="StaticPagesContentOnlyPattern">
+     <seourl:seoUrlPattern viewName="GenericStaticContentPageLayoutView">/StaticPagesToken/ContentOnlyToken</seourl:seoUrlPattern> 
+     <seourl:urlToParamMapping>
+         <seourl:mapping name="pageId" value="?StaticPagesToken?"/>
+		 <seourl:mapping name="omitHeader" value="?ContentOnlyToken?"/>
+     </seourl:urlToParamMapping>
+     <seourl:paramToUrlMapping>
+          <seourl:mapping name="StaticPagesToken" value="?pageId?"/>
+		  <seourl:mapping name="ContentOnlyToken" value="?omitHeader?"/>
+     </seourl:paramToUrlMapping>
+     <seourl:usageDef CMCPrefix="true">
+          <seourl:usage device="browser">
+               <seourl:target>StaticPages</seourl:target>
+          </seourl:usage>
+     </seourl:usageDef>
+	</seourl:seoUrlPatternDef>
+	
+	
+	<seourl:seoUrlPatternDef name="SearchOrderPageURL">
+		<seourl:seoUrlPattern viewName="OrderTrackingSearchView">/SearchOrderPageToken</seourl:seoUrlPattern>  
+		<seourl:paramToUrlMapping>
+			<seourl:mapping name="SearchOrderPageToken" value="SearchOrderPageToken"/>
+		</seourl:paramToUrlMapping>
+		<seourl:usageDef CMCPrefix="true">
+			<seourl:usage device="browser">
+				<seourl:target>SearchOrderPage</seourl:target>
+			</seourl:usage>
+		</seourl:usageDef>
+	</seourl:seoUrlPatternDef>
+	
+	<seourl:seoUrlPatternDef name="SearchQuotationPageURL">
+		<seourl:seoUrlPattern viewName="QuotationTrackingSearchView">/SearchQuotationPageToken</seourl:seoUrlPattern>  
+		<seourl:paramToUrlMapping>
+			<seourl:mapping name="SearchQuotationPageToken" value="SearchQuotationPageToken"/>
+		</seourl:paramToUrlMapping>
+		<seourl:usageDef CMCPrefix="true">
+			<seourl:usage device="browser">
+				<seourl:target>SearchQuotationPage</seourl:target>
+			</seourl:usage>
+		</seourl:usageDef>
+	</seourl:seoUrlPatternDef>
+</seourl:seoUrlConfiguration>

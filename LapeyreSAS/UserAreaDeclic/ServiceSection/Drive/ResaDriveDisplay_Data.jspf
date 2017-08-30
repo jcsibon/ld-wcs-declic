@@ -1,0 +1,53 @@
+<%@page import="java.util.Date"%>
+<%@page import="com.ibm.icu.util.Calendar"%>
+<%@page import="com.lapeyre.declic.configurations.ConfigTool"%>
+<%@ include file="Common/DriveDisplay_Data.jspf" %>
+<%
+	int driveScheduleStepDaysInt = 0;
+	int driveScheduleNbDaysInt = 0;
+   //Retrieve number of days to display for drive schedule
+	if(request.getAttribute("driveScheduleNbDays") == null) {
+    	String driveScheduleNbDays = ConfigTool.getConfigurationPropertiesResource().getProperty("drive.schedule.nb.days");
+    	request.setAttribute("driveScheduleNbDays",driveScheduleNbDays);
+    	driveScheduleNbDaysInt = Integer.parseInt(driveScheduleNbDays);
+    }
+    //Retrieve number of days for each drive schedule
+	if(request.getAttribute("driveScheduleStepDays") == null) {
+    	String driveScheduleStepDays = ConfigTool.getConfigurationPropertiesResource().getProperty("drive.schedule.step.days");
+    	request.setAttribute("driveScheduleStepDays",driveScheduleStepDays);
+    	
+    	driveScheduleStepDaysInt = Integer.parseInt(driveScheduleStepDays);
+    }
+    Date today = new Date();
+    request.setAttribute("dateToday",today);
+    
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(today);
+    calendar.add(Calendar.DATE,driveScheduleStepDaysInt);
+    Date dateFin = calendar.getTime();
+    request.setAttribute("dateFin",dateFin);
+    
+    calendar.setTime(today);
+    calendar.add(Calendar.DATE,driveScheduleNbDaysInt);
+    Date dateFinTotal = calendar.getTime();
+    request.setAttribute("dateFinTotal",dateFinTotal);
+%>
+
+<wcf:url var="URLToReserveDriveTime" value="RequestCreneauDrive">
+	<wcf:param name="storeId"   value="${WCParam.storeId}" />
+	<wcf:param name="langId" value="${WCParam.langId}" />
+</wcf:url>
+
+<wcf:url var="URLConfirmationResaDriveDriveTime" value="ConfirmationReservationDrive">
+	<wcf:param name="storeId"   value="${WCParam.storeId}" />
+	<wcf:param name="langId" value="${WCParam.langId}" />
+</wcf:url>
+
+<fmt:formatDate var="dateDebut" value="${dateToday}" pattern="yyyyMMdd" />
+<fmt:formatDate var="dateFinStep" value="${dateFin}" pattern="yyyyMMdd" />
+<fmt:formatDate var="dateFinTotal" value="${dateFinTotal}" pattern="yyyyMMdd" />
+
+<c:set var="resaDrive" value="true"/>
+<c:set var="confirmResa" value="false"/>
+
+<fmt:message var="reservationCreneauDriveError" bundle="${widgetText}" key="reservationCreneauDriveError"></fmt:message>

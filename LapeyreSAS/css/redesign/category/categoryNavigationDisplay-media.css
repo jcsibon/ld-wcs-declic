@@ -1,0 +1,30 @@
+@media screen and (max-width: 600px) {
+	.univers .quoteArticle {
+		margin-bottom: 0;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.quantity_section>.qty_controls_container {
+		width: 175px;
+	}
+	.quantity_section label {
+		width: 80px;
+	}
+}
+
+@media ( max-width :800px) {
+	.nstSlider .leftGripValue {
+		margin: -70% -170%;
+	}
+	.nstSlider .rightGripValue {
+		margin: -70% -90%;
+	}
+}
+
+@media screen and (max-width: 800px) {
+	hr.horizontalDivider {
+		width: 80%;
+		margin: 16px auto;
+	}
+}

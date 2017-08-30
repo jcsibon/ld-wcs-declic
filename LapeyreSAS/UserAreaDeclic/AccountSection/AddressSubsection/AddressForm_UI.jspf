@@ -1,0 +1,346 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<div class="sign_in_registration userData" id="WC_UserAddressForm_div_1">
+
+	<c:if test="${!empty WCParam.addressId}">
+		<c:set var="selectedAddressId" value="${WCParam.addressId}"/>
+	</c:if>
+	<form name="Address" method="post" action="${AddressFormURL}" id="Address">
+		<c:if test="${!empty selectedAddressId}">
+			<input type="hidden" name="addressId" value="${selectedAddressId}" autocomplete="off">
+		</c:if>
+		<input type="hidden" name="storeId" value="${WCParam.storeId}" id="WC_UserAddressForm_FormInput_storeId_In_Register_1" autocomplete="off">
+		<input type="hidden" name="catalogId" value="${WCParam.catalogId}" id="WC_UserAddressForm_FormInput_catalogId_In_Register_1" autocomplete="off">
+		<input type="hidden" name="langId" value="${WCParam.langId}" id="WC_UserAddressForm_FormInput_langId" autocomplete="off">
+		<c:choose><c:when test="${isAddressFormLight}">
+		<input type="hidden" name="URL" value="AjaxAccountAddressFormResponseJsonView" id="WC_UserAddressForm_FormInput_URL_In_Register_1" autocomplete="off">
+		<input type="hidden" name="errorViewName" value="AjaxAccountAddressFormResponseJsonView" id="WC_UserAddressForm_FormInput_errorViewName_In_Register_1" autocomplete="off">
+		</c:when><c:otherwise>
+		<input type="hidden" name="URL" value="${!empty WCParam.URL ? WCParam.URL : 'AjaxAccountAddressForm'}" id="WC_UserAddressForm_FormInput_URL_In_Register_1" autocomplete="off">
+		<input type="hidden" name="errorViewName" value="${!empty WCParam.errorViewName ? WCParam.errorViewName : 'AjaxAccountAddressForm'}" id="WC_UserAddressForm_FormInput_errorViewName_In_Register_1" autocomplete="off">
+		</c:otherwise></c:choose>
+		
+		<c:if test="${addressAB.primary==1}">
+			<input type="hidden" name="oldLogonId" value="${addressAB.email1}" autocomplete="off">
+		</c:if>
+		<div class="form" id="WC_UserAddressForm_div_3">
+			<c:if test="${(!empty errorMessage && empty rnvpErrorCode && rnvpIsBreak eq 'false') || (!empty inPopin && inPopin eq true)}">
+				<div class="error">
+					<span  class="error" id="WC_UserAddressForm_span_1"><c:out value="${errorMessage}" /></span>
+				</div>
+			</c:if>
+			<div class="content" id="WC_UserAddressForm_div_6">
+				<div class="align" id="WC_UserAddressForm_div_7">
+					<div class="form_3column" id="WC_UserAddressForm_div_8">
+						<c:if test="${addressAB.primary!=1}">
+							<div class="column column_20 bcolumn_100" id="isDefaultContainer">
+								<div class="column_label" id="isDefaultLabel">
+									<span class="spanacce">
+										<label for="WC_UserAddressForm_FormInput_logonId_In_Register_1">
+											<fmt:message bundle="${storeText}" key="defaultAdresseFieldlabel" />
+										</label>
+									</span>
+									<fmt:message bundle="${storeText}" key="defaultAdresseFieldlabel" />
+								</div>
+								<label class="radioButtonContainer" for="default"> 
+									<input type="radio" class="radioLP" name="selectAsPrimary" id="default" value="true" <c:if test="${addressAB.primary==1}">checked=true</c:if>>
+									<div></div> 
+									<fmt:message bundle="${storeText}" key="confirm" />
+								</label>
+								<label class="radioButtonContainer" for="notDefault"> 
+									<input type="radio" class="radioLP" name="selectAsPrimary" id="notDefault" value="false" <c:if test="${addressAB.primary!=1}">checked=true</c:if>>
+									<div></div>
+									 <fmt:message bundle="${storeText}" key="unconfirm" />
+								</label>
+							</div>
+							<div class="gutter mobile-hidden"></div>
+						</c:if>
+						<c:choose>
+							<c:when test="${addressAB.primary!=1}">
+								<c:set var="desktopClass" value="column_77" />
+							</c:when>
+							<c:otherwise>
+								<c:set var="desktopClass" value="column_100" />
+							</c:otherwise>
+						</c:choose>
+						<div class="column ${desktopClass } bcolumn_100" id="AddressNickNameContainer">
+								<div id="AddressNickNameLabel" class="column_label">
+									<span class="spanacce">
+										<label for="WC_UserAddressForm_NameEntryForm_FormInput_nickName_1">
+												<fmt:message bundle="${storeText}" key="addressNameFieldLabel" />
+										</label>
+									</span>
+									<fmt:message bundle="${storeText}" key="addressNameFieldLabel" />
+									<span class="required-field" id="WC_AddressEntryForm__div_17"> *</span>
+								</div>
+								<input type="text" maxlength="100" size="63" id="WC_UserAddressForm_NameEntryForm_FormInput_nickName_1" name="${isAddAddress eq true ? 'nickName':'addressName' }" value="${nickName}" >
+							</div>
+						<div class="clearAll"></div>
+						
+						<div class="column column_20 bcolumn_30" id="CiviliteContainer">
+							<div class="column_label" id="CiviliteLabel">
+								<span class="spanacce">
+									<label for="personTitle">
+										<fmt:message bundle="${storeText}" key="addressCiviliteFieldLabel" />
+									</label>
+								</span>
+								<fmt:message bundle="${storeText}" key="addressCiviliteFieldLabel" />
+								<span class="required-field"> *</span>
+							</div>
+							<div class="dropdownLP">
+								<select id="personTitle" name="personTitle" value="" required>
+									<option value="">-</option>
+									<c:forTokens items="${listCivilitePart}" delims="," var="token">
+									    <option value="<c:out value='${token}'/>" <c:if test="${token==personTitle}">selected</c:if> >
+											<fmt:message bundle="${storeListe}" key="Civilite_${token}" />
+										</option>
+									</c:forTokens>
+									<c:if test="${extendedUserContext.isPro eq true}">
+										<c:forTokens items="${listCivilitePro}" delims="," var="token">
+										    <option value="<c:out value='${token}'/>" <c:if test="${token==personTitle}">selected</c:if> >
+												<fmt:message bundle="${storeListe}" key="Civilite_${token}" />
+											</option>
+										</c:forTokens>
+									</c:if>
+								</select>
+							</div>
+							
+						</div>
+						<div class="gutter"></div>
+						<div class="column column_25-5 bcolumn_67" id="FirstNameContainer">
+							<div id="FirstNameLabel" class="column_label">
+								<span class="spanacce">
+									<label for="WC_UserAddressForm_NameEntryForm_FormInput_firstName_1">
+											<fmt:message bundle="${storeText}" key="addressFirstnameFieldLabel" />
+									</label>
+								</span>
+								<fmt:message bundle="${storeText}" key="addressFirstnameFieldLabel" />
+								<span class="required-field" id="WC_AddressEntryForm__div_17"> *</span>
+							</div>
+							<input type="text" maxlength="60" size="20" id="WC_UserAddressForm_NameEntryForm_FormInput_firstName_1" name="firstName" value="${firstName}" required="">
+						</div>
+						<div class="gutter mobile-hidden"></div>
+						<div class="column column_48-5 bcolumn_100" id="LastNameContainer">
+							<div id="LastNameLabel" class="column_label">
+								<span class="spanacce">
+									<label for="WC_UserAddressForm_NameEntryForm_FormInput_lastName_1">
+										<fmt:message bundle="${storeText}" key="addressLastnameFieldLabel" />
+									</label>
+								</span>
+								<fmt:message bundle="${storeText}" key="addressLastnameFieldLabel" />
+								<span class="required-field" id="WC_AddressEntryForm__div_20">*</span>
+							</div>
+							<input type="text" maxlength="40" size="35" aria-required="true" id="WC_UserAddressForm_NameEntryForm_FormInput_lastName_1" name="lastName" value="${lastName}" required="">
+						</div>
+						<div class="clearAll"></div>
+						<div class="column column_48-5 bcolumn_100" id="EmailLogonContainer">
+							<div class="column_label" id="EmailLogonLabel">
+								<span class="spanacce">
+									<label for="WC_UserAddressForm_FormInput_email1_In_Register_1">
+										<fmt:message bundle="${storeText}" key="loginFieldlabel" />
+									</label>
+								</span>
+								<fmt:message bundle="${storeText}" key="loginFieldlabel" />
+								<span class="required-field" id="WC_UserAddressForm_div_21"></span>
+							</div>
+							<input type="email" size="40" maxlength="100" aria-required="false" name="email1" id="WC_UserAddressForm_FormInput_email1_In_Register_1" value="${email1}" required="">
+						</div>
+						<div class="gutter"></div>
+						<a id="addPhone" onclick="affPhonesInput();" class="button"><fmt:message bundle="${storeText}" key="addPhonesButton"/></a>
+						<div class="clearAll"></div>
+						<div class="column column_48-5 bcolumn_100 phones" id="PhoneFixContainer" >
+							<div class="column_label" id="PhoneFixLabel">
+								<span class="spanacce">
+									<label for="WC_UserAddressForm_FormInput_phone1Num_In_Register_2">
+											<fmt:message bundle="${storeText}" key="addressPhoneNumber1FieldLabel" /> 
+									</label>
+								</span>
+								<fmt:message bundle="${storeText}" key="addressPhoneNumber1FieldLabel" />
+								<span class="required-field">**</span>
+							</div>
+							<input type="tel" class="telephone phone-group" size="25" maxlength="20" id="WC_UserAddressForm_FormInput_phone1Num_In_Register_2" name="phone1" value="${phone1}">				
+						</div>
+						<div class="gutter mobile-hidden phones"></div>
+						<div class="column column_48-5 bcolumn_100 phones" id="PhoneMobileContainer">
+							<div class="column_label" id="PhoneMobileLabel">
+								<span class="spanacce">
+									<label for="WC_UserAddressForm_FormInput_mobilePhoneNum_In_Register_2">
+											<fmt:message bundle="${storeText}" key="addressPhoneNumber2FieldLabel" /> 
+									</label>
+								</span>
+								<fmt:message bundle="${storeText}" key="addressPhoneNumber2FieldLabel" />
+								<span class="required-field">**</span>
+							</div>
+							<input type="tel" class="telephone phone-group" size="25" maxlength="20" id="WC_UserAddressForm_FormInput_mobilePhoneNum_In_Register_2" name="mobilePhone1" value="${mobilePhone1}">
+						</div>
+						<div class="column column_48-5 bcolumn_100 phones" id="PhoneProContainer" style="<c:if test='${empty phone2}'>display:none;</c:if>">
+							<div class="column_label" id="PhoneProLabel">
+								<span class="spanacce">
+									<label for="WC_UserAddressForm_FormInput_phone2Num_In_Register_2">
+											<fmt:message bundle="${storeText}" key="addressFaxNumber1FieldLabel" /> 
+									</label>
+								</span>
+								<fmt:message bundle="${storeText}" key="addressFaxNumber1FieldLabel" />
+								<span class="required-field">**</span>
+							</div>
+							<input type="tel" class="telephone phone-group" size="25" maxlength="20" id="WC_UserAddressForm_FormInput_phone2Num_In_Register_2" name="phone2" value="${phone2}">
+						</div>
+						<div class="gutter"></div>
+						<div class="column column_48-5 bcolumn_100 phones" id="FaxContainer" style="<c:if test='${empty fax1}'>display:none;</c:if>">
+							<div class="column_label" id="FaxLabel">
+								<span class="spanacce">
+									<label for="WC_UserAddressForm_FormInput_fax1Num_In_Register_2">
+											<fmt:message bundle="${storeText}" key="addressFaxNumber2FieldLabel" /> 
+									</label>
+								</span>
+								<fmt:message bundle="${storeText}" key="addressFaxNumber2FieldLabel" />
+							</div>
+							<input type="tel" class="telephone" size="25" maxlength="20" id="WC_UserAddressForm_FormInput_fax1Num_In_Register_2" name="fax1" value="${fax1}">
+						</div>
+						<div class="clearAll"></div>
+						<div class="column column_48-5 bcolumn_100" id="Address1Container">
+							<div id="Address1Label" class="column_label">
+								<span class="spanacce">
+									<label for="WC_UserAddressForm_AddressEntryForm_FormInput_address1_1">
+										<fmt:message bundle="${storeText}" key="addressStreetFieldLabel" />
+									</label>
+								</span>
+								<fmt:message bundle="${storeText}" key="addressStreetFieldLabel" />
+								<span class="required-field" id="WC_AddressEntryForm__div_3"> *</span>
+							</div>
+							<div class="dropdownLP" style="display: none;" id="streetSelectorDropDown">
+								<select class="dropDownStreet" aria-required="true" id="streetSelector" name="streetSelector" required>
+								</select>
+							</div>
+							<input type="text" maxlength="38" size="50" aria-required="true" id="WC_UserAddressForm_AddressEntryForm_FormInput_address1_1" name="address1" value="${address1}" required="">
+						</div>
+						<div class="gutter mobile-hidden"></div>
+						<div class="column column_25-5 bcolumn_67" id="Address2Container">
+							<div id="Address2Label" class="column_label">
+								<span class="spanacce">
+									<label for="WC_UserAddressForm_AddressEntryForm_FormInput_address1_10">
+										<fmt:message bundle="${storeText}" key="addressBatimentFieldLabel" />
+									</label>
+								</span>
+								<fmt:message bundle="${storeText}" key="addressBatimentFieldLabel" />
+							</div>
+							<input type="text" maxlength="38" size="10" id="WC_UserAddressForm_AddressEntryForm_FormInput_address2_1" name="address2" value="${address2}">
+						</div>
+						<div class="gutter"></div>
+						<div class="column column_20 bcolumn_30" id="StageContainer">
+							<div id="StageLabel" class="column_label">
+								<span class="spanacce">
+									<label for="WC_UserAddressForm_AddressEntryForm_FormInput_address1_1">
+										<fmt:message bundle="${storeText}" key="addressFloorFieldLabel" />
+									</label>
+								</span>
+								<fmt:message bundle="${storeText}" key="addressFloorFieldLabel" />
+							</div>
+							<div class="dropdownLP">
+								<select name="address3">
+									<c:forTokens items="${listEtage}" delims="," var="token">
+										<option value="<c:out value='${token}'/>" <c:if test="${token==address3}">selected</c:if> >
+											<fmt:message bundle="${storeListe}" key="Etage_${token}" />
+										</option>
+									</c:forTokens>
+								</select>
+							</div>
+							
+						</div>
+						<div class="clearAll"></div>
+						<div class="column column_20 bcolumn_33" id="ZipCodeContainer">
+							<div id="ZipCodeLabel" class="column_label">
+								<span class="spanacce">
+									<label for="WC_UserAddressForm_AddressEntryForm_FormInput_zipCode_1">
+										<fmt:message bundle="${storeText}" key="addressZipcodeFieldLabel" />
+									</label>
+								</span>
+								<fmt:message bundle="${storeText}" key="addressZipcodeFieldLabel" />
+								<span class="required-field" id="WC_AddressEntryForm__div_15"> *</span>
+							</div>
+							<div class="dropdownLP" style="display: none;" id="zipCodeSelectorDropDown">
+								<select class="dropDownZipCode" aria-required="true" id="zipCodeSelector" name="zipCodeSelector" required>
+								</select>
+							</div>
+							<input type="text" maxlength="20" size="10" aria-required="true" id="WC_UserAddressForm_AddressEntryForm_FormInput_zipCode_1" name="zipCode" value="${zipCode}" required="">
+							<img src="/wcsstore/LapeyreSAS/images/loading.gif" width="20" height="20" class="loading" style="display: none"/>
+						</div>
+						<div class="gutter"></div>
+						<div class="column column_54 bcolumn_64" id="CityContainer">
+							<div id="CityLabel" class="column_label">
+								<span class="spanacce"> 
+									<label for="WC_UserAddressForm_AddressEntryForm_FormInput_city_1">
+										<fmt:message bundle="${storeText}" key="addressCityFieldLabel" /> 
+									</label> 
+								</span>
+								<fmt:message bundle="${storeText}" key="addressCityFieldLabel" />
+								<span class="required-field" id="WC_AddressEntryForm__div_6"> *</span>
+							</div>
+							<div class="dropdownLP" style="display: none;" id="citySelectorDropDown">
+								<select class="dropDownCity" aria-required="true" id="citySelector" name="citySelector" required>
+								</select>
+							</div>
+							<input type="text" maxlength="100" size="42" aria-required="true" id="WC_UserAddressForm_AddressEntryForm_FormInput_city_1" name="city" value="${city}" required="">
+							<img src="/wcsstore/LapeyreSAS/images/loading.gif" width="20" height="20" class="loading" style="display: none"/>
+						</div>
+						<div class="gutter mobile-hidden"></div>
+						<c:if test="${empty country }">
+							<c:set var="country" value="${CommandContext.country }"/>
+						</c:if>
+						<wcbase:useBean id="countryBean" classname="com.ibm.commerce.user.beans.CountryStateListDataBean">
+							<c:set target="${countryBean}" property="countryCode" value="${CommandContext.country}" />
+						</wcbase:useBean>
+						<div class="column column_20 bcolumn_100 relative" id="Contact_Country_Container">
+							<div id="Contact_Country_Label" class="column_label">
+								<fmt:message bundle="${widgetText}" key="CONTACT_COUNTRY" />
+								<span class="required-field" id="Contact_Country_Required">*</span>
+							</div>
+							<div class="dropdownLP" style="display: none;" id="countryDiv">
+								<select style="width: 176px; " class="dropDownCountry" aria-required="true" id="countryField" name="country" required>
+									<c:forEach var="countryItem" items="${countryBean.countries}">
+										<option value="<c:out value="${countryItem.code}"/>"
+											<c:if test="${countryItem.code eq country || countryItem.displayName eq contact_country}">
+											<c:set var="selectedCountryDisplayName" value="${countryItem.displayName}"/>
+										selected="selected"
+									</c:if>>
+											<c:out value="${countryItem.displayName}" />
+										</option>
+									</c:forEach>
+								</select>
+							</div>
+								<input type="text" value="${selectedCountryDisplayName}" id="textCountry" disabled="disabled">
+							<div class="editCountry" style="display: inline;" id="editCountry">
+								<a href="#" onClick="selectCountry();return false;">
+									<img src="${jspStoreImgDir}images/editCountry.png" alt="">
+								</a>
+							</div>
+						</div>
+						<br clear="all">
+						<div class="button_footer_line no_float" id="WC_UserAddressForm_div_40">
+							<c:if test="${empty inPopin || inPopin eq false}">
+								<input onclick="window.location.replace('${addressBookURL}');" class="button" value='<fmt:message bundle="${storeText}" key="addAddressCancelButtonLabel"/>'>
+							</c:if>
+							<c:choose>
+								<c:when test="${empty selectedAddressId}">
+									<fmt:message bundle="${storeText}" key="addAddressSubmitButtonLabel" var="submitButton"/>
+								</c:when>
+								<c:when test="${mesAdressesLight}">
+									<fmt:message bundle="${storeText}" key="addAddressButton" var="submitButton"/>
+								</c:when>
+								<c:when test="${tunnelStep eq 2 && !empty lightAddress}">
+									<fmt:message bundle="${storeText}" key="tunnelAddAddressPageButtonLabel" var="submitButton"/>
+								</c:when>
+								<c:otherwise>
+									<fmt:message bundle="${storeText}" key="editAddressSubmitButtonLabel" var="submitButton"/>
+								</c:otherwise>
+							</c:choose>
+							<%-- Add an authentication token to avoid CSRF attacks --%>
+							<input type="hidden" name="authToken" value="${authToken}" id="WC_UserRegistrationUpdateForm_FormInput_authToken_1"/>
+							<input type="submit" value='<c:out value="${submitButton}"/>' class="button green">
+						</div>
+						<br clear="all">
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

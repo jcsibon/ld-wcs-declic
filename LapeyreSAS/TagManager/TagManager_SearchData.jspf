@@ -1,0 +1,3 @@
+<c:set var="pageTemplate" value="recherche" />
+
+<c:set var="pageTitle" value="search - ${searchTerm}" />

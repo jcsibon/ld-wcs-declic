@@ -1,0 +1,23 @@
+<!-- Begin Content_Tags_UI.jspf-->
+<%@ page trimDirectiveWhitespaces="true" %>
+<div class="row">
+	<c:if test="${fn:length(content.page.tags) > 0}">
+		<div class="textArticle contenuAssocie">
+			<p class="title"><fmt:message bundle="${widgetText}" key="tagsListBlockTitle"/></p>
+			<p>
+			<c:forEach items="${content.page.tags}" var="tag">
+				<wcf:url var="searchTagURL" patternName="SearchDisplay">
+					<wcf:param name="langId" value="${langId}" />
+					<wcf:param name="storeId" value="${storeId}" />
+					<wcf:param name="catalogId" value="${catalogId}" />
+					<wcf:param name="searchTerm" value="${tag}" />
+					<wcf:param name="urlLangId" value="${urlLangId}" />
+					<wcf:param name="ongletSearch" value="contenu" />
+				</wcf:url>
+				<span>#</span><a href="${searchTagURL}">${tag}</a> 
+			</c:forEach>
+			</p>
+		</div>
+	</c:if>
+</div>
+<!-- End Content_Tags_UI.jspf-->

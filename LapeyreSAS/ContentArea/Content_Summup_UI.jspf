@@ -1,0 +1,8 @@
+<!-- Begin Content_Summup_UI.jspf-->
+<%@ page trimDirectiveWhitespaces="true" %>
+<div class="row">
+	<div class="textArticle" itemprop="description">
+		${content.page.accroche}
+	</div>
+</div>
+<!-- End Content_Summup_UI.jspf-->

@@ -1,0 +1,143 @@
+<%@ page trimDirectiveWhitespaces="true"%>
+<%@ page import="com.lapeyre.declic.misc.taglib.EcoceaFunctions"%>
+
+<c:set var="typeAdd" value="" />
+<c:if test='${contact.address.primary=="true"}'>
+	<c:set var="typeAdd" value="principal" />
+</c:if>
+<div class='myAdress <c:out value="${typeAdd}"/>'>
+	<div class="adressTitle">
+		<%-- URL pour édition--%>
+		<wcf:url var="AddressModifFormURL" value="AjaxAccountAddressForm">
+			<wcf:param name="langId" value="${langId}" />
+			<wcf:param name="storeId" value="${WCParam.storeId}" />
+			<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+			<wcf:param name="addressId"
+				value="${contact.contactInfoIdentifier.uniqueID}" />
+			<wcf:param name="URL" value="${AddressBookURL}" />
+		</wcf:url>
+
+		<p>
+			<c:choose><c:when test="${!isSelfAdress}">
+			<a href="${AddressModifFormURL}"><c:out
+					value="${contact.contactInfoIdentifier.externalIdentifier.contactInfoNickName}" />
+			</a>
+			</c:when><c:otherwise><c:out value="${contact.contactInfoIdentifier.externalIdentifier.contactInfoNickName}" /></c:otherwise></c:choose>
+		</p>
+		<c:choose>
+			<c:when test='${contact.address.primary}'>
+				<img src="${jsAssetsDir}images/myAdressPrincipalBar.png" alt="">
+			</c:when>
+			<c:otherwise>
+				<img src="${jsAssetsDir}images/myAdressBar.png" alt="">
+			</c:otherwise>
+		</c:choose>
+
+	</div>
+	<div class="adressDetails">
+	<fmt:message bundle="${storeListe}" key="Civilite_Abreviation_${contact.contactName.personTitle}" var="civ" />
+		<span
+			title="<c:if test="${not fn:startsWith(civ,'???')}">${civ}</c:if>&nbsp;<c:out value="${contact.contactName.firstName}"/> <c:out value="${contact.contactName.lastName}"/>">
+			<c:if test="${not fn:startsWith(civ,'???')}">${civ}</c:if>&nbsp;<ecocea:crop
+				value="${contact.contactName.firstName} ${contact.contactName.lastName}"
+				length="31" /> </span>
+
+		<%-- par défaut téléphone 2 --%>
+		<c:if test="${contact.telephone2!=null}">
+			<c:out value="${ecocea:fmtPhone(contact.telephone2.value)}" />
+			<br>
+		</c:if>
+		<%-- sinon un des autres --%>
+		<c:if test="${contact.telephone1!=null && contact.telephone2==null}">
+			<c:out value="${ecocea:fmtPhone(contact.telephone1.value)}" />
+			<br>
+		</c:if>
+		<c:if
+			test="${contact.mobilePhone1!=null && contact.telephone1==null && contact.telephone2==null}">
+			<c:out value="${ecocea:fmtPhone(contact.mobilePhone1.value)}" />
+			<br>
+		</c:if>
+		<c:out value="${contact.emailAddress1.value}" />
+	</div>
+	<div class="adressInfo">
+		<p>
+			<ecocea:crop value="${contact.address.addressLine[0]}" length="35" />
+			<br />
+			<c:if test="${!empty contact.address.addressLine[1]}">
+				<fmt:message bundle="${storeText}" key="addressBatimentFieldLabel" />&nbsp;: &nbsp;<ecocea:crop
+					value="${contact.address.addressLine[1]}" length="26" />
+				<br />
+			</c:if>
+
+			<c:set var="etageField" value="${contact.address.addressLine[2]}" />
+			<c:if test="${empty etageField}">
+				<c:set var="etageField" value="-1" />
+			</c:if>
+			<c:if
+				test="${etageField != 0 && etageField != 25 && etageField != -1 }">
+				<fmt:message bundle="${storeListe}" key="Etage_${etageField}" />&nbsp;<fmt:message
+					bundle="${storeText}" key="addressFloorFieldLabel" />
+				<br />
+			</c:if>
+			<c:if
+				test="${etageField == 0 || etageField == 25 || etageField == -1 }">
+				<fmt:message bundle="${storeText}" key="addressFloorFieldLabel" />&nbsp;:&nbsp;	<fmt:message
+					bundle="${storeListe}" key="Etage_${etageField}" />
+				<br />
+			</c:if>
+
+			<c:out value="${contact.address.postalCode}" />
+			&nbsp;
+			<c:out value="${contact.address.city}" />
+			<br />
+			<%--mantis 2108 : afficher le pays si différent de FR --%>
+			<c:if test="${contact.address.country ne 'FR' }">
+				<wcbase:useBean id="countryBean"
+					classname="com.ibm.commerce.user.beans.CountryStateListDataBean">
+					<c:set target="${countryBean}" property="countryCode"
+						value="${CommandContext.country}" />
+				</wcbase:useBean>
+				<c:forEach var="countryItem" items="${countryBean.countries}">
+					<c:if test="${countryItem.code eq contact.address.country}">
+						<span class="uppercase">${countryItem.displayName }</span>
+					</c:if>
+				</c:forEach>
+			</c:if>
+		</p>
+	</div>
+	<div class="adressFooter">
+		<div class="left">
+
+			<c:choose>
+				<c:when test='${contact.address.primary}'>
+					<img alt="" src="${jsAssetsDir}images/shopBlockEpingleWhite.png">
+				</c:when>
+				<c:otherwise>
+					<a href="javascript:void(0);"
+						onclick="switchAddress('<c:out value="${contact.contactInfoIdentifier.uniqueID}" />');"
+						class="aepingler"> <img alt=""
+						src="${jspStoreImgDir}images/shopBlockEpingle.png"> </a>
+				</c:otherwise>
+			</c:choose>
+			<fmt:message bundle="${storeText}" key="primaryAddress" />
+
+		</div>
+		<div class="right" style="width:80px;">
+			<%-- 0001736: [mes adresses] La page mes adresses n'est pas conforme à la maquette - pas de picto de suppression d'adresse principale --%>
+			<c:choose>
+			<c:when test="${isSelfAdress}">
+				<span style="font-size: 7pt;">Pour modifier, rendez-vous dans la rubrique "Mon profil"</span>
+			</c:when>
+			<c:when test='${!isSelfAdress && !contact.address.primary}'>
+				<a href="javascript:void(0);"
+					onclick="DeleteAddressView('<c:out value="${contact.contactInfoIdentifier.uniqueID}" />');">
+					<img
+					src="${jspStoreImgDir}images/delete${contact.address.primary?'White':''}.png"
+					alt="Supprimer"
+					onmouseover="this.src='${jspStoreImgDir}images/delete${contact.address.primary?'':'Red'}.png';"
+					onmouseout="this.src='${jspStoreImgDir}images/delete${contact.address.primary?'White':''}.png';">
+				</a>
+			</c:when></c:choose>
+		</div>
+	</div>
+</div>

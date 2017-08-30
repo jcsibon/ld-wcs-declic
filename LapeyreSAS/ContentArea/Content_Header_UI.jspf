@@ -1,0 +1,25 @@
+<!-- Begin Content_Header_UI.jspf-->
+<%@ page trimDirectiveWhitespaces="true" %>
+<div class="row">
+	<div class="blockPresentation article">
+		<c:if test="${!empty content.page.tempsLecture}"><div class="coin<ecocea:typeArticleIcon types="${content.page.type}"/>"><div><span>${content.page.tempsLecture}</span></div></div></c:if>
+		<div class="editoBackground"><img  itemprop="image" alt="${isOnMobileDevice?content.page.visuelMobile.alt:content.page.visuelDesktop.alt}" src="${imageUrl}${isOnMobileDevice?content.page.visuelMobile.url:content.page.visuelDesktop.url}" onerror="this.src='/wcsstore/LapeyreSAS/images/contentListView/defaultImage.png'" /></div>
+		<div class="textContainer">
+		<c:choose>	
+			<c:when test="${isOnMobileDevice}">
+				<c:if test="${!empty content.page.surTitre}"><span><ecocea:crop value="${content.page.surTitre}" length="31" /></span> <br clear="all"></c:if>
+				<c:if test="${!empty content.page.surTitre && !empty content.page.titre}"><img alt="separator" src="${jspStoreImgDir}images/separator.png"></c:if>
+				<h1  title="${content.page.titre}" itemprop="headline" content="${content.page.titre}"><ecocea:crop value="${content.page.titre}" length="51" /></h1>
+			</c:when>
+			<c:when test="${!isOnMobileDevice}">
+				<c:if test="${!empty content.page.surTitre}"><span><ecocea:crop value="${content.page.surTitre}" length="61" /></span> <br clear="all"></c:if>
+				<c:if test="${!empty content.page.surTitre && !empty content.page.titre}"><img alt="separator" src="${jspStoreImgDir}images/separator.png"></c:if>
+				<h1 title="${content.page.titre}" itemprop="headline" content="${content.page.titre}"><ecocea:crop value="${content.page.titre}" length="70" /></h1>
+			</c:when>
+			
+		</c:choose>
+			<meta itemprop="datePublished" content="${MICRO_DATA_TODAY}"/>
+		</div>
+	</div>
+</div>
+<!-- End Content_Header_UI.jspf-->

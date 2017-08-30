@@ -1,0 +1,274 @@
+<c:set var="storeId" value="${storeId}" scope="page" />
+<c:set var="isWishlistPage" value="true" />
+
+<wcf:url var="WishListResultDisplayViewURL" value="WishListResultDisplayView">
+	<wcf:param name="langId" value="${langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	<wcf:param name="id" value="${param.id}" />
+</wcf:url>
+
+<wcf:url var="WishListDisplayURL" value="WishListDisplayView">
+	<wcf:param name="listId" value="." />
+	<wcf:param name="storeId" value="${storeId}" />
+	<wcf:param name="catalogId" value="${catalogId}" />
+	<wcf:param name="langId" value="${langId}" />
+</wcf:url>
+
+<!-- Page Start -->
+<c:set var="myAccountPage" value="true" scope="request" />
+<c:set var="wishListPage" value="true" />
+<c:set var="hasBreadCrumbTrail" value="false" scope="request" />
+
+<c:set var="catEntryParams" value="{}" />
+<c:set var="storeParams" value="{storeId: '${fn:escapeXml(storeId)}',catalogId: '${fn:escapeXml(catalogId)}',langId: '${fn:escapeXml(langId)}'}" />
+
+<%@ include file="../../../Common/JSTLEnvironmentSetupExtForRemoteWidgets.jspf"%>
+
+<c:set var="myAccountPage" value="true" scope="request" />
+<c:set var="bHasWishList" value="true" />
+<c:set var="wishListPage" value="true" />
+<c:set var="emailError" value="false" />
+<c:set var="numberProductsPerRow" value="2" />
+<c:set var="wishListViaEmail" value="false" />
+<c:if test="${(WCParam.wishListEMail != null && !empty WCParam.wishListEMail  && WCParam.wishListEMail == 'true')}">
+	<c:set var="wishListViaEmail" value="true" />
+</c:if>
+
+<c:if test="${(param.wishListEMail != null && !empty param.wishListEMail && param.wishListEMail == 'true')}">
+	<c:set var="wishListViaEmail" value="true" />
+</c:if>
+
+<c:choose>
+	<%-- users have explicitly chosen a pageView --%>
+	<c:when test="${!empty WCParam.pageView}">
+		<c:set var="pageView" value="${WCParam.pageView}" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="pageView" value="image" />
+	</c:otherwise>
+</c:choose>
+
+<%--La pagination sur le détail d'une wishlist a été supprimée. startIndex, currentPage, pageSize sont définis en conséquence pour appeler toutes les données sur une page--%>
+<c:set var="startIndex" value="0" />
+<c:set var="currentPage" value="0" />
+<c:set var="pageSize" value="9999" />
+
+<c:choose>
+	<c:when test="${param.id>0}">
+		<wcf:getData
+			type="com.ibm.commerce.giftcenter.facade.datatypes.GiftListType"
+			var="defaultWishList" expressionBuilder="findGiftListByUniqueIDs">
+			<wcf:param name="accessProfile" value="IBM_Store_Summary" />
+			<wcf:contextData name="storeId" data="${WCParam.storeId}" />
+			<wcf:param name="UniqueID" value="${param.id}" />
+		</wcf:getData>
+	</c:when>
+	<c:otherwise>
+		<wcf:getData type="com.ibm.commerce.giftcenter.facade.datatypes.GiftListType" var="defaultWishList" expressionBuilder="findDefaultWishListForUser">
+			<wcf:contextData name="storeId" data="${WCParam.storeId}"/>
+			<wcf:param name="accessProfile" value="IBM_Store_Summary" />
+			<wcf:param name="uniqueId" value="${userId}" />
+		</wcf:getData>		
+	</c:otherwise>
+</c:choose>
+
+
+<c:set var="selectedWishListExternalId" value="${defaultWishList.giftListIdentifier.giftListExternalIdentifier.externalIdentifier}" />
+<c:set var="selectedWishListId" value="${defaultWishList.giftListIdentifier.uniqueID}" />
+
+<c:choose>
+	<c:when test="${!empty WCParam.wishListEMail && WCParam.wishListEMail != null && WCParam.wishListEMail == 'true'}">
+		<%-- from shared wish list page - user can be a guest user or a registered user who is not the owner of the wish list --%>
+		<c:set var="sharedWishList" value="true" scope="request" />
+		<c:set var="numberProductsPerRow" value="4" />
+		<c:choose>
+
+			<c:when test="${empty WCParam.externalId}">
+				<c:set var="emailError" value="true" />
+			</c:when>
+
+			<c:otherwise>
+				<c:set var="selectedWishListExternalId" value="${WCParam.externalId}" />
+				<%@ include file="../../../Snippets/MultipleWishList/GetWishListItemsByExternalId.jspf"%>
+
+				<c:if test="${selectedSoaWishList == null}">
+					<c:set var="emailError" value="true" />
+				</c:if>
+
+				<c:if test="${empty selectedSoaWishList.item}">
+					<c:set var="bHasWishList" value="false" />
+				</c:if>
+			</c:otherwise>
+		</c:choose>
+
+	</c:when>
+
+	<c:when test="${empty defaultWishList}">
+		<%-- from my account wish list page - if user has no wish list defined, set bHasWishList to false --%>
+		<c:set var="bHasWishList" value="false" />
+	</c:when>
+
+	<c:when test="${WCParam.giftListId == -1}">
+		<%-- from my account wish list page - user selected the dummy Wish List entry, set bHasWishList to false --%>
+		<c:set var="bHasWishList" value="false" />
+	</c:when>
+
+	<c:otherwise>
+		<%-- from my account wish list page - user has wish list defined, get the detail of user's default wish list --%>
+
+		<%@ include file="../../../Snippets/MultipleWishList/GetWishListItemsByExternalId.jspf"%>
+
+		<c:if test="${empty selectedSoaWishList.item}">
+			<c:set var="bHasWishList" value="false" />
+		</c:if>
+	</c:otherwise>
+</c:choose>
+
+<c:set var="numEntries" value="${ShowVerbWishList.recordSetTotal}" />
+
+<wcf:url var="WishListResultDisplayViewFullURL" value="WishListResultDisplayView" type="Ajax">
+	<wcf:param name="langId" value="${langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	<wcf:param name="currentPage" value="${currentPage}" />
+	<wcf:param name="startIndex" value="${startIndex}" />
+	<wcf:param name="pageView" value="detailed" />
+	<c:if test="${wishListViaEmail == 'true'}">
+		<wcf:param name="wishListEMail" value="true" />
+		<wcf:param name="externalId" value="${WCParam.externalId}" />
+	</c:if>
+</wcf:url>
+
+<wcf:url var="WishListResultDisplayViewURL" value="WishListResultDisplayView" type="Ajax">
+	<wcf:param name="langId" value="${langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	<wcf:param name="currentPage" value="${currentPage}" />
+	<wcf:param name="startIndex" value="${startIndex}" />
+	<wcf:param name="pageView" value="image" />
+	<c:if test="${wishListViaEmail == 'true'}">
+		<wcf:param name="wishListEMail" value="true" />
+		<wcf:param name="externalId" value="${WCParam.externalId}" />
+	</c:if>
+</wcf:url>
+
+<wcf:url var="WishListResultDisplay" value="WishListResultDisplayView" type="Ajax">
+	<wcf:param name="langId" value="${langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	<wcf:param name="currentPage" value="${currentPage}" />
+	<wcf:param name="startIndex" value="${startIndex}" />
+	<wcf:param name="pageView" value="${pageView}" />
+	<c:if test="${wishListViaEmail == 'true'}">
+		<wcf:param name="wishListEMail" value="true" />
+		<wcf:param name="externalId" value="${WCParam.externalId}" />
+	</c:if>
+</wcf:url>
+
+<c:set var="cookieOrderIdKey" value="WC_CartOrderId_${storeId}" />
+
+<c:choose>
+	<c:when test="${emailError}">
+		<%-- NADA --%>
+	</c:when>
+
+	<c:when test="${ !bHasWishList }">
+		<%@ page import="com.ibm.commerce.component.giftregistry.objects.GiftRegistryAccessBean"%>
+		<c:set var="abExternalId" value="${selectedWishListExternalId}" scope="request" />
+		<%-- Bizarrement, si pas d'item l'objet est vide au ieu d'avoir un objet plein avec une liste d'items vide, donc il faut ajouter un getdata --%>
+		<wcf:getData
+			type="com.ibm.commerce.giftcenter.facade.datatypes.GiftListType"
+			var="myWishList"
+			expressionBuilder="findGiftListByExternalIdentifiers">
+			<wcf:param name="accessProfile" value="IBM_Store_Summary" />
+			<wcf:contextData name="storeId" data="${WCParam.storeId}" />
+			<wcf:param name="ExternalIdentifier" value="${abExternalId}" />
+		</wcf:getData>
+	</c:when>
+
+	<c:otherwise>
+		<wcf:getData
+			type="com.ibm.commerce.giftcenter.facade.datatypes.GiftListType"
+			var="myWishList"
+			expressionBuilder="findGiftListByExternalIdentifiers">
+			<wcf:param name="accessProfile" value="IBM_Store_Summary" />
+			<wcf:contextData name="storeId" data="${WCParam.storeId}" />
+			<wcf:param name="ExternalIdentifier" value="${selectedSoaWishList.giftListIdentifier.giftListExternalIdentifier.externalIdentifier}" />
+		</wcf:getData>
+	</c:otherwise>
+
+</c:choose>
+
+<c:set var="wishListName" value="" />
+<c:if test="${!empty myWishList}">
+	<c:set var="wishListName" value="${myWishList.description.name}" />
+</c:if>
+
+<c:set var="keyDefaultImageMaps" value="GRID_ASSET_main_full"/>
+<astpush:assetPushUrl var="defaultProductFullImage" urlRelative="${defaultImageMaps[keyDefaultImageMaps]}" type="GRID_ASSET" source="main" device="${device}" format="full" defaultUrl="true"/>
+
+<c:if test="${not emailError and bHasWishList}">
+	<c:set var="guestAccessKey" value="${myWishList.accessSpecifier.guestAccessKey}" />
+	<c:set var="prefix" value="soaWishList" />
+	<%-- used by CatalogEntryDBThumbnailDisplay.jspf to form unique ID for divs/quickInfo buttons --%>
+
+	<wcf:rest var="catalogNavigationView" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byIds">
+		<c:forEach var="soaWishListItem" items="${selectedSoaWishList.item}" varStatus="status">
+			<wcf:param name="id" value="${soaWishListItem.catalogEntryIdentifier.uniqueID}" />
+		</c:forEach>
+		<wcf:param name="langId" value="${langId}" />
+		<wcf:param name="currency" value="${env_currencyCode}" />
+		<wcf:param name="responseFormat" value="json" />
+		<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+		<%-- ECOCEA --%>
+		<wcf:param name="profileName" value="ECO_findProductByIds_Details_Without_Attachment" />
+		<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+	</wcf:rest>
+
+	<c:set var="productResults" value="${catalogNavigationView.catalogEntryView}" />
+	<c:set var="wishListIdentifier" value="${selectedSoaWishList.giftListIdentifier.uniqueID}" />
+	<c:set var="wishListName" value="${selectedSoaWishList.description.name}" />
+
+	<wcf:url var="ShoppingCartURL" value="TunnelShopCartView" type="Ajax">
+		<wcf:param name="langId" value="${langId}" />
+		<wcf:param name="storeId" value="${WCParam.storeId}" />
+		<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	</wcf:url>
+
+	<wcf:url var="sharedWishListViewURL" value="SharedWishListView">
+		<wcf:param name="langId" value="${langId}" />
+		<wcf:param name="storeId" value="${storeId}" />
+		<wcf:param name="catalogId" value="${catalogId}" />
+		<wcf:param name="wishListEMail" value="true" />
+		<wcf:param name="externalId" value="${wishListIdentifier}" />
+		<wcf:param name="guestAccessKey" value="${guestAccessKey}" />
+	</wcf:url>
+</c:if>
+
+<wcf:getData type="com.ibm.commerce.giftcenter.facade.datatypes.GiftListType[]" var="soaWishLists" expressionBuilder="findWishListsForUser">
+	<wcf:contextData name="storeId" data="${WCParam.storeId}" />
+	<wcf:param name="accessProfile" value="IBM_Store_Summary" />
+</wcf:getData>
+
+<c:set var="shoppingListNames" value="" />
+<c:forEach var="shoppingList" items="${soaWishLists}">
+	<c:if test="${selectedWishListExternalId != shoppingList.giftListIdentifier.uniqueID}">
+		<c:if test="${!empty shoppingListNames}">
+			<c:set var="shoppingListNames" value="${shoppingListNames}," />
+		</c:if>
+		<c:set var="shoppingListName" value="${fn:replace(shoppingList.description.name,'\\\\','\\\\\\\\')}" />
+		<c:set var="shoppingListNames" value="${shoppingListNames}'${fn:escapeXml(shoppingListName)}': 1" />
+	</c:if>
+</c:forEach>
+<c:set var="shoppingListNames" value="${fn:toUpperCase(shoppingListNames)}" />
+
+<wcf:getData
+	type="com.ibm.commerce.order.facade.datatypes.OrderType"
+	scope="request" var="order" expressionBuilder="findByOrderId"
+	varShowVerb="ShowVerbCart">
+	<wcf:param name="accessProfile" value="IBM_Details" />
+	<wcf:param name="sortOrderItemBy" value="orderItemID" />
+	<wcf:param name="isSummary" value="false" />
+	<wcf:param name="orderId" value="${cookie[cookieOrderIdKey].value}" />
+</wcf:getData>

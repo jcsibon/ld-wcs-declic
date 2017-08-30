@@ -1,0 +1,292 @@
+<c:choose>
+	<c:when test="${isOnMobileDevice }" >
+		<c:set var="cropTitleLimit" value="46" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="cropTitleLimit" value="112" />
+	</c:otherwise>
+</c:choose>
+
+<script type="text/javascript" src="${jspStoreImgDir}../Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.PDP_FullImage/javascript/ProductFullImage.js?${versionNumber}"></script>
+<script type="text/javascript" src="${jsAssetsDir}javascript/Widgets/ShoppingList/ShoppingList.js?${versionNumber}"></script>
+<script type="text/javascript" src="${jsAssetsDir}javascript/Widgets/ShoppingList/ShoppingListServicesDeclaration.js?${versionNumber}"></script>
+<script type="text/javascript" src="${jspStoreImgDir}../Widgets-lapeyre/Common/ShoppingList/javascript/WishList.js?${versionNumber}"></script>
+
+<meta itemprop="productID" content="${partNumber}" />
+<meta itemprop="sku" content="${defaultSku.partNumber}" />
+<meta itemprop="manufacturer" content="${MICRO_DATA_MANUFACTURER}" />
+<meta itemprop="category" content="${googleCategory}" />
+<link itemprop="itemCondition" content="${MICRO_DATA_NEW_CONDITION}" />
+
+<div class="container">
+	<div class="row">
+		<%-- Left column --%>
+		<div id="ficheProduitStandardHeadLeftCol" class="col s12 m7 l5 push-l1">
+			<div class="row">
+				<div class="ficheImage" id="ficheImage">
+					<div class="<c:if test="${isOnSpecial}" > ribbon promo</c:if> <c:if test="${soldeFlagProduct eq 1 || soldeFlagProduct eq 1.0 }"> ribbon soldes</c:if>">
+						<%--On affiche le ribbonad au product uniquement pour les sur mesure ou si le produit est mono-sku, pour les autres, il est surchargé à l'item en js--%>
+						<c:if test="${productType eq 'SUR_MESURE' ||numberOfSKUs eq 1 }">
+							<c:forEach var="adRibbon" items="${adRibbonMap}">
+								<c:set var="adRibbonStyle" value="RibbonAdDefault ${fn:replace(adRibbon.key , '\"' , '_')}"/>
+								<div class="${fn:escapeXml(adRibbonStyle)}">${adRibbon.value}</div>
+							</c:forEach>
+						</c:if>
+					</div>
+					<%-- Full image widget --%>
+					<%out.flush(); %>
+					<c:import url="${fullImagewidgetPath}" >
+						<c:param name="widgetCeption" value="true" />
+					</c:import>
+					<%out.flush(); %>
+					
+					<c:if test="${productRedirected eq 'true' && productRedirectedType ge 0 && productRedirectedType le 1}" >
+					<%@ include file="/Widgets-lapeyre/Common/ProductRedirectionPopup.jspf" %>    
+					</c:if>
+				</div>
+			</div>
+			
+			<div class="row hide-on-med-and-down">
+				<%-- Display the first four pictograms --%>
+				<div class="col s7 push-s3">
+					<div class="row">
+						<c:forEach var="picto" items="${pictos}" varStatus="status">
+							<c:if test="${status.count <= 4}">
+								<astpush:assetPushUrl var="pictoURL" scope="page" urlRelative="${picto.attachmentAssetPath}" type="" source="" device="" format=""/>
+								<img src="${pictoURL}" alt="${picto.name}" class="product-picto col s3" />
+							</c:if>
+						</c:forEach>
+					</div>
+				</div>
+				
+				<%-- Social networks --%>
+				<div class="col s2 push-s3">
+					<c:import url="${sharePopupPath}"></c:import>
+				</div>		
+			 </div>
+		</div>
+			
+		<%-- Right column --%>
+		<div class="col s12 m5 l5 push-l1">
+			<div id="ficheProduitStandardficheAside" class="product-page-standard-right-column ${microDataOfferAttributes}">
+				<%-- Partnumber --%>
+				<div class="row">
+					<div class="col s12 product-reference">
+						<fmt:message key="ficheProduitSkuLabel" bundle="${widgetText}" /> : 
+						<span itemprop="sku" content="${defaultSku.partNumber}" id="product_SKU_<c:out value='${catalogEntryID}' />">${partNumber}</span>
+					</div>
+				</div>
+				
+				<%-- Product name --%>
+				<div class="row">
+					<h1 role="heading" aria-level="1" class="main_header product-name" title="<c:out value="${name}" escapeXml="false"/>" itemprop="name"><ecocea:crop value="${name}" length="${cropTitleLimit}" />
+						<div id="atoutPrix" class="<c:if test="${atoutPrix ne 1 && atoutPrix ne 1.0 }">hidden</c:if>"><span class="asterix atoutPrix"></span></div>
+					</h1>
+				</div>
+				
+				<div class="row">
+					<div class="col s6">
+						<a href="#description" class="link-primary link-bold"><fmt:message key="ficheProduitSmMainSection1Label" bundle="${widgetText}" /></a>
+					</div>
+					
+			        <div id="BVRRSummaryContainer" class="col s6">
+			        	${sBvOutputSummary}
+			        </div>
+				</div>
+			
+				<%-- Defining attributes --%>
+				<div class="row" id="ficheContent" data-slot-id="5">
+					<%out.flush(); %>
+						<c:import url="${definingAttributeswidgetsPath}">
+							<c:param name="displayType" value="${displayType}" />
+							<c:param name="widgetCeption" value="true" />
+							<c:param name="displayOptionsChoicesWarning" value="true" /> <%-- 0001088 : [Fiche produit standard] - L'info bulle mes options n'apparit jamais--%>
+						</c:import>
+					<%out.flush(); %>
+				</div>
+		
+				<%-- Price --%>
+				<%-- Attention : la position du prix est en absolue. ProductDisplay.js : dÃ©calage pour gÃ©rer le cas de "surface"  --%>
+				<div id="priceSectionRow" class="row">
+					<div id="priceSectionCol" class="col s10 l7 push-s2 push-l5">
+						<div>
+							<%@ include file="/Widgets-lapeyre/Common/PriceDisplay/PriceDisplay.jspf" %>
+						</div>
+						<div class="ecoPartContainer product-subinformation" id="ecoPartContainer_${fn:escapeXml(catalogEntryID)}" style="display:none;">
+							<fmt:message key="ecoPartIncludingLabel" bundle="${widgetText}" /> : <span>N/A</span>
+						</div>
+						<div class="product-subinformation">
+<%-- 							<span id="priceLabel_${fn:escapeXml(catalogEntryID)}">${priceLabelDefault}</span> --%>
+							<div id="coeffArea_${fn:escapeXml(catalogEntryID)}" class="ficheInfosMin">
+								<c:if test="${fn:toLowerCase(uniteSecondaire) ne fn:toLowerCase(uniteVenteLegale)}"> <%-- 0001097: [Quick view] - Un texte "Unitï¿½" prï¿½cï¿½dï¿½ du prix est affichï¿½ --%>
+									<c:choose> 
+										<c:when test="${!empty coeffConversionQuantite && offerPrice*coeffConversionQuantite > 0}">
+											<fmt:formatNumber var="priceInUnit" value="${offerPrice*coeffConversionQuantite}" maxFractionDigits="2"  />
+											${fn:replace(fn:replace(fn:replace(libellesUnit.colisagePriceLabel,'PRICE',priceInUnit),'NBUNIT',coeffConversionQuantite),'.',',')}
+										</c:when>
+										<c:otherwise>
+										<c:if test="${!empty coeffConversionPrix && offerPrice*coeffConversionPrix > 0}">
+											<fmt:formatNumber var="priceInUnit" value="${offerPrice/coeffConversionPrix}" maxFractionDigits="2" />
+											<fmt:formatNumber var="coeff" value="${1/coeffConversionPrix}" maxFractionDigits="3" />
+											${fn:replace(fn:replace(fn:replace(libellesUnit.colisagePriceLabel,'PRICE',priceInUnit),'NBUNIT',coeff),'.',',')}
+										</c:if>
+										</c:otherwise>
+									</c:choose>
+								</c:if>
+							</div>
+						</div>
+					</div>
+				</div>
+						
+				<%-- Shopping actions --%>	
+				<div dojoType="wc.widget.RefreshArea" controllerId="shopperActionsRefreshAreaController" id="shopperActionsRefreshArea">
+					<%out.flush(); %>
+						<c:import url="${shopperActionswidgetPath}" >
+							<c:param name="widgetCeption" value="true" />
+							<c:param name="defaultProductSkuID" value="${defaultSku.uniqueID}" />
+						</c:import>
+					<%out.flush(); %>
+				</div>
+				
+				<%-- Stock --%>
+				<c:if test="${productAvailable eq 'true'}"><%-- if not buyable, dont show shop/avail data --%> 		
+					<div class="row">
+						<div class="col s12">
+							<div dojoType="wc.widget.RefreshArea" controllerId="itemAvailabilityRefreshAreaController" id="itemAvailabilityRefreshAreaPopup">
+									<%out.flush(); %>
+									<c:import url="${itemAvailabilityInPhysicalStoreswidget}" >
+										<c:param name="widgetCeption" value="true" />
+									</c:import>
+									<%out.flush(); %>
+							</div>
+							<span id="availabilityPopupClick" onclick="javascript:availabilityPopup.show();"><fmt:message bundle="${widgetText}" key="availabilityPopupOtherStoreClickLabel" /></span>
+						</div>
+					</div>
+				</c:if>
+			</div>
+			
+			<%-- Reassurance --%>
+			<c:if test="${productAvailable eq 'true'}">
+				<div class="row">
+					<div class="col s12 m12">	
+					<%-- Shipping and return information --%>
+						<div class="product-reassurance">
+							<span class="product-reassurance-label">
+								<i class="product-icons product-icon-return product-reassurance-image"></i>
+								<fmt:message key="ficheProduitStandardRetour" bundle="${storeText}" />
+							</span>
+								-
+							<c:choose>
+								<c:when test="${isShippingAllowed ne 0 and isShippingAllowed ne 0.0}">
+									<span class=" product-reassurance-label">
+										<i class="product-icons product-icon-truck product-reassurance-image"></i>
+										<fmt:message key="ficheProduitStandardLivraison" bundle="${storeText}" />
+									</span>
+								</c:when>
+								<c:otherwise>
+									<span class=" product-reassurance-label">
+										<fmt:message key="ficheProduitStandardRetrait" bundle="${storeText}" />
+									</span>
+								</c:otherwise>
+							</c:choose>
+						</div>
+					</div>
+				</div>
+			</c:if>
+		</div>
+	</div>
+</div>
+
+<!-- Popup Availability -->
+<div id="availabilityPopup" class="" role="dialog" dojoType="lapeyre/widget/Dialog" data-dojo-id="availabilityPopup" style="display:none" executeScripts="true">
+	<div class="dijitDialogPaneContent" data-dojo-attach-point="containerNode" style="width: auto; height: auto;">
+		<div class="widget_site_popup">
+			<div class="container">
+				<div class="header row" id="availabilityPopupTitle">
+					<div class="col s12">
+						<span class="dispoText"><fmt:message bundle="${widgetText}" key="AvailabilityPopupTitle" /></span>
+						<a aria-label="Fermer" title="Fermer" class="close tlignore" onclick="javascript:dijit.byId('availabilityPopup').hide();return false;" href="javascript:void(0);" id="availabilityPopupClose" role="button"></a>
+					</div>
+				</div>
+				<div class="body row">
+					<div class="col s12">
+						<div class="chooseStoreText"><fmt:message bundle="${widgetText}" key="chooseStoreText" /></div>
+						<%out.flush(); %>
+						<c:import url="${itemAvailabilityInPhysicalStoreswidget}" >
+							<c:param name="widgetCeption" value="true" />
+							<c:param name="displayType" value="_popup" />
+						</c:import>
+						<%out.flush(); %>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	dojo.addOnLoad(function(){
+		
+		standardProductDisplay.initialize('${catalogEntryID}', '${displayPriceRange}','${attrIdentifiers}', '');
+		standardProductDisplay.buildDefiningAttributesArray('${defaultSkuAttrsJSON}');
+		standardProductDisplay.selectDefaultSku();
+		
+		$("#bodyNavigationMenu li a[href*='ratingReviews']").html("Avis clients");
+		$("#ratingReviewsSection span[data-anchor-name*='ratingReviews']").html("<span>Avis</span> clients");
+		var itemPartnumber = $("span[id^='product_SKU_" + ${catalogEntryID} + "']").text(); <%-- FIXME preferer la mise a jour via selectDefaultSku a la recuperation depuis le dom --%> 
+		$BV.ui('rr', 'show_reviews',{productId : itemPartnumber});
+		setTimeout(function(){ 
+		   if ($("span[itemprop*='ratingValue']").length < 1) {
+		     $("a.bv-rating-stars-container").attr("style","display:none !important;");
+		   }
+		   $(".bv-action-bar,.bv-inline-histogram-header,.bv-content-title").attr("style","display: none !important");
+		}, 6000);
+		
+		if(itemAvailabilityInPhysicalStoreForPopin) {
+			$(itemAvailabilityInPhysicalStoreForPopin).on("SetDefaultStoreSucceed", function(){
+				wc.render.updateContext("ItemAvailablity_Context", {pageType :"ProductStandard", catalogEntryID : "${catalogEntryID}"});
+				wc.render.updateContext("HeaderStoreLocation_Context");
+				
+				/* Change the label if a store is selected */
+				if($("#firstDefaultShop_standardUI").length > 0){
+					$("#availabilityPopupClick").text("<fmt:message bundle="${widgetText}" key="availabilityPopupOtherStoreClickLabel" />");
+				} else {
+					$("#availabilityPopupClick").text("<fmt:message bundle="${widgetText}" key="availabilityPopupClickLabel" />");
+				}
+			});
+		}
+		
+		var tooltip = $(".tooltip").tooltipster({
+			position: 'bottom',
+			touchDevices: false
+		});
+		
+		dojo.subscribe('HeaderStoreLocator.onGetNearestStoreLocationSucceed', function(headerStoreId) {
+			wc.render.updateContext("ItemAvailablity_Context", {pageType :"ProductStandard", catalogEntryID : "${catalogEntryID}"});
+		});
+		
+		/* If on mobile, we need to change the design of the availability Popup  */
+		if(viewport().width < desktopBreakpoint){
+			$("#availabilityPopup .widget_site_popup").css("height", viewport().height);
+			$("#availabilityPopup").css("right", -viewport().width);
+						
+			var dlg = dijit.byId("availabilityPopup")  
+			
+			/* Availability Popup animation */
+		    dojo.connect(dlg,"onHide",function() {  
+		    	$("#availabilityPopup").animate({right: -viewport().width});
+		    });
+			
+			dojo.connect(dlg,"onShow",function() {  
+				$("#availabilityPopup").animate({right: '0px'});
+			});
+			         
+		}
+		
+		/* Change the label if a store is selected */
+		if($("#firstDefaultShop_standardUI").length > 0){
+			$("#availabilityPopupClick").text("<fmt:message bundle="${widgetText}" key="availabilityPopupOtherStoreClickLabel" />");
+		} else {
+			$("#availabilityPopupClick").text("<fmt:message bundle="${widgetText}" key="availabilityPopupClickLabel" />");
+		}
+	});
+</script>

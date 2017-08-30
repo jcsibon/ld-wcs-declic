@@ -1,0 +1,2328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2005 rel. 3 U (http://www.altova.com) by DOSI02 (LAPEYRE) -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" attributeFormDefault="unqualified">
+	<xsd:element name="pivotDocument">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="enteteDocument">
+					<xsd:annotation>
+						<xsd:documentation>Caracteristiques generales du document</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="versionPivot" fixed="5.0">
+								<xsd:annotation>
+									<xsd:documentation>Version du message ici = 5.0</xsd:documentation>
+								</xsd:annotation>
+								<xsd:simpleType>
+									<xsd:restriction base="xsd:string"/>
+								</xsd:simpleType>
+							</xsd:element>
+							<xsd:element name="numeroMessage" type="xsd:long">
+								<xsd:annotation>
+									<xsd:documentation>No du message, compteur,unique quelque soit le message</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="dateCreationMessage" type="dateType">
+								<xsd:annotation>
+									<xsd:documentation>Date de creation du message</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="emetteur">
+								<xsd:annotation>
+									<xsd:documentation>Emetteur du message, Obligatoire, balise vide si problemes de connection avec Base de donnees en extraction, panier sans ligne dans ce cas</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:complexContent>
+										<xsd:extension base="partenaireType">
+											<xsd:sequence>
+												<xsd:element name="applicationSource">
+													<xsd:annotation>
+														<xsd:documentation>Nom de l'applicatif source (pour transcodification, ...)</xsd:documentation>
+													</xsd:annotation>
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:minLength value="1"/>
+															<xsd:maxLength value="25"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:extension>
+									</xsd:complexContent>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="exclusionsCibles" type="xsd:string" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>flags d'application cible</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="action">
+								<xsd:annotation>
+									<xsd:documentation>Creation, Modification, Suppression</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:complexContent>
+										<xsd:extension base="actionType">
+											<xsd:sequence>
+												<xsd:element name="acteurAction" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Celui qui a fait l'action</xsd:documentation>
+													</xsd:annotation>
+													<xsd:complexType>
+														<xsd:complexContent>
+															<xsd:extension base="coordonneesType">
+																<xsd:sequence>
+																	<xsd:element name="matriculeActeurAction" type="xsd:string">
+																		<xsd:annotation>
+																			<xsd:documentation>Code (Lapeyre) ou matricule (K par K) vendeur</xsd:documentation>
+																		</xsd:annotation>
+																	</xsd:element>
+																</xsd:sequence>
+															</xsd:extension>
+														</xsd:complexContent>
+													</xsd:complexType>
+												</xsd:element>
+												<xsd:element name="siteAction" type="partenaireType" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Dans Pyramide commerciale</xsd:documentation>
+													</xsd:annotation>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:extension>
+									</xsd:complexContent>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="infosVente" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Vendeur et son site de rattachement</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="vendeur" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Vendeur</xsd:documentation>
+											</xsd:annotation>
+											<xsd:complexType>
+												<xsd:complexContent>
+													<xsd:extension base="coordonneesType">
+														<xsd:sequence>
+															<xsd:element name="matriculeVendeur" type="xsd:string"/>
+														</xsd:sequence>
+													</xsd:extension>
+												</xsd:complexContent>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element name="siteVendeur" type="partenaireType" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>site de rattachement du vendeur</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="codeDevise" default="EUR">
+								<xsd:annotation>
+									<xsd:documentation>Code de la devise</xsd:documentation>
+								</xsd:annotation>
+								<xsd:simpleType>
+									<xsd:restriction base="xsd:string"/>
+								</xsd:simpleType>
+							</xsd:element>
+							<xsd:element name="export" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Exportation O/N</xsd:documentation>
+								</xsd:annotation>
+								<xsd:simpleType>
+									<xsd:restriction base="xsd:string">
+										<xsd:enumeration value="O"/>
+										<xsd:enumeration value="N"/>
+									</xsd:restriction>
+								</xsd:simpleType>
+							</xsd:element>
+							<xsd:element name="remiseTheorique" type="xsd:decimal" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Remise de base du client (10.00, 15.00, ...)</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="infosCreation">
+								<xsd:annotation>
+									<xsd:documentation>Dates, references, ...</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="typeDocument">
+											<xsd:annotation>
+												<xsd:documentation>Devis, Commande, Contrat</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string"/>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="sousTypeDocument" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>REC(lamation), POS (Installation), ...</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string"/>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="universDocument" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Univers principal du contrat, ... (K par K)</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string"/>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="numeroDocument">
+											<xsd:annotation>
+												<xsd:documentation>No Transaction, commande, devis, ....</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="25"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="numeroDocumentWeb" minOccurs="0">
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="40"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="siteCreateurDocument" type="partenaireType">
+											<xsd:annotation>
+												<xsd:documentation>Site du document d'origine, plateforme pour K par K</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="siteLogistique" type="partenaireType" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Depot K par K</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="siteVente" type="partenaireType" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Magasin K par K</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="dateCreationDocument" type="dateType">
+											<xsd:annotation>
+												<xsd:documentation>Date initiale de creation du document (date commande, date contrat)</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="codeMotifAnnul" minOccurs="0">
+								<xsd:simpleType>
+									<xsd:restriction base="xsd:string"/>
+								</xsd:simpleType>
+							</xsd:element>
+							<xsd:element name="infosStatutDocument" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Statut</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="codeStatutDocument">
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:length value="3"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="libelleStatutDocument">
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="30"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="dateStatut" type="dateType" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Date de modification du statut du document</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="infosDocumentPrecedent" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Document  precedent (Devis, Commande, Facture, ...)</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="typeDocumentPrecedent">
+											<xsd:annotation>
+												<xsd:documentation>Devis, contrat, Commande, facture</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="250"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="sousTypeDocumentPrecedent" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>REC(lamation), POS (Installation), ...</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string"/>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="numeroDocumentPrecedent">
+											<xsd:annotation>
+												<xsd:documentation>No document  precedent</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="25"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="vendeurDocumentPrecedent" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Vendeur createur du document precedent</xsd:documentation>
+											</xsd:annotation>
+											<xsd:complexType>
+												<xsd:complexContent>
+													<xsd:extension base="coordonneesType">
+														<xsd:sequence>
+															<xsd:element name="matriculeActeurAction" type="xsd:string">
+																<xsd:annotation>
+																	<xsd:documentation>Code (Lapeyre) ou matricule (K par K) vendeur</xsd:documentation>
+																</xsd:annotation>
+															</xsd:element>
+														</xsd:sequence>
+													</xsd:extension>
+												</xsd:complexContent>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element name="siteCreateurDocumentPrecedent" type="partenaireType">
+											<xsd:annotation>
+												<xsd:documentation>Sitedu document precedent</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="dateCreationDocumentPrecedent" type="dateType" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Date initiale de creation du document  precedent</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="infosOrigineCommerciale" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Origine de la transaction commerciale (transformation du devis en commande...)</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="vendeurOrigineCommerciale" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Vendeur à l'origine de la transaction commerciale (transformation du devis en commande...)</xsd:documentation>
+											</xsd:annotation>
+											<xsd:complexType>
+												<xsd:complexContent>
+													<xsd:extension base="coordonneesType">
+														<xsd:sequence>
+															<xsd:element name="matriculeVendeur" type="xsd:string">
+																<xsd:annotation>
+																	<xsd:documentation>Code (Lapeyre) ou matricule (K par K) vendeur</xsd:documentation>
+																</xsd:annotation>
+															</xsd:element>
+														</xsd:sequence>
+													</xsd:extension>
+												</xsd:complexContent>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element name="siteOrigineCommerciale" type="partenaireType" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Site à l'origine de la transaction commerciale (transformation du devis en commande...)</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="dateOrigineCommerciale" type="dateType" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Date de la transaction commerciale (transformation du devis en commande...)</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="infosProspection" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Demarchage</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="codeSource">
+											<xsd:annotation>
+												<xsd:documentation>TA P, JPO, ....</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="3"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="teleActeur" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Operateur Call Center</xsd:documentation>
+											</xsd:annotation>
+											<xsd:complexType>
+												<xsd:complexContent>
+													<xsd:extension base="coordonneesType">
+														<xsd:sequence>
+															<xsd:element name="matriculeTeleActeur" type="xsd:string"/>
+														</xsd:sequence>
+													</xsd:extension>
+												</xsd:complexContent>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element name="siteTeleActeur" type="partenaireType" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>site Call Center</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="numeroCouponUtilise" minOccurs="0">
+								<xsd:simpleType>
+									<xsd:restriction base="xsd:string">
+										<xsd:minLength value="1"/>
+										<xsd:maxLength value="20"/>
+									</xsd:restriction>
+								</xsd:simpleType>
+							</xsd:element>
+							<xsd:element name="infosProjet" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Projet</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="numeroProjet" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Specifique Contrats K par K</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="20"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="codeAttributionRelance" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>M(agasin), S(iege), ...</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="8"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="codeTypePose" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Lapeyre, Artisan, ...</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="5"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="propositionFinancement" type="xsd:boolean" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Oui / Non</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="budget" type="xsd:decimal" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Budget</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="codeRepPropFinancement" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>code Reponse</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="5"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="dateProjet" type="dateType" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Date </xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="dateRelance" type="dateType" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Date Relance</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="commentaireProjet" type="commentaireType" minOccurs="0"/>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="infosPromotionDocument" minOccurs="0">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="codePromotionAppliquee">
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="45"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="libellePromotionAppliquee">
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="45"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="dateStatistique" type="dateType" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Date statistique (K par K) </xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="infosArtisan" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Si client professionnel</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="carteProfessionnelle" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Carte pro</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="20"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="numeroCommandeArtisan" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Reference de la commande de l'artisan</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="20"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="numeroChantierArtisan" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>No de chantier de l'Artisan</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="20"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="infosDispos" minOccurs="0">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="statutDispoCommande" minOccurs="0">
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:length value="3"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="dateMADMagasin" type="dateType" minOccurs="0"/>
+										<xsd:element name="dateDisponibiliteReelle" type="dateType" minOccurs="0"/>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="infosPrestationsAtelier" minOccurs="0">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="dateEntreeAtelier" type="dateType"/>
+										<xsd:element name="dateSortieAtelier" type="dateType"/>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="infosEnlevement" minOccurs="0">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="dateEnlevementClient" type="dateType" minOccurs="0"/>
+										<xsd:element name="modeEnlevement" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>G(lobal), P(artiel)</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:enumeration value="P"/>
+													<xsd:enumeration value="G"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="siteEnlevement" type="partenaireType" minOccurs="0"/>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="infosEtape" minOccurs="0" maxOccurs="unbounded">
+								<xsd:annotation>
+									<xsd:documentation>Metrage, Installation, SAV, ...</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="typeEtape">
+											<xsd:annotation>
+												<xsd:documentation>Metrage, Installation, SAV, 010, ...</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string"/>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="numeroEtape">
+											<xsd:annotation>
+												<xsd:documentation>No d'Installation</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="25"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="intervenantEtape" minOccurs="0" maxOccurs="unbounded">
+											<xsd:annotation>
+												<xsd:documentation>Artisan Poseur, ...</xsd:documentation>
+											</xsd:annotation>
+											<xsd:complexType>
+												<xsd:complexContent>
+													<xsd:extension base="coordonneesType">
+														<xsd:sequence>
+															<xsd:element name="typeIntervenant">
+																<xsd:annotation>
+																	<xsd:documentation>Interne ou externe</xsd:documentation>
+																</xsd:annotation>
+																<xsd:simpleType>
+																	<xsd:restriction base="xsd:string">
+																		<xsd:minLength value="1"/>
+																		<xsd:maxLength value="25"/>
+																	</xsd:restriction>
+																</xsd:simpleType>
+															</xsd:element>
+															<xsd:element name="codeIntervenant">
+																<xsd:annotation>
+																	<xsd:documentation>Matricule ou code externe</xsd:documentation>
+																</xsd:annotation>
+																<xsd:simpleType>
+																	<xsd:restriction base="xsd:string">
+																		<xsd:minLength value="1"/>
+																		<xsd:maxLength value="25"/>
+																	</xsd:restriction>
+																</xsd:simpleType>
+															</xsd:element>
+															<xsd:element name="codeClientPoseur" minOccurs="0">
+																<xsd:annotation>
+																	<xsd:documentation>Si le poseur est client</xsd:documentation>
+																</xsd:annotation>
+																<xsd:simpleType>
+																	<xsd:restriction base="xsd:string">
+																		<xsd:minLength value="1"/>
+																		<xsd:maxLength value="14"/>
+																	</xsd:restriction>
+																</xsd:simpleType>
+															</xsd:element>
+														</xsd:sequence>
+													</xsd:extension>
+												</xsd:complexContent>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element name="dateDebut" type="dateType" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Date de debut  sur l'etape</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="dateFin" type="dateType" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Date de fin sur l'etape</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="clientFacture" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Client facture, signataire pour K par K</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:complexContent>
+										<xsd:extension base="clientType">
+											<xsd:sequence minOccurs="0">
+												<xsd:element name="typeSalarie">
+													<xsd:annotation>
+														<xsd:documentation>0 = pas salarie Lapeyre, 1 = Salarie Lapeyre, 2 = salarie Groupe</xsd:documentation>
+													</xsd:annotation>
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:length value="1"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+												<xsd:element name="reglement" minOccurs="0" maxOccurs="unbounded">
+													<xsd:annotation>
+														<xsd:documentation>Reglement, optionnel</xsd:documentation>
+													</xsd:annotation>
+													<xsd:complexType>
+														<xsd:complexContent>
+															<xsd:extension base="reglementType"/>
+														</xsd:complexContent>
+													</xsd:complexType>
+												</xsd:element>
+												<xsd:element name="financement" minOccurs="0">
+													<xsd:complexType>
+														<xsd:sequence>
+															<xsd:element name="codeFinancement">
+																<xsd:annotation>
+																	<xsd:documentation>Code du financement</xsd:documentation>
+																</xsd:annotation>
+																<xsd:simpleType>
+																	<xsd:restriction base="xsd:string">
+																		<xsd:minLength value="1"/>
+																		<xsd:maxLength value="15"/>
+																	</xsd:restriction>
+																</xsd:simpleType>
+															</xsd:element>
+															<xsd:element name="codeFamilleFinancement" minOccurs="0">
+																<xsd:annotation>
+																	<xsd:documentation>Code du financement</xsd:documentation>
+																</xsd:annotation>
+																<xsd:simpleType>
+																	<xsd:restriction base="xsd:string">
+																		<xsd:minLength value="1"/>
+																		<xsd:maxLength value="15"/>
+																	</xsd:restriction>
+																</xsd:simpleType>
+															</xsd:element>
+															<xsd:element name="codeOrganismeFinancement" minOccurs="0">
+																<xsd:annotation>
+																	<xsd:documentation>Code de l'organisme</xsd:documentation>
+																</xsd:annotation>
+																<xsd:simpleType>
+																	<xsd:restriction base="xsd:string">
+																		<xsd:minLength value="1"/>
+																		<xsd:maxLength value="15"/>
+																	</xsd:restriction>
+																</xsd:simpleType>
+															</xsd:element>
+															<xsd:element name="montantFinancement" type="xsd:decimal" minOccurs="0">
+																<xsd:annotation>
+																	<xsd:documentation>Montant Financement</xsd:documentation>
+																</xsd:annotation>
+															</xsd:element>
+															<xsd:element name="echeanceFinancement" type="dateType" minOccurs="0">
+																<xsd:annotation>
+																	<xsd:documentation>Date prevue de fin ?</xsd:documentation>
+																</xsd:annotation>
+															</xsd:element>
+														</xsd:sequence>
+													</xsd:complexType>
+												</xsd:element>
+												<xsd:element name="carteSalarie" minOccurs="0">
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:minLength value="1"/>
+															<xsd:maxLength value="20"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+												<xsd:element name="compteProjet" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>0 ou 1</xsd:documentation>
+													</xsd:annotation>
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:integer">
+															<xsd:minInclusive value="0"/>
+															<xsd:maxInclusive value="1"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:extension>
+									</xsd:complexContent>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="clientDonneurdOrdres" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>pour GAM, celui qui passe sa commande, PointP, ...</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:complexContent>
+										<xsd:extension base="partenaireType"/>
+									</xsd:complexContent>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="clientLivre" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Coordonnees de la livraison, obligatoires</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:complexContent>
+										<xsd:extension base="clientType">
+											<xsd:sequence minOccurs="0">
+												<xsd:element name="livraison" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Caracteristiques de la livraison</xsd:documentation>
+													</xsd:annotation>
+													<xsd:complexType>
+														<xsd:complexContent>
+															<xsd:extension base="livraisonType"/>
+														</xsd:complexContent>
+													</xsd:complexType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:extension>
+									</xsd:complexContent>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="clientFinal" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Avec les informations de livraison au client final</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:complexContent>
+										<xsd:extension base="partenaireType">
+											<xsd:sequence minOccurs="0">
+												<xsd:element name="numeroCommandeClientFinal">
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:minLength value="1"/>
+															<xsd:maxLength value="20"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+												<xsd:element name="priseDeRendezVous" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>OUI / NON</xsd:documentation>
+													</xsd:annotation>
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:enumeration value="Oui"/>
+															<xsd:enumeration value="Non"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+												<xsd:element name="rendezVous" type="livraisonType" minOccurs="0"/>
+											</xsd:sequence>
+										</xsd:extension>
+									</xsd:complexContent>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="clientChantier" type="clientType" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Coordonnees du chantier</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="dossierTechniqueEntete" type="cameleonEnteteType" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Tables ISCLCOM de Cameleon</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="infosAdresseSecondaire" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Si adresse secondaire renseignee</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="codePostalAdrSec">
+											<xsd:annotation>
+												<xsd:documentation>Code postal de l'adresse secondaire</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="12"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="villeAdrSec" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Ville de l'adresse secondaire</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="25"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="codePaysAdrSec" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Code pays de l'adresse secondaire</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="3"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="commentaire" type="commentaireType" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Commentaires d'en-tete de document</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="infosWeb" type="infosWebType" minOccurs="0"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="ligneDocument" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>Lignes de commande, contrat, ...</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="actionLigne" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Creation, Modification, Suppression</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:complexContent>
+										<xsd:extension base="actionType"/>
+									</xsd:complexContent>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="numeroLigneDocument">
+								<xsd:annotation>
+									<xsd:documentation>No de ligne de la commande</xsd:documentation>
+								</xsd:annotation>
+								<xsd:simpleType>
+									<xsd:restriction base="xsd:integer"/>
+								</xsd:simpleType>
+							</xsd:element>
+							<xsd:element name="article">
+								<xsd:annotation>
+									<xsd:documentation>References de l'article</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:complexContent>
+										<xsd:extension base="articleType">
+											<xsd:sequence minOccurs="0">
+												<xsd:element name="gencod" minOccurs="0">
+													<xsd:annotation>
+														<xsd:documentation>Code EAN</xsd:documentation>
+													</xsd:annotation>
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:minLength value="13"/>
+															<xsd:maxLength value="14"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+											</xsd:sequence>
+										</xsd:extension>
+									</xsd:complexContent>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="infosPromotionLigne" minOccurs="0">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="codePromotionAppliquee">
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="45"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="typePromotion" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Simple, Conditionnelle</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="3"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="libellePromotionAppliquee" minOccurs="0">
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:minLength value="1"/>
+													<xsd:maxLength value="45"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="infosStatutLigne" minOccurs="0">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="codeStatutLigne" type="xsd:string"/>
+										<xsd:element name="libelleStatutLigne" type="xsd:string"/>
+										<xsd:element name="dateStatutLigne" type="dateType" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>date de modification du statu de la ligne</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="infosDisposLigne" minOccurs="0">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="dateMADMagasin" type="dateType" minOccurs="0"/>
+										<xsd:element name="dateLivraison" type="dateType" minOccurs="0"/>
+										<xsd:element name="delaiReception" type="xsd:integer" minOccurs="0"/>
+										<xsd:element name="delaiOption" type="xsd:integer" minOccurs="0"/>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="valorisation" type="valorisationType" minOccurs="0" maxOccurs="unbounded">
+								<xsd:annotation>
+									<xsd:documentation>Valorisation, YC Transport, optionnel</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="dossierTechniqueLigne" type="xsd:string" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Tables ISCLLIG, ISCLDET, ISCLDT, ISCAVAAN, SCPC de Cameleon</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="litige" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>references a un litige</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="referenceLitige" type="xsd:string"/>
+										<xsd:element name="codeFournisseur" type="xsd:string" minOccurs="0"/>
+										<xsd:element name="numeroCommandeFrs" type="xsd:string" minOccurs="0"/>
+										<xsd:element name="numeroCommandeDO" type="xsd:string" minOccurs="0"/>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="descriptifProduit" type="xsd:string" minOccurs="0"/>
+							<xsd:element name="commentaire" type="commentaireType" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Commentaires de ligne</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="ligneMontants" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>Lignes de montant (K par K)</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="numeroLigneMontant">
+								<xsd:annotation>
+									<xsd:documentation>No de ligne de la commande</xsd:documentation>
+								</xsd:annotation>
+								<xsd:simpleType>
+									<xsd:restriction base="xsd:integer">
+										<xsd:minInclusive value="1"/>
+										<xsd:maxInclusive value="999"/>
+									</xsd:restriction>
+								</xsd:simpleType>
+							</xsd:element>
+							<xsd:element name="dateModification" type="dateType"/>
+							<xsd:element name="valorisation" type="valorisationType" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Valorisation, YC Transport, optionnel</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="motif" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Commentaires lies a la ligne de montant</xsd:documentation>
+								</xsd:annotation>
+								<xsd:simpleType>
+									<xsd:restriction base="xsd:string">
+										<xsd:minLength value="1"/>
+										<xsd:maxLength value="300"/>
+									</xsd:restriction>
+								</xsd:simpleType>
+							</xsd:element>
+							<xsd:element name="codeMotifResiliation" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation>Code motif de resiliation</xsd:documentation>
+								</xsd:annotation>
+								<xsd:simpleType>
+									<xsd:restriction base="xsd:string">
+										<xsd:minLength value="1"/>
+										<xsd:maxLength value="10"/>
+									</xsd:restriction>
+								</xsd:simpleType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="piedDocument">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="valorisation" type="valorisationType" minOccurs="0" maxOccurs="unbounded">
+								<xsd:annotation>
+									<xsd:documentation>Valorisation, YC Transport, optionnel</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element name="ecartsCotation" minOccurs="0" maxOccurs="unbounded">
+								<xsd:annotation>
+									<xsd:documentation>Ecarts de valorisation par le Vendeur ou le Service (K par K)</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="typeEcartCotation" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>V(endeur), S(ervice)</xsd:documentation>
+											</xsd:annotation>
+											<xsd:simpleType>
+												<xsd:restriction base="xsd:string">
+													<xsd:length value="1"/>
+													<xsd:enumeration value="V"/>
+													<xsd:enumeration value="S"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:element>
+										<xsd:element name="tauxEcart" type="xsd:decimal" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>% Ecart</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="montantEcart" type="xsd:decimal" minOccurs="0">
+											<xsd:annotation>
+												<xsd:documentation>Montant </xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="actionType">
+		<xsd:annotation>
+			<xsd:documentation>Modele pour les actions sur la facture</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="codeAction">
+				<xsd:annotation>
+					<xsd:documentation>CRE, MOD, SUP, ...</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="CRE"/>
+						<xsd:enumeration value="MOD"/>
+						<xsd:enumeration value="SUP"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="dateAction" type="dateType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="adresseType">
+		<xsd:annotation>
+			<xsd:documentation>Adresses type, telephones, ...</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="adresse1" minOccurs="0">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="55"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="adresse2" minOccurs="0">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="55"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="adresse3" minOccurs="0">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="55"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="adresse4" minOccurs="0">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="55"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="etage" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Etage</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:integer">
+						<xsd:minInclusive value="0"/>
+						<xsd:maxInclusive value="99"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="presenceAscenseur" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>0 ou 1</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:integer">
+						<xsd:enumeration value="0"/>
+						<xsd:enumeration value="1"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="interphone" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Presence d'un interphone (0 / 1)</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:integer">
+						<xsd:enumeration value="0"/>
+						<xsd:enumeration value="1"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="digiCode1" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>1er digicode</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="digiCode2" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>2eme digicode</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="codePostal">
+				<xsd:annotation>
+					<xsd:documentation>Code Postal, facutltatif</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="3"/>
+						<xsd:maxLength value="12"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="ville">
+				<xsd:annotation>
+					<xsd:documentation>Ville, Facultatif</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="35"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="district" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Canton, province, etat, ...</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="35"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="pays">
+				<xsd:annotation>
+					<xsd:documentation>Pays, (parametrage applicatif ensource)</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="3"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="geocodage" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Informations geocodage</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="X" type="xsd:decimal"/>
+						<xsd:element name="Y" type="xsd:decimal"/>
+						<xsd:element name="typeGeocodage" type="xsd:string" minOccurs="0"/>
+						<xsd:element name="scoreGeocodage" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:decimal">
+									<xsd:minInclusive value="0"/>
+									<xsd:maxInclusive value="1"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="codeIRIS" type="xsd:string" minOccurs="0"/>
+						<xsd:element name="codeTroncon" type="xsd:string" minOccurs="0"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="articleType">
+		<xsd:annotation>
+			<xsd:documentation>Article</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="codeArticle">
+				<xsd:annotation>
+					<xsd:documentation>Code de l'article</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="25"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="libelleArticle" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Designation de l'article</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string"/>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="quantite" type="xsd:decimal">
+				<xsd:annotation>
+					<xsd:documentation>Quantite, decimal</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="unite" default="UN">
+				<xsd:annotation>
+					<xsd:documentation>Unite dans laquelle la quantite est exprimee</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="10"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="puCatalHT" type="xsd:decimal" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Prix Unitaire Vente HT, Hors remise, hors promotion</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="puCatalTTC" type="xsd:decimal" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Prix Unitaire Vente TTC Hors remise, hors promotion</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="puVenteHT" type="xsd:decimal" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Prix Unitaire Vente Brut, apres promo  Hors Taxe</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="puVenteTTC" type="xsd:decimal" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Prix Unitaire Vente Brut apres promo TTC</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="puNetHT" type="xsd:decimal" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Prix Unitaire Vente Net avec promo et remises Hors Taxe</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="puNetTTC" type="xsd:decimal" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Prix Unitaire Vente Net avec promo et remises TTC</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="puAchatHT" type="xsd:decimal" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Prix Unitaire Achat (PMA), Ferrage, ..., Hors Taxe</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="criteres" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>Critere, Famille, ...</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="codeCritere" type="xsd:string">
+							<xsd:annotation>
+								<xsd:documentation>Famille, ...</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="valeurCritere" type="xsd:string">
+							<xsd:annotation>
+								<xsd:documentation>Valeur de la famille, ...</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="cameleonEnteteType">
+		<xsd:annotation>
+			<xsd:documentation>Modele pour les Donnees Techniques</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="isClCom">
+				<xsd:annotation>
+					<xsd:documentation>Entete de commande SCC</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="numCom">
+							<xsd:annotation>
+								<xsd:documentation>Numero de commande</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="25"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="typeCommande">
+							<xsd:annotation>
+								<xsd:documentation>Type de Commandes (C : Commande, D: Devis)</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string"/>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="etatCommande" default="" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>V : Valide, sinon, vide</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string"/>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="etatISIA" nillable="true" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>0: Dispo, 1: en modification, 2, en creation</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string"/>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="refClient">
+							<xsd:annotation>
+								<xsd:documentation>Reference du client</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="35"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="nomClient" nillable="true" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Nom du client</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string"/>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="refDevise" type="xsd:string"/>
+						<xsd:element name="refLangue" type="xsd:string"/>
+						<xsd:element name="montantCde" type="xsd:decimal">
+							<xsd:annotation>
+								<xsd:documentation>Montant total de la commande</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="commentCde" type="xsd:string" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Commentaire associe a la commande</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="modChifTarif" type="xsd:string">
+							<xsd:annotation>
+								<xsd:documentation>Mode de chiffrage</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="refReseau" type="xsd:string">
+							<xsd:annotation>
+								<xsd:documentation>Reference reseau en lien avec IsReseau</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="valide" type="xsd:string">
+							<xsd:annotation>
+								<xsd:documentation>Valididite de l'enregistrement : 0 = OK, 1 = supprime</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="clientType">
+		<xsd:annotation>
+			<xsd:documentation>Definition d'un intervenant, interne ou externe, </xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="codeNatureClient" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>1=PART, 2=PRO du BAT., 3=Autres PRO</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="25"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="enseigneCommerciale" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Nom de l'enseigne (Pyramide commerciale)</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="25"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="entiteCommerciale" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Nom de l'entite commerciale (Pyramide commerciale)</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="25"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="identifiant" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Si le site est reference dans une table, code du site, facultatif</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string"/>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="coordonnees" type="coordonneesType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Nom, Raison sociale, codes, ...</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="contact" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Contact</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="codeContact" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="10"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="coordonnees" type="coordonneesType" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Nom, Raison sociale, codes, ...</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="gerant" type="coordonneesType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Gerant, Directeur ou responsable</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="commentaireType">
+		<xsd:annotation>
+			<xsd:documentation>Zone commentaire, facultatif</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="libelle1Commentaire" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Texte libre</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="254"/>
+						<xsd:whiteSpace value="preserve"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="libelle2Commentaire" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Texte libre</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="254"/>
+						<xsd:whiteSpace value="preserve"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="libelle3Commentaire" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Texte libre</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="254"/>
+						<xsd:whiteSpace value="preserve"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="libelle4Commentaire" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Texte libre</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="254"/>
+						<xsd:whiteSpace value="preserve"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="dateCommentaire" type="dateType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Date</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="coordonneesType">
+		<xsd:annotation>
+			<xsd:documentation>Adresses type, telephones, ...</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="codePatronyme" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Code pour Civilite, forme juridique</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string"/>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="nom">
+				<xsd:annotation>
+					<xsd:documentation>Nom, Raison sociale, ... obligatoire</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="40"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="prenom" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Prenom, facultatif</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="35"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="dateNaissance" type="dateType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Date de naissance du "partenaire"</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="adresse" type="adresseType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Adresse, rue, ...</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="telephone" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Telephones, professionnel, portable ou Domicile</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="numeroTelPerso" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="20"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="numeroTelPro" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="20"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="numeroTelMobile" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="20"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="telecopie" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Numero de Fax, facultatif</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="numeroFaxPerso" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="20"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="numeroFaxPro" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="20"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="numeroFaxMobile" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="20"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="email" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Adresses de Messagerie, facultatif</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="adresseEmailPerso" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="100"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="adresseEmailPro" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="100"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="adresseEmailMobile" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="100"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="dateType">
+		<xsd:annotation>
+			<xsd:documentation>Modele pour les dates</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="annee">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:integer">
+						<xsd:minInclusive value="1000"/>
+						<xsd:maxInclusive value="2099"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="mois">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:integer">
+						<xsd:minInclusive value="1"/>
+						<xsd:maxInclusive value="12"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="jour">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:integer">
+						<xsd:minInclusive value="1"/>
+						<xsd:maxInclusive value="31"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="heure" minOccurs="0">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:integer">
+						<xsd:minInclusive value="0"/>
+						<xsd:maxInclusive value="23"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="minute" minOccurs="0">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:integer">
+						<xsd:minInclusive value="0"/>
+						<xsd:maxInclusive value="59"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="seconde" minOccurs="0">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:integer">
+						<xsd:minInclusive value="0"/>
+						<xsd:maxInclusive value="59"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="infosWebType">
+		<xsd:annotation>
+			<xsd:documentation>Modele pour les informations relatives au compte web</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="idWeb">
+				<xsd:annotation>
+					<xsd:documentation>identifiant du web</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string"/>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="dateCreation" type="dateType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>date de creation du compte web</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="dateDesactivation" type="dateType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>date de desactivation du compte web</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="dateDerniereConnexion" type="dateType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>date de derniere connexion au compte web</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="nombreConnexion" type="xsd:integer" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>nombre de connexions au compte web</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="dateDerniereModification" type="dateType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>date de derniere modification du compte web</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="magasinPrefere" type="xsd:integer" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>magasin prefere declare du compte web</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="livraisonType">
+		<xsd:annotation>
+			<xsd:documentation>Permet de definir les criteres de la livraison</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="dateDemandee" type="dateType">
+				<xsd:annotation>
+					<xsd:documentation>Date demandee de livraison</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="dateAuPlusTard" type="dateType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Date au plus tard de livraison</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="dateAuPlusTot" type="dateType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Date au plus tot de livraison</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="dateAuPlusTotTheorique" type="dateType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Date calculee, au plus tot de livraison</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="livraisonPartielle" type="xsd:boolean" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Oui / Non, pour le niveau ou l'on est</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="zoneStockageReceptrice" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Informations pour la plate-forme de reception - Client livre</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="codeZone" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Code de la zone de stockage</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="5"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="libelleZone">
+							<xsd:annotation>
+								<xsd:documentation>Designation de cette zone</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="25"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="codeTournee" minOccurs="0">
+				<xsd:complexType/>
+			</xsd:element>
+			<xsd:element name="transport" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Informations propres au mode d'acheminement</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="codeTransporteur" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Code de l'artisan Transporteur pour Export</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="25"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="codeTransport">
+							<xsd:annotation>
+								<xsd:documentation>Code du mode de transport (C)lient, (T)ransporteur</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:length value="1"/>
+									<xsd:enumeration value="C"/>
+									<xsd:enumeration value="T"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="libelleTransport" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Libelle du mode de transport</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="25"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="typePort" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Type de port</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="10"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="distance" type="xsd:integer" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Distance de l'etape</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="commentaire" type="commentaireType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Commentaires lies a la livraison</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="partenaireType">
+		<xsd:annotation>
+			<xsd:documentation>Definition d'un intervenant, interne ou externe, </xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="enseigneCommerciale" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Nom de l'enseigne (Pyramide commerciale)</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="25"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="entiteCommerciale" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Nom de l'entite commerciale (Pyramide commerciale)</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="25"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="identifiant" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Si le site est reference dans une table, code du site, facultatif</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string"/>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="coordonnees" type="coordonneesType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Nom, Raison sociale, codes, ...</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="contact" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Contact</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="codeContact" minOccurs="0">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="10"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="coordonnees" type="coordonneesType" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Nom, Raison sociale, codes, ...</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="gerant" type="coordonneesType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Gerant, Directeur ou responsable</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="reglementType">
+		<xsd:annotation>
+			<xsd:documentation>Modele pour les reglements</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="codeReglement">
+				<xsd:annotation>
+					<xsd:documentation>Code du reglement</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="15"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="libelleReglement" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Libelle du reglement</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="15"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="dateReglement" type="dateType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Date prevue d'echeance</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="valorisationType">
+		<xsd:annotation>
+			<xsd:documentation>Modele pour la valorisation</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="typeValorisation">
+				<xsd:annotation>
+					<xsd:documentation>Achat, Install, Prestation,Vente</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="Achat"/>
+						<xsd:enumeration value="Install"/>
+						<xsd:enumeration value="Vente"/>
+						<xsd:enumeration value="Prestation"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="montantHT" type="xsd:decimal" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Montant HTnet, remises deduites</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="remise" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>Remise optionnelle</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="montantHT" type="xsd:decimal">
+							<xsd:annotation>
+								<xsd:documentation>Montant HT de la remise</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="montantTTC" type="xsd:decimal" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Montant TTC de la Remise</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="montantRemise" type="xsd:decimal" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Montant TTC de la Remise</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="typeRemise" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Type de remise</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="10"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="tauxRemise" type="xsd:decimal">
+							<xsd:annotation>
+								<xsd:documentation>Taux de la remise, Decimal</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="promotion" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>promotion</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="montantHT" type="xsd:decimal">
+							<xsd:annotation>
+								<xsd:documentation>Montant HT de la promotion</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="montantTTC" type="xsd:decimal">
+							<xsd:annotation>
+								<xsd:documentation>Montant TTC de la promotion</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="typePromotion" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Type de promotion</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="10"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="codePromotion" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Code de promotion</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="10"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="libellePromotion" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Libelle de promotion</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:minLength value="1"/>
+									<xsd:maxLength value="50"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="tauxPromotion" type="xsd:decimal">
+							<xsd:annotation>
+								<xsd:documentation>Taux de la promotion, Decimal</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="escompte" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Excompte optionnelle</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="tauxEscompte">
+							<xsd:annotation>
+								<xsd:documentation>Taux d'escompte</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:decimal">
+									<xsd:maxInclusive value="100"/>
+									<xsd:minInclusive value="0"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="montantEscompte" type="xsd:decimal">
+							<xsd:annotation>
+								<xsd:documentation>Montant escompte</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="tva" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>tva Totales</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="montantHT" type="xsd:decimal" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Montant HTnet, concerne par la TVA</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="tauxTVA" default="19.6">
+							<xsd:annotation>
+								<xsd:documentation>Taux de tva (decimal)</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:decimal">
+									<xsd:minInclusive value="0"/>
+									<xsd:maxInclusive value="100"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="montantTVA" type="xsd:decimal">
+							<xsd:annotation>
+								<xsd:documentation>Montant tva</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="taxes" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>Taxes diverses</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="montantHT" type="xsd:decimal" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Montant HTnet, concerne par la taxe</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="tauxTaxe" default="19.6">
+							<xsd:annotation>
+								<xsd:documentation>Taux (decimal)</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:decimal">
+									<xsd:minInclusive value="0"/>
+									<xsd:maxInclusive value="100"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="montantTaxes" type="xsd:decimal">
+							<xsd:annotation>
+								<xsd:documentation>Montant Taxe</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="montantTTC" type="xsd:decimal" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Montant ht Produits</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="acompteRegle" type="xsd:decimal" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Accompte deja regle</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

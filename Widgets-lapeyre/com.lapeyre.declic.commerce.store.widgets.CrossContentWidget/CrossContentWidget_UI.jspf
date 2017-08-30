@@ -1,0 +1,64 @@
+<c:if test="${xcontentsSize > 0}">
+	<div class="row product-section" id="advicesSection">
+
+		<div class="col s12 advices">
+			<c:choose>
+				<c:when test="${isPageEdito eq 'true'}">
+					<fmt:message key="relatedEditorialContentBlockTitle" bundle="${widgetText}" var="crossContentTitle"/>
+				</c:when>
+				<c:otherwise>
+					<fmt:message key="ficheProduitStdNavigationSection5Label" bundle="${widgetText}" var="crossContentTitle"/>
+				</c:otherwise>
+			</c:choose>
+			<c:set var="maxPerRow" value="1" />
+				<h2 class="titleBlock advices-title" role="button" tabindex="0" aria-describedby="category_widget_acce_desc">
+					<span>${crossContentTitle}</span>
+				</h2>
+				<div class="advices-content container">
+					<c:choose>
+						<c:when test="${xcontentsSize > maxPerRow}">
+							<div id="contentRecommendationWidget_${widgetSuffix}">
+								<div class="content row">
+									<ul id="advicesContainer" data-dojo-attach-point="ul" style="left: 0%; -webkit-transition: 500ms; transition: 500ms;" class="col s12 m10 offset-m1">
+						</c:when>
+						<c:otherwise>
+							<div class="row linkContainer collapsOnMobile">
+								<a name="anchor2"></a>
+									<span id="category_widget_acce_desc" class="spanacce"><fmt:message key="LAP011_EDITO_CARROUSEL_COLLAPSE" bundle="${widgetText}" /></span>
+									<div class="content">
+						</c:otherwise>
+					</c:choose>
+					
+					<c:forEach var="xcontent" items="${xcontents}" varS	tatus="statut">
+								<c:if test="${xcontentsSize > maxPerRow}">
+									<li>
+								</c:if>
+								<% //on ne peut faire un c:set ou c:param sinon on perd le type 
+								request.setAttribute("editoElement",pageContext.getAttribute("xcontent"));
+								%>
+							 	<c:import url="/Widgets-lapeyre/Common/Editorial/teaserView_UI.jsp">
+							 		<c:param name="format" value="${param.format}" />
+							 	</c:import>
+								<c:if test="${xcontentsSize > maxPerRow}">
+									</li>
+								</c:if>
+					</c:forEach>
+					
+					<c:choose>
+						<c:when test="${xcontentsSize > maxPerRow}">
+									</ul>
+								</div>
+							</div>
+						</c:when>
+						<c:otherwise>
+									</div>
+							</div>
+						</c:otherwise>
+					</c:choose>
+				</div>
+				<c:if test="${isPageEdito eq 'true'}">
+					<hr class="horizontalDivider" />
+				</c:if>
+		</div>
+	</div>
+</c:if>

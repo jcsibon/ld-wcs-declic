@@ -1,0 +1,93 @@
+<%-- Schema.org microdata management --%>
+
+<c:set var="MICRO_DATA_ORGANIZATION" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_ORGANIZATION" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_STORE" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_STORE" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_OPENINGHOURS" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_OPENINGHOURS" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_VIDEO" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_VIDEO" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_PRODUCT" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_PRODUCT" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_BRAND" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_BRAND" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_OFFER" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_OFFER" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_MANUFACTURER" scope="request">
+	<fmt:message key="MICRO_DATA_MANUFACTURER" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_INSTOCK" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_INSTOCK" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_PREORDER" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_PREORDER" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_OFFER" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_OFFER" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_INSTOREONLY" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_INSTOREONLY" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_ARTICLE" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_ARTICLE" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_PERSON" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_PERSON" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_BREADCRUMBLIST" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_BREADCRUMBLIST" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_LISTITEM" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_LISTITEM" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_POSTALADDRESS" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_POSTALADDRESS" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_COUNTRY" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_COUNTRY" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_AGGREGATERATING" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_AGGREGATERATING" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_NEW_CONDITION" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_NEW_CONDITION" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_PROPERTYVALUE" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_PROPERTYVALUE" bundle="${widgetText}" />
+</c:set>
+<c:set var="MICRO_DATA_STRUCTUREDVALUE" scope="request">
+	${env_schemeToUse}://<fmt:message key="MICRO_DATA_STRUCTUREDVALUE" bundle="${widgetText}" />
+</c:set>
+
+<jsp:useBean id="MICRO_DATA_DAYS" class="java.util.HashMap" scope="request"/>
+<c:set target="${MICRO_DATA_DAYS}" property="LUNDI">
+	http://<fmt:message key="MICRO_DATA_LUNDI" bundle="${widgetText}" />
+</c:set>
+<c:set target="${MICRO_DATA_DAYS}" property="MARDI">
+	http://<fmt:message key="MICRO_DATA_MARDI" bundle="${widgetText}" />
+</c:set>
+<c:set target="${MICRO_DATA_DAYS}" property="MERCREDI">
+	http://<fmt:message key="MICRO_DATA_MERCREDI" bundle="${widgetText}" />
+</c:set>
+<c:set target="${MICRO_DATA_DAYS}" property="JEUDI">
+	http://<fmt:message key="MICRO_DATA_JEUDI" bundle="${widgetText}" />
+</c:set>
+<c:set target="${MICRO_DATA_DAYS}" property="VENDREDI">
+	http://<fmt:message key="MICRO_DATA_VENDREDI" bundle="${widgetText}" />
+</c:set>
+<c:set target="${MICRO_DATA_DAYS}" property="SAMEDI">
+	http://<fmt:message key="MICRO_DATA_SAMEDI" bundle="${widgetText}" />
+</c:set>
+<c:set target="${MICRO_DATA_DAYS}" property="DIMANCHE">
+	http://<fmt:message key="MICRO_DATA_DIMANCHE" bundle="${widgetText}" />
+</c:set>
+
+<jsp:useBean id="MICRO_DATA_TODAY" class="java.util.Date" scope="request"/>

@@ -1,0 +1,65 @@
+.is_clickable {
+  cursor: pointer;
+}
+.nstSlider {
+  cursor: pointer;
+  position: relative;
+  width: 80%;
+  padding: 0px 0px 0px 10px;
+  margin: 20px auto;
+  background: #dbdbdb;
+  display: block;
+  font-family: Arial, sans-serif;
+  height: 3px;
+}
+
+.nstSlider .rightGrip,
+.nstSlider .leftGrip {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: -10px;
+    border: 1px solid #dbdbdb;
+    border-radius: 20px;
+    background: white;
+}
+
+.nstSlider .rightGrip{
+	margin-left: 10px;
+}
+
+.nstSlider .rightGrip:hover,
+.nstSlider .leftGrip:hover {
+	background-position: -35px -60px;
+}
+.nstSlider .rightGripValue,
+.nstSlider .leftGripValue{
+	position:absolute;
+	padding: 0px 0px 0px 2px;
+	font-family: Arial, sans-serif;
+	font-size: 9px;
+	text-align: center;
+	width: 50px;
+	top: 35px;
+}
+
+.nstSlider .leftGripValue{
+	margin:-6px -17px;
+}
+
+.nstSlider .rightGripValue{
+	margin:-6px -18px;
+}
+
+@media (max-width:800px){
+	
+	.nstSlider .leftGripValue{
+		margin:-70% -170%;
+	}
+	
+	.nstSlider .rightGripValue{
+		margin:-70% -90%;
+	}
+}
+
+

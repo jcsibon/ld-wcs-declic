@@ -1,0 +1,134 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2007, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<!-- BEGIN TunnelLogonDisplay_UI.jspf -->
+<%@ page trimDirectiveWhitespaces="true" %>
+<link rel="stylesheet" href="${jspStoreImgDir}UserAreaDeclic/css/style.css" type="text/css" />
+
+<script>
+$() .ready( function() {
+	// validate signup form on keyup and submit
+	$("#Logon")
+			.validate(
+					{
+						rules : {
+							logonId : {
+								required : true,
+								email : true,
+							},
+							logonPassword : {
+								required: "#clientoui:checked",
+							}
+						},
+						messages : {
+							logonId : {
+								required : "<fmt:message bundle='${storeText}' key='missingLoginErrorMessage' />",
+								email : "<fmt:message bundle='${storeText}' key='InvalidLoginErrorMessage' />",
+								maxlength : "<fmt:message bundle='${storeText}' key='maxLengthLoginErrorMessage' />"
+							},
+							logonPassword : {
+								required: "<fmt:message bundle='${storeText}' key='missingPasswordErrorMessage' />",
+							}
+						},
+						errorPlacement : function(error,
+								element) {
+							if (element.is("select")) {
+								//For select inputs, insert at the parent
+								error.insertAfter(element
+										.parent());
+							} else if (element.attr("type") == "radio") {
+								//for radio button, insert at the end of the grandparent
+								error.appendTo(element
+										.parent().parent());
+							} else {
+								error.insertAfter(element);
+							}
+						}
+					});
+});
+</script>
+
+<wcf:url var="orderMove" value="OrderItemMove" type="Ajax">		
+	<wcf:param name="toOrderId" value="."/>
+	<wcf:param name="continue" value="1"/>
+	<wcf:param name="createIfEmpty" value="1"/>
+	<wcf:param name="calculationUsageId" value="-1"/>
+	<wcf:param name="updatePrices" value="0"/>
+	<wcf:param name="deleteIfEmpty" value="*"/>
+	<wcf:param name="deleteIfNotEmpty" value="*"/>
+	<wcf:param name="fromOrderId" value="**"/>
+</wcf:url>
+	
+<wcf:url var="ForgetPasswordURL" value="ResetPasswordGuestErrorView">
+	<wcf:param name="langId" value="${langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	<wcf:param name="state" value="forgetpassword" />
+</wcf:url>
+
+<wcf:url var="MyAccountURL" value="AjaxLogonForm" type="Ajax">
+	<wcf:param name="langId" value="${WCParam.langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+</wcf:url>
+<wcf:url var="SynchroUrl" value="UserSynchronisationForm">
+	<wcf:param name="langId" value="${WCParam.langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	<wcf:param name="returnURL" value="${orderMove}&amp;URL=OrderCalculate%3FURL=${tunnelShippingLink}&calculationUsageId=-1&calculationUsageId=-2&calculationUsageId=-7" />
+</wcf:url>
+<wcf:url var="UserRegistrationFormUrl" value="UserRegistrationForm">
+	<wcf:param name="langId" value="${WCParam.langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	<wcf:param name="returnURL" value="${orderMove}&amp;URL=OrderCalculate%3FURL=${tunnelShippingLink}&calculationUsageId=-1&calculationUsageId=-2&calculationUsageId=-7" />
+</wcf:url>
+	
+<div class="row tunnelSignInPage">
+	<div class="sign_in_registration logon_registration" id="WC_UserRegistrationAddForm_div_1">
+		<div class="title" id="WC_UserRegistrationAddForm_div_2">
+			<p><fmt:message bundle="${storeText}" key="identificationPageIntroMessage"/></p>
+		</div>
+		<form name="Logon" method="post" action="RedirectView?URL=${UserRegistrationFormUrl}" id="Logon">
+			<input type="hidden" name="storeId" value="<c:out value="${WCParam.storeId}"/>" id="WC_AccountDisplay_FormInput_storeId_In_Logon_1"/>
+			<input type="hidden" name="catalogId" value="<c:out value="${WCParam.catalogId}"/>" id="WC_AccountDisplay_FormInput_catalogId_In_Logon_1"/>
+			<input type="hidden" name="reLogonURL" value="LogonForm" id="WC_AccountDisplay_FormInput_reLogonURL_In_Logon_1"/>
+			<c:choose>
+				<c:when test="${(!empty WCParam.logonId) && (!empty WCParam.validationCode) && (empty errorMessage)}">
+				        <input type="hidden" name="myAcctMain" value="<c:out value="1"/>"/>
+				</c:when>
+				<c:otherwise>
+						<input type="hidden" name="myAcctMain" value="<c:out value="${WCParam.myAcctMain}"/>"/>
+				</c:otherwise>
+			</c:choose>
+			<input type="hidden" name="fromOrderId" value="*" id="WC_AccountDisplay_FormInput_fromOrderId_In_Logon_1"/>
+			<input type="hidden" name="toOrderId" value="." id="WC_AccountDisplay_FormInput_toOrderId_In_Logon_1"/>
+			<input type="hidden" name="deleteIfEmpty" value="*" id="WC_AccountDisplay_FormInput_deleteIfEmpty_In_Logon_1" />
+			<input type="hidden" name="continue" value="1" id="WC_AccountDisplay_FormInput_continue_In_Logon_1" />
+			<input type="hidden" name="createIfEmpty" value="1" id="WC_AccountDisplay_FormInput_createIfEmpty_In_Logon_1" />
+			<input type="hidden" name="calculationUsageId" value="-1" id="WC_AccountDisplay_FormInput_calculationUsageId_In_Logon_1" />
+			<input type="hidden" name="updatePrices" value="0" id="WC_AccountDisplay_FormInput_updatePrices_In_Logon_1"/>
+			<input type="hidden" name="errorViewName" value="AjaxOrderItemDisplayView" id="WC_AccountDisplay_FormInput_errorViewName_In_Logon_1"/>                                                 
+			<input type="hidden" name="previousPage" value="logon" id="WC_AccountDisplay_FormInput_previousPage_In_Logon_1"/>
+
+			<input type="hidden" name="URL" value="${orderMove}&amp;URL=OrderCalculate%3FURL=${tunnelShippingLink}&calculationUsageId=-1&calculationUsageId=-2&calculationUsageId=-7" id="WC_AccountDisplay_FormInput_URL_In_Logon_3" />
+			
+			<%@ include file="../../UserAreaDeclic/AccountSection/LogonSubsection/LogonForm.jsp" %>
+		</form>
+		<br>
+		<form id="GoToSynchroForm" name="GoToSynchroForm" action="RedirectView?URL=${SynchroUrl}" method="POST">
+			<input type="hidden" name="logonId" value="${WCParam.logonId}" />
+		</form>
+	</div>
+</div>
+<!-- END TunnelLogonDisplay_UI.jspf -->

@@ -1,0 +1,470 @@
+<message type="priceImport">
+	<header>
+		<sender>SAS</sender><SASid>kok</SASid>
+		<extractDate>2014-10-14T09:34:54.264</extractDate>
+		<targetCatalog>current</targetCatalog>
+		<nbDataEntries>1</nbDataEntries>
+		<credentials>
+			<login>importadmin</login>
+			<password>passw0rd</password>
+		</credentials>
+	</header>
+	<data>
+		<itemPriceList>
+
+			<sku>1197150</sku>
+
+			<priceList>
+
+				<price>
+
+					<part>
+
+						<startDate>2016-06-22T00:00:00.000</startDate>
+
+						<endDate>2016-06-22T07:59:59.999</endDate>
+
+						<standardPrice>
+
+							<unitPriceWithVAT currency="EUR">2992</unitPriceWithVAT>
+
+							<vatPercentage>20</vatPercentage>
+
+							<codeTarif>standartPart1</codeTarif>
+
+							<ecoPartList>
+
+								<ecoPart>
+
+									<typeEcoPart>41</typeEcoPart>
+
+									<ecoPartLabel>Eco participation pour les déchets électriques et électronique</ecoPartLabel>
+
+									<ecoAmountWithVAT currency="EUR">7</ecoAmountWithVAT>
+
+									<ecoItemCode>1128050</ecoItemCode>
+
+								</ecoPart>
+
+							</ecoPartList>
+
+						</standardPrice>
+
+					</part>
+
+					<pro>
+
+						<startDate>2016-06-22T00:00:00.000</startDate>
+
+						<endDate>2016-06-22T07:59:59.999</endDate>
+
+						<standardPrice>
+
+							<unitPriceWithVAT currency="EUR">2692.8</unitPriceWithVAT>
+
+							<vatPercentage>20</vatPercentage>
+
+							<codeTarif>standartPro1</codeTarif>
+
+							<ecoPartList>
+
+								<ecoPart>
+
+									<typeEcoPart>41</typeEcoPart>
+
+									<ecoPartLabel>Eco participation pour les déchets électriques et électronique</ecoPartLabel>
+
+									<ecoAmountWithVAT currency="EUR">7</ecoAmountWithVAT>
+
+									<ecoItemCode>1128050</ecoItemCode>
+
+								</ecoPart>
+
+							</ecoPartList>
+
+						</standardPrice>
+
+					</pro>
+
+				</price>
+
+				<price>
+
+					<part>
+
+						<startDate>2016-06-22T08:00:00.000</startDate>
+
+						<endDate>2016-08-02T23:59:59.000</endDate>
+
+						<standardPrice>
+
+							<unitPriceWithVAT currency="EUR">2992</unitPriceWithVAT>
+
+							<vatPercentage>20</vatPercentage>
+
+							<codeTarif>standartPart2</codeTarif>
+
+							<ecoPartList>
+
+								<ecoPart>
+
+									<typeEcoPart>41</typeEcoPart>
+
+									<ecoPartLabel>Eco participation pour les déchets électriques et électronique</ecoPartLabel>
+
+									<ecoAmountWithVAT currency="EUR">7</ecoAmountWithVAT>
+
+									<ecoItemCode>1128050</ecoItemCode>
+
+								</ecoPart>
+
+							</ecoPartList>
+
+						</standardPrice>
+
+						<discountPriceList>
+
+							<discountPrice>
+
+								<unitPriceWithVAT currency="EUR">2094.4</unitPriceWithVAT>
+
+								<vatPercentage>20</vatPercentage>
+
+								<codeTarif>discounttPart2</codeTarif>
+
+								<ecoPartList>
+
+									<ecoPart>
+
+										<typeEcoPart>41</typeEcoPart>
+
+										<ecoPartLabel>Eco participation pour les déchets électriques et électronique</ecoPartLabel>
+
+										<ecoAmountWithVAT currency="EUR">7</ecoAmountWithVAT>
+
+										<ecoItemCode>1128050</ecoItemCode>
+
+									</ecoPart>
+
+								</ecoPartList>
+
+							</discountPrice>
+
+						</discountPriceList>
+
+					</part>
+
+					<pro>
+
+						<startDate>2016-06-22T08:00:00.000</startDate>
+
+						<endDate>2016-08-02T23:59:59.000</endDate>
+
+						<standardPrice>
+
+							<unitPriceWithVAT currency="EUR">2692.8</unitPriceWithVAT>
+
+							<vatPercentage>20</vatPercentage>
+
+							<codeTarif>standartPro2</codeTarif>
+
+							<ecoPartList>
+
+								<ecoPart>
+
+									<typeEcoPart>41</typeEcoPart>
+
+									<ecoPartLabel>Eco participation pour les déchets électriques et électronique</ecoPartLabel>
+
+									<ecoAmountWithVAT currency="EUR">7</ecoAmountWithVAT>
+
+									<ecoItemCode>1128050</ecoItemCode>
+
+								</ecoPart>
+
+							</ecoPartList>
+
+						</standardPrice>
+
+						<discountPriceList>
+
+							<discountPrice>
+
+								<unitPriceWithVAT currency="EUR">1884.96</unitPriceWithVAT>
+
+								<vatPercentage>20</vatPercentage>
+
+								<codeTarif>discountPro2</codeTarif>
+
+								<ecoPartList>
+
+									<ecoPart>
+
+										<typeEcoPart>41</typeEcoPart>
+
+										<ecoPartLabel>Eco participation pour les déchets électriques et électronique</ecoPartLabel>
+
+										<ecoAmountWithVAT currency="EUR">7</ecoAmountWithVAT>
+
+										<ecoItemCode>1128050</ecoItemCode>
+
+									</ecoPart>
+
+								</ecoPartList>
+
+							</discountPrice>
+
+						</discountPriceList>
+
+					</pro>
+
+				</price>
+
+				<price>
+
+					<part>
+
+						<startDate>2016-08-02T23:59:59.001</startDate>
+
+						<endDate>2017-08-02T23:59:59.000</endDate>
+
+						<standardPrice>
+
+							<unitPriceWithVAT currency="EUR">2992</unitPriceWithVAT>
+
+							<vatPercentage>20</vatPercentage>
+
+							<codeTarif>standartPart3</codeTarif>
+
+							<ecoPartList>
+
+								<ecoPart>
+
+									<typeEcoPart>41</typeEcoPart>
+
+									<ecoPartLabel>Eco participation pour les déchets électriques et électronique</ecoPartLabel>
+
+									<ecoAmountWithVAT currency="EUR">7</ecoAmountWithVAT>
+
+									<ecoItemCode>1128050</ecoItemCode>
+
+								</ecoPart>
+
+							</ecoPartList>
+
+						</standardPrice>
+
+					</part>
+
+					<pro>
+
+						<startDate>2016-08-02T23:59:59.001</startDate>
+
+						<endDate>2017-08-02T23:59:59.000</endDate>
+
+						<standardPrice>
+
+							<unitPriceWithVAT currency="EUR">2692.8</unitPriceWithVAT>
+
+							<vatPercentage>20</vatPercentage>
+
+							<codeTarif>standartPro3</codeTarif>
+
+							<ecoPartList>
+
+								<ecoPart>
+
+									<typeEcoPart>41</typeEcoPart>
+
+									<ecoPartLabel>Eco participation pour les déchets électriques et électronique</ecoPartLabel>
+
+									<ecoAmountWithVAT currency="EUR">7</ecoAmountWithVAT>
+
+									<ecoItemCode>1128050</ecoItemCode>
+
+								</ecoPart>
+
+							</ecoPartList>
+
+						</standardPrice>
+
+					</pro>
+
+				</price>
+				<price>
+
+					<part>
+
+						<startDate>2016-06-22T00:00:00.000</startDate>
+
+						<endDate>2016-06-22T07:59:59.999</endDate>
+
+						<standardPrice>
+
+							<unitPriceWithVAT currency="EUR">1500</unitPriceWithVAT>
+
+							<vatPercentage>20</vatPercentage>
+
+							<codeTarif>standartPart4</codeTarif>
+
+							<ecoPartList>
+
+								<ecoPart>
+
+									<typeEcoPart>41</typeEcoPart>
+
+									<ecoPartLabel>Eco participation pour les déchets électriques et électronique</ecoPartLabel>
+
+									<ecoAmountWithVAT currency="EUR">7</ecoAmountWithVAT>
+
+									<ecoItemCode>1128050</ecoItemCode>
+
+								</ecoPart>
+
+							</ecoPartList>
+
+						</standardPrice>
+
+					</part>
+
+					<pro>
+
+						<startDate>2016-06-10T00:00:00.000</startDate>
+
+						<endDate>2016-06-22T07:59:59.999</endDate>
+
+						<standardPrice>
+
+							<unitPriceWithVAT currency="EUR">1000.8</unitPriceWithVAT>
+
+							<vatPercentage>20</vatPercentage>
+
+							<codeTarif>standartPro4</codeTarif>
+
+							<ecoPartList>
+
+								<ecoPart>
+
+									<typeEcoPart>41</typeEcoPart>
+
+									<ecoPartLabel>Eco participation pour les déchets électriques et électronique</ecoPartLabel>
+
+									<ecoAmountWithVAT currency="EUR">7</ecoAmountWithVAT>
+
+									<ecoItemCode>1128050</ecoItemCode>
+
+								</ecoPart>
+
+							</ecoPartList>
+
+						</standardPrice>
+
+					</pro>
+
+				</price>
+				<price>
+
+					<part>
+
+						<startDate>2016-06-22T00:00:00.000</startDate>
+
+						<endDate>2016-06-29T07:59:59.999</endDate>
+
+						<standardPrice>
+
+							<unitPriceWithVAT currency="EUR">1000</unitPriceWithVAT>
+
+							<vatPercentage>20</vatPercentage>
+
+							<codeTarif>standartPart5</codeTarif>
+
+							<ecoPartList>
+
+								<ecoPart>
+
+									<typeEcoPart>41</typeEcoPart>
+
+									<ecoPartLabel>Eco participation pour les déchets électriques et électronique</ecoPartLabel>
+
+									<ecoAmountWithVAT currency="EUR">7</ecoAmountWithVAT>
+
+									<ecoItemCode>1128050</ecoItemCode>
+
+								</ecoPart>
+
+							</ecoPartList>
+
+						</standardPrice>
+						<discountPriceList>
+
+							<discountPrice>
+
+								<unitPriceWithVAT currency="EUR">988</unitPriceWithVAT>
+
+								<vatPercentage>20</vatPercentage>
+
+								<codeTarif>discountPart5</codeTarif>
+
+								<ecoPartList>
+
+									<ecoPart>
+
+										<typeEcoPart>41</typeEcoPart>
+
+										<ecoPartLabel>Eco participation pour les déchets électriques et électronique</ecoPartLabel>
+
+										<ecoAmountWithVAT currency="EUR">7</ecoAmountWithVAT>
+
+										<ecoItemCode>1128054</ecoItemCode>
+
+									</ecoPart>
+
+								</ecoPartList>
+
+							</discountPrice>
+
+						</discountPriceList>
+
+					</part>
+
+					<pro>
+
+						<startDate>2016-06-10T00:00:00.000</startDate>
+
+						<endDate>2016-06-22T07:59:59.999</endDate>
+
+						<standardPrice>
+
+							<unitPriceWithVAT currency="EUR">999</unitPriceWithVAT>
+
+							<vatPercentage>20</vatPercentage>
+
+							<codeTarif>standartPro5</codeTarif>
+
+							<ecoPartList>
+
+								<ecoPart>
+
+									<typeEcoPart>41</typeEcoPart>
+
+									<ecoPartLabel>Eco participation pour les déchets électriques et électronique</ecoPartLabel>
+
+									<ecoAmountWithVAT currency="EUR">7</ecoAmountWithVAT>
+
+									<ecoItemCode>1128050</ecoItemCode>
+
+								</ecoPart>
+
+							</ecoPartList>
+
+						</standardPrice>
+
+					</pro>
+
+				</price>
+
+			</priceList>
+
+		</itemPriceList>
+	</data>		
+</message>

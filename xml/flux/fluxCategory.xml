@@ -1,0 +1,39 @@
+<message type="categoryImport">
+	<header>
+		<sender>SAS</sender>
+		<SASid>sas id </SASid>
+		<extractDate>2014-11-20T09:34:54.00</extractDate>
+		<targetCatalog>current</targetCatalog>
+		<nbDataEntries>2</nbDataEntries>
+		<credentials>
+			<login>importadmin</login>
+			<password>passw0rd</password>
+		</credentials>
+	</header>
+	<data>
+	
+		<!-- niveau 1: Exterieur/Auvent et marquise -->
+		<category>
+			<action>update</action>
+			<identifier>CATALOGUE-CUISINE</identifier>
+			<familyAsUniverse>false</familyAsUniverse>
+			<published locale="fr">true</published>
+			<parentIdentifier></parentIdentifier>
+			<label locale="fr"><![CDATA[Cuisine]]></label>
+			<shortDesc locale="fr"><![CDATA[]]></shortDesc>
+			<longDesc locale="fr"><![CDATA[Un choix infini de cuisines... tous les styles, plus de 150 finitions de meubles, des centaines de plans de travail, d'accessoires et de carrelages de cuisine.]]></longDesc>
+			<keyword locale="fr"><![CDATA[cuisine,électroménager,évier]]></keyword>
+			<imageThumbnail locale="fr"><![CDATA[/thumbnail/CATALOGUE-CUISINE.jpg]]></imageThumbnail>
+			<imageFull locale="fr"><![CDATA[/standardMain/CATALOGUE-CUISINE.jpg]]></imageFull>
+			<idXiti locale="fr">0100</idXiti>
+			<seo>
+				<urlKeyword locale="fr">catalogue-cuisine</urlKeyword>
+				<pageTitle locale="fr"><![CDATA[Cuisines]]></pageTitle>
+				<metaDesc locale="fr"><![CDATA[Un choix infini de cuisines... tous les styles, plus de 150 finitions de meubles, des centaines de plans de travail, d'accessoires et de carrelages de cuisine.]]></metaDesc>
+				<metaKeyword locale="fr"><![CDATA[cuisine,électroménager,évier]]></metaKeyword>
+				<imageAltText locale="fr"><![CDATA[cuisine]]></imageAltText>
+			</seo>
+		</category>
+		
+	</data>
+</message>

@@ -1,0 +1,103 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<%-- START ShopperActions_UI.jspf --%>
+<c:if test="${!empty catalogEntryID}">
+
+	<c:set var="mobileHiddenClass" value="${param.inQuickInfo ? '' : 'mobile-hidden' }" />
+
+	<div class="shopperActions">
+		
+		<%@ include file="/Widgets/Common/RangePricing/RangePricing.jspf" %>
+				
+		<c:choose>
+			<c:when test="${productAvailable eq 'true'}"> 
+			
+				<div class="row">
+					<div class="col s10 l6 quantity_section" id="qtySurface_<c:out value='${productId}'/>"></div> 
+				</div>
+				<div class="row">
+					<div class="col s5 m6 l5 quantity_section noselect">
+						<c:choose>
+							<c:when test="${productType != CATALOGUE_PAPIER_PRODUCT}">
+								<label for="quantity_<c:out value='${productId}'/>" class="header"><fmt:message key="PD_QTY" bundle="${widgetText}"/></label>
+								<div class="qty_controls_container">
+									<span class="qtyButton leftPosition quantity-disabled" id="qtyLeftBtn" onclick="javascript:var quantityInput = document.getElementById('quantity_<c:out value='${productId}'/>'); if(quantityInput != null) {var curQty = parseInt(quantityInput.value); if(curQty > 1) {quantityInput.value = curQty - 1;QuickInfoJS.updateSurface(<c:out value='${productId}'/>);QuickInfoJS.updateQuantityMinusButton(<c:out value='${productId}'/>);timer.reset(function(){productDisplayJS.notifyQuantityChange(quantityInput.value,<c:out value='${productId}'/>);}, 500);}}">-</span>
+									<input onpaste="return false;"
+									       onkeypress="return checkNumericInput(event);"
+									 	   name="quantity_<c:out value='${productId}'/>" id="quantity_<c:out value='${productId}'/>" type="text" class="product-quantity-input" value="1" onchange="javascript:QuickInfoJS.updateQuantityMinusButton(<c:out value='${productId}'/>);QuickInfoJS.updateSurface(<c:out value='${productId}'/>);productDisplayJS.notifyQuantityChange(this.value,<c:out value='${productId}'/>);">
+									<span class="qtyButton rightPosition" onclick="javascript:var quantityInput = document.getElementById('quantity_<c:out value='${productId}'/>'); if(quantityInput != null) {var curQty = parseInt(quantityInput.value);curQty = isNaN(curQty) ? 0 : curQty;quantityInput.value = curQty + 1;QuickInfoJS.updateSurface(<c:out value='${productId}'/>);QuickInfoJS.updateQuantityMinusButton(<c:out value='${productId}'/>);timer.reset(function(){productDisplayJS.notifyQuantityChange(quantityInput.value,<c:out value='${productId}'/>);}, 500);}">+</span>
+								</div>
+							</c:when>
+							<c:otherwise>
+								<input onpaste="return false;"
+								       onkeypress="return checkNumericInput(event);" 
+								name="quantity_<c:out value='${productId}'/>" id="quantity_<c:out value='${productId}'/>" type="hidden" class="product-quantity-input" value="1">
+							</c:otherwise>
+						</c:choose>
+					</div>
+				</div>
+			</c:when>
+			<c:otherwise>
+				<div class="ctaContainer ${mobileHiddenClass}">
+					<div class="button orange disabled">
+						<div class="button_text"><fmt:message key="PD_UNAVAILABLE" bundle="${widgetText}"/></div>
+					</div>																	
+				</div>
+			</c:otherwise>
+		</c:choose>	
+		
+		<div class="row shopperactions-row">
+			<c:if test="${productAvailable eq 'true'}">
+				<%-- Wish list button --%>
+				<div class="col s3 m3">
+					<%out.flush();%>
+					<c:if test="${productType != CATALOGUE_PAPIER_PRODUCT}">
+						<c:import url = "/Widgets-lapeyre/Common/ShoppingList/ShoppingList.jsp" >
+							<c:param name="productId" value="${productId}" />
+							<c:param name="defaultProductSkuID" value="${defaultProductSkuID}" />
+							<c:param name="display" value="button" />
+						</c:import>
+					</c:if>
+					<%out.flush();%>
+				</div>
+			
+				<%-- Add to cart button --%>
+				<div class="col s12 m12 l9">
+					<a id="add2CartBtn" href="#" class="button button-primary"
+						onclick="javascript:setCurrentId('add2CartBtn');productDisplayJS.Add2ShopCartAjax('entitledItem_<c:out value='${productId}'/>',document.getElementById('quantity_<c:out value='${productId}'/>').value, false)" 
+						wairole="button" role="button" title="<fmt:message key="PD_ADD_TO_CART" bundle="${widgetText}"/>" onKeyPress="javascript:MessageHelper.setFocusElement('add2CartBtn');">
+						<div id="productPageAdd2Cart" class="button_text">
+							<fmt:message key="PD_ADD_TO_CART" bundle="${widgetText}"/>
+						</div>
+					</a>
+				</div>
+			</c:if>
+		</div>
+		
+		<%-- Find my store button --%>
+		<div class="row">
+			<c:if test="${productType eq CATALOGUE_PAPIER_PRODUCT}">
+				<%--NE PAS SUPPRIMER le script. Sans ce script l'ajout au panier pour un catalogue papier est KO. (mantis 2794) --%>
+				<script>
+					shoppingListJS = null;
+				</script>
+				<a href="${storeLocatorURL}" class="button trouverMonMagasinBtn"><fmt:message key="ficheProduitCatalogueStoreLocButtonLabel" bundle="${widgetText}" /></a>
+			</c:if>
+		</div>
+		
+	</div>
+
+</c:if>
+<%-- END ShopperActions_UI.jspf --%>

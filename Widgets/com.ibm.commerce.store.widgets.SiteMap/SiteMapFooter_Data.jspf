@@ -1,0 +1,107 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<wcf:getData type="com.ibm.commerce.pagelayout.facade.datatypes.PageType[]"
+			var="pages" 
+			expressionBuilder="getContentPagesByName">
+		<wcf:param name="Name" value="HelpPage"/>
+		<wcf:param name="Name" value="ContactUsPage"/>
+		<wcf:param name="Name" value="PrivacyPolicyPage"/>
+		<wcf:param name="Name" value="ReturnPolicyPage"/>
+		<wcf:param name="Name" value="CorporateContactUsPage"/>
+		<wcf:param name="Name" value="CorporateInfoPage"/>
+		<wcf:param name="accessProfile" value="IBM_Store_Summary"/>
+</wcf:getData>
+
+<c:forEach var="page" items="${pages}">
+	<c:if test="${page.pageIdentifier.externalIdentifier.name eq 'HelpPage'}" >
+		<wcf:url var="HelpViewURL" patternName="StaticPagesPattern" value="GenericStaticContentPageLayoutView">
+			<wcf:param name="urlLangId" value="${urlLangId}" />
+			<wcf:param name="storeId"   value="${storeId}"  />
+			<wcf:param name="catalogId" value="${catalogId}"/>
+			<wcf:param name="langId" value="${langId}" />
+			<wcf:param name="pageId" value="${page.pageIdentifier.uniqueID }" />
+		</wcf:url>
+	</c:if>
+		
+	<c:if test="${page.pageIdentifier.externalIdentifier.name eq 'ContactUsPage'}" >
+		<wcf:url var="ContactUsViewURL" patternName="StaticPagesPattern" value="GenericStaticContentPageLayoutView">
+			<wcf:param name="urlLangId" value="${urlLangId}" />
+			<wcf:param name="storeId"   value="${storeId}"  />
+			<wcf:param name="catalogId" value="${catalogId}"/>
+			<wcf:param name="langId" value="${langId}" />
+			<wcf:param name="pageId" value="${page.pageIdentifier.uniqueID }" />
+		</wcf:url>
+	</c:if>
+	<c:if test="${page.pageIdentifier.externalIdentifier.name eq 'PrivacyPolicyPage'}" >
+		<wcf:url var="PrivacyViewURL" patternName="StaticPagesPattern"  value="GenericStaticContentPageLayoutView">
+			<wcf:param name="urlLangId" value="${urlLangId}" />
+			<wcf:param name="storeId"   value="${storeId}"  />
+			<wcf:param name="catalogId" value="${catalogId}"/>
+			<wcf:param name="langId" value="${langId}" />
+			<wcf:param name="pageId" value="${page.pageIdentifier.uniqueID }" />
+		</wcf:url>
+	</c:if>
+	<c:if test="${page.pageIdentifier.externalIdentifier.name eq 'ReturnPolicyPage'}" >
+		<wcf:url var="ReturnPolicyViewURL" patternName="StaticPagesPattern" value="GenericStaticContentPageLayoutView">
+			<wcf:param name="urlLangId" value="${urlLangId}" />
+			<wcf:param name="storeId"   value="${storeId}"  />
+			<wcf:param name="catalogId" value="${catalogId}"/>
+			<wcf:param name="langId" value="${langId}" />
+			<wcf:param name="pageId" value="${page.pageIdentifier.uniqueID }" />
+		</wcf:url>
+	</c:if>
+	<c:if test="${page.pageIdentifier.externalIdentifier.name eq 'CorporateContactUsPage'}" >
+
+		<wcf:url var="CorporateInfoViewURL" patternName="StaticPagesPattern" value="GenericStaticContentPageLayoutView">
+			<wcf:param name="urlLangId" value="${urlLangId}" />
+			<wcf:param name="storeId"   value="${storeId}"  />
+			<wcf:param name="catalogId" value="${catalogId}"/>
+			<wcf:param name="langId" value="${langId}" />
+			<wcf:param name="pageId" value="${page.pageIdentifier.uniqueID}" />
+		</wcf:url>
+	</c:if>
+	<c:if test="${page.pageIdentifier.externalIdentifier.name eq 'CorporateInfoPage'}" >
+
+		<wcf:url var="CorporateContactUsViewURL" patternName="StaticPagesPattern" value="GenericStaticContentPageLayoutView">
+			<wcf:param name="urlLangId" value="${urlLangId}" />
+			<wcf:param name="storeId"   value="${storeId}"  />
+			<wcf:param name="catalogId" value="${catalogId}"/>
+			<wcf:param name="langId" value="${langId}" />
+			<wcf:param name="pageId" value="${page.pageIdentifier.uniqueID}" />
+		</wcf:url>
+	</c:if>
+</c:forEach>
+
+<wcf:url var="AdvancedSearchDisplayURL" value="AdvancedSearchDisplay">
+	<wcf:param name="storeId"   value="${storeId}"  />
+	<wcf:param name="catalogId" value="${catalogId}"/>
+	<wcf:param name="langId" value="${langId}" />
+</wcf:url>
+
+<flow:ifEnabled feature="QuickOrder">
+	<wcf:url var="QuickOrderURL" value="QuickOrderView">
+		<wcf:param name="storeId" value="${storeId}" />
+		<wcf:param name="catalogId" value="${catalogId}" />
+		<wcf:param name="langId" value="${langId}" />
+	</wcf:url>
+</flow:ifEnabled>
+
+<flow:ifEnabled feature="StoreLocator">
+	<wcf:url var="StoreLocatorURL" value="AjaxStoreLocatorDisplayView">
+		<wcf:param name="storeId" value="${storeId}" />
+		<wcf:param name="catalogId" value="${catalogId}" />
+		<wcf:param name="langId" value="${langId}" />
+	</wcf:url>
+</flow:ifEnabled>

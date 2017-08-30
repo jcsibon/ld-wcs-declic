@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE taglib
+  PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+  "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+<taglib>
+	<tlib-version>1.0</tlib-version>
+	<jsp-version>1.2</jsp-version>
+	<short-name>asset-push</short-name>
+	<uri>http://declice.lapeyre.com/assetpush</uri>
+	<display-name>Asset Push Url Utilities</display-name>
+	<description>Library provide utilities for asset push</description>
+	<tag>
+		<name>assetPushUrl</name>
+		<tag-class>com.lapeyre.declic.assetspush.taglib.AssetPushUrlTag</tag-class>
+		<description>JSTL tag to generate asset push absolute url</description>
+		<attribute>
+			<name>urlRelative</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Relative url to handle.</description>
+		</attribute>
+		<attribute>
+			<name>type</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>The type of url generated : 'product', 'category' or 'swatch'</description>
+		</attribute>
+		<attribute>
+			<name>source</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>source of url : 'main', 'secondary', 'list', 'brand_logo', 'collection_desc', 'compo_type' or 'icon'</description>
+		</attribute>
+		<attribute>
+			<name>device</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Device : 'mobile' or 'desktop'</description>
+		</attribute>
+		<attribute>
+			<name>format</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Asset push format to displayed : 'full', 'thumbnail', 'zoom', 'HD' or 'zoomHD'</description>
+		</attribute>
+		<attribute>
+			<name>defaultUrl</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Getting default url</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<description>Name of variable where the result will be stored</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Scope of var</description>
+		</attribute>
+	</tag>
+</taglib>

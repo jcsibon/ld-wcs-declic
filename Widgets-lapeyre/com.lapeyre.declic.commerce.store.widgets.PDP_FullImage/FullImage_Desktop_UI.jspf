@@ -1,0 +1,94 @@
+<div class="col s3 productPageImageViewer-LeftSliderContainer">
+	<c:if test="${thumbnailCount >1}">
+	
+		<div class="fullImage-slider display${hideAngleImage}" id="ProductAngleImagesArea${displayType}">
+			<c:if test="${fn:length(angleThumbnailAttachmentMap)>numberOfThumbnailByPage}">
+	  			<div class="fullImage-previous-container">
+  					<div id="fullImagePrevious" class="fullImage-navigation fullImage-navigation-top"></div>
+	  			</div>
+  			</c:if>
+  			<div class="fullImage-slider-wrapper">
+  				<div class="fullImage-slider-wrapper-in">			  				
+					<%-- Images --%>
+					<ul id="ProductAngleImagesArea${displayType}List">
+						<c:forEach var="descriptiveAttr" items="${angleThumbnailAttachmentMap}" varStatus="status">
+							<li id="productAngleLi${displayType}<c:out value='${descriptiveAttr.key}' />" class="fullImage-thumbnails-container thumbnails-container-desktop" data-type="image">
+								<a id="WC_CachedProductOnlyDisplay_links_1_<c:out value='${descriptiveAttr.key}' />" href="JavaScript:ProductFullImageJS.changeThumbNail('<c:out value="${angleFullImageAttachmentMap[descriptiveAttr.key]}" />', '${displayType}','<c:out value="${angleZoomImageAttachmentMap[descriptiveAttr.key]}" />');" title="Visuel ${angleThumbnailAttachmentNameMap[descriptiveAttr.key]}">
+									<img alt="${angleThumbnailAttachmentNameMap[descriptiveAttr.key]}" 
+										id="WC_CachedProductOnlyDisplay_images_1_<c:out value='${descriptiveAttr.key}' />" 
+										src="${angleThumbnailAttachmentMap[descriptiveAttr.key]}"
+										onerror="this.src='/wcsstore/LapeyreSAS/images/thumbnail/defaultImage.png'" 
+										class="fullImage-thumbnails" />
+								</a>
+							</li>
+						</c:forEach>
+					</ul>
+					<%-- Videos --%>
+  					<c:if test="${!empty vids}">
+						<ul>					
+							<c:forEach var="vid" items="${vids}">
+								<c:set var="videoID" value="${ecocea:extractVideoId(vid.attachmentAssetPath)}" />
+								<c:set var="thumbnailUrl" value="${ecocea:fmtMessage(ecocea:getProperty('youtube.thumbnail.url'), videoID)}" />
+								<c:set var="embedUrl" value="${ecocea:fmtMessage(ecocea:getProperty('youtube.embed.url'), videoID)}" />
+								<li itemscope itemtype="${MICRO_DATA_VIDEO}" class="fullImage-thumbnails-container thumbnails-container-desktop" data-type="video">
+									<div class="fullImage-thumbnail-video"></div>
+									<a href="#">
+										<img src="${thumbnailUrl}" data-video-id="${videoID}" alt="${videoID}" height="70"
+										class="thumb fullImage-thumbnails" data-embed-url="${embedUrl}" />
+									</a>
+									<meta itemprop="name" content="${vid.name}"/>
+									<meta itemprop="description" content="${not empty vid.shortdesc ? vid.shortDesc : vid.name}"/>
+									<meta itemprop="contentUrl" content="${vid.attachmentAssetPath}"/>
+									<meta itemprop="thumbnailUrl" content="${thumbnailUrl}"/>
+									<meta itemprop="datePublished" content="${MICRO_DATA_TODAY}"/>
+									<meta itemprop="uploadDate" content="${MICRO_DATA_TODAY}"/>
+								</li>
+							</c:forEach>
+						</ul>
+					</c:if>
+				</div>
+			</div>
+			<c:if test="${fn:length(angleThumbnailAttachmentMap)>numberOfThumbnailByPage}">
+	  			<div class="fullImage-next-container">
+					<div id="fullImageNext" class="fullImage-navigation fullImage-navigation-bottom"></div>
+	  			</div>
+  			</c:if>
+		</div>
+	</c:if>
+</div>
+
+<div class="col s9 image_container">
+	<%--Do not display the zoom if the product has not FullImage --%>
+	<c:if test="${canZoom}">
+		<a href="#" onclick="javascript:showPopup('popupPhotoZoom${displayType}')">
+	</c:if>
+	<div id="fullImageMainContainer">
+		<div id="fullImageVideoContainer" class="hidden">
+			<c:if test="${!empty vids}">
+				<iframe src="" title="YouTube video player" allowfullscreen="1" id="youtubePlayer" frameborder="0" height="360"></iframe>
+			</c:if>
+		</div>
+		<div id="fullImageImageContainer">
+			<img itemprop="image" id="productMainImage${displayType}" src="${productFullImage}" onerror="this.src='${defaultProductFullImage}'" 
+				alt="<c:out value="${fullImageAltDescription}" escapeXml="false"/>" title="<c:out value="${fullImageAltDescription}" escapeXml="false"/>" 
+				class="product_main_image" data-tabid="0"/>
+			<%--On affiche le ribbonad au product uniquement pour les sur mesure ou si le produit est mono-sku, pour les autres, il est surchargé à l'item en js--%>
+			<c:if test="${productType eq 'SUR_MESURE' ||numberOfSKUs eq 1 }">
+				<c:forEach var="adRibbon" items="${adRibbonMap}">
+					<c:set var="adRibbonStyle" value="RibbonAdDefault ${fn:replace(adRibbon.key , '\"' , '_')}"/>
+					<div class="${fn:escapeXml(adRibbonStyle)}">${adRibbon.value}</div>
+				</c:forEach>
+			</c:if>
+		</div>
+	</div>
+	<%--Do not display the zoom if the product has not FullImage --%>
+	<c:if test="${canZoom}">
+		</a>
+	</c:if>				
+</div>
+
+<c:if test="${thumbnailCount + fn:length(vids) > 1 }">
+	<script type="text/javascript">
+		ProductFullImageJS.init(${fn:length(angleThumbnailAttachmentMap) + fn:length(vids)}, ${numberOfThumbnailByPage},  ${heightOfAThumbnail}, false);
+	</script>
+</c:if>

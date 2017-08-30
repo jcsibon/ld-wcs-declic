@@ -1,0 +1,33 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<%@include file="ShareMailSentPopup.jspf" %>
+<%@include file="ShareMailNotSentPopup.jspf" %>
+<div id="popUpMailSharing" data-dojo-type="lapeyre/widget/Dialog" style="display: none;">
+<form id="mailSharingForm" name="mailSharingForm">
+	<div class="widget_site_popup">
+		<div class="content">
+			<div class="header">
+				<span>
+					<fmt:message key="LAP032_POPUP_SHARE_MAIL" bundle="${widgetText}" />
+				</span>
+				<a role="button" id="popUpMailSharing_close" href="javascript:hidePopup('popUpMailSharing')" aria-label="<fmt:message bundle="${widgetText}" key="SL_CLOSE" />" title="<fmt:message bundle="${widgetText}" key="SL_CLOSE" />" class="close tlignore" tabindex="4" title="<fmt:message key="SL_CLOSE" bundle="${widgetText}" />"></a>
+				<div class="clear_float"></div>
+			</div>
+			<div class="body">
+				<fmt:message key="LAP033_POPUP_SHARE_SELECT_DEST" bundle="${widgetText}" />
+				<input type="text" name="to" value="" id="mailSharingToDest" />
+				<input type="hidden" name="invitation" value="true"/>
+				<input type="hidden" name="subject" value="" id="mailSharingSubject" /> 
+				<input type="hidden" name="hideLabel" value="true" />
+				<input type="text" name="message" value="" id="mailSharingContent" />
+			</div>
+			<div class="footer">
+				<div class="ctaContainer">
+					<a id="popUpMailSharing_ok" href="#" class="button green" tabindex="0" onclick="return false;">
+						<fmt:message key="LAP024_REDIRECTION_PRODUIT_BUTTON_OK" bundle="${widgetText}" />
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+</div>

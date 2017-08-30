@@ -1,0 +1,312 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<%@page import="com.lapeyre.declic.configurations.ConfigTool"%>
+<%
+	String workinEnv = ConfigTool.getConfigurationPropertiesResource().getProperty("environment.work.label");
+	if(workinEnv != null){
+		request.setAttribute("workingEnvironment", workinEnv);
+	}
+%>
+<c:set var="catGroupName" value="" />
+<c:if test="${pageGroup eq 'Category' || pageGroup eq 'Item' || pageGroup eq 'Product'}">
+	<%--ECOCEA: si le breadCrumb n'est pas encore d�fini et si on a une cat�gorie --%>
+	<c:if test="${empty globalbreadcrumbsForTagManager.breadCrumbTrailEntryView && !empty WCParam.categoryId}">
+		<%--Retrieve the breadcrumb hierarchy from the CatalogNavigationView based on the categoryId --%>
+		<wcf:rest var="bcCategoryCatalogNavigationView1" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byCategory/${WCParam.categoryId}" >	
+			<wcf:param name="langId" value="${langId}"/>
+			<wcf:param name="currency" value="${env_currencyCode}"/>
+			<wcf:param name="responseFormat" value="json"/>		
+			<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+			<wcf:param name="profileName" value="IBM_BreadCrumbByCategoryUniqueId" />
+		</wcf:rest>
+		<c:set var="globalbreadcrumbs" value="${bcCategoryCatalogNavigationView1}" scope="request"/>
+	</c:if>
+	<c:if test="${!empty globalbreadcrumbsForTagManager.breadCrumbTrailEntryView}">
+		<wcf:rest var="categories" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/categoryview/byIds">
+			<wcf:param name="profileName" value="ECO_findCategoryByUniqueIds" />
+			<c:forEach var="catgroup" items="${globalbreadcrumbsForTagManager.breadCrumbTrailEntryView}">
+				<wcf:param name="id" value="${catgroup.value}" />
+			</c:forEach>
+			<wcf:param name="langId" value="${WCParam.langId}"/>
+			<wcf:param name="responseFormat" value="json"/>		
+			<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+		</wcf:rest>
+		<c:choose>
+			<c:when test="${fn:length(globalbreadcrumbsForTagManager.breadCrumbTrailEntryView) eq 1}">
+				<c:set var="cat1Name" value="${globalbreadcrumbsForTagManager.breadCrumbTrailEntryView[0].label}" />
+				<c:set var="catGroupName" value="${cat1Name}" />
+			</c:when>
+			<c:when test="${fn:length(globalbreadcrumbsForTagManager.breadCrumbTrailEntryView) eq 2}">
+				<c:set var="cat1Name" value="${globalbreadcrumbsForTagManager.breadCrumbTrailEntryView[0].label}" />
+				<c:set var="cat2Name" value="${globalbreadcrumbsForTagManager.breadCrumbTrailEntryView[1].label}" />
+				<c:set var="catGroupName" value="${cat2Name}" />
+			</c:when>
+			<c:otherwise>
+				<c:set var="cat1Name" value="${globalbreadcrumbsForTagManager.breadCrumbTrailEntryView[0].label}" />
+				<c:set var="cat2Name" value="${globalbreadcrumbsForTagManager.breadCrumbTrailEntryView[1].label}" />
+				<c:set var="cat3Name" value="${globalbreadcrumbsForTagManager.breadCrumbTrailEntryView[2].label}" />
+				<c:set var="catGroupName" value="${cat3Name}" />
+			</c:otherwise>
+		</c:choose>
+	</c:if>
+</c:if>
+
+<wcf:useBean classname="java.util.ArrayList" var="productsList" />
+<c:if test="${!empty globalresults}">
+	<c:forEach var="catentry" items="${globalresults}">
+		<wcf:useBean classname="java.util.HashMap" var="productObject" />
+		<c:forEach var="parentCatgroupIdentifiers" items="${catentry.parentCategoryIdentifier}">
+			<c:set var="parentCatgroupIdentifierArray" value="${fn:split(parentCatgroupIdentifiers, '*/*')}" />
+			<c:if test="${parentCatgroupIdentifierArray[0] eq catalogId}">
+				<c:set var="parentIdentifier" value="${parentCatgroupIdentifierArray[1]}" />
+			</c:if>
+		</c:forEach>
+		<wcf:url var="ProductDisplayURL" patternName="ProductURL" value="Product1">
+			<wcf:param name="langId" value="${langId}" />
+			<wcf:param name="storeId" value="${storeId}" />
+			<wcf:param name="catalogId" value="${catalogId}" />
+			<wcf:param name="productId" value="${catentry.uniqueID}" />
+			<wcf:param name="urlLangId" value="${urlLangId}" />
+		</wcf:url>
+		<wcf:set target="${productObject}" key="product_id" value="${catentry.partNumber}" />
+		<wcf:set target="${productObject}" key="name" value="${fn:escapeXml(catentry.name)}" />
+		<wcf:set target="${productObject}" key="category" value="${catGroupName}" />
+		<c:if test="${!empty parentIdentifier}">
+			<wcf:set target="${productObject}" key="category" value="${fn:escapeXml(parentIdentifier)}" />
+		</c:if>
+		<wcf:set target="${productObject}" key="url" value="${ProductDisplayURL}" />
+		<wcf:set target="${productsList}" value="${productObject}" />
+		<c:remove var="productObject" />
+		<c:remove var="parentIdentifier" />
+		<c:remove var="ProductDisplayURL" />
+	</c:forEach>
+</c:if>
+
+<c:if test="${person == null}" >
+<wcf:getData type="com.ibm.commerce.member.facade.datatypes.PersonType" var="person" expressionBuilder="findCurrentPerson">
+       <wcf:param name="accessProfile" value="IBM_All" />
+</wcf:getData>
+</c:if>
+
+<c:set var="userCRMId" value="" />
+<c:set var="userWebId" value="" />
+<c:set var="userPostCode" value="" />
+<c:set var="userCity" value="" />
+<c:set var="gender" value="" />
+<c:set var="userEmail" value="" />		
+
+<c:if test="${person != null}" >
+	<c:if test="${storeListe == null}">
+		<fmt:setBundle basename="/${sdb.jspStoreDir}/storelist" var="storeListe"/>
+	</c:if>
+	
+	<c:if test="${!empty person.contactInfo.contactName.personTitle}">
+		<fmt:message var="gender" bundle="${storeListe}" key="Civilite_${person.contactInfo.contactName.personTitle}" />
+	</c:if>
+	
+	
+	<c:if test="${person.attributes != null}">
+		<c:set var="userCRMId" value="${person.attributes['userField1']}" />	
+	</c:if>
+	
+	<c:set var="userWebId" value="${person.credential.logonID}" />
+	<c:set var="userPostCode" value="${person.contactInfo.address.postalCode}" />
+	<c:set var="userCity" value="${person.contactInfo.address.city}" />
+</c:if>
+
+<c:choose>
+	<c:when test="${pageGroup eq 'tunnel' && tunnelStep eq '5' }">
+	</c:when>
+	<c:otherwise>
+	<%@ include file="TagManager_ShopCartData.jspf" %>
+	</c:otherwise>
+</c:choose>
+
+<c:if test="${pageGroup eq 'Home'}">
+	<c:set var="pageTemplate" value="Home" />
+</c:if>
+<c:if test="${pageGroup eq 'identification'}">
+	<c:set var="pageTemplate" value="identification" />
+</c:if>
+<c:if test="${pageGroup eq 'Category'}">
+	<%@ include file="TagManager_CategoryData.jspf" %>
+</c:if>
+<c:if test="${pageGroup eq 'Item' || pageGroup eq 'Product'}">
+	<%@ include file="TagManager_ProductData.jspf" %>
+</c:if>
+<c:if test="${pageGroup eq 'Search'}">
+	<%@ include file="TagManager_SearchData.jspf" %>
+</c:if>
+<c:if test="${pageGroup eq 'storeLoc'}">
+	<c:set var="pageTemplate" value="Store Locator" />
+</c:if>
+<c:if test="${pageGroup eq 'storeLocFiche'}">
+	<c:set var="pageTemplate" value="Fiche magasin" />
+</c:if>
+<c:if test="${pageGroup eq 'contentCMS'}">
+	<%@ include file="TagManager_CmsData.jspf" %>
+</c:if>
+<c:if test="${pageGroup eq 'error'}">
+	<c:set var="pageTemplate" value="Error" />
+</c:if>
+<c:if test="${pageGroup eq 'tunnel'}">
+	<%@ include file="TagManager_TunnelData.jspf" %>
+</c:if>
+<c:if test="${pageGroup eq 'espaceClient'}">
+	<c:set var="pageTemplate" value="${param.pageName}" />
+</c:if>
+<c:if test="${pageGroup eq 'devisCommande'}">
+	<c:set var="pageTemplate" value="${param.pageName}" />
+</c:if>
+<c:if test="${pageGroup eq 'wishlist'}">
+	<c:set var="pageTemplate" value="${param.pageName}" />
+</c:if>
+<c:if test="${pageGroup eq 'compareProducts'}">
+<c:set var="pageTemplate" value="comparateur" />
+</c:if>
+
+
+
+<wcf:useBean var="catGroupIdentifiers" classname="java.util.ArrayList"/>
+<c:forEach var="catgeory" items="${categories.catalogGroupView}">
+	<wcf:set target="${catGroupIdentifiers}" value="${catgeory.identifier}" />
+	<c:if test="${categoryId eq catgeory.uniqueID}">
+		<c:set var="idXiti" value="${catgeory.idXiti}" />
+		<c:set var="direkParentCatgroupIdentifier" value="${catgeory.identifier}" />
+		<c:set var="direkParentCatgroupLabel" value="${catgeory.name}" />
+	</c:if>
+</c:forEach>
+
+<c:set var="isLogged" value="${(userType eq 'G' ? 'N':'Y')}" />
+
+<c:choose>
+	<c:when test="${isLogged eq 'N'}">
+		<c:set var="clientType" value="" />
+	</c:when>
+	<c:otherwise>
+		<c:choose>
+			<c:when test="${extendedUserContext.isPro eq 'true'}">
+				<c:set var="clientType" value="PRO" />
+			</c:when>
+			<c:otherwise>
+				<c:set var="clientType" value="PART" />
+			</c:otherwise>
+		</c:choose>
+	</c:otherwise>
+</c:choose>
+
+
+<script>
+	var dataLayer = [];
+
+	dataLayer.push({"env_template" : "${pageTemplate}"});
+	dataLayer.push({"env_work" : "${workingEnvironment}"});
+	dataLayer.push({"env_language" : "FR"});
+	dataLayer.push({"env_dnt" : ""});
+	dataLayer.push({"env_device" : "${device}"});
+	dataLayer.push({"page_cat1_id" : "${catGroupIdentifiers[0]}"});
+	dataLayer.push({"page_cat2_id" : "${catGroupIdentifiers[1]}"});
+	dataLayer.push({"page_cat3_id" : "${catGroupIdentifiers[2]}"});
+	dataLayer.push({"page_cat1_name" : "${fn:replace(cat1Name,'"','')}"});
+	dataLayer.push({"page_cat2_name" : "${fn:replace(cat2Name,'"','')}"});
+	dataLayer.push({"page_cat3_name" : "${fn:replace(cat3Name,'"','')}"});
+	dataLayer.push({"page_name" : "${pageTitle}"});
+	dataLayer.push({"page_error" : "${errorCode}"});
+	dataLayer.push({"idxiti" : "${idXiti}"});
+	dataLayer.push({"product_id" : "${productIdentifier}"});
+	dataLayer.push({"product_name" : "${fn:escapeXml(productName)}"});
+	dataLayer.push({"product_unitprice_ati" : "${realPrice}"});
+	dataLayer.push({"product_discount_ati" : "${discountPrice}"});
+	dataLayer.push({"product_currency" : "${env_currencyCode}"});
+	dataLayer.push({"product_trademark" : "${fn:escapeXml(productManufacturer)}"});
+	dataLayer.push({"product_url_page" : "${ProductDisplayURL}"});
+	dataLayer.push({"product_url_picture" : "${productFullImage}"});
+	dataLayer.push({"product_isbundle" : "${isBundle}"});
+	dataLayer.push({"product_breadcrumb_id" : "${direkParentCatgroupIdentifier}"});
+	dataLayer.push({"product_breadcrumb_label" : "${fn:replace(direkParentCatgroupLabel,'"','')}"});
+	dataLayer.push({"product_rating" : ""});
+	dataLayer.push({"product_type" : "${productType}"});
+	<c:choose><c:when test="${empty productsList}">
+	dataLayer.push({"list_products" : ""});
+	</c:when><c:otherwise>
+	dataLayer.push({"list_products" : <wcf:json object="${productsList}" />});
+	</c:otherwise></c:choose>
+	dataLayer.push({"search_keywords" : "${searchTerm}"});
+	dataLayer.push({"search_page_number" : "${currentPage}"});
+	dataLayer.push({"search_results_number" : "${totalSearchCount}"});
+	dataLayer.push({"search_filters" : ""});
+	
+<c:if test="${pageGroup eq 'Product'}">
+	dataLayer.push({
+		"eeAction": "eeProductDetail",
+		"products": [{
+			"id": "${productIdentifier}", 
+			"category": "${fn:replace(cat2Name,'"','')}", 
+			<c:choose>
+				<c:when test="${not empty discountPrice}">
+					"price": "${discountPrice}",
+				</c:when>
+				<c:otherwise>
+					"price": "${realPrice}",
+				</c:otherwise>
+			</c:choose>
+			"name": "${fn:escapeXml(productName)}",
+			"brand": "${fn:escapeXml(productManufacturer)}",
+			"variant": "${productType}"
+		}]
+	});
+</c:if>
+
+
+<c:if test="${pageGroup eq 'tunnel' or (pageGroup eq 'identification' and tunnelStep eq 2)}">
+	<c:choose>
+		<c:when test="${tunnelStep eq '5'}">
+			dataLayer.push({"transactionId" : "${orderId}"});
+			dataLayer.push({"transactionTotal_without_sf" : "${transactionTotal_without_sf}"});
+			dataLayer.push({"transaction_store_id" : "${transaction_store_id}"});
+			dataLayer.push({"transaction_newcustomer" : "${empty WCParam.newCustomer || WCParam.newCustomer ne false}"});
+			
+			dataLayer.push({
+				"transactionCurrency": "EUR",
+				"transactionId": "${orderId}",
+				"transactionShipping": "${transactionShipping}",
+				"transactionAffiliation": "Lapeyre",
+				"transactionTotal": "${transactionTotal}",
+				"transactionTax": "${transactionTax}",
+				"products":  <wcf:json object="${transactionProductsEE}" />});
+		</c:when>
+		<c:otherwise>
+			dataLayer.push({"basket_payment_methods" : "${transaction_payment_methods}"});
+			dataLayer.push({"basket_shipping_method" : "${transaction_shipping_method}"});
+			dataLayer.push({"basketShipping" : "${transactionShipping}"});
+			dataLayer.push({"basket_store_id" : "${transaction_store_id}"});
+			
+			
+			dataLayer.push({"eeAction" : "eeCheckout"});
+			dataLayer.push({"checkoutStep" : ${tunnelStep}});
+			<c:if test="${tunnelStep eq 4}">
+				dataLayer.push({"checkoutOption" : "${transaction_shipping_method eq 'TRANSPORTER' ? 'livraison' : 'drive'}"});
+			</c:if>
+			dataLayer.push({"products" : <wcf:json object="${basket_products}" />});
+		</c:otherwise>
+	</c:choose>
+</c:if>
+
+	dataLayer.push({"basket_id" : "${basket_id}"});
+	dataLayer.push({"basket_total" : "${basket_total}"});
+	dataLayer.push({"basket_tax" : "${basket_tax}"});
+	
+	dataLayer.push({"basket_total_without_sf" : "${basket_total_without_sf}"});
+	dataLayer.push({"basket_discount" : "${basket_discount}"});
+	dataLayer.push({"basket_promo_codes" : "${basket_promo_codes}"});
+	dataLayer.push({"basket_products_number" : "${basket_products_number}"});
+	
+	dataLayer.push({"user_id" : "${person.personIdentifier.uniqueID}"});
+	dataLayer.push({"user_crm_id" : "${userCRMId}"});
+	dataLayer.push({"user_gender" : "${gender}"});
+	dataLayer.push({"user_category" : "${clientType}"});
+	dataLayer.push({"user_logged" : "${isLogged}"});
+	dataLayer.push({"user_postalcode" : "${userPostCode}"});
+	dataLayer.push({"user_city" : "${userCity}"});
+	
+	dataLayer.push({"piece_habitation" : "${pieceHabitation}"});
+</script>

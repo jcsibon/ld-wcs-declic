@@ -1,0 +1,61 @@
+@media print {
+	
+	@page {
+		margin: 1cm;
+	}
+
+	* {
+		color: #000 !important;
+		text-shadow: none !important;
+		box-shadow: none !important;
+		background: none !important;
+	}
+	
+	.print-hidden {
+		display:none !important;
+	}
+	
+	#header {
+		position: initial;
+	}
+	
+	#logo {
+		position: initial;
+	}
+	
+	#highlight {
+		display: none !important;
+	}
+	
+	.print-hidden,
+	.button {
+		display: none !important;
+	}
+	
+	.printable {
+		display: block;
+	}
+	
+		.printable.text {
+			font-size: 14px;
+		}
+	
+	.blockPresentation  {
+		min-height: initial !important;
+		margin-bottom: 1cm !important;
+	}
+		
+		.blockPresentation .editoBackground {
+			display: none;
+		}
+		
+		.blockPresentation .separator {
+			height: 0;
+			width: 5cm;
+			border-bottom: solid 1px #333;
+		}
+		
+	.tunnel .confirmation {
+		max-width: initial;
+	}
+}

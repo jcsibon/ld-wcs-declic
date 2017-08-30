@@ -1,0 +1,23 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<div id="popupVideo" data-dojo-type="lapeyre/widget/Dialog" style="display: none;">
+	<div class="widget_site_popup">
+		<div class="content">
+			<div class="header">
+				<span>Lapeyre <span id="videoShortDesc"></span></span>
+				<div class="close" id="youtubePlayerCloseButton"></div>
+				<div class="clear_float"></div>
+			</div>
+			<div class="body">
+				<div class="videoWrapper" id="youtubeVideoWrapper">
+					<script type="text/javascript">
+					    if (ieVersion > 0 && ieVersion <= 10.0) {
+					         document.write('<iframe src="" title="YouTube video player" allowfullscreen="1" id="youtubePlayer" frameborder="0" height="360" width="640"></iframe>');
+					    } else {
+					    	 document.write('<div id="youtubePlayer"></div>');
+					    }
+					</script>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

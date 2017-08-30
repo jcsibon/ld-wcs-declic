@@ -1,0 +1,30 @@
+<c:set var="googlePlusUrlSharing" value="http://plus.google.com/share" />
+<c:url var="googlePlusFullUrlSharing" value="${googlePlusUrlSharing}" >
+	<c:param name="url" value="${socialSharingURL}" />
+</c:url>
+<script id="SocialNetworksScript_googlePlus">	
+	
+	function openGooglePlusSharePopup(event){
+		event.preventDefault();
+		event.stopImmediatePropagation();
+
+		var width = 575,
+			height = 251,
+			left = ($(window).width() - width)/2,
+			top = ($(window).height() - height)/2,
+			url = this.href || '<c:out value="${googlePlusFullUrlSharing}" />',
+			opts = 'status=1' +
+				   ',width=' + width +
+				   ',height=' + height +
+				   ',top=' + top +
+				   ',left=' + left +
+				   ',directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no';
+		window.open(url,'Google +',opts);
+	}
+	
+	$(document).ready(function(){
+		$('#ficheSocialNetworks .googlePlusShareLink').on('click touchstart', openGooglePlusSharePopup);
+	});
+	
+</script>
+

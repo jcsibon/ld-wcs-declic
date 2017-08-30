@@ -1,0 +1,84 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<!-- BEGIN IBMProductRecommendation_Vertical_UI.jspf -->
+
+<c:if test="${!empty catentryIdList || !empty partNumbers}">
+	<fmt:message key="PC_PREVIOUS_PAGE" bundle="${widgetText}" var="PC_PREVIOUS_PAGE"/>
+	<fmt:message key="PC_NEXT_PAGE" bundle="${widgetText}" var="PC_NEXT_PAGE"/>
+	<fmt:message key="PC_MOVE_TO_PAGE_{0}" bundle="${widgetText}" var="PC_MOVE_TO_PAGE"/>
+	<fmt:message key="ES_RECOMMENDED_PRODUCTS" bundle="${widgetText}" var="ES_RECOMMENDED_PRODUCTS" />
+	<script>require(["dojo/parser", "wc/widget/WCCarousel", "wc/widget/Grid"]);</script>
+	
+	<c:set var="WC_zone" value=""/>
+	<c:if test="${not empty param.WC_zone}" >
+		<c:set var="WC_zone" value="${param.WC_zone}"/>
+	</c:if>
+	<c:choose>
+			<c:when test="${!empty titleContentTypeMap || !empty espotTitle}" >
+				<c:set var="ariaAttribute" > role="${(!empty param.numIntelligentOffer)? 'marquee': 'region'}" aria-labelledby="title${widgetSuffix}${WC_zone}" </c:set>
+			</c:when>
+			<c:when test="${!empty param.numIntelligentOffer}" >
+				<c:set var="ariaAttribute" > role="marquee" aria-label="${ES_RECOMMENDED_PRODUCTS}" </c:set>
+			</c:when>
+			<c:otherwise>
+				<c:set var="ariaAttribute" ></c:set>
+			</c:otherwise>
+	</c:choose>
+
+	<div id="IBMProductRecommendationWidget${widgetSuffix}${WC_zone}" class="catalogEntryRecommendationWidget carousel clip-true" data-dojo-type="wc/widget/WCCarousel" ${ariaAttribute}>
+		<div class="header">
+			<h2 id="title${widgetSuffix}${WC_zone}"><%@include file="../Common/ESpot/ESpotTitle_UI.jspf"%></h2>
+			<div class="controlBar">
+				<a id="prevPageButton${widgetSuffix}" href="#" class="prevPageButton" data-dojo-attach-point="prevPageButton" role="button" aria-label="${PC_PREVIOUS_PAGE}" alt="${PC_PREVIOUS_PAGE}"></a>
+				<div class="pageControlWrapper">
+					<a href="#" class="pageControlButton" data-dojo-attach-point="pageControlButton" data-toggle="pageControlMenu${widgetSuffix}" role="button">1</a>
+					<div id="pageControlMenu${widgetSuffix}" class="pageControlMenu" data-dojo-attach-point="pageControlMenu" data-parent="header">
+						<div class="pageControl number" data-dojo-attach-point="pageControl"><a href="#" role="button" aria-label="${PC_MOVE_TO_PAGE}">{0}</a></div>
+						<a class="closeButton" href="#" alt="${CLOSE}" data-deactivate="pageControlMenu${widgetSuffix}" role="button"></a>
+					</div>
+				</div>
+				<a id="nextPageButton${widgetSuffix}" href="#" class="nextPageButton" data-dojo-attach-point="nextPageButton" role="button" aria-label="${PC_NEXT_PAGE}" alt="${PC_NEXT_PAGE}"></a>
+				<flow:ifEnabled feature="RemoteWidget">
+					<c:if test="${param.showFeed}">
+						<%out.flush();%>
+						<c:import url="/Widgets/Common/ESpot/FeedAndRemoteWidgetDisplay.jsp">
+							<c:param name="feedURL" value="${eMarketingFeedURL}"/>
+							<c:param name="widgetPrefix" value="${widgetPrefix}"/>
+						</c:import>
+						<%out.flush();%>
+					</c:if>
+				</flow:ifEnabled>
+			</div>
+		</div>
+		<div class="content" data-dojo-attach-point="content">
+			<ul data-dojo-attach-point="ul">
+				<c:forEach begin="0" end="${totalPages - 1}" varStatus="status"><li>
+					<ul class="grid" data-dojo-type="wc/widget/Grid" data-dojo-props="columnCountByWidth:{0:1,301:2}">
+						<c:choose>
+							<c:when test="${!empty partNumbers}">
+								<c:forTokens items="${partNumbers}" begin="${pageSize * status.index}" end="${pageSize * (status.index + 1) - 1}" delims="," var="currentPartnumber" ><li><%out.flush();%><%-- Same product should not be displayed --%><c:import url="/Widgets/com.ibm.commerce.store.widgets.IBMProductRecommendations/IBMProductRecommendations_SKU_UI.jsp"><c:param name="partNumber" value="${currentPartnumber}"/><c:param name="pageView" value="${param.pageView}"/><c:param name="showCompareBox" value="${param.showCompareBox}"/><c:param name="emsName" value="${emsName }" /></c:import><%out.flush();%></li></c:forTokens>
+							</c:when>
+							<c:otherwise>
+								<c:forTokens items="${catentryIdList}" delims="," begin="${pageSize * status.index}" end="${pageSize * (status.index + 1) - 1}" var="catEntryId"><li><%out.flush();%><c:import url="/Widgets/com.ibm.commerce.store.widgets.IBMProductRecommendations/IBMProductRecommendations_SKU_UI.jsp"><c:param name="catEntryIdentifier" value="${catEntryId}"/><c:param name="pageView" value="${param.pageView}"/><c:param name="emsName" value="${emsName }" /><c:param name="showCompareBox" value="${param.showCompareBox}"/></c:import><%out.flush();%></li></c:forTokens>
+							</c:otherwise>
+						</c:choose>
+					</ul>
+				</li></c:forEach>
+			</ul>
+		</div>
+	</div>
+</c:if>
+
+<!-- END IBMProductRecommendation_Vertical_UI.jspf -->

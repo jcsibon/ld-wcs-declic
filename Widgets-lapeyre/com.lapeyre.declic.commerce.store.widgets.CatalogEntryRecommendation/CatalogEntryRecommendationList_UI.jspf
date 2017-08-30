@@ -1,0 +1,71 @@
+<%--
+Simplified catalogEntryList_UI for recommendations
+--%>
+<%@ page trimDirectiveWhitespaces="true" %>
+<c:if test="${totalCount > 0}">
+
+		<!-- <a id="ancreProduct" href="#"></a> -->
+		<div class="productListingWidget">
+			 <c:if test="${eSpotTitleIncluded == null || empty eSpotTitleIncluded[emsName]}" >
+				<div id="titleRecoxxx"><%@include file="../Common/ESpot/ESpotTitle_UI.jspf"%></div>
+			</c:if> 
+		
+							<%-- <div class="${isOnMobileDevice?'header_bar mobile':'header_bar' }">
+
+								Set variables used by pagination controls
+								<c:set var="otherViewsEventName" value="toggleViewEvent"/>
+								<c:set var="eventName" value="showResultsForPageNumber"/>
+								<fmt:message var="sortByPrefixLabel" key="sortByPrefixLabel" bundle="${widgetText}"/>
+								<script>
+									dojo.addOnLoad(function(){
+										dojo.subscribe("toggleViewEvent",SearchBasedNavigationDisplayJS,"toggleView");
+										dojo.subscribe("showResultsForPageNumber",SearchBasedNavigationDisplayJS,"showResultsPage");
+										<c:if test="${env_inPreview && !env_storePreviewLink}">
+										dojo.subscribe("CMPageRefreshEvent",function(){
+											var previewHeader = window.parent.frames[0];
+											if(previewHeader.isSpotsShown()) {
+												previewHeader.showESpots();previewHeader.showESpots();
+												}
+											});
+										</c:if>
+									});
+
+									
+									//0000237: [mode de vue] Le mode de vue (grille/liste) doit s'appliquer sur toutes familles et ce pour une même session
+									function setProductPageViewInCookie(pageView) {
+										dojo.cookie('productPreferedPageView', pageView, {path:'/'});
+									}
+									
+								</script>
+
+								<%@include file="/Widgets-lapeyre/Common/ECOPaginationControls.jspf" %>
+							</div>
+ --%>
+							<div class="product_listing_container">
+								<c:if test="${totalCount > 0}">									
+											<ul class="grid_mode grid" data-dojo-type="wc/widget/Grid" data-dojo-props="columnCountByWidth:${columnCountByWidth_Grid}">
+												<c:forEach var="catEntry" items="${eSpotCatalogIdResults}" varStatus="statusColumn"><%-- globalresults --%>
+															
+													<c:set var="position" value="${position + 1}" />
+													<c:set var="catEntryIdentifier" value="${catEntry.uniqueID}" scope="request"/>
+													<li itemscope itemtype="${MICRO_DATA_PRODUCT}"><%-- TODO trouver qui passe style=width:33.3333% --%>
+														
+														<%out.flush();%>
+														<c:import url="/Widgets-lapeyre/Common/ECOCatalogEntry/CatalogEntryDisplay.jsp">
+															<c:param name="pageView" value="grid"/>
+															<c:param name="disableProductCompare" value="${disableProductCompare}" />
+															<c:param name="catEntryIdentifier" value="${catEntryIdentifier}"/> <%-- Pass catEntryIdentifier parameter so that CatalogEntryDisplay can be cached, based on catEntryIdentifier --%>
+															<c:param name="fromWidget" value="CatalogEntryList"/>
+															<c:param name="catEntryType" value="${catEntry.type}" />
+														</c:import>
+														<%out.flush();%>
+														<div class="catEntryGrid_border"></div>
+													</li>
+												</c:forEach>
+											</ul>
+								</c:if>
+							</div>
+							<%-- <%@include file="/Widgets-lapeyre/Common/ECOPaginationControls.jspf" %> --%>
+		</div>
+
+</c:if>

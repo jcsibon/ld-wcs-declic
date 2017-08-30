@@ -1,0 +1,136 @@
+<!-- BEGIN SearchCrossContentSetup.jspf-->
+<%@ page trimDirectiveWhitespaces="true" %>
+<%@page import="org.apache.commons.json.JSONException"%>
+<%@page import="org.apache.commons.json.JSONObject"%>
+<%@page import="java.util.Collections"%>
+<c:if test="${empty includedSearchCrossContentJSPF}">
+	<c:set var="includedSearchCrossContentJSPF" value="includedSearchCrossContentJSPF" scope="request"/> <%-- For singleton feature --%>
+	<c:if test="${empty contentSearchTerm}">
+		<c:set var="contentSearchTerm" value="${WCParam.searchTerm}" scope="request"/>
+	</c:if>
+	<%--If contentSearchTerm is still null, is because the search is based on the manufacturer term. --%>
+	<c:if test="${empty contentSearchTerm}">
+		<c:set var="contentSearchTerm" value="${WCParam.manufacturer}" scope="request"/>
+	</c:if>
+	
+	<c:set var="sortByContent" value="" scope="request"/>
+	<c:choose>
+		<%-- param.sortBy is from widget property --%>
+		<c:when test="${not empty param.orderByContent}" >
+			<c:if test="${param.orderByContent == '1' || param.orderByContent == '2'}">
+				<c:set var="sortByContent" value="${param.orderByContent}" scope="request"/>
+			</c:if>
+		</c:when>
+	</c:choose>
+	<%--0000236: [Règle de tri] les règles de tri doivent s'appliquer sur toutes les familles et ce pour une même session --%>
+	<c:if test="${empty sortByContent}">
+		<c:set var="contentSortBySelected" value="${!empty cookie['contentSortBySelected'] ? cookie['contentSortBySelected'].value:''}"/>
+		<c:if test="${!empty contentSortBySelected}">
+			<c:set var="sortByContent" value="${contentSortBySelected}" scope="request"/>
+		</c:if>
+	</c:if>
+	
+	<c:set var="pageNumber" value="0" />
+	
+	<c:if test="${!empty beginIndex && beginIndex > 0}">
+		<fmt:parseNumber var="pageSizeNb" value="${pageSize}" integerOnly="true"/>
+		<fmt:parseNumber var="beginIndexNb" value="${beginIndex}" integerOnly="true"/>
+		<fmt:formatNumber var="pageNumber" value="${beginIndexNb/pageSizeNb}" maxFractionDigits="0" />
+	</c:if>
+	
+	
+	<c:set var="sortOrder" value="0" />
+	
+	<c:choose>
+		<c:when test="${sortByContent == '1'}">
+			<c:set var="sortByFieldName" value="titre" />
+		</c:when>
+		<c:when test="${sortByContent == '2'}">
+			<c:set var="sortByFieldName" value="debutValidite" />
+		</c:when>
+		<c:otherwise>
+			<c:set var="sortByFieldName" value="" />
+			<c:set var="sortOrder" value="0" />
+		</c:otherwise>
+	</c:choose>
+	
+	<c:set var="onlyResults" value="1" />
+	<c:if test="${!empty onlyResultsForContent && onlyResultsForContent eq '0'}" >
+		<c:set var="onlyResults" value="0" />
+	</c:if>
+	
+	<c:set var="complement" value="pageSize=${pageSize}" />
+	<c:set var="complement" value="${complement}&pageNumber=${pageNumber}" />
+	<c:if test="${not empty onlyResults}">
+		<c:set var="complement" value="${complement}&onlyResults=${onlyResults}" />	
+	</c:if>
+	<c:if test="${not empty sortByFieldName && not empty sortOrder}">
+		<c:set var="complement" value="${complement}&sortBy=${sortByFieldName}&sortOrder=${sortOrder}" />	
+	</c:if>
+	
+	
+	<%-- Tableau de facet : nomFacet; valeurFacet --%>
+	<c:if test="${not empty paramValues.facetContent && not empty paramValues.facetContentId}" >
+		<c:set var="complement" value="${complement}&facet=" />
+			
+			<c:set var="facetteString" value="" />
+			<c:forEach var="facetParam" items="${paramValues.facetContent}" varStatus="counter">
+				<c:choose>
+				    <c:when test="${counter.count>1}">
+				        <c:set var="facetteString" value="${facetteString};;${facetParam}" />
+				    </c:when>
+				    <c:otherwise>
+				        <c:set var="facetteString" value="${facetParam}" />
+				    </c:otherwise>
+				</c:choose>	
+			</c:forEach>
+		<c:set var="complement" value="${complement}${facetteString}" />
+	</c:if>
+	
+	<%-- Call CMS and fill right data in existing var  --%>
+	<%-- ECOCEA : call CMS --%>
+	<c:choose>
+		<c:when test="${empty searchMethod}"><c:set var="searchMethod" value="search"/></c:when>
+		<c:otherwise><c:set var="searchMethod" value="search/byParent"/></c:otherwise><%-- FIXME comprendre pourquoi il a tantot un string tantot un tableau --%>
+	</c:choose>
+	<c:import url="/LapeyreSAS/include/ContentContext.jsp">
+		<c:param name="typePage" value="${searchMethod}" />
+		<c:param name="id" value="${contentSearchTerm}" />
+		<c:param name="complement" value="${complement}" /> 
+	</c:import>
+	<%
+	  //filtrer les pages depuis l'objet en request, à partir des parametres du widget
+	  {	  		
+		  com.lapeyre.declic.cms.ContentHelper xcontentHelper = (com.lapeyre.declic.cms.ContentHelper) request.getAttribute("contentHelper");
+		  java.util.List<org.apache.commons.json.JSONObject> resultXContent = xcontentHelper.getPages();
+		  try {
+		  	  
+			  int resultXContentTotalSize = 0 ;
+			  if(xcontentHelper.getContent() != null && xcontentHelper.getContent().getJSONObject("result") != null && xcontentHelper.getContent().getJSONObject("result").get("nbResults") != null) {
+			  	resultXContentTotalSize = xcontentHelper.getContent().getJSONObject("result").getInt("nbResults");
+			  	
+			  }
+			  
+			  
+			  java.util.List<org.apache.commons.json.JSONObject> resultXContentFacet = xcontentHelper.getFacets();
+			  request.setAttribute("xcontentsFacet", resultXContentFacet);
+			  request.setAttribute("xcontentsFacetSize", resultXContentFacet.size());
+			  request.setAttribute("xcontents", resultXContent);
+			  request.setAttribute("xcontentsSize",resultXContentTotalSize);
+		  } catch(Exception ex) {
+			  request.setAttribute("xcontentsFacet", Collections.<JSONObject>emptyList());
+			  request.setAttribute("xcontentsFacetSize", 0);
+			  
+			  request.setAttribute("xcontents", resultXContent);
+			  request.setAttribute("xcontentsSize",0);
+			  request.setAttribute("isOnError", true);
+		  }
+	  }
+	%>
+	<c:set var="totalContentCount" value="${xcontentsSize}" scope="request"/>
+	<c:set var="errorMessage" value="" scope="request" />
+	<c:if test="${isOnError}">
+		<c:set var="errorMessage" value="Erreur" scope="request" />
+	</c:if>
+</c:if>
+<!-- END SearchCrossContentSetup.jspf-->  

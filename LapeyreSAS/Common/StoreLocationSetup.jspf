@@ -1,0 +1,19 @@
+demanderGeoloc(){
+}
+
+helper.setDefault(long userId, pos){
+ //ajax call to DefaultStoreLoadCmdImpl
+}
+
+<c:if test="${defaultMag == null}">
+  <c:choose>
+    <c:when test="${userId == null}">
+        pos=demanderGeoloc();
+        if(!pos) helper.setDefault(-1,null);
+        else helper.setDefault(null,pos);
+    </c:when>
+    <c:otherwise>
+        helper.setDefault(userId,null)
+    </c:otherwise>
+  </c:choose>
+</c:if>

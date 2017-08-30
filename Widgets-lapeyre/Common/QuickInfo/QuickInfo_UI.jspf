@@ -1,0 +1,318 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+ 
+ Sorry about this copy and paste, but the content of this quickInfo popin is exactly the same as the product display view,
+ and I can't just import the correct widget due to duplicates id's
+--%>
+<!-- Start QuickInfo_UI.jspf : used in Quick View -->
+<%@ page trimDirectiveWhitespaces="true" %>
+<div>
+	<a id="WC_QuickInfo_Link_close" href="javascript:QuickInfoJS.close('catalogEntry_img<c:out value='${param.productId}'/>');" class="closeButton"></a>
+</div>
+<div id="standardFicheProduitHead">
+	<div id="ficheProduitHeadLeftCol" class="bcol12 col9 ccol9 left">
+		<div class="ficheTitle">
+		<c:set var="socialSharingTitle" value="${name}" scope="request" />
+			<a class="hover_underline" href="${catEntryDisplayUrl}" title="${name}">
+			<h1 role="heading" aria-level="1" class="main_header" title="<c:out value="${name}" escapeXml="false"/>" itemprop="name"><ecocea:crop value="${name}" length="110" /></h1></a>
+			<meta itemprop="productId" content="${partNumber}" />
+	        <meta itemprop="manufacturer" content="${MICRO_DATA_MANUFACTURER}" />
+		</div>
+		<div class="row" id="WC_QuickInfo_ficheContent">
+			<div class="bcol12 ficheImage<c:if test="${isOnSpecial}" > promo</c:if>" id="WC_QuickInfo_ficheImage">
+				<%out.flush(); %>
+					<c:import url="${fullImagewidgetPath}">
+						<c:param name="displayType" value="_popup" />
+						<c:param name="widgetCeption" value="true" />
+					</c:import>
+				<%out.flush(); %>
+				<c:set var="socialSharingImage" value="${productFullImage}" scope="request"/>
+				<%-- Product videos --%>
+				<%@ include file="/Widgets-lapeyre/Common/ProductDescription/ProductVideos.jspf" %>
+			</div>
+			<div class="acol12 col12 ccol5 ficheDesc">
+				<div data-slot-id="5" class="ccol12 slot5">
+					<div class="product_text" itemprop="description">
+						<c:if test="${!empty shortDesc }">
+							<h2 class="ficheSubTitle" title="${shortDesc}">${shortDesc}</h2>
+						</c:if>
+						<p id="product_shortdescription_${fn:escapeXml(catalogEntryID)}">
+							<c:choose>
+								<c:when test="${!empty auxDesc1}">
+									<c:set var="socialSharingDescription" value="${auxDesc1}" scope="request" />
+									${auxDesc1}
+								</c:when>
+								<c:otherwise>
+									<%-- affiche les 150 premiers caractères de longDesc --%>
+									<ecocea:crop value="${longDesc}" length="150" />
+								</c:otherwise>
+							</c:choose>
+						</p>
+						<div class="clear_float"></div>
+						<c:if test="${empty auxDesc1 && !empty longDesc}">
+							<div class="product_desc_complet"><a href="${catEntryDisplayUrl}#detailedDescription"><fmt:message key="beneficeClientLinkLabel" bundle='${widgetText}' /></a></div>
+						</c:if>
+					</div>
+				</div>
+				<div class="ccol12">
+					<%out.flush(); %>
+						<c:import url="${definingAttributeswidgetsPath}">
+							<c:param name="displayType" value="_popup" />
+							<c:param name="widgetCeption" value="true" />
+							<c:param name="productId" value="${parentCatEntryId}" />
+							<c:param name="displayOptionsChoicesWarning" value="true" /> <%-- 0001088 : [Fiche produit standard] - L'info bulle mes options n'apparit jamais--%>
+						</c:import>
+					<%out.flush(); %>
+					<c:if test="${!empty pictos}">
+					<div class="clear_float attBorder"></div>
+					<div class="listePictos">
+						<c:forEach var="picto" items="${pictos}" varStatus="status">
+							<c:if test="${status.index < 6 }">
+								<astpush:assetPushUrl var="pictoURL" scope="page" urlRelative="${picto.attachmentAssetPath}" type="" source="" device="" format=""/>
+								<img src="${pictoURL}" alt="${picto.name}" />
+							</c:if>
+						</c:forEach>
+					</div>
+					</c:if>
+					<c:if test="${!empty brands}">
+						<div class="clear_float attBorder"></div>
+						<div class="ficheProduitBlockInfo">
+							<c:forEach var="brand" items="${brands}">
+							 	<wcf:url var="brandSearchURL" value="SearchDisplay">
+									<wcf:param name="langId" value="${WCParam.langId}" />
+									<wcf:param name="storeId" value="${WCParam.storeId}" />
+									<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+									<wcf:param name="manufacturer" value="${brand.name}" />			
+									<wcf:param name="urlLangId" value="${urlLangId}" />
+								</wcf:url>
+								<astpush:assetPushUrl var="brandURL" scope="page" urlRelative="${brand.attachmentAssetPath}" type="" source="" device="" format=""/>
+								<a class="brandLogo" href="${brandSearchURL}"><img src="${brandURL}" alt="${brand.name}"></a>
+								<%-- shortdesc de la relation entre un produit et l'attachment, dans la table ATCHRELDSC --%>
+								<p>${brand.shortdesc}</p>
+								<p><a class="lapeyreLink" href="${brandSearchURL}"><fmt:message key="brandSearchLinkLabel" bundle='${widgetText}' /></a></p>
+							</c:forEach>
+						</div>
+					</c:if>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="bcol12 col3 ccol3 right" id="WC_QuickInfo_ficheAside">
+		<%@ include file="/Widgets-lapeyre/Common/PriceDisplay/PriceDisplay.jspf" %>
+		<div class="ficheActions">
+			<div class="ficheInfos">
+				<div class="ficheInfosPrix">
+					<div class="ecoPartContainer" id="ecoPartContainer_${fn:escapeXml(catalogEntryID)}" style="display:none;">
+						<fmt:message key="ecoPartIncludingLabel" bundle="${widgetText}" /> : <span>N/A</span>
+					</div>
+					<fmt:message key="ficheProduitSkuLabel" bundle="${widgetText}" /> : <span id="product_SKU_<c:out value='${catalogEntryID}' />">${partNumber}</span>
+				</div>
+			</div>
+			
+			<%@ taglib uri="ecocea.tld" prefix="ecocea" %>
+			<c:set var="libellesUnit" value="${ecocea:getLibelles(uniteVenteLegale,contrainteColisage)}" scope="request" />
+			
+			<div class="ficheLivraison">
+				<span id="priceLabel_${fn:escapeXml(catalogEntryID)}">${priceLabelDefault}</span>
+				<c:if test="${!empty offerPrice}">
+					<div id="coeffArea_${fn:escapeXml(catalogEntryID)}" class="ficheInfosMin">
+						<c:if test="${fn:toLowerCase(uniteSecondaire) ne fn:toLowerCase(uniteVenteLegale)}"> <%-- 0001097: [Quick view] - Un texte "Unité" précédé du prix est affiché --%>
+							<c:choose>
+								<c:when test="${!empty coeffConversionQuantite && offerPrice*coeffConversionQuantite > 0}">
+									<fmt:formatNumber var="priceInUnit" value="${offerPrice*coeffConversionQuantite}" maxFractionDigits="2" />
+									${fn:replace(fn:replace(fn:replace(libellesUnit.colisagePriceLabel,'PRICE',priceInUnit),'NBUNIT',coeffConversionQuantite),'.',',')} 
+								</c:when>
+								<c:otherwise>
+									<c:if test="${!empty coeffConversionPrix && offerPrice*coeffConversionPrix > 0}">
+										<fmt:formatNumber var="priceInUnit" value="${offerPrice/coeffConversionPrix}" maxFractionDigits="2" />
+										<fmt:formatNumber var="coeff" value="${1/coeffConversionPrix}" maxFractionDigits="3" />
+										 ${fn:replace(fn:replace(fn:replace(libellesUnit.colisagePriceLabel,'PRICE',priceInUnit),'NBUNIT',coeff),'.',',')} 
+									</c:if>
+								</c:otherwise>
+							</c:choose>
+						</c:if>
+					</div>
+				</c:if>
+			</div>
+			<div class="ficheLivraison"><img src="${jspStoreImgDir}images/ficheLivraisonPic.png" alt="<fmt:message key="ficheProduitStandardLivraisonLabel" bundle="${widgetText}" />" /><p><fmt:message key="ficheProduitStandardLivraisonLabel" bundle="${widgetText}" /></p></div>
+			<div dojoType="wc.widget.RefreshArea" controllerId="WCQuickInfoShopperActionsRefreshAreaController" id="WCQuickInfoShopperActionsRefreshArea">
+			<%out.flush(); %>
+				<c:import url="${shopperActionswidgetPath}" >
+					<c:param name="widgetCeption" value="true" />
+					<c:param name="inQuickInfo" value="true" />
+					<c:param name="defaultProductSkuID" value="${defaultSku.uniqueID}" />
+				</c:import>
+			<%out.flush(); %>
+			</div>
+			<c:if test="${showCompareBox eq 'true'}">
+				<div id="compareContainer_${catalogEntryID}_${displayType}">
+					<%out.flush();%>
+						<c:import url = "/LapeyreSAS/Widgets/AddRemoveCompareProductDisplay/AddRemoveCompareProductDisplay.jsp">
+							<c:param name="productId" value="${catalogEntryID}" />
+							<c:param name="catalogEntryId" value="${defaultSku.uniqueID}" />
+							<c:param name="displayType" value="_popup" />
+						</c:import>
+					<%out.flush();%>
+				</div>
+			</c:if>
+			<c:set var="isQuickView" value="true"/>
+			<%@ include file="../../../LapeyreSAS/Common/JSTLEnvironmentSetupExtForSocialNetworks.jsp" %>
+			<%out.flush(); %>
+			<c:import url="${socialNetworksWidgetPath}">
+				<c:param name="classToApply" value="ficheSocialNetworks shareSocialNetwork" />
+				<c:param name="rootPath" value="${jspStoreImgDir}" />
+				<c:param name="widgetText" value="${widgetText}" />
+			</c:import>
+			<%out.flush(); %>
+			<div dojoType="wc.widget.RefreshArea" controllerId="WCQuickInfoItemAvailabilityRefreshAreaController" id="WCQuickInfoItemAvailabilityRefreshArea">
+				<%out.flush(); %>
+					<c:import url="${itemAvailabilityInPhysicalStoreswidget}">
+						<c:param name="displayType" value="_popup" />
+						<c:param name="widgetCeption" value="true" />
+					</c:import>
+				<%out.flush(); %>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="compareCheckboxLabels">
+    <label><fmt:message key="LAP003_COMPARE_ADD" bundle="${widgetText}"/></label>
+    <label>     
+	   	<fmt:message var="comparatorLabel" key="LAP004_COMPARE_ADDED" bundle="${widgetText}"/>
+	   	<fmt:message var="comparatorLabelWithLink" key="LAP004_COMPARE_ADDED_WITHLINK" bundle="${widgetText}"/>
+		<c:import url="/Widgets-lapeyre/Common/ECOComparatorControls.jsp">
+			<c:param name="asCheckbox" value="true"/>
+			<c:param name="comparatorLabel" value="${comparatorLabel}"/>
+			<c:param name="comparatorLabelWithLink" value="${comparatorLabelWithLink}"/>
+		</c:import>
+    </label>
+</div>
+
+<a id="ECO_QuickInfo_Swatch_itemDefault_${fn:escapeXml(catalogEntryID)}" href="javascript:productDisplayJS.skusCount = null;standardProductDisplay.initialize('${catalogEntryID}', '${displayPriceRange}','${attrIdentifiers}', '_popup');standardProductDisplay.buildDefiningAttributesArray('${fn:escapeXml(defaultSkuAttrsJSON)}');standardProductDisplay.selectDefaultSku();" style="display:none;"></a>
+<a id="ECO_QuickInfo_perform_compareCheck_${fn:escapeXml(catalogEntryID)}" href="javascript:shoppingActionsJS.checkForCompare();" style="display: none;"></a>
+<script id="WCQuickInfoItemAvaibilityScripts_SetDefaultHandler">
+	$(itemAvailabilityInPhysicalStoreForQuickInfo).on("SetQuickInfoDefaultStoreSucceed", function(){
+		wc.render.updateContext("WCQuickInfoItemAvailability_Context", {pageType :"ProductStandard", catalogEntryID : "${catalogEntryID}", displayType : "_popup"});
+		wc.render.updateContext("HeaderStoreLocation_Context");
+	});
+	
+	dojo.subscribe('HeaderStoreLocator.onGetNearestStoreLocationSucceed', function(headerStoreId) {
+		wc.render.updateContext("WCQuickInfoItemAvailability_Context", {pageType :"ProductStandard", catalogEntryID : "${catalogEntryID}", displayType : "_popup"});
+	});
+		
+	var tooltip = $(".tooltip").tooltipster({
+		position: 'bottom',
+		touchDevices: false
+	});
+	
+	youtubePlayer.init();
+</script>
+
+<div id="entitledItem_<c:out value='${productId}'/>_AngleImages" style="display:none;">
+	[
+		<c:if test="${fn:length(productAttachments) > 0}">
+			{
+				"ItemAngleThumbnail" : {
+				<c:set var="imageCount" value="0" />
+				<c:forEach var="productAttachment" items="${productAttachments}" varStatus="status1">
+					<c:if test="${productAttachment.usage == 'ANGLEIMAGES_THUMBNAIL'}">
+						<c:if test='${imageCount gt 0}'>,</c:if>
+						<c:set var="imageCount" value="${imageCount+1}" />
+						<astpush:assetPushUrl var="resolvedPath" scope="page" urlRelative="${productAttachment.attachmentAssetPath}" type="${catalogEntryDetails.type}" source="main" device="${device}" format="thumbnail"/>
+						"image_${imageCount}" : "<c:out value='${resolvedPath}' />;<c:out value='${productAttachment.name}' />"
+					</c:if>
+				</c:forEach>
+				},				
+				"ItemAngleFullImage" : {
+				<c:set var="imageCount" value="0" />
+				<c:forEach var="productAttachment" items="${productAttachments}" varStatus="status2">
+					
+					<c:if test="${productAttachment.usage == 'ANGLEIMAGES_FULLIMAGE'}">
+						<c:if test='${imageCount gt 0}'>,</c:if>
+						<c:set var="imageCount" value="${imageCount+1}" />
+						<astpush:assetPushUrl var="imgSourceFull" scope="page" urlRelative="${productAttachment.attachmentAssetPath}" type="${catalogEntryDetails.type}" source="main" device="${device}" format="full"/>
+						<astpush:assetPushUrl var="imgSourceZoom" scope="page" urlRelative="${productAttachment.attachmentAssetPath}" type="${catalogEntryDetails.type}" source="main" device="${device}" format="zoom"/>
+						"image_${imageCount}" : "<c:out value='${imgSourceFull}' />;<c:out value='${imgSourceZoom}' />"
+					</c:if>
+				</c:forEach>
+				}
+			}
+		</c:if>
+	]
+</div>
+<div id="entitledItem_<c:out value='${productId}'/>" style="display:none;">
+		[
+		<c:if test="${type == 'product'}">
+
+				<c:forEach var='entitledItem' items='${entitledItems}' varStatus='outerStatus'>
+					<c:if test="${entitledItem.buyable eq 'true'}">
+						<c:set var="sku" value="${entitledItem}"/>
+						<c:set var="skuID" value="${entitledItem.uniqueID}"/>
+	
+						{
+						"catentry_id" : "<c:out value='${skuID}' />",
+						
+						"Attributes" :	{
+							<c:set var="hasAttributes" value="false"/>											
+							<c:forEach var="definingAttrValue2" items="${sku.attributes}" varStatus="innerStatus">
+								<c:if test="${definingAttrValue2.usage == 'Defining'}">
+									<c:if test='${hasAttributes eq "true"}'>,</c:if>
+									"<c:out value="${fn:replace(definingAttrValue2.identifier, search01, replaceStr01)}_${fn:replace(fn:replace(definingAttrValue2.values[0].identifier, search01, replaceStr01), search, replaceStr)}" />":"<c:out value='${innerStatus.count}' />"
+									<c:set var="hasAttributes" value="true"/>
+								</c:if>
+							</c:forEach>
+							},
+							
+							<%-- SwatchCode start --%>
+																
+							<c:set var="catalogEntryViewItemDetails" value="${catalogEntryDetails.sKUs}"/>
+						
+							<%--Mantis 1420: initialisation des variables en début de boucle --%>
+							<c:set var="itemFullImagePath" value=""/>
+							<c:set var="thumbnailImage" value=""/>
+							<c:set var="itemZoomImagePath" value=""/>
+							
+								
+							<c:if test="${!empty entitledItem.thumbnail}">
+								<astpush:assetPushUrl var="thumbnailImage" scope="page" urlRelative="${entitledItem.thumbnail}" type="${catalogEntryDetails.type}" source="main" device="${device}" format="thumbnail"/>
+							</c:if>
+							<c:if test="${!empty entitledItem.fullImage}">
+								<astpush:assetPushUrl var="itemFullImagePath" scope="page" urlRelative="${entitledItem.fullImage}" type="${catalogEntryDetails.type}" source="main" device="${device}" format="full"/>
+								<astpush:assetPushUrl var="itemZoomImagePath" scope="page" urlRelative="${entitledItem.fullImage}" type="${catalogEntryDetails.type}" source="main" device="${device}" format="zoom"/>
+							</c:if>
+							
+						
+							<c:if test="${empty itemFullImagePath}">
+									<c:set var="keyDefaultImageMaps" value="${catalogEntryDetails.type}_main_full"/>
+									<astpush:assetPushUrl var="itemFullImagePath" scope="page" urlRelative="${defaultImageMaps[keyDefaultImageMaps]}" type="${catalogEntryDetails.type}" source="main" device="${device}" format="full" defaultUrl="true"/>
+							</c:if>
+							
+							
+							"ItemImage" : "<c:out value='${itemFullImagePath}' />",
+							"ItemImage467" : "<c:out value='${itemFullImagePath}' />",
+							"ItemZoomImage" : "<c:out value='${itemZoomImagePath}' />",
+							"ItemThumbnailImage" : "<c:out value='${thumbnailImage}' />"
+							<%-- SwatchCode end --%>
+						}<c:if test='${!outerStatus.last}'>,</c:if>
+					</c:if>
+				</c:forEach>
+			
+		</c:if>
+		<c:if test="${type == 'package' || type == 'bundle' || type == 'item' || type == 'dynamickit'}">
+			{
+			"catentry_id" : "<c:out value='${catalogEntryID}'/>",
+			"Attributes" :	{ }
+			}
+		</c:if>
+		]
+</div>

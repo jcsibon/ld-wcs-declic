@@ -1,0 +1,26 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<%@page import="com.lapeyre.declic.configurations.ConfigTool"%>
+
+<%@ include file="/Widgets-lapeyre/Common/ProductConstants.jspf" %>
+<%@ include file="/Widgets-lapeyre/Common/PDP_CatalogEntryData.jspf" %>
+
+<c:set var="productType" value="${catalogEntryDetails.type}" />
+
+<%
+	// storeLocatorURL
+	String storeLocatorURL = ConfigTool.getConnectionPropertiesResource().getProperty("store.all.mag.url");
+	request.setAttribute("storeLocatorURL","/"+storeLocatorURL);
+%>

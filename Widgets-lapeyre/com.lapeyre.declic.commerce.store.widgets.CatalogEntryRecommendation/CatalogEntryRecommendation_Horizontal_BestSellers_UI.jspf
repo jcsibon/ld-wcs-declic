@@ -1,0 +1,68 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<!-- BEGIN CatalogEntryRecommendation_Horizontal_BestSellers_UI.jspf -->
+
+<c:if test="${!empty catentryIdList}">
+	<fmt:message key="PC_PREVIOUS_PAGE" bundle="${widgetText}" var="PC_PREVIOUS_PAGE"/>
+	<fmt:message key="PC_NEXT_PAGE" bundle="${widgetText}" var="PC_NEXT_PAGE"/>
+	<fmt:message key="PC_MOVE_TO_PAGE_{0}" bundle="${widgetText}" var="PC_MOVE_TO_PAGE"/>
+	<fmt:message key="ES_RECOMMENDED_PRODUCTS" bundle="${widgetText}" var="ES_RECOMMENDED_PRODUCTS" />
+	
+	<c:choose>
+		<c:when test="${!empty titleContentTypeMap || !empty espotTitle}">
+			<c:set var="ariaAttributes"> role="${marketingSpotDatas.behavior == 2 ? 'marquee' : 'region'}" aria-labelledby="title${widgetSuffix}"</c:set>
+		</c:when>
+		<c:when test="${marketingSpotDatas.behavior == 2}" >
+			<c:set var="ariaAttributes"> role="marquee" aria-label="${ES_RECOMMENDED_PRODUCTS}"</c:set>
+		</c:when>
+		<c:otherwise>
+			<c:set var="ariaAttributes"></c:set>
+		</c:otherwise>
+	</c:choose>
+	<div class="row collapsOnMobile">
+		<div class="collapsible col12" aria-label="" role="navigation" aria-expanded="true">
+			<span class="titleBlock" role="button" tabindex="0" aria-describedby="category_widget_acce_desc"><fmt:message key="ficheProduitStdMainSection7Label" bundle="${widgetText}" /></span>
+			<div class="content">
+				<div id="catalogEntryRecommendationWidget${widgetSuffix}" class="catalogEntryRecommendationWidget carousel clip-true padding-true background-${background} border-${border}" data-dojo-type="wc/widget/WCCarousel" data-dojo-props="columnCountByWidth:${columnCountByWidth}" ${ariaAttributes}>
+					<c:if test="${eSpotTitleIncluded == null || empty eSpotTitleIncluded[emsName]}" >
+						<span id="title${widgetSuffix}" class="blocktitle"><%@include file="../Common/ESpot/ESpotTitle_UI.jspf"%></span>
+					</c:if>
+					<div class="content" data-dojo-attach-point="content">
+						<ul data-dojo-attach-point="ul">
+							<c:forTokens items="${catentryIdList}" delims="," var="catEntryIdentifier">
+							<li itemscope itemtype="${MICRO_DATA_PRODUCT}">
+								<%@include file="RecommendedCatalogEntryDisplay.jspf"%>
+							</li></c:forTokens>
+						</ul>
+					</div>
+					<a id="prevPageButton${widgetSuffix}" href="#" class="prevPageButton" data-dojo-attach-point="prevPageButton" role="button" aria-label="${PC_PREVIOUS_PAGE}" alt="${PC_PREVIOUS_PAGE}"></a>
+					<a id="nextPageButton${widgetSuffix}" href="#" class="nextPageButton" data-dojo-attach-point="nextPageButton" role="button" aria-label="${PC_NEXT_PAGE}" alt="${PC_NEXT_PAGE}"></a>
+					<flow:ifEnabled feature="RemoteWidget">
+						<c:if test="${param.showFeed}">
+							<%out.flush();%>
+							<c:import url="/Widgets/Common/ESpot/FeedAndRemoteWidgetDisplay.jsp">
+								<c:param name="feedURL" value="${eMarketingFeedURL}"/>
+								<c:param name="widgetPrefix" value="${widgetPrefix}"/>
+							</c:import>
+							<%out.flush();%>
+						</c:if>
+					</flow:ifEnabled>
+				</div>
+			</div>
+		</div>
+	</div>
+</c:if>
+
+<!-- END CatalogEntryRecommendation_Horizontal_BestSellers_UI.jspf -->

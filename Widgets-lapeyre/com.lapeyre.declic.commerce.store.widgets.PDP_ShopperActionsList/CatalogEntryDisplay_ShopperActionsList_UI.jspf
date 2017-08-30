@@ -1,0 +1,120 @@
+<c:choose>
+	<c:when test="${(requestScope.bundleKitAvailable eq 'true') or (requestScope.productAvailable eq 'true') or (requestScope.dynamicKitAvailable eq 'true')}" >
+		<flow:ifDisabled feature="HidePurchaseButton">
+			<c:choose>											
+				<c:when test="${type == 'dynamickit' && showDynamicKit == 'true'}">
+					<%@ include file="/Widgets-lapeyre/Common/ECOCatalogEntry/CatalogEntryDisplayForDynamicKits_ImageView.jspf" %>
+				</c:when>
+				<c:when test="${type == 'item' || type == 'package' || type == 'product'}">
+					<c:if test="${!hasAssociations}" >
+						<div class="ctaContainer mobile_hidden">
+						<c:choose>
+							<c:when test="${catEntryType eq SUR_MESURE_PRODUCT}">
+								<a href="${storeLocatorURL}" class="button trouverMonMagasinBtn"><fmt:message key="ficheProduitSMStoreLocButtonLabel" bundle="${widgetText}" /></a>
+							</c:when>
+							<c:when test="${catEntryType eq COLLECTION_PRODUCT}">
+							<c:choose>
+								<c:when test="${hasCollectionRelationship}">
+								<wcf:url var="CollectionSearchDisplayURL" value="CollectionSearchDisplay">
+									<wcf:param name="storeId" value="${storeId}" />
+									<wcf:param name="catalogId" value="${catalogId}" />
+									<wcf:param name="productId" value="${catEntryIdentifier}" />
+									<wcf:param name="categoryId" value="${WCParam.categoryId}" />
+								</wcf:url>
+								<a href="${CollectionSearchDisplayURL}" class="button orange achatEnligneCollectionBtn"><fmt:message key="ficheProduitCollectionListeMeublesButtonLabel" bundle="${widgetText}" /></a>
+								</c:when>
+								<c:otherwise>
+								<a href="${storeLocatorURL}" class="button trouverMonMagasinBtn"><fmt:message key="ficheProduitCollectionStoreLocButtonLabel" bundle="${widgetText}" /></a>
+								</c:otherwise>
+							</c:choose>
+							</c:when>
+							<c:otherwise>
+							<a id="listViewAdd2Cart_${fn:escapeXml(catalogEntryID)}" href="javascript:setCurrentId('listViewAdd2Cart_${fn:escapeXml(productId)}');shoppingActionsJS.Add2ShopCartAjax('entitledItem_${fn:escapeXml(productId)}',document.getElementById('quantity_${fn:escapeXml(productId)}').value, false)" onKeyPress="javascript:MessageHelper.setFocusElement('listViewAdd2Cart_${fn:escapeXml(productId)}');" class="button achatEnLigneBtn" wairole="button" role="button" title="<fmt:message key='ADD_TO_CART' bundle='${widgetText}' />">
+								<fmt:message key="addToCartStandardButtonLabel" bundle="${widgetText}"/>
+							</a>
+							<c:if test="${catEntryType eq CATALOGUE_PAPIER_PRODUCT}">
+								<a href="${storeLocatorURL}" class="button trouverMonMagasinBtn"><fmt:message key="ficheProduitCatalogueStoreLocButtonLabel" bundle="${widgetText}" /></a>
+							</c:if>
+							</c:otherwise>
+						</c:choose>
+							<%out.flush();%>
+							<c:if test="${catEntryType != CATALOGUE_PAPIER_PRODUCT}">
+								<c:import url = "/Widgets-lapeyre/Common/ShoppingList/ShoppingList.jsp">
+									<c:param name="productId" value="${productId}" />
+								</c:import>
+							</c:if>
+							<%out.flush();%>
+						</div>
+					</c:if>
+					<c:if test="${hasAssociations}" >								
+						<div class="ctaContainer mobile_hidden">
+						<c:choose>
+							<c:when test="${catEntryType eq SUR_MESURE_PRODUCT}">
+								<a href="${storeLocatorURL}" class="button trouverMonMagasinBtn"><fmt:message key="ficheProduitSMStoreLocButtonLabel" bundle="${widgetText}" /></a>
+							</c:when>
+							<c:otherwise>
+							<a id="addBothToCartBtn_${fn:escapeXml(productId)}" href="javascript:setCurrentId('addBothToCartBtn_${fn:escapeXml(productId)}');MerchandisingAssociationJS.addBoth2ShopCart('entitledItem_<c:out value='${productDetailsPageCatalogEntryID}'/>','entitledItem_${fn:escapeXml(productId)}',document.getElementById('quantity_${fn:escapeXml(productId)}').value,${associationIndex});" class="button primary" wairole="button" role="button" title="<fmt:message key="MA_ADD_BOTH_TO_CART" bundle="${widgetText}"/>">
+								<fmt:message key="MA_ADD_BOTH_TO_CART" bundle="${widgetText}"/>
+							</a>
+							</c:otherwise>
+						</c:choose>
+							<%out.flush();%>
+								<c:if test="${catEntryType != CATALOGUE_PAPIER_PRODUCT}"> <%-- 0001139: [Comparateur] - Un catalogue papier ne doit pas pouvoir être ajouté à la liste d'achat --%>
+									<c:import url = "/Widgets-lapeyre/Common/ShoppingList/ShoppingList.jsp">
+										<c:param name="productId" value="${productId}" />
+									</c:import>
+								</c:if>
+							<%out.flush();%>
+						</div>
+					</c:if>
+				</c:when>
+				<c:otherwise>						
+					<c:if test="${hasAssociations}" >								
+						<div class="ctaContainer mobile_hidden">
+							<a id="viewFullDetailsLink_${fn:escapeXml(productId)}" href="${fn:escapeXml(productDisplayUrl)}${fn:escapeXml(cmcrurl_productFullDetailsLink)}" class="button primary" wairole="button" role="button" title="<fmt:message key="QI_VIEW_FULL_DETAILS" bundle="${widgetText}"/>">
+								<fmt:message key="QI_VIEW_FULL_DETAILS" bundle="${widgetText}"/>
+							</a>
+							<%out.flush();%>
+								<c:if test="${catEntryType != CATALOGUE_PAPIER_PRODUCT}"> <%-- 0001139: [Comparateur] - Un catalogue papier ne doit pas pouvoir être ajouté à la liste d'achat --%>
+									<c:import url = "/Widgets-lapeyre/Common/ShoppingList/ShoppingList.jsp">
+										<c:param name="productId" value="${catalogEntryID}" />
+									</c:import>
+								</c:if>
+							<%out.flush();%>
+						</div>
+					</c:if>
+				</c:otherwise>
+			</c:choose>
+		</flow:ifDisabled> 
+	</c:when>
+	<c:when test="${catEntryType eq COLLECTION_PRODUCT}">
+		<c:choose>
+			<c:when test="${hasCollectionRelationship}">
+			<wcf:url var="CollectionSearchDisplayURL" value="CollectionSearchDisplay">
+				<wcf:param name="storeId" value="${storeId}" />
+				<wcf:param name="catalogId" value="${catalogId}" />
+				<wcf:param name="productId" value="${catEntryIdentifier}" />
+				<wcf:param name="categoryId" value="${WCParam.categoryId}" />
+			</wcf:url>
+			<a href="${CollectionSearchDisplayURL}" class="button orange achatEnligneCollectionBtn"><fmt:message key="ficheProduitCollectionListeMeublesButtonLabel" bundle="${widgetText}" /></a>
+			</c:when>
+			<c:otherwise>
+			<a href="${storeLocatorURL}" class="button trouverMonMagasinBtn"><fmt:message key="ficheProduitCollectionStoreLocButtonLabel" bundle="${widgetText}" /></a>
+			</c:otherwise>
+		</c:choose>
+	</c:when>
+	<c:otherwise>
+		<c:choose>
+		<c:when test="${catEntryType eq SUR_MESURE_PRODUCT}">
+			<a href="${storeLocatorURL}" class="button trouverMonMagasinBtn"><fmt:message key="ficheProduitCollectionStoreLocButtonLabel" bundle="${widgetText}" /></a>
+		</c:when>				
+		<c:otherwise>
+			<div class="product_option disabled">
+				<div onclick="" class="button disabled">
+					<fmt:message key="PD_UNAVAILABLE" bundle="${widgetText}"/>
+				</div>	
+			</div>
+		</c:otherwise>
+		</c:choose>
+	</c:otherwise>
+</c:choose>

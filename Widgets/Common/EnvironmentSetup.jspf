@@ -1,0 +1,226 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%-- Ecocea begin --%>
+<%@page import="org.apache.commons.lang3.StringUtils"%>
+<%@page import="com.lapeyre.declic.configurations.ConfigTool"%>
+<%@page import="java.util.Properties"%>
+<%@ page trimDirectiveWhitespaces="true" %>
+<%-- Ecocea end --%>
+<%-- 
+  *****
+  * This file retrieves and prepares a lot of information which are used by all the store JSP files.
+  * 
+  *****
+--%>
+ 
+<%@ include file="../Common/JSTLEnvironmentSetup.jspf" %>
+<%@ include file="/LapeyreSAS/Common/ExtendedUserContextSetup.jspf" %>
+<%@ page import="com.ibm.commerce.foundation.internal.server.services.search.config.solr.SolrSearchConfigurationRegistry"%>
+<%@ page import="com.ibm.commerce.command.CommandContext" %>
+<%@ page import="com.ibm.commerce.common.beans.StoreCurrencyFormatDescriptionDataBean" %>
+<%@ page import="com.ibm.commerce.context.preview.PreviewContext" %>
+<%-- Ecocea begin --%>
+<%
+//Get the number version config param
+Properties configurationProperties = ConfigTool.getConfigurationPropertiesResource();
+String versionNumber = "v" + configurationProperties.getProperty("version.number");
+if(StringUtils.isNoneBlank(versionNumber) && request != null){
+	request.setAttribute("versionNumber",versionNumber);
+}
+
+// check to see if wcparam is available; initialise it if it is not available
+if( null == request.getAttribute(com.ibm.commerce.server.ECConstants.EC_INPUT_PARAM)){
+	request.setAttribute(com.ibm.commerce.server.ECConstants.EC_INPUT_PARAM, new com.ibm.commerce.datatype.WcParam(request));
+}
+
+//Ecocea - redirige staticAssetContextRoot vers le sous-domaine statics
+String ctroot = (String) request.getAttribute("staticAssetContextRoot");
+if(!ctroot.startsWith(ConfigTool.getSousDomain())){
+	request.setAttribute("staticAssetContextRoot",ConfigTool.getSousDomain()+ctroot);
+}
+%>
+<%-- Ecocea end --%>
+<%-- This flow tag is used to change styles --%>
+<flow:fileRef id="vfileColor" fileId="vfile.color"/>
+<flow:fileRef id="StyleDir" fileId="StyleDir"/>
+
+<flow:fileRef id="vfileStylesheet" fileId="vfile.stylesheet"/>
+<c:set var = "env_vfileColor" value="${vfileColor}"/>
+<c:set var = "env_StyleDir" value="${StyleDir}"/>
+<c:set var = "env_vfileStylesheet" value="${vfileStylesheet}"/>
+
+<%-- The commerce useBean tag is used to activate the StoreDataBean --%>
+<wcbase:useBean id="sdb" classname="com.ibm.commerce.common.beans.StoreDataBean" />
+
+<%-- These are variables to use on pages --%>
+<c:set var="locale" value="${CommandContext.locale}" />
+<c:set var="langId" value="${CommandContext.languageId}" />
+<c:set var="storeId" value="${CommandContext.storeId}" />
+<c:set var="userType" value="${CommandContext.user.registerType}" />
+<c:if test="${!empty WCParam.catalogId}">
+	<c:set var="catalogId"><c:out value="${WCParam.catalogId}"/></c:set>
+</c:if>
+
+<%-- urlLangId parameter can be passed to wcf:url tags. If passed, this urlLangId will be used to look up
+the URL keywords. If keywords are not found for this urlLangId, then store default langId will be used to look up
+the URL keywords. By default page langId is set as urlLangId. If store URLs are supported in only one language, then set that
+Id here --%>
+<c:set var="urlLangId" value="${langId}" scope="request"/>
+
+<%--
+	For CaaS, prefix the path of jspStoreImgDir and jsAssetsDir, so that it points to webserver. OOB it will be empty
+--%>
+<%-- Ecocea values --%>
+<c:set var = "jsServerPath" value="<%=ConfigTool.getSousDomain()%>"/>
+<c:set var = "cssServerPath" value="<%=ConfigTool.getSousDomain()%>"/>
+
+<%-- URL pointing to the shared image directory.  Use this to reference images --%>
+<c:choose>
+<c:when test="${not empty param.ajaxStoreImageDir }" >
+	<c:set var="jspStoreImgDir" value="${param.ajaxStoreImageDir}" />
+</c:when>
+<c:otherwise>
+	<c:set var="jspStoreImgDir" value="${jsServerPath}${sdb.jspStoreDirFilePath}" />
+</c:otherwise>
+</c:choose>
+
+<%-- WebAsset directory of the shared file directory.  Includes JSPs, HTML, Image files, etc --%>
+<c:set var="env_jspStoreDir" value="/${sdb.jspStoreDir}/" />
+
+<%-- Path used to retrieve the JavaScript assets.  Use this to reference your JavaScript files. --%>
+<c:set var="jsAssetsDir" value="${cssServerPath}${sdb.jspStoreDirFilePath}" />
+
+<%--
+Example directories:
+storeImgDir - /wcsstore/<hostedstoredir>/
+storeDir - /<hostedstoredir>/
+jspStoreImgDir - /wcsstore/<sharedstorefrontassetstoredir>/ 
+jspStoreDir - /<sharedstorefrontassetstoredir>/ 
+--%>
+
+<wcbase:useBean id="currencyFormatterDB" classname="com.ibm.commerce.common.beans.StoreCurrencyFormatDescriptionDataBean" >
+	<c:set property="storeId" value="${storeId}" target="${currencyFormatterDB}" />
+	<c:set property="langId" value="${langId}" target="${currencyFormatterDB}" />
+	<c:set property="currencyCode" value="${CommandContext.currency}" target="${currencyFormatterDB}" />
+	<c:set property="numberUsage" value="-1" target="${currencyFormatterDB}" />
+</wcbase:useBean>
+
+<%-- Set to context root where images can be found --%>
+<c:set var="env_imageContextPath" value="${staticAssetContextRoot}" /> 
+
+<c:set var="env_currencyDecimal" value="${currencyFormatterDB.decimalPlaces}" />
+<c:set var="env_currencyCode" value="${currencyFormatterDB.currencyCode}" />
+
+<c:if test="${CommandContext.currency == 'KRW'}">
+	<c:set property="currencySymbol" value='&#8361;' target="${currencyFormatterDB}"/>
+</c:if>
+<c:if test="${CommandContext.currency == 'PLN'}">
+	<c:set property="currencySymbol" value='z&#322;' target="${currencyFormatterDB}"/>
+</c:if>
+<c:if test="${CommandContext.currency == 'TRY'}">
+	<%-- No longer necessary when Turkish Lira is displayable through Unicode --%>
+	<c:set property="currencySymbol" value="<IMG src='${env_imageContextPath}/images/turkish_lira.gif' align='bottom'>" target="${currencyFormatterDB}"/>
+</c:if>
+<c:if test="${CommandContext.currency == 'EGP' && locale != 'iw_IL'}">
+	<c:set property="currencySymbol" value="<SPAN dir=ltr> .&#1580;.&#1605;</SPAN>" target="${currencyFormatterDB}"/>	
+</c:if>
+<c:if test="${CommandContext.currency == 'ILS' && locale == 'iw_IL'}">
+	<c:set property="currencySymbol" value="&#1513;&#1524;&#1495;" target="${currencyFormatterDB}"/>
+</c:if>
+
+<c:set var="env_CurrencySymbolToFormat" value="${currencyFormatterDB.currencySymbol}" />
+
+
+<%-- Determine if we are in preview mode. --%>
+<wcst:preview var="env_inPreview" />
+<%
+	Boolean inPreview = (Boolean) request.getAttribute("env_inPreview");
+	String hostname = SolrSearchConfigurationRegistry.getInstance().getSearchServerHostname();
+	if (inPreview != null && inPreview) {
+		// In preview mode
+		String port = SolrSearchConfigurationRegistry.getInstance().getSearchServerPreviewSecuredPort();
+		request.setAttribute("searchHostNamePath", "https://" + hostname + ":" + port);
+		request.setAttribute("searchContextPath", SolrSearchConfigurationRegistry.getInstance().getSearchServerPreviewContextPath());
+	} else {
+		// Non preview mode
+		String port = SolrSearchConfigurationRegistry.getInstance().getSearchServerPort();
+		request.setAttribute("searchHostNamePath", "http://" + hostname + ":" + port);
+		request.setAttribute("searchContextPath", SolrSearchConfigurationRegistry.getInstance().getSearchServerContextPath());
+	}
+%>
+
+<%-- Load the store bundles --%>
+<c:if test="${env_inPreview }">
+	<c:if test="${not empty cookie.WC_TOOLLOCALE.value }">
+		<fmt:setLocale value="${cookie.WC_TOOLLOCALE.value}"/>
+	</c:if>
+	<c:if test="${empty cookie.WC_TOOLLOCALE.value }">
+	<%-- 
+		The TOOLLOCALE will be empty if the preview launched from Accelerator 
+	--%>
+		<fmt:setLocale value="${CommandContext.locale}" />
+	</c:if>
+	<fmt:setBundle basename="/Widgets/Properties/widgettext" var="widgetPreviewText"/>
+	<fmt:setBundle basename="com.ibm.commerce.stores.preview.properties.StorePreviewer" var="previewText" />
+</c:if>
+<fmt:setLocale value="${CommandContext.locale}" />
+<fmt:setBundle basename="/Widgets/Properties/widgettext" var="widgetText" />
+
+<% request.setAttribute("previewContext", ((CommandContext) request.getAttribute("CommandContext")).getContext(PreviewContext.CONTEXT_NAME)); %>
+<c:set var="env_storePreviewLink" value="${!empty previewContext && !empty previewContext.properties['previewToken']}"/>
+<c:if test="${empty env_hiddenFieldsList}">
+	<c:set var="env_hiddenFieldsList" value="" scope="request"/>
+</c:if>
+<wcf:useBean var="cachedCatalogEntryDetailsMap" classname="java.util.HashMap" scope="request"/>
+<wcf:useBean var="cachedEntitledPriceMap" classname="java.util.HashMap" scope="request"/>
+<wcf:useBean var="cachedRangePriceMap" classname="java.util.HashMap" scope="request"/>
+<wcf:useBean var="cachedCategoryViewMap" classname="java.util.HashMap" scope="request"/>
+<wcf:useBean var="cachedOnlineStoreMap" classname="java.util.HashMap" scope="request"/>
+
+
+<%-- Constants used by subscriptions products --%>
+<c:set var="env_subsFulfillmentFrequencyAttrName" value="fulfillmentFrequency" scope="request"/>
+<c:set var="env_subsPaymentFrequencyAttrName" value="paymentFrequency" scope="request"/>
+<c:set var="env_subsTimePeriodAttrName" value="timePeriod" scope="request"/>
+
+<%-- Begin pagination control variables definition --%>
+<%-- set default pageSize and beginIndex --%>
+<c:set var="beginIndex" value="${WCParam.beginIndex}" scope="request"/>
+<c:if test="${empty beginIndex}">
+	<c:set var="beginIndex" value = "0" scope="request"/>
+</c:if>
+
+<c:set var="pageSize" value = "${WCParam.pageSize}" scope="request"/>
+<c:if test="${empty pageSize}">
+	<c:set var="pageSize" value="${param.resultsPerPage}" scope="request"/>
+	<c:if test="${empty pageSize}">
+		<c:set var="pageSize" value="24" scope="request"/>
+	</c:if>
+</c:if>
+<c:set var="env_displayRibbonAdInGridMode" value="false" scope="request"/>
+
+<c:set var="MOBILE_DEVICE_ID" value="-21" scope="request"/>
+<c:set var="DESKTOP_DEVICE_ID" value="-1" scope="request" />
+<c:set var="device" value="desktop" scope="request"/>
+<c:set var="isOnMobileDevice" value="false" scope="request" />
+<c:if test="${EC_deviceAdapter.deviceFormatId eq MOBILE_DEVICE_ID}">
+	<c:set var="isOnMobileDevice" value="true" scope="request" />
+	<c:set var="device" value="mobile" scope="request"/>
+</c:if>
+
+<%@ include file="SterlingConfiguratorIntegrationSetup.jspf" %>
+
+<%@ include file="/Widgets-lapeyre/Common/DefaultImageSetup.jspf" %>
+
+

@@ -1,0 +1,113 @@
+<c:if test="${empty catalogEntryDetails}">
+	<c:if test="${!empty catalogEntryID}">
+		<%-- Try to get it from our internal hashMap --%>
+		<c:set var="key1" value="${catalogEntryID}+getCatalogEntryViewAllByID"/>
+		<c:set var="catalogEntryDetails" value="${cachedCatalogEntryDetailsMap[key1]}"/>
+		<c:if test="${empty catalogEntryDetails}">
+		<wcf:rest var="catalogNavigationView" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byId/${catalogEntryID}" >	
+			<wcf:param name="langId" value="${langId}"/>
+			<wcf:param name="currency" value="${env_currencyCode}"/>
+			<wcf:param name="responseFormat" value="json"/>		
+			<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+			<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+		</wcf:rest>
+			<c:set var="catalogEntryDetails" value="${catalogNavigationView.catalogEntryView[0]}"/>
+			<wcf:set target = "${cachedCatalogEntryDetailsMap}" key="${key1}" value="${catalogNavigationView.catalogEntryView[0]}"/>
+		</c:if>
+	</c:if>
+
+	<c:if test="${empty catalogEntryID && !empty WCParam.partNumber}">
+		<c:set var="key1" value="${WCParam.partNumber}+getCatalogEntryViewAllByPartnumber"/>
+		<c:set var="catalogEntryDetails" value="${cachedCatalogEntryDetailsMap[key1]}"/>
+		<c:if test="${empty catalogEntryDetails}">
+			<wcf:rest var="catalogNavigationView" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/${WCParam.partNumber}" >	
+				<wcf:param name="langId" value="${langId}"/>
+				<wcf:param name="currency" value="${env_currencyCode}"/>
+				<wcf:param name="responseFormat" value="json"/>		
+				<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+				<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+			</wcf:rest>
+			<c:set var="catalogEntryDetails" value="${catalogNavigationView.catalogEntryView[0]}"/>
+			<wcf:set target = "${cachedCatalogEntryDetailsMap}" key="${key1}" value="${catalogNavigationView.catalogEntryView[0]}"/>
+		</c:if>
+	</c:if>
+
+	<c:if test="${!empty catalogNavigationView && !empty catalogNavigationView.catalogEntryView[0]}">
+		<c:set var="catalogEntryDetails" value="${catalogNavigationView.catalogEntryView[0]}"/>
+	</c:if>
+</c:if>
+
+<c:set var="type" value="${fn:toLowerCase(catalogEntryDetails.catalogEntryTypeCode)}" />
+<c:set var="type" value="${fn:replace(type,'bean','')}" />
+<c:if test="${empty catalogEntryID}">
+<c:set var="catalogEntryID" value="${catalogEntryDetails.uniqueID}" />
+</c:if>
+<c:if test="${empty productId}">
+<c:set var="productId" value="${catalogEntryDetails.uniqueID}" />
+</c:if>
+<c:set var="shortDescription" value="${catalogEntryDetails.shortDescription}" />
+<c:set var="longDescription" value="${catalogEntryDetails.longDescription}" />
+<c:set var="name" value="${catalogEntryDetails.name}" />
+<c:set var="partnumber" value="${catalogEntryDetails.partNumber}" />
+<c:set var="partNumber" value="${catalogEntryDetails.partNumber}" />
+<c:set var="manufacturerName" value="${catalogEntryDetails.manufacturer}" />
+<c:set var="entitledItems" value="${catalogEntryDetails.sKUs}"/>
+<c:set var="numberOfSKUs" value="${catalogEntryDetails.numberOfSKUs}"/>
+<c:set var="attributes" value="${catalogEntryDetails.attributes}"/>
+<c:set var="isOnSpecial" value="${catalogEntryDetails.isOnSpecial}" />
+
+<c:if test="${empty catalogEntryDetails.type}">
+	<wcf:rest var="catalogNavigationView" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byId/${catEntryIdentifier}" >
+		<wcf:param name="langId" value="${langId}" />
+		<wcf:param name="currency" value="${env_currencyCode}" />
+		<wcf:param name="responseFormat" value="json" />
+		<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+		<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+	</wcf:rest>
+	<c:set var = "catalogEntryDetails" value = "${catalogNavigationView.catalogEntryView[0]}"/>
+</c:if>
+
+<c:set var="catEntryType" value="${catalogEntryDetails.type}" />
+
+<c:forEach var="prices" items="${catalogEntryDetails.price}">
+	<c:if test="${prices.usage == 'Offer'}">
+		<c:set var="maximumItemPrice" value="${prices.maximumValue.value}"/>
+		<c:if test="${empty maximumItemPrice}">						
+			<c:set var="maximumItemPrice" value="${prices.value}"/>
+		</c:if>
+	</c:if>
+</c:forEach>
+
+<c:if test="${empty requestScope.bundleId and empty requestScope.packageId}">
+	<c:set var="bundleKitAvailable" value="false" scope="request"/> <%-- set default value to false --%>
+</c:if>
+<c:set var="productAvailable" value="false" scope="request"/> <%-- set default value to false --%>
+<c:set var="dynamicKitAvailable" value="false" scope="request"/> <%-- set default value to false --%>
+<c:if test="${!empty maximumItemPrice}">
+	<%-- We have price... Continue with other checks --%>
+	<c:choose>
+		<c:when test="${type eq 'bundle' or type eq 'package'}">
+			<%--For bundle and package check the buyable flag at the bundle or pacakge level instead of looping through each individual components --%>
+			<c:set var="bundleKitAvailable" value="${catalogEntryDetails.buyable}" scope="request"/>
+		</c:when>
+		<c:otherwise>
+			<%-- It is not a Subscription item OR Subscription products with the well known 3 attributes set properly --%>
+			<c:if test="${!isSubscription || (fulfillmentFrequency != '' && paymentFrequency != '' && aValidTimePeriod != '')}" >
+				<c:choose>
+					<%-- If it is a product iterate through all its SKUs --%>
+					<c:when test="${type eq 'product'}">
+						<c:forEach var="entitledItem" items="${entitledItems}">
+							<c:if test = "${entitledItem.buyable eq 'true'}">
+								<c:set var="productAvailable" value="true" scope="request"/> <%-- We have one item which is marked as buyable..Show AddToCart button --%>
+							</c:if>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<%-- Since it is an item, pick from buyable field --%>
+						<c:set var="productAvailable" value="${catalogEntryDetails.buyable}" scope="request"/>
+					</c:otherwise>
+				</c:choose>
+			</c:if>
+		</c:otherwise>
+	</c:choose>
+</c:if>

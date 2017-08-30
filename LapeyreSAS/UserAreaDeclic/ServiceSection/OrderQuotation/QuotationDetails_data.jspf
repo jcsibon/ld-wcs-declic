@@ -1,0 +1,61 @@
+<wcf:useBean var="orderItemsDetailsList" classname="java.util.ArrayList" scope="request" />
+<c:set var="totalDevis" value="0"/>
+
+<c:forEach var="Detail" items="${detailQuota.lignesDocument}">
+	<wcf:useBean var="DetailItem" classname="java.util.HashMap"/>
+	<c:if test="${Detail.article.quantite>0}">
+		<fmt:formatNumber var="quantite" value="${Detail.article.quantite}" maxFractionDigits="0"/>
+		<wcf:set target="${DetailItem}" key="productQty" value="${quantite}"/>
+		<wcf:set target="${DetailItem}" key="unitProductPrice" value="${Detail.article.puNetTTC}"/>
+		
+		<wcf:set target="${DetailItem}" key="TVA" value="${(Detail.valorisation.tva[0].tauxTVA*100)}"/>
+		<c:choose>
+			<c:when test="${extendedUserContext.isPro}">
+				<wcf:set target="${DetailItem}" key="productPrice" value="${Detail.valorisation.montantHT}"/>
+				<c:set var="totalDevis" value="${totalDevis+Detail.valorisation.montantHT}"/>
+			</c:when>
+			<c:otherwise>
+				<wcf:set target="${DetailItem}" key="productPrice" value="${Detail.valorisation.montantTTC}"/>
+				<c:set var="totalDevis" value="${totalDevis + Detail.valorisation.montantTTC }"/>
+			</c:otherwise>
+		</c:choose>
+			<wcf:rest var="DescRest" url="${searchHostNamePath}${searchContextPath}/store/${storeId}/productview/${Detail.article.codeArticle}" >
+					<wcf:param name="langId" value="${langId}" />
+					<wcf:param name="responseFormat" value="json" />
+					<wcf:param name="catalogId" value="${catalogId}" />
+					<wcf:param name="searchProfile" value="IBM_findProductByPartNumber_Summary" />
+			</wcf:rest>
+		<c:choose>
+			<c:when test="${DescRest.recordSetTotal>0}">
+				<%-- on génère l'URL du produit --%>
+				<wcf:url var="catEntryDisplayUrl" patternName="ProductURL" value="Product1">
+					<wcf:param name="catalogId" value="${catalogId}"/>
+					<wcf:param name="storeId" value="${storeId}"/>
+					<wcf:param name="productId" value="${DescRest.catalogEntryView[0].uniqueID}"/>
+					<wcf:param name="langId" value="${langId}"/>
+					<wcf:param name="urlLangId" value="${langId}" />
+				</wcf:url>
+				<%-- On récupère la description du produit --%>
+				<wcbase:useBean id="DescDB" classname="com.ibm.commerce.catalog.beans.CatalogEntryDescriptionDataBean" scope="page">
+					<c:set value="${DescRest.catalogEntryView[0].uniqueID}" target="${DescDB}" property="dataBeanKeyCatalogEntryReferenceNumber"/>
+					<c:set value="${langId}" target="${DescDB}" property="dataBeanKeyLanguage_id"/>
+					<c:set value="${CommandContext}" target="${DescDB}" property="commandContext"/>
+				</wcbase:useBean> 
+				<wcf:set target="${DetailItem}" key="productImage" value="${DescRest.catalogEntryView[0].fullImage}"/>
+				<wcf:set target="${DetailItem}" key="productName" value="${DescRest.catalogEntryView[0].name}"/>
+				<wcf:set target="${DetailItem}" key="productDescription" value="${DescDB.shortDescription}"/>
+				<wcf:set target="${DetailItem}" key="productURL" value="${catEntryDisplayUrl}"/>
+			</c:when>
+			<c:otherwise>
+				<wcf:set target="${DetailItem}" key="productURL" value="#"/>
+				<wcf:set target="${DetailItem}" key="productName" value="${Detail.article.libelleArticle}"/>
+			</c:otherwise>
+		</c:choose>
+		<wcf:set target="${DetailItem}" key="productSKU" value="${Detail.article.codeArticle}"/>
+			<c:remove var="DescDB"/>
+				<wcf:set target="${DetailItem}" key="unitProductPrice" value="${Detail.article.puNetTTC}"/>
+		<%-- Ajout de l'objet dans la liste --%>
+		<wcf:set target="${orderItemsDetailsList}" value="${DetailItem}"/>
+	</c:if>
+	<c:remove var="DetailItem"/>
+</c:forEach>

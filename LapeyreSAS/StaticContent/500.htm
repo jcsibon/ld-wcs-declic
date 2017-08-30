@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Erreur 500</title>
+<style>
+#page {
+  margin:0 auto;
+  
+  display: block;
+}
+@media screen and (min-width: 960px) {
+#page{
+	width: 960px;
+}
+}
+.titre{
+	font-size:24px;
+	font-weight: bold;
+	color:#454545;
+}	
+div{
+	text-transform: uppercase;
+	font-family: 'roboto condensed', sans-serif;
+	font-size: 16px;
+	color:#828282;
+}
+#attention{
+	display: table-cell;
+    width: 20%;
+}
+.logo{
+	display: block;
+    margin: 70px 0;
+    text-align: center;
+}
+.contenu>div{
+	margin-bottom:15px;
+}
+@media screen and (max-width: 800px) {
+	.bcol12 {
+		width: 100%;
+	}
+	.mobile-hidden {
+		display: none !important;
+	}
+}
+
+</style>
+</head>
+<body>
+<div id="page">
+	<div class="logo">
+		<img src="/LapeyreSAS/StaticContent/images/logo_grand.png" alt="logo" />
+	</div>
+	<div style="display: table-row; table-layout: auto;">
+		<div id="attention" class="mobile-hidden">
+			<img src="/LapeyreSAS/StaticContent/images/attention.png" alt="logo" />
+		</div>
+		<div style="display: table-cell; vertical-align: middle; width: 80%;" class="contenu bcol12" >
+			<div class="titre">Le site Lapeyre.fr est actuellement indisponible pour des raisons techniques.</div>
+			<div>Nous vous invitions à renouveler votre visite dans quelques instants.</div>
+			<div>Merci de votre compréhension</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

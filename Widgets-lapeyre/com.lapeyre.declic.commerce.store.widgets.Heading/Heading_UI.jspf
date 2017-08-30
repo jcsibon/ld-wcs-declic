@@ -1,0 +1,59 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<%-- BEGIN Heading_UI.jsp --%>
+<div id="PageHeading<c:out value="${widgetSuffix}"/>">
+		<c:choose>
+			<c:when test="${CustomSearchTermFieldName eq 'collectionSearch'}" >
+				<h1 class="category-title">${productName}</h1>
+				<%--
+				<c:if test="${!empty auxDescription1MainProduct}" >
+					<div class="textArticle quoteArticle">
+						<p>${auxDescription1MainProduct}</p>
+					</div>
+				</c:if>
+				 --%>
+			</c:when>
+			<c:when test="${CustomSearchTermFieldName eq 'promotionSearch'}" >
+				<h1><fmt:message bundle="${storeText}" key="LAP016_PROMOTIONS_PAGE_TILE" /></h1>
+			</c:when>
+			<c:when test="${CustomSearchTermFieldName eq 'saleSearch'}" >
+				<h1><fmt:message bundle="${storeText}" key="LAP_SALE_PAGE_TILE" /></h1>
+			</c:when>
+			<c:when test="${!empty categoryName}">
+				<h1 class="category-title">${categoryName}</h1>
+				<c:if test="${not empty globalcategories}">
+					<fmt:parseNumber var="numberOfProducts" value="${globalcategories[0].entry[0].count}" />
+					<span class="heading-count-title">
+						(<fmt:message bundle="${widgetText}" key="productsLabel">
+							<fmt:param value="${numberOfProducts}" />
+						</fmt:message>)
+					</span>
+				</c:if>
+				<%--
+				<c:if test="${!empty categoryLongDescription}" >
+					<div class="textArticle <c:if test="${parentCatalogGroupID eq '-1'}">column_67 bcolumn_100</c:if> quoteArticle">
+						<p>${categoryLongDescription}</p>
+					</div>
+				</c:if>
+				 --%>
+			</c:when>
+			<c:when test="${!empty productName}">
+				<h1>${productName}</h1>
+			</c:when>
+			
+		</c:choose>
+</div>
+
+<%-- END Heading_UI.jsp --%>

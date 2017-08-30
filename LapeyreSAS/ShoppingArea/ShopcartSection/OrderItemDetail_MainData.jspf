@@ -1,0 +1,8 @@
+<c:catch>
+	<wcf:getData type="com.ibm.commerce.order.facade.datatypes.OrderType"
+		   var="orderInCart" expressionBuilder="findCurrentShoppingCartWithPagingOnItem" varShowVerb="ShowVerbCart" maxItems="${env_maxOrderItemsToInspect}" recordSetStartNumber="0" recordSetReferenceId="headerorder" scope="request">
+		<wcf:param name="accessProfile" value="IBM_Details" />	 
+		<wcf:param name="sortOrderItemBy" value="orderItemID" />
+		<wcf:param name="isSummary" value="true" />
+	</wcf:getData>
+</c:catch>

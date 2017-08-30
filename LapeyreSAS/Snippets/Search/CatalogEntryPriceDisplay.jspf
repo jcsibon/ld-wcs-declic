@@ -1,0 +1,100 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2010, 2012 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<%--
+***** 
+This object snippet displays the price for a catalog entry.
+
+The rules for price display are as follows: 
+    
+     For product and bundle: 
+     	-- If there is no available item price, a message indicating 
+           that no price is available will be displayed. 
+        -- If the minimum item price is not equal to the maximum item
+           price, a price range will be displayed. 
+        -- If there is only one item price, and the list price is either
+           unavailable or smaller than the item price, then only the
+           item price will be displayed. 
+        -- If there is only one item price, and the list price is greater than
+           the item price, then both the list price and the item price will be
+           displayed. 
+           
+      For item and package: 
+        -- If there is no offer price, a message indicating that no price is
+           available will be displayed. 
+        -- If there is no list price or the list price is smaller than the 
+           offer price, then only will the offer price be displayed. 
+        -- If the list price is greater than the offer price, then both the
+           list price and the offer price will be displayed. 
+*****
+--%>
+
+<!-- BEGIN CatalogEntryPriceDisplay.jspf-->
+
+<c:choose>
+    <%-- If the price is unavailable, print out the corresponding message --%>
+	<c:when test="${emptyPriceString}">
+		<%-- Si pas de prix, on affiche rien --%>
+		<%--<span <c:if test="${not empty priceHighlightable}">id="price"</c:if> class=""></span>--%>
+	</c:when>
+	
+	<c:otherwise>
+		<c:if test="${!empty strikedPriceString && strikedPriceString != '0'}">
+			<span <c:if test="${!empty priceHighlightable}">id="listPrice"</c:if> class="listPrice ">
+				<c:choose>
+					<c:when  test="${extendedUserContext.isPro}">
+						<fmt:formatNumber value="${strikedPriceString}" type="currency" currencySymbol="${env_CurrencySymbolToFormat}<sup class='vat-free'>HT</sup>" maxFractionDigits="${env_currencyDecimal}"/>
+					</c:when>
+					<c:otherwise>
+						<fmt:formatNumber value="${strikedPriceString}" type="currency" currencySymbol="<sup>${env_CurrencySymbolToFormat}</sup>" maxFractionDigits="${env_currencyDecimal}"/>
+					</c:otherwise>
+				</c:choose>
+			</span>
+		</c:if>
+		
+		<c:if test="${!empty priceString && priceString != '0'}">
+			<div <c:if test="${!empty priceHighlightable}">id="offerPrice"</c:if> class="offerprice ">
+				<c:choose>
+					<c:when  test="${extendedUserContext.isPro}">
+						<fmt:formatNumber value="${priceString}" type="currency" currencySymbol="${env_CurrencySymbolToFormat}<sup class='vat-free'>HT</sup>" maxFractionDigits="${env_currencyDecimal}"/>
+					</c:when>
+					<c:otherwise>
+						<fmt:formatNumber value="${priceString}" type="currency" currencySymbol="<sup>${env_CurrencySymbolToFormat}</sup>" maxFractionDigits="${env_currencyDecimal}"/>
+					</c:otherwise>
+				</c:choose>
+			</div>			
+		</c:if>
+	</c:otherwise>
+</c:choose>
+
+<c:choose>
+    <%-- If the price is unavailable, print out the corresponding message --%>
+	<c:when test="${!buyableItem}">
+		<span class="notBuyableMessage"><fmt:message bundle="${widgetText}" key="wishlistNotBuyable" /></span>
+	</c:when>
+	<c:when test="${emptyPriceString}">
+		<span class="notBuyableMessage"><fmt:message bundle="${widgetText}" key="noPriceLabel" /></span>
+	</c:when>
+	<c:otherwise>
+	</c:otherwise>
+</c:choose>
+
+<c:remove var="priceString" />
+<c:remove var="minimumPriceString" />
+<c:remove var="maximumPriceString" />
+<c:remove var="priceHighlightable" />
+<c:remove var="strikedPriceString" />
+<c:remove var="emptyPriceString" />
+	
+<!-- END CatalogEntryPriceDisplay.jspf-->

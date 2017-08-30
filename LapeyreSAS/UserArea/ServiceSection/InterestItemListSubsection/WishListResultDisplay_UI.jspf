@@ -1,0 +1,861 @@
+<!DOCTYPE HTML>
+<%@ page pageEncoding="UTF-8"%>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:wairole="http://www.w3.org/2005/01/wai-rdf/GUIRoleTaxonomy#"
+	  xmlns:waistate="http://www.w3.org/2005/07/aaa" lang="${shortLocale}"
+	  xml:lang="${shortLocale}">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="robots" content="noindex,nofollow" />
+
+	<title><fmt:message bundle="${storeText}" key="WISHLIST_TITLE" /> ${myWishList.description.name}</title>
+
+	<link rel="stylesheet" href="<c:out value="${jspStoreImgDir}${env_vfileStylesheet}?${versionNumber}"/>" type="text/css" />
+	<link rel="stylesheet" href="${jsAssetsDir}css/base.css?${versionNumber}" type="text/css" />
+		<link rel="stylesheet" href="${jsAssetsDir}css/styles.css?${versionNumber}" type="text/css" />
+	
+	<%@ include file="../../../Common/CommonJSToInclude.jspf"%>
+	<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/CommonContextsDeclarations.js?${versionNumber}"/>"></script>
+	<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/CommonControllersDeclaration.js?${versionNumber}"/>"></script>
+	<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/Widgets/ShoppingList/ShoppingList.js?${versionNumber}"/>"></script>
+	<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/Widgets/ShoppingList/ShoppingListServicesDeclaration.js?${versionNumber}"/>"></script>
+	<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/Widgets/ShoppingList/ShoppingListControllers.js?${versionNumber}"/>"></script>
+	<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/Configurator/ConfiguratorServicesDeclaration.js?${versionNumber}"/>"></script>
+	<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/CatalogArea/CategoryDisplay.js?${versionNumber}"/>"></script>
+	<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/CatalogArea/CompareProduct.js?${versionNumber}"/>"></script>
+	<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/UserArea/AccountWishListDisplay.js?${versionNumber}"/>"></script>
+	<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/ServicesDeclaration.js?${versionNumber}"/>"></script>
+	
+	<script type="text/javascript">
+		dojo.addOnLoad(function() {
+			MultipleWishLists.setDefaultListId('<c:out value="${defaultWishList.giftListIdentifier.uniqueID}"/>');
+		});
+	</script>
+
+	<%@ include file="../../../Common/MultipleWishListSetup.jspf"%>
+
+	<script type="text/javascript">
+		dojo.addOnLoad(function() { 
+			categoryDisplayJS.setCommonParameters('<c:out value='${WCParam.langId}'/>','<c:out value='${WCParam.storeId}'/>','<c:out value='${WCParam.catalogId}'/>','<c:out value='${userType}'/>');
+			ServicesDeclarationJS.setCommonParameters('<c:out value='${WCParam.langId}'/>','<c:out value='${WCParam.storeId}'/>','<c:out value='${WCParam.catalogId}'/>');
+			
+			<fmt:message bundle="${storeText}" key="WISHLIST_MISSINGNAME" var="WISHLIST_MISSINGNAME"/>
+			<fmt:message bundle="${storeText}" key="WISHLIST_MISSINGEMAIL" var="WISHLIST_MISSINGEMAIL"/>
+			<fmt:message bundle="${storeText}" key="WISHLIST_INVALIDEMAILFORMAT" var="WISHLIST_INVALIDEMAILFORMAT"/>
+			<fmt:message bundle="${storeText}" key="REQUIRED_FIELD_ENTER" var="REQUIRED_FIELD_ENTER"/>
+			<fmt:message bundle="${storeText}" key="WISHLIST_EMPTY" var="WISHLIST_EMPTY"/>
+			<fmt:message bundle="${storeText}" key="SHOPCART_ADDED" var="SHOPCART_ADDED"/>
+			<fmt:message bundle="${storeText}" key="SHOPCART_REMOVEITEM" var="SHOPCART_REMOVEITEM" />
+			<fmt:message bundle="${storeText}" key="ERROR_MESSAGE_TYPE" var="ERROR_MESSAGE_TYPE"/>
+			<fmt:message bundle="${storeText}" key="WISHLIST_ADDED" var="WISHLIST_ADDED"/>
+			<fmt:message bundle="${storeText}" key="QUANTITY_INPUT_ERROR" var="QUANTITY_INPUT_ERROR"/>
+			<%-- Missing message --%>
+			<fmt:message bundle="${storeText}" key="ERROR_CONTRACT_EXPIRED_GOTO_ORDER" var="ERROR_CONTRACT_EXPIRED_GOTO_ORDER"/>
+			<fmt:message bundle="${storeText}" key="GENERICERR_MAINTEXT" var="ERROR_RETRIEVE_PRICE">                                     
+				<fmt:param><fmt:message bundle="${storeText}" key="GENERICERR_CONTACT_US" /></fmt:param>
+			</fmt:message>
+			<fmt:message bundle="${storeText}" key="ERR_RESOLVING_SKU" var="ERR_RESOLVING_SKU"/>
+			MessageHelper.setMessage("ERROR_RETRIEVE_PRICE", <wcf:json object="${ERROR_RETRIEVE_PRICE}"/>);
+			MessageHelper.setMessage("WISHLIST_MISSINGNAME", <wcf:json object="${WISHLIST_MISSINGNAME}"/>);
+			MessageHelper.setMessage("WISHLIST_MISSINGEMAIL", <wcf:json object="${WISHLIST_MISSINGEMAIL}"/>);
+			MessageHelper.setMessage("WISHLIST_INVALIDEMAILFORMAT", <wcf:json object="${WISHLIST_INVALIDEMAILFORMAT}"/>);
+			MessageHelper.setMessage("REQUIRED_FIELD_ENTER", <wcf:json object="${REQUIRED_FIELD_ENTER}"/>);
+			MessageHelper.setMessage("WISHLIST_EMPTY", <wcf:json object="${WISHLIST_EMPTY}"/>);
+			MessageHelper.setMessage("SHOPCART_ADDED", <wcf:json object="${SHOPCART_ADDED}"/>);
+			MessageHelper.setMessage("SHOPCART_REMOVEITEM", <wcf:json object="${SHOPCART_REMOVEITEM}"/>);
+			MessageHelper.setMessage("ERROR_MESSAGE_TYPE", <wcf:json object="${ERROR_MESSAGE_TYPE}"/>);
+			MessageHelper.setMessage("WISHLIST_ADDED", <wcf:json object="${WISHLIST_ADDED}"/>);
+			MessageHelper.setMessage("QUANTITY_INPUT_ERROR", <wcf:json object="${QUANTITY_INPUT_ERROR}"/>);
+			MessageHelper.setMessage("ERROR_CONTRACT_EXPIRED_GOTO_ORDER", <wcf:json object="${ERROR_CONTRACT_EXPIRED_GOTO_ORDER}"/>);
+			MessageHelper.setMessage("ERR_RESOLVING_SKU", <wcf:json object="${ERR_RESOLVING_SKU}"/>);
+		});
+		dojo.addOnLoad(AccountWishListDisplay.processBookmarkURL); 
+		dojo.addOnLoad(function() { AccountWishListDisplay.initHistory("WishlistDisplay_Widget", '${WishListResultDisplayViewURL}') });
+
+		dojo.addOnLoad(function() {
+			var isAuthenticated = ${userType ne 'G'};
+			shoppingListJS = new ShoppingListJS(${storeParams}, ${catEntryParams}, {${shoppingListNames}},"shoppingListJS");
+			shoppingListJS.refreshLinkState();
+			dojo.topic.subscribe("ShoppingList_Changed", function(serviceResponse) {
+				eval("shoppingListJS.updateShoppingListAndAddItem(serviceResponse);");
+			});
+		});
+	</script>
+
+	<%@ include file="../../../Common/SocialNetworksSetup.jspf" %>
+	<%@ include file="../../../Common/JSTLEnvironmentSetupExtForSocialNetworks.jsp"%>
+</head>
+
+<body>
+	<%@ include file="../../../Common/CommonJSPFToInclude.jspf"%>
+	<%@ include file="../../../Widgets/ShoppingList/CreateShoppingListPopup.jspf" %>
+	<%@ include file="../../../Widgets/ShoppingList/EditShoppingListPopup.jspf" %>
+	<%@ include file="../../../Widgets/ShoppingList/DeleteShoppingListPopup.jspf" %>
+	<%@ include file="../../../Widgets/ShoppingList/ShoppingListCreateSuccessPopup.jspf" %>
+
+	<!-- BEGIN WishListResultDisplay.jsp -->
+	<%-- page --%>
+	<div id="page">
+		<div class="container">
+		<!-- Import Header Widget -->
+		<% out.flush(); %>
+		<c:import url="${env_jspStoreDir}/Widgets/Header/Header.jsp" />
+		<% out.flush(); %>
+		<!-- Header Nav End -->
+
+		<!-- Main Content Start -->
+		<input type="hidden" id="wishListId" />
+		<input type="hidden" id="wishListName" />
+
+		<c:if test="${not sharedWishList}">
+			<div class="row">
+				<div data-slot-id="1" class="col12 slot1 mobile-hidden">
+					<% out.flush(); %>
+					<c:import url="/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.BreadcrumbTrail/BreadcrumbTrail.jsp">
+						<c:param name="pageName" value="CompteClient" />
+						<c:param name="breadCrumbMonCompte" value="true" />
+						<c:param name="breadCrumbWishList" value="true" />
+						<c:param name="lastBreadCrumbItemCompteClient" value="${wishListName}" />
+					</c:import>
+					<% out.flush(); %>
+				</div>
+			</div>
+			<c:set var="navMonCompteCurrentPage" value="myWishlist" />
+			<div class="row" id="myWishlistDetailPage">
+				<div id="navCompteClient" class="col3 mobile-hidden">
+					<%@ include file="../../../UserAreaDeclic/AccountSection/navClient.jspf" %>
+				</div>
+				<div class="col9 bcol12 mainContentWrapper">
+		</c:if>
+
+		<%-- wishlistDetailPage --%>
+				<div class="row" id="wishlistDetailPage">
+		
+					<c:choose>
+		
+						<%-- 
+						  ***
+						  * Error condition - when externalID specified is incorrect, or guestAccessKey is incorrect 
+						  ***
+						--%>
+						<c:when test="${emailError}">
+							<div class="my_account_wishlist_container" id="WC_WishListResultDisplay_div_6">
+								<fmt:message bundle="${storeText}" key="GENERICERR_MAINTEXT">
+									<fmt:param>
+										<fmt:message bundle="${storeText}" key="GENERICERR_CONTACT_US" />
+									</fmt:param>
+								</fmt:message>
+								<br />
+								<br />
+							</div>
+						</c:when>
+		
+						<%--
+							***
+							* Start: Empty Wish List 
+							* If the wish list is empty, display the empty wish list message
+							***
+						--%>
+						<c:when test="${ !bHasWishList }">
+							<c:if test="${!sharedWishList }">
+								<div class="left col3">
+									<a href="${WishListDisplayURL}" class="button back">
+										<fmt:message bundle="${storeText}" key="wishlistReturnButtonLabel" />
+									</a>
+								</div>
+							</c:if>
+							
+							<div class="col13 centered">
+								<h2 class="titleBlock">
+									<%-- Use a c:out to escape XML characters to prevent XSS --%>
+									<span><c:out value="${myWishList.description.name}" /></span>
+								</h2>
+								<div id="editShoppingListErrorMessageArea" class="centered">
+									<span id="editShoppingListErrorMessageText" class="error"></span>
+								</div>
+								<div class="my_account_wishlist_container content" id="WC_WishListResultDisplay_div_6">
+									<br />
+									<fmt:message bundle="${storeText}" key="EMPTYWISHLIST" />
+									<br />
+									<br />
+								</div>
+							</div>
+						</c:when>
+						
+						<%-- 
+						  ***
+						  * Wish list is not empty - display content of wish list 
+						  ***
+						--%>
+						<c:otherwise>
+		
+							<c:if test="${!sharedWishList }">
+								<div class="left col3">
+									<a href="${WishListDisplayURL}" class="button back">
+										<fmt:message bundle="${storeText}" key="wishlistReturnButtonLabel" />
+									</a>
+								</div>
+							</c:if>
+							
+							<h1 class="titleBlock col8 bcol12 left <c:if test="${sharedWishList}">marginTop20</c:if>">
+								<%-- Escape unwanted XML tags in wishlist name --%>
+								<c:set var="escapeListName"><c:out value="${selectedSoaWishList.description.name}" /></c:set>
+								<span>${escapeListName}</span>
+							</h1>
+							<div class="col2 left"></div>
+							<%-- WISHLIST --%>
+							<div class="order wishList">
+								
+								<%-- ENTETE WISHLIST --%>
+								<div class="orderHeader">
+									<div class="row">
+										<div class="quantityTotal"></div>
+										<div class="unitPrice">
+											<c:choose>
+												<c:when test="${!extendedUserContext.isPro}">
+													<fmt:message bundle="${storeText}" key="htPriceColumnLabel" />
+												</c:when>
+												<c:otherwise>
+													&nbsp;
+												</c:otherwise>
+											</c:choose>
+										</div>
+										<%-- <div class="vat">
+											<fmt:message bundle="${storeText}" key="vatColumnLabel" />
+										</div> --%>
+										<div class="totalPrice white-background">
+											<c:choose>
+												<c:when test="${extendedUserContext.isPro}">
+													<fmt:message key="prixHtColumnLabel" bundle="${widgetText}" />
+												</c:when>
+												<c:otherwise>
+													<fmt:message key="prixTtcColumnLabel" bundle="${widgetText}" />
+												</c:otherwise>
+											</c:choose>
+										</div>
+										<div class="deleteAction">
+											<c:if test="${!sharedWishList}">
+												<img alt="${codeAvantageRemoveSubmitButtonLabel}" src="${jspStoreImgDir}/images/delete.png">
+											</c:if>
+										</div>
+									</div>
+								</div>
+							
+								<%-- LIGNES WISHLIST --%>
+								<div class="orderBody" id="wishListListProduits">
+								
+									<script type="text/javascript">
+										var buyableItems = new Array();
+									</script>
+										
+									<c:set var="detailMissingSKUS" value="" />
+									<c:set var="totalAmt" value="0" />
+									<c:set var="someBuyable" value="0" />
+			
+									<c:if test="${empty selectedSoaWishList.item}">
+										<fmt:message bundle="${storeText}" key="emptyWishlistmessage" />
+									</c:if>						
+									
+									<c:forEach var="soaWishlistItem" items="${selectedSoaWishList.item}" varStatus="status">
+									
+										<c:remove var="strikedPriceString" />
+										<c:remove var="priceString" />
+										<c:remove var="emptyPriceString" />
+										<c:remove var="offerPrice" />
+			
+										<%-- try to instantiate an instance of CatalogEntryDataBean and pass to thumbnail display --%>
+										<c:set var="itemError" value="false" scope="request" />
+										<c:set var="buyableItem" value="false" />
+										
+										<%-- ROW --%>
+										<div class="row ${status.count % 2 == 1 ? 'odd' : 'even'}">
+										
+											<c:choose>
+												<c:when test="${empty soaWishlistItem.catalogEntryIdentifier.uniqueID}">
+													
+													<%@ page import="java.util.Enumeration"%>
+													<%@ page import="com.ibm.commerce.catalog.objects.CatalogEntryAccessBean"%>
+													<%@ page import="com.ibm.commerce.catalog.objsrc.CatalogEntryCache"%>
+													
+													<c:set var="itemPartNumber" value="${soaWishlistItem.catalogEntryIdentifier.externalIdentifier.partNumber}" scope="request" />
+													<%
+														try {
+															CatalogEntryAccessBean abCatalogEntry = null;
+															String[] strStoreId = (String[])request.getAttribute("storeId");
+												
+															Enumeration e = CatalogEntryCache.findBySKUNumberAndStore((String)request.getAttribute("itemPartNumber"),new Integer(strStoreId[0]));
+															abCatalogEntry = (CatalogEntryAccessBean) e.nextElement();
+															request.setAttribute("itemCatentryId", abCatalogEntry.getCatalogEntryReferenceNumber());
+														} catch (Exception e) {
+															request.setAttribute("itemError", true);
+														}
+													%>
+													<c:if test="${!requestScope.itemError}">
+														<c:forEach var="wishListItemDisplay" items="${productResults}">
+															<c:if test="${wishListItemDisplay.uniqueID eq requestScope.itemCatentryId}">
+																<c:set var="catEntry" value="${wishListItemDisplay}" />
+															</c:if>
+														</c:forEach>
+													</c:if>
+													
+													<c:remove var="requestScope.itemPartNumber" />
+													<c:remove var="requestScope.itemCatentryId" />
+												</c:when>
+												
+												<c:otherwise>
+													<c:forEach var="wishListItemDisplay" items="${productResults}">
+														<c:if test="${wishListItemDisplay.uniqueID eq soaWishlistItem.catalogEntryIdentifier.uniqueID}">
+															<c:set var="catEntry" value="${wishListItemDisplay}" />
+															<c:set var="catentryId" value="${soaWishlistItem.catalogEntryIdentifier.uniqueID}" scope="request" />
+															<c:if test="${catEntry.buyable == 'true' && catEntry.type == 'STANDARD'}">
+																<c:set var="buyableItem" value="true" />
+																<c:set var="catEntId" value="${soaWishlistItem.catalogEntryIdentifier.uniqueID}" />	
+															</c:if>
+														</c:if>
+													</c:forEach>
+												</c:otherwise>
+											</c:choose>
+											
+											<c:choose>
+											
+												<%-- item exists in catalog - calls thumbnail display to display item details --%>
+												<c:when test="${!requestScope.itemError}">
+												
+													<%--
+													<c:if test="${buyableItem}">
+														<c:set var="someBuyable" value="${someBuyable + 1}" />
+													</c:if>
+													--%>
+			
+													<c:if test="${!sharedWishList}">
+														<c:set var="includeRemoveFromWishList" value="true" />
+													</c:if>
+			
+													<c:set var="soaListItem" value="${soaWishlistItem}" />
+													<c:set var="catEntryIdentifier" value="${soaWishlistItem.catalogEntryIdentifier.uniqueID}" scope="request" />
+													
+													<%-- used by CatalogEntryDBThumbnailDisplay.jspf to form unique ID for divs/quickInfo buttons --%>
+													<c:set var="productThumbNail" value="${catEntry.thumbnail}" />
+													<c:choose>
+														<c:when test="${(fn:startsWith(productThumbNail, 'http://') || fn:startsWith(productThumbNail, 'https://'))}">
+															<wcst:resolveContentURL var="productThumbNail" url="${productThumbNail}" />
+														</c:when>
+														<c:otherwise>
+															<c:set var="productThumbNail" value="${productThumbNail}" />
+														</c:otherwise>
+													</c:choose>
+													
+													<c:set var="productFullImage" value="${catEntry.fullImage}" />
+													<c:choose>
+														<c:when test="${(fn:startsWith(productFullImage, 'http://') || fn:startsWith(productFullImage, 'https://'))}">
+															<wcst:resolveContentURL var="productFullImage" url="${productFullImage}" />
+														</c:when>
+														<c:otherwise>
+															<c:set var="productFullImage" value="${productFullImage}" />
+														</c:otherwise>
+													</c:choose>
+			
+			
+													<c:set var="storeent_id" value="${catEntry.storeID}" />
+			
+													<%-- RÃ©cupÃ©ration du nom et de la shortDescription de la ligne de la wishlist --%>
+													<c:set var="highlightedName" value="${catEntry.metaData.name}" />
+													<c:set var="highlightedShortDescription" value="${catEntry.metaData.shortDescription}" />
+			
+													<%-- Si vides, on rÃ©cupÃ¨re le nom et la shortDescription du product --%>
+													<c:if test="${empty highlightedShortDescription || empty highlightedName}">
+														<%-- 1 seul appel au product parent --%>
+														<wcf:rest var="catalogNavigationView" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byId/${catEntry.parentCatalogEntryID}">
+															<wcf:param name="langId" value="${langId}" />
+															<wcf:param name="currency" value="${env_currencyCode}" />
+															<wcf:param name="responseFormat" value="json" />
+															<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+															<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+															<wcf:param name="profileName" value="ECO_findProductByIds_Light"/>
+														</wcf:rest>
+														<c:set var="parentProduct" value="${catalogNavigationView.catalogEntryView[0]}" />
+														<c:set var="productName" value="${parentProduct.name}" />
+														<c:set var="productShortDescription" value="${parentProduct.shortDescription}" />
+													</c:if>
+													<c:set var="catalogIdEntry" value="${catEntry}"/>
+													<%@ include file="../../../Snippets/Search/CatalogEntrySetPriceDisplay.jspf" %>
+													
+													<c:set var="tva" value="${catEntry.vat_rate}" />
+			
+													<c:if test="${buyableItem && !empty priceString}">
+														<c:set var="someBuyable" value="${someBuyable + 1}" />
+													</c:if>
+													
+													<c:set var="catalogEntry" value="${catEntry}" />
+													<c:choose>
+														<%-- Use the context parameters if they are available; usually in a subcategory --%>
+														<c:when test="${empty WCParam.categoryId}">
+															<%-- categoryId is empty..just display product URL --%>
+															<c:set var="patternName" value="ProductURL" />
+															<c:set var="parent_category_rn" value="${searchParentCategoryId}" />
+															<c:set var="top_category" value="${searchTopCategoryId}" />
+															<c:set var="categoryId" value="${WCParam.categoryId}" />
+														</c:when>
+														<c:when
+															test="${searchParentCategoryId == WCParam.categoryId}">
+															<%-- CategoryId is present..but it is same as parent category Id --%>
+															<c:set var="parent_category_rn" value="${searchTopCategoryId}" />
+															<c:set var="top_category" value="${searchTopCategoryId}" />
+															<c:set var="categoryId" value="${WCParam.categoryId}" />
+															<c:set var="patternName" value="ProductURLWithCategory" />
+															<c:if test="${!empty top_category}">
+																<c:set var="patternName"
+																	value="ProductURLWithParentCategory" />
+															</c:if>
+														</c:when>
+														<c:when test="${!empty searchParentCategoryId && !empty searchTopCategoryId}">
+															<%-- both parent and top category are present.. display full product URL --%>
+															<c:set var="parent_category_rn" value="${searchParentCategoryId}" />
+															<c:set var="top_category" value="${searchTopCategoryId}" />
+															<c:set var="categoryId" value="${WCParam.categoryId}" />
+															<c:set var="patternName" value="ProductURLWithParentAndTopCategory" />
+															<c:if test="${top_category == parent_category_rn}">
+																<%-- But both top and parent category are same..display only parent category in product URL --%>
+																<c:set var="patternName" value="ProductURLWithParentCategory" />
+															</c:if>
+														</c:when>
+														<c:when test="${!empty searchParentCategoryId}">
+															<%-- parent category is not empty..use product URL with parent category --%>
+															<c:set var="parent_category_rn" value="${searchParentCategoryId}" />
+															<c:set var="top_category" value="${searchTopCategoryId}" />
+															<c:set var="categoryId" value="${WCParam.categoryId}" />
+															<c:set var="patternName" value="ProductURLWithParentCategory" />
+														</c:when>
+														<%-- In a top category; use top category parameters --%>
+														<c:when test="${WCParam.top == 'Y'}">
+															<c:set var="parent_category_rn" value="${searchParentCategoryId}" />
+															<c:set var="top_category" value="${searchTopCategoryId}" />
+															<c:set var="categoryId" value="${WCParam.categoryId}" />
+															<c:set var="patternName" value="ProductURLWithCategory" />
+														</c:when>
+														<%-- Store front main page; usually eSpots, parents unknown --%>
+														<c:otherwise>
+															<c:set var="parent_category_rn" value="${searchParentCategoryId}" />
+															<c:set var="top_category" value="${searchTopCategoryId}" />
+															<%-- Just display productURL without any category info --%>
+															<c:set var="patternName" value="ProductURL" />
+														</c:otherwise>
+													</c:choose>
+			
+													<wcf:url var="catEntryDisplayUrl" patternName="${patternName}" value="Product2">
+														<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+														<wcf:param name="storeId" value="${WCParam.storeId}" />
+														<wcf:param name="productId" value="${catEntryIdentifier}" />
+														<wcf:param name="langId" value="${langId}" />
+														<wcf:param name="errorViewName" value="ProductDisplayErrorView" />
+														<wcf:param name="categoryId" value="${WCParam.categoryId}" />
+														<wcf:param name="top_category" value="${top_category}" />
+														<wcf:param name="parent_category_rn" value="${parent_category_rn}" />
+														<wcf:param name="urlLangId" value="${urlLangId}" />
+													</wcf:url>
+													<c:if test="${! empty experimentId}">
+														<wcf:url var="catEntryDisplayUrl" value="ClickInfo">
+															<wcf:param name="storeId" value="${WCParam.storeId}" />
+															<wcf:param name="evtype" value="CpgnClick" />
+															<wcf:param name="mpe_id" value="${mpe_id}" />
+															<wcf:param name="intv_id" value="${intv_id}" />
+															<wcf:param name="experimentId" value="${experimentId}" />
+															<wcf:param name="testElementId" value="${testElementId}" />
+															<wcf:param name="expDataType" value="CatalogEntryId" />
+															<wcf:param name="expDataUniqueID" value="${catEntryIdentifier}" />
+															<wcf:param name="URL" value="${catEntryDisplayUrl}" />
+														</wcf:url>
+													</c:if>
+													
+													<c:forEach var="attribute" items="${catalogEntry.attributes}" varStatus="statusAttr1">
+														<c:if test="${ attribute.identifier eq 'isSoldes'}">
+														           <c:set var="soldeFlagProduct" value="${attribute.values[0].value}" scope="request" />
+													 	</c:if>
+												 	</c:forEach>
+													<%-- image --%>
+													<div class="productImage <c:if test="${catEntry.isOnSpecial}"> promo</c:if> <c:if test="${soldeFlagProduct eq 1 || soldeFlagProduct eq 1.0 }"> soldes</c:if>">														
+														<c:if test="${buyableItem}">
+															<script type="text/javascript">buyableItems.push("<c:out value="${catEntId}" />");</script>
+														</c:if>
+			
+														<a href="<c:out value="${catEntryDisplayUrl}" escapeXml="false"/>" title="<c:out value='${productName}' escapeXml='false'/>">
+															<c:choose>
+																<c:when test="${!empty productThumbNail}">
+																	<astpush:assetPushUrl var="productFullImage" scope="page"
+																		urlRelative="${catEntry.fullImage}"
+																		type="${catEntry.type}" source="list" device="${device}"
+																		format="full" />
+																	<img width="212px" height="212px" src="${productFullImage}" alt="${catEntry.name}" border="0" onerror="this.src='${defaultProductFullImage}';"/>
+																	<astpush:assetPushUrl var="productThumbImage" scope="page"
+																		urlRelative="${productThumbNail}" type="${catEntry.type}"
+																		source="list" device="${device}" format="full" />
+																</c:when>
+																<c:otherwise>
+																	<c:set var="keyDefaultImageMaps" value="${catEntry.type}_main_thumbnail" />
+																	<astpush:assetPushUrl var="productThumbImage" scope="page"
+																		urlRelative="${defaultImageMaps[keyDefaultImageMaps]}"
+																		type="${catEntry.type}" source="list" device="${device}"
+																		format="thumbnail" defaultUrl="true" />
+																	<astpush:assetPushUrl var="productFullImage" scope="page"
+																		urlRelative="${defaultImageMaps[keyDefaultImageMaps]}"
+																		type="${catEntry.type}" source="list" device="${device}"
+																		format="full" defaultUrl="true" />
+																	<img src="${productFullImage}" alt="<c:out value='${fn:replace(productName, search, replaceStr)} ${formattedPriceString}' escapeXml='false'/>" />
+																</c:otherwise>
+															</c:choose>
+														 </a>
+			
+														<c:if test="${device!='mobile'}">
+															<c:forEach var="attribute" items="${attributes}" varStatus="status2">
+																<c:if test="${attribute.usage == 'Descriptive' && fn:startsWith(attribute.attributeIdentifier.externalIdentifier.identifier,'adbug')}">
+																	<c:remove var="adbugImage1" />
+																	<c:set var="adbugLocation" value="top_right" />
+																	<c:forEach var="extVal" items="${attribute.extendedValue}">
+																		<c:if test="${extVal.key == 'Image1'}">
+																			<c:set var="adbugImage1"
+																				value="${storeImgDir}${extVal.value}" />
+																		</c:if>
+																		<c:if test="${extVal.key == 'Field2'}">
+																			<c:set var="adbugLocation" value="${extVal.value}" />
+																		</c:if>
+																	</c:forEach>
+																	<c:if test="${!empty adbugImage1}">
+																		<div
+																			style="background-image: url(<c:out value='${adbugImage1}'/>)"
+																			class="adbug_detailed_${adbugLocation}"
+																			id="adbug_${emsName}_${catEntryIdentifier}_${attribute.value.value}"
+																			title="${attribute.value.value}"></div>
+																	</c:if>
+																</c:if>
+															</c:forEach>
+														</c:if>
+													</div>
+													<c:remove var="soldeFlagProduct" />
+													<%-- detail --%>
+													<div class="productSummary">
+														<p class="productName">
+															<a class="hover_underline" href="<c:out value="${catEntryDisplayUrl}" escapeXml="false"/>"><c:out value="${productName}" escapeXml="false" /></a>
+														</p>
+														<c:if test="${!empty highlightedShortDescription}">
+															<p class="productShortDesc">
+																<c:out value="${highlightedShortDescription}" escapeXml="false" />
+															</p>
+														</c:if>
+														<p class="skuReference">
+															<fmt:message key="wishlistProduitSkuLabel" bundle="${widgetText}" /> : 
+															<span itemprop="sku" id="product_SKU_<c:out value='${catEntryIdentifier}' />">${catEntry.partNumber}</li>
+														</p>
+														<c:if test="${device!='mobile'}">
+															<dl class="definingAttributes">
+																<c:forEach var="attribute" items="${catEntry.attributes}">
+																	<c:if test="${attribute.usage eq 'Defining' && attribute.displayable}">
+																		<dt>${attribute.name}</dt>
+																		<dd>${attribute.values[0].value}</dd>
+																	</c:if>
+																</c:forEach>
+															</dl>
+														</c:if>
+													</div>
+													
+													<c:catch var="exc">
+														<c:set var="totalAmt" value="${totalAmt+priceString}" />
+													</c:catch>
+													<%-- price : exception catchÃ© car prix en attente possible--%>
+													<%-- PRIX HT: affichÃ© que pour les part. Les pros ont dÃ©ja des prix HT--%>
+													<div class="unitPrice">
+														<c:if test="${!extendedUserContext.isPro}">
+															<c:if test="${!empty priceString}">
+																<c:set var="price_ht" value="${priceString}" />
+																<c:if test="${!empty tva }">
+																	<c:set var="price_ht" value="${priceString * 100/(100 + tva)}" />
+																</c:if>
+																<c:catch>
+																	<fmt:formatNumber value="${price_ht}" type="currency" currencySymbol="${env_CurrencySymbolToFormat}" maxFractionDigits="${env_currencyDecimal}" />
+																</c:catch>
+															</c:if>
+														</c:if>
+													</div>
+													
+													<%-- TVA --%>
+													<%-- <div class="vat">
+														<c:if test="${!empty tva}">
+															${tva}%
+														</c:if>
+													</div> --%>
+													
+													<div class="totalPrice">
+														<%@ include file="../../../Snippets/Search/CatalogEntryPriceDisplay.jspf"%>
+													</div>
+													
+													<div class="deleteAction">
+														<c:if test="${includeRemoveFromWishList}">
+															<c:choose>
+																<c:when test="${sharedWishList}">
+																	<a class="deleteLink hover_underline"
+																		href="<c:out value="${interestItemDeleteURL}"/>"
+																		id="WC_CatalogEntryDBThumbnailDisplayJSPF_<c:out value='${catEntryIdentifier}'/>_links_14"
+																		waistate:controls="MiniShoppingCart"><span
+																		class="remove">&nbsp;</span>
+																		<fmt:message bundle="${storeText}" key="WISHLIST_REMOVE" />
+																	</a>
+																</c:when>
+																<c:otherwise>
+																	<a class="deleteLink hover_underline"
+																		href="javaScript:dojo.byId('wishListId').value='${selectedWishListId}';MultipleWishLists.removeItem('<c:out value='${soaListItem.giftListItemID}'/>')"
+																		id="WC_CatalogEntryDBThumbnailDisplayJSPF_<c:out value='${catEntryIdentifier}'/>_links_14">
+																		<img src="${jspStoreImgDir}images/delete.png"
+																		alt="Supprimer"
+																		onmouseover="this.src='${jspStoreImgDir}images/deleteRed.png';"
+																		onmouseout="this.src='${jspStoreImgDir}images/delete.png';">
+																	</a>
+																</c:otherwise>
+															</c:choose>
+														</c:if>
+													</div>
+													
+													<%--
+													<c:if test="${!sharedWishList && !buyableItem && emptyPriceString}">
+														TODO : && !buyableItem  oter test buyable pour valider l'affichage en test
+														<c:if test="${detailMissingSKUS!=''}">
+															<c:set var="detailMissingSKUS" value="${detailMissingSKUS}," />
+														</c:if>
+														<c:set var="detailMissingSKUS"
+															value="${detailMissingSKUS} {\" image\":\"${productThumbImage}\",\"price\":\" ${formattedPriceString}\",\"name\":\"${highlightedName}\"}"/>
+													</c:if> 
+													--%>
+			
+												</c:when>
+			
+												<%-- item does not exist in catalog - display empty image and remove link to allow shopper to remove the item --%>
+												<c:otherwise>
+													<div class="productImage">
+														<img src="<c:out value='${defaultProductFullImage}' />"  alt="<fmt:message bundle="${storeText}" key="No_Image" />"/>
+													</div>
+													
+													<div class="productSummary">
+														<p class="productName">
+															<c:out value="${soaWishlistItem.catalogEntryIdentifier.externalIdentifier.partNumber}" />
+														</p>
+														<p class="productShortDesc">
+															<fmt:message bundle="${storeText}" key="PRODUCT_ERROR" />
+														</p>
+													</div>
+													
+													<div class="unitPrice"></div>
+													
+													<%--  TODO : aller chercher le taux de tva du store --%>
+													<div class="vat">20%</div>
+													
+													<div class="totalPrice"></div>
+													
+													<div class="deleteAction">
+													
+														<c:if test="${!sharedWishList}">
+															<div class="deleteLink">
+																<a class="bopis_link" href="javaScript:MultipleWishLists.removeItem('${soaWishlistItem.giftListItemID}')">
+																	<fmt:message bundle="${storeText}" key="WISHLIST_REMOVE" />
+																</a>
+															</div>
+														</c:if>
+														
+													</div>
+												</c:otherwise>
+											</c:choose>
+											
+											<%--RÃ©initialisation des variables --%>
+											<c:remove var="catEntry" />
+											<c:remove var="requestScope.itemError" />
+										</div>
+										<%-- Fin ROW --%>
+										
+										<c:if test="${(!sharedWishList && !buyableItem) || emptyPriceString}">
+											<c:if test="${detailMissingSKUS!=''}">
+												<c:set var="detailMissingSKUS" value="${detailMissingSKUS}," />
+											</c:if>
+											<c:set var="detailMissingSKUS"
+												value="${detailMissingSKUS} {\"image\":\"${productThumbImage}\",\"price\":\" ${formattedPriceString}\",\"name\":\"${productName}\",\"quantity\":\"1\"}"/>
+										</c:if>
+										
+									</c:forEach>
+								</div>
+								<%-- FIN LIGNES WISHLIST --%>
+							
+								<%-- RECAP WISHLIST --%>
+								<div class="orderSummary">
+									<dl class="main line">
+										<dt class="label">
+											<c:choose>
+												<c:when test="${extendedUserContext.isPro}">
+													<fmt:message bundle="${widgetText}" key="htTotalAmountLabelStrong" />
+												</c:when>
+												<c:otherwise>
+													<fmt:message bundle="${widgetText}" key="ttcTotalAmountLabelStrong" />
+												</c:otherwise>
+											</c:choose>
+										</dt>
+										<dd class="value">
+											<span class="price">
+												<c:choose>
+													<c:when test="${extendedUserContext.isPro}">
+														<fmt:formatNumber value="${totalAmt}" type="currency" currencySymbol="${env_CurrencySymbolToFormat}<sup class='vat-free'>HT</sup>" maxFractionDigits="${env_currencyDecimal}" />
+													</c:when>
+													<c:otherwise>
+														<fmt:formatNumber value="${totalAmt}" type="currency" currencySymbol="<sup class='currency'>${env_CurrencySymbolToFormat}</sup>" maxFractionDigits="${env_currencyDecimal}" />
+													</c:otherwise>
+												</c:choose>
+											</span>
+										</dd>
+									</dl>
+								</div>
+								
+							</div>
+							<%-- FIN WISHLIST --%>
+							
+						</c:otherwise>
+		
+					</c:choose>
+		
+					<div class="buttonsBar" id="wishListBar">
+						
+						<c:if test="${!sharedWishList}">
+							<div class="socialNetworks bcol8 centered <c:if test="${device!='mobile'}">left</c:if>">
+								<c:set var="titleToShare" value="${myWishList.description.name}" scope="page" />
+								<c:set var="metaDescriptionToShare" value="${metaDescription}" scope="page" />
+								<c:set var="urlToShare" value="${sharedWishListViewURL}" scope="page" />
+								<c:set var="imagePathToShare" value="${productFullImage}" scope="page" />
+								<c:set var="isNoMail" value="true" scope="request" />
+			
+								<ecocea:widgetPath var="socialNetworksWidgetPath" identifier="SocialNetworks" storeId="${storeId}" />
+								<% out.flush(); %>
+								<c:import url="${socialNetworksWidgetPath}">
+									<c:param name="classToApply" value="wishlistSocialNetwork ficheSocialNetworks shareSocialNetwork" />
+									<c:param name="rootPath" value="${jspStoreImgDir}" />
+									<c:param name="widgetText" value="${widgetText}" />
+								</c:import>
+								<% out.flush(); %>
+							</div>
+						</c:if>
+						
+						<div class="right">
+							<%--ECOCEA: ne pas afficher les boutons d'action si la wishlist n'existe pas et si c'est une wishlist partagÃ©e  --%>
+							<c:if test="${!sharedWishList && not empty selectedWishListId}">
+								<a id="renameButton" class="button" href="#"
+									onclick="javascript:dojo.byId('renameButton').style.display='none';dojo.byId('renameField').style.display='inline';return false;">
+									<fmt:message bundle="${storeText}" key="wishlistRenameButtonLabel" />
+								</a>
+								<span id="renameField" style="display: none;">
+								<input type="text" id="editListName" maxlength="50" />
+								<a class="button" href="javascript:dojo.byId('wishListId').value='${selectedWishListId}';dojo.byId('wishListName').value='${wishListName}';shoppingListJS.edit();"
+									id="doRenameButton">
+									<fmt:message bundle="${storeText}" key="wishlistDoRenameButtonLabel" />
+								</a>
+								</span>
+		
+								<a class="button" href="#"
+									onclick="javascript: dojo.byId('wishListId').value='${selectedWishListId}';dojo.byId('wishListName').value='${wishListName}';dojo.byId('deleteListName').innerHTML=dojo.byId('wishListName').value; shoppingListJS.showPopup('delete');">
+									<fmt:message bundle="${storeText}" key="wishlistDeleteButtonLabel" />
+								</a>
+							</c:if>
+		
+							<%-- l'information du minishop n'est pas forcÃ©ment Ã  jour --%>
+							<c:set var="wishlistAddToCartButtonAttribute" value="aria-disabled=true" />
+							<c:if test="${someBuyable > 0}">
+								<c:set var="wishlistAddToCartButtonAttribute" value="href=javascript:shoppingListJS.replaceOrAddToCart(${fn:length(order.orderItem)},'${ShoppingCartURL}');" />
+							</c:if>
+							<a class="button ${someBuyable > 0 ?'green':'disabled'}" ${wishlistAddToCartButtonAttribute}>
+								<fmt:message bundle="${storeText}" key="wishlistAddToCartButtonLabel" />
+							</a>
+						</div>
+					</div>
+				</div>
+				<%-- Fin wishlistDetailPage --%>
+			<c:if test="${not sharedWishList}">				
+				</div>
+			</div>
+		</c:if>
+		<div class="item_container_divider">
+			<div class="divider_line" colspan="4" id="WC_WishListResultDisplay_td_1a"></div>
+		</div>
+		</div>
+	</div>
+	<%-- Fin page --%>
+
+	<div class="clear_both"></div>
+
+	<c:if test="${!empty emspotpath}">
+		<br />
+	</c:if>
+
+	<c:if test="${device!='mobile'}">
+		<div class="marketingSpotSection">
+			<%out.flush();%>
+			<c:catch var="exc">
+				<ecocea:widgetPath var="emspotpath" identifier="EMarketingSpot" />
+				<c:import url="${emspotpath}">
+					<c:param name="storeId" value="${storeId}" />
+					<c:param name="catalogId" value="${catalogId}" />
+					<c:param name="emsName"
+						value="detailWishlistMarketingSpot_bestSeller" />
+					<c:param name="pageSize" value="4"/>
+					<c:param name="t2sWidgetSuffix" value="detailWishlistMarketingSpot_bestSeller"/>
+					<c:param name="displayPreference" value="1"/>
+				</c:import>
+				<c:import url="${emspotpath}">
+					<c:param name="storeId" value="${storeId}" />
+					<c:param name="catalogId" value="${catalogId}" />
+					<c:param name="emsName" value="detailWishlistMarketingSpot_RecoProduits" />
+					<c:param name="pageSize" value="4"/>
+					<c:param name="t2sWidgetSuffix" value="detailWishlistMarketingSpot_RecoProduits"/>
+					<c:param name="displayPreference" value="1"/>
+				</c:import>
+				<c:import url="${emspotpath}">
+					<c:param name="storeId" value="${storeId}" />
+					<c:param name="catalogId" value="${catalogId}" />
+					<c:param name="emsName"	value="detailWishlistMarketingSpot_SelectionDuMois" />
+					<c:param name="pageSize" value="4"/>
+					<c:param name="t2sWidgetSuffix" value="detailWishlistMarketingSpot_SelectionDuMois"/>
+					<c:param name="displayPreference" value="1"/>	
+				</c:import>
+				<c:import url="${emspotpath}">
+					<c:param name="storeId" value="${storeId}" />
+					<c:param name="catalogId" value="${catalogId}" />
+					<c:param name="emsName"	value="detailWishlistMarketingSpot_ProduitsEtContenus" />
+					<c:param name="pageSize" value="4"/>
+					<c:param name="t2sWidgetSuffix" value="detailWishlistMarketingSpot_ProduitsEtContenus"/>
+					<c:param name="displayPreference" value="1"/>	
+				</c:import>
+			</c:catch>
+			<%out.flush();%>
+		</div>
+	</c:if>
+
+	<c:set var="numberMissing" value="${empty selectedSoaWishList.item? 0 : fn:length(selectedSoaWishList.item) - someBuyable}"/>
+	<%@ include file="AddToCartPopup.jspf"%>
+	<input type="hidden" name="controllerURLWishlist" value="${WishListResultDisplay}" id="controllerURLWishlist" />
+	<div class="footer" id="WC_WishListResultDisplay_div_12">
+		<div class="left_corner" id="WC_WishListResultDisplay_div_13"></div>
+		<div class="left" id="WC_WishListResultDisplay_div_14"></div>
+		<div class="right_corner" id="WC_WishListResultDisplay_div_15"></div>
+	</div>
+
+	<!-- Main Content End -->
+	<!-- Footer Start -->
+	<div class="footer_wrapper_position">
+		<%out.flush();%>
+		<c:import url="${env_jspStoreDir}/Widgets/Footer/Footer.jsp" />
+		<%out.flush();%>
+	</div>
+	<!-- Footer End -->
+
+	<flow:ifEnabled feature="Analytics">
+		<cm:pageview />
+	</flow:ifEnabled>
+	<%@ include file="../../../Common/JSPFExtToInclude.jspf"%>
+
+	<c:import url="../../../TagManager/TagManager.jsp">
+		<c:param name="pageGroup" value="wishlist" />
+		<c:param name="pageName" value="myWishListResult" />
+	</c:import>
+</body>
+</html>
+

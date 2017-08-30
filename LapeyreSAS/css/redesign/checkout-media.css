@@ -1,0 +1,30 @@
+/*-------------------------------------------------------------*\
+    $RESPONSIVE
+    Responsive style
+\*-------------------------------------------------------------*/
+
+/* Mobile */
+@media screen and (max-width: 779px) {
+	.shoppingcart-header, .shoppingcart-store, .shoppingcart-stock {
+		display: block;
+	}
+	.shoppingcart-header h1 {
+		padding: 0;
+	}
+	.shoppingcart-stock {
+	    margin: 10px 0;
+	}
+	.shop-select {
+	   	margin: 10px 0;
+	    width: 100%;
+	    height: 50px;
+	    font-size: 20px;
+	}
+	
+	.shoppingcart-product {
+		border-left: none;
+		border-right: none;
+		display: block !important;
+	}
+	
+}

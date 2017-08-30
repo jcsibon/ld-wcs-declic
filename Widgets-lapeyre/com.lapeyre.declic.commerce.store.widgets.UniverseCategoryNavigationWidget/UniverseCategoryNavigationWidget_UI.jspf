@@ -1,0 +1,45 @@
+<%--  The following code is created as an example. Modify the generated code and add any additional required code.  --%>
+<div class="collapsible radioArea" id="widget_left_nav${widgetSuffix}" role="navigation" aria-expanded="true">
+	<h3 class="toggle" role="button" tabIndex="0" aria-describedby="category_widget_acce_desc">${currentCategoryName}</h3>
+	<span id="category_widget_acce_desc" class="spanacce">Press enter to collapse or expand the menu.</span>
+	<div class="content">
+		<div class="widget_left_nav">
+	        <div class="content_left_border" style="border:none;">
+	            <div class="content_right_border" style="border:none;">
+	                <div class="content">
+                        <div class="content_section">
+                            <div class="dropdownLP">                    
+                                <select id="categoryFacetList${widgetSuffix}" class="facetSelect">
+                                    <c:forEach var="topCategory" items="${fullTopCategoryList}" varStatus="aStatus" >
+                                    	<c:if test="${topCategory[0] == currentCategoryName}">
+                                    		<c:set var="optionSelected" value="selected" />
+                                    	</c:if>
+                                        <option value="${topCategory[2]}" ${optionSelected}>
+                                            <c:choose>
+                                                <c:when test="${displayProductCount == 'false'}">
+                                                    <c:out value="${topCategory[0]}"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <fmt:message key="LN_SEARCH_FACET_COUNT" bundle="${widgetText}"> 
+                                                        <fmt:param value ="${topCategory[0]}" />
+                                                        <fmt:param><fmt:formatNumber value="${topCategory[1]}"/></fmt:param>
+                                                    </fmt:message>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </option>
+                                        <c:remove var="optionSelected" />
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+</div>
+<script>
+	dojo.addOnLoad(function() {
+		universeCategoryNavigation.attach('categoryFacetList${widgetSuffix}');
+	});
+</script>

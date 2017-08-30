@@ -1,0 +1,170 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%-- Initializing the param variables --%>
+<c:set var="top_category" value=""/>
+<c:set var="pageName" value=""/>
+
+<%-- Check first in the param and then in WCParam --%>
+<c:if test="${!empty param.top_category}">
+	<c:set var="top_category" value="${param.top_category}"/>
+</c:if>
+<c:if test="${!empty WCParam.top_category}">
+	<c:set var="top_category" value="${WCParam.top_category}"/>
+</c:if>
+<c:if test="${!empty param.productId}">
+	<c:set var="productId" value="${param.productId}"/>
+</c:if>
+<c:if test="${!empty WCParam.productId}">
+	<c:set var="productId" value="${WCParam.productId}"/>
+</c:if>
+<c:if test="${!empty param.pageName}">
+	<c:set var="pageName" value="${param.pageName}"/>
+</c:if>
+<c:if test="${!empty WCParam.pageName}">
+	<c:set var="pageName" value="${WCParam.pageName}"/>
+</c:if>
+
+<%-- A Map to store the bread crumb items along with their URLs--%>
+<jsp:useBean id="breadCrumbItemsMap" class="java.util.LinkedHashMap" type="java.util.Map"/>
+
+<%-- Sets the Home url to the Map--%>
+<fmt:message var="home" key="BCT_HOME"  bundle="${widgetText}"/>
+<c:set target="${breadCrumbItemsMap}" property="${home}" value="${env_TopCategoriesDisplayURL}"/>
+
+<%-- Sets the Home as the last bread crumb item --%>
+<c:set var="lastBreadCrumbItem" value="${home}"/>
+
+<%-- Page specific bread crumbs --%>
+<c:choose>
+	<%-- When it is a Advanced Search Page --%>
+	<c:when test="${pageName eq 'AdvancedSearchPage'}">
+		<fmt:message var="lastBreadCrumbItem" key="TITLE_ADVANCED_SEARCH"  bundle="${widgetText}" />
+	</c:when>
+	<%-- When it is a Static Search Page --%>
+	<c:when test="${pageName eq 'StaticSearchPage'}">
+		<c:set var="lastBreadCrumbItem" value=""/>
+	</c:when>
+	<%-- Default BreadCrumb for rest of the pages --%>
+	<c:otherwise>
+		<%-- Check if productId is passed as a param --%>
+		<%--ECOCEA: on prend toujours le nom du product et non de l'item --%>
+		<c:if test="${!empty parentCatEntryId}">
+			<c:set var="productId" value="${parentCatEntryId}"/>
+		</c:if>
+		<c:if test="${!empty productId}">
+			<%-- Try to get it from our internal cached hashMap --%>
+			<c:set var="key1" value="${productId}+getCatalogEntryViewSummaryByID"/>
+			<c:set var="bcCatalogEntry" value="${cachedCatalogEntryDetailsMap[key1]}"/>
+			<c:if test="${empty bcCatalogEntry}">
+				<c:set var="key1" value="${productId}+getCatalogEntryViewAllByID"/>
+				<c:set var="bcCatalogEntry" value="${cachedCatalogEntryDetailsMap[key1]}"/>
+				<c:if test="${empty bcCatalogEntry}">
+					<%-- Sets Product Name as the last bread crumb item --%>
+					<c:catch var ="invalidProductException">
+						<wcf:rest var="bcCatalogNavigationView" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byId/${productId}" >
+							<wcf:param name="langId" value="${langId}" />
+							<wcf:param name="currency" value="${env_currencyCode}" />
+							<wcf:param name="responseFormat" value="json" />
+							<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+							<%--ECOCEA perf: profile light --%>
+							<wcf:param name="profileName" value="ECO_findProductByIds_Light" />
+						</wcf:rest>
+					</c:catch>
+					<c:if test="${empty invalidProductException}">
+						<c:set var="bcCatalogEntry" value="${bcCatalogNavigationView.catalogEntryView[0]}"/>
+						<%-- Cache it in our internal hash map --%>
+						<wcf:set target = "${cachedCatalogEntryDetailsMap}" key="${productId}+getCatalogEntryViewSummaryByID" value="${bcCatalogEntry}"/>
+					</c:if>
+				</c:if>
+			</c:if>
+			<c:if test="${empty invalidProductException}">
+				<c:set var="lastBreadCrumbItem" value="${bcCatalogEntry.name}"/>
+			</c:if>
+		</c:if>
+		
+		<c:set target="${breadCrumbItemsMap}" property="${lastBreadCrumbItem}" value="${null}"/>
+	</c:otherwise>
+</c:choose>
+<c:if test="${isCustomSearchTermFieldName eq '1' && !empty  CustomSearchTermFieldName}" >
+	<c:if test="${CustomSearchTermFieldName eq 'collectionSearch'}" >
+		<c:choose>
+			<%-- Use the context parameters if they are available; usually in a subcategory --%>
+			<c:when test="${empty WCParam.categoryId || (!empty param.emsName && param.fromWidget ne 'CatalogEntryList')}">
+				<%-- categoryId is empty..just display product URL --%>
+				<c:set var="parent_category_rn" value="${searchParentCategoryId}" />
+				<c:set var="top_category" value="${searchTopCategoryId}" />
+				<c:set var="categoryId" value="${WCParam.categoryId}" />
+			</c:when>
+			<c:when test="${searchParentCategoryId == WCParam.categoryId}">
+					<%-- CategoryId is present..but it is same as parent category Id --%>
+					<c:set var="parent_category_rn" value="${searchTopCategoryId}" />
+					<c:set var="top_category" value="${searchTopCategoryId}" />
+					<c:set var="categoryId" value="${WCParam.categoryId}" />
+			</c:when>
+			<c:when test="${!empty searchParentCategoryId && !empty searchTopCategoryId}">
+				<%-- both parent and top category are present.. display full product URL --%>
+				<c:set var="parent_category_rn" value="${searchParentCategoryId}" />
+				<c:set var="top_category" value="${searchTopCategoryId}" />
+				<c:set var="categoryId" value="${WCParam.categoryId}" />
+			</c:when>
+			<c:when test="${!empty searchParentCategoryId}">
+				<%-- parent category is not empty..use product URL with parent category --%>
+				<c:set var="parent_category_rn" value="${searchParentCategoryId}" />
+				<c:set var="top_category" value="${searchTopCategoryId}" />
+				<c:set var="categoryId" value="${WCParam.categoryId}" />
+			</c:when>
+			<c:when test="${!empty WCParam.categoryId}">
+					<c:set var="parent_category_rn" value="${searchTopCategoryId}" />
+					<c:set var="top_category" value="${searchTopCategoryId}" />
+					<c:set var="categoryId" value="${WCParam.categoryId}" />
+			</c:when>
+			<%-- Store front main page; usually eSpots, parents unknown --%>
+			<c:otherwise>
+				<c:set var="parent_category_rn" value="${searchParentCategoryId}" />
+				<c:set var="top_category" value="${searchTopCategoryId}" />
+			</c:otherwise>
+		</c:choose>
+		
+		<c:set var = "categoryId_local" value = "${WCParam.categoryId}"/>
+		
+		<wcf:url var="catEntryDisplayUrl" patternName="ProductURL" value="Product2">
+			<wcf:param name="catalogId" value="${catalogId}"/>
+			<wcf:param name="storeId" value="${storeId}"/>
+			<wcf:param name="productId" value="${productId}"/>
+			<wcf:param name="langId" value="${langId}"/>
+			<wcf:param name="errorViewName" value="ProductDisplayErrorView"/>
+			<wcf:param name="categoryId" value="${categoryId_local}" />
+			<wcf:param name="top_category" value="${top_category}" />
+			<wcf:param name="parent_category_rn" value="${parent_category_rn}" />
+			<wcf:param name="urlLangId" value="${urlLangId}" />
+		</wcf:url>
+		
+		<c:set target="${breadCrumbItemsMap}" property="${lastBreadCrumbItem}" value="${catEntryDisplayUrl}"/>
+		
+		<fmt:message var="lastBreadCrumbItem" key="listeMeublesCollectionPagetitle"  bundle="${widgetText}" />
+	</c:if>
+	<c:if test="${CustomSearchTermFieldName eq 'promotionSearch'}" >
+		<fmt:message var="lastBreadCrumbItem" key="listePromotionsPagetitle"  bundle="${widgetText}" />
+	</c:if>
+	<c:if test="${CustomSearchTermFieldName eq 'saleSearch'}" >
+		<fmt:message var="lastBreadCrumbItem" key="listeSoldesPagetitle"  bundle="${widgetText}" />
+	</c:if>
+</c:if>
+<c:forEach var="breadCrumb" items="${breadCrumbItemsMap}" varStatus="status">
+	<c:set var="breadCrumbList" value="${breadCrumbList}${breadCrumb.key}" scope="request"/>
+	<c:if test="${!empty lastBreadCrumbItem}">
+		<c:set var="breadCrumbList" value="${breadCrumbList};" scope="request"/>
+	</c:if>
+</c:forEach>
+<c:set var="breadCrumbList" value="${breadCrumbList}${lastBreadCrumbItem}" scope="request"/>

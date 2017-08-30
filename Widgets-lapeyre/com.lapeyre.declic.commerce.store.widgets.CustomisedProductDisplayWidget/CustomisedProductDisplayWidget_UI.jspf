@@ -1,0 +1,191 @@
+<%--  The following code is created as an example. Modify the generated code and add any additional required code.  --%>
+<c:set var="cropTitleLimit" value="" />
+<c:choose>
+	<c:when test="${isOnMobileDevice }" >
+		<c:set var="cropTitleLimit" value="46" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="cropTitleLimit" value="112" />
+	</c:otherwise>
+</c:choose>
+
+<script type="text/javascript" src="${jspStoreImgDir}../Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.PDP_FullImage/javascript/ProductFullImage.js?${versionNumber}"></script>
+<script type="text/javascript" src="${jsAssetsDir}javascript/Widgets/ShoppingList/ShoppingList.js?${versionNumber}"></script>
+<script type="text/javascript" src="${jsAssetsDir}javascript/Widgets/ShoppingList/ShoppingListServicesDeclaration.js?${versionNumber}"></script>
+<script type="text/javascript" src="${jspStoreImgDir}../Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.StandardProductDisplayWidget/javascript/StandardProductDisplayWidget.js?${versionNumber}"></script>
+
+<div class="container">
+	<div id="surMesureFicheProduitHead" class="row">
+	
+		<%-- Left column --%>
+		<div id="ficheProduitHeadLeftCol" class="col s12 m7 l5 push-l1">	
+			<div class="row">		
+				<div class="ficheImage surMesure<c:if test="${isOnSpecial}" > promo</c:if> <c:if test="${soldeFlagProduct eq 1 || soldeFlagProduct eq 1.0 }"> soldes</c:if>" id="ficheImage">
+					<%-- Full image widget --%>
+					<%out.flush(); %>
+					<c:import url="${fullImagewidgetPath}" >
+						<c:param name="widgetCeption" value="true" />
+					</c:import>
+					<%out.flush(); %>
+					
+					<c:if test="${productRedirected eq 'true' && productRedirectedType ge 0 && productRedirectedType le 1}" >
+					<%@ include file="/Widgets-lapeyre/Common/ProductRedirectionPopup.jspf" %>    
+					</c:if>
+				</div>
+			</div>
+			<div class="row hide-on-med-and-down">
+				<%-- Display the first four pictograms --%>
+				<div class="col s7 push-s3">
+					<div class="row">
+						<c:forEach var="picto" items="${pictos}" varStatus="status">
+							<c:if test="${status.count <= 4}">
+								<astpush:assetPushUrl var="pictoURL" scope="page" urlRelative="${picto.attachmentAssetPath}" type="" source="" device="" format=""/>
+								<img src="${pictoURL}" alt="${picto.name}" class="product-picto col s3" />
+							</c:if>
+						</c:forEach>
+					</div>
+				</div>
+				
+				<%-- Social networks --%>
+				<div class="col s2 push-s3">
+					<c:import url="${sharePopupPath}"></c:import>
+				</div>		
+			 </div>
+		</div>
+		
+		<%-- Right column --%>
+		<div class="col s12 m5 l5 push-l1">
+			<div id="ficheAside" class="product-page-standard-right-column ${microDataOfferAttributes}">
+				<meta itemprop="category" content="${googleCategory}" />
+				<link itemprop="itemCondition" content="${MICRO_DATA_NEW_CONDITION}" />
+				
+				<%-- Product name --%>
+				<div class="row">
+					<h1 role="heading" aria-level="1" class="main_header product-name" title="<c:out value="${name}" escapeXml="false"/>" itemprop="name"><ecocea:crop value="${name}" length="${cropTitleLimit}" />
+						<div id="atoutPrix" class="<c:if test="${atoutPrix ne 1 && atoutPrix ne 1.0 }">hidden</c:if>"><span class="asterix atoutPrix"></span></div>
+					</h1>
+				</div>
+				
+				<div class="row">
+					<div class="col s12 product-link">
+						<a href="#description"><fmt:message key="ficheProduitSmMainSection1Label" bundle="${widgetText}" /></a>
+					</div>
+					
+					<div id="BVRRSummaryContainer">
+			        	${sBvOutputSummary}
+			        </div>
+				</div>
+				
+				
+				<%-- Price --%>
+				<div class="row">
+					<div class="col s12">
+						<%@ include file="/Widgets-lapeyre/Common/PriceDisplay/PriceDisplay.jspf" %>
+					</div>
+					<div class="col s12 ecoPartContainer" id="ecoPartContainer_${fn:escapeXml(catalogEntryID)}" style="display:none;">
+						<fmt:message key="ecoPartIncludingLabel" bundle="${widgetText}" /> : <span>N/A</span>
+					</div>
+				</div>	
+				
+				
+				<div class="ficheActions">
+					<div class="ficheInfos row">
+                        <c:if test="${!empty ecoPart}">
+                            <div class="ficheInfosPrix col s12">                    
+                                <div id="ecoPartContainer">
+                                    <fmt:message key="ecoPartIncludingLabel" bundle="${widgetText}" /> : <span>${ecoPart}</span>
+                                </div>
+                            </div>
+                        </c:if>
+                    </div>
+					<!-- Item Availablility  -->
+					<div dojoType="wc.widget.RefreshArea" controllerId="itemAvailabilityRefreshAreaController" id="itemAvailabilityRefreshArea">
+						<%out.flush(); %>
+						<c:import url="${itemAvailabilityInPhysicalStoreswidget}" >
+							<c:param name="widgetCeption" value="true" />
+						</c:import>
+						<%out.flush(); %>
+					</div>
+					<c:if test="${toolAttachment != null}">
+						<div class="ctaContainer">
+							<a href="${toolAttachment.attachmentAssetPath}" class="button green" role="button" wairole="button"><fmt:message key="LAP017_SIMULATE_PROJECT" bundle="${widgetText}" /></a>
+						</div>
+					</c:if>
+					<div class="row" id="appointmentBlock">
+						<div class="col s3 m3 ctaContainer">
+							<%out.flush();%>
+							<c:if test="${productType != CATALOGUE_PAPIER_PRODUCT}">
+								<c:import url = "/Widgets-lapeyre/Common/ShoppingList/ShoppingList.jsp" >
+									<c:param name="productId" value="${productId}" />
+									<c:param name="defaultProductSkuID" value="${defaultProductSkuID}" />
+									<c:param name="display" value="button" />
+								</c:import>
+							</c:if>
+							<%out.flush();%>
+						</div>
+						
+						<!-- Appointment button -->
+						<div class="col s9 m9 ctaContainer">
+							<c:import url="${appointmentPopupPath}"></c:import>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			<%-- Reassurance --%>
+			<c:if test="${productAvailable eq 'true'}">
+				<div class="row">
+					<div class="col s12 m12">	
+					<%-- Shipping and return information --%>
+						<div class="product-reassurance">
+							<span class=" product-reassurance-label">
+								<i class="product-icons product-icon-return product-reassurance-image"></i>
+								<fmt:message key="ficheProduitStandardRetour" bundle="${storeText}" />
+							</span>
+							-
+							<span class=" product-reassurance-label">
+								<i class="product-icons product-icon-truck product-reassurance-image"></i>
+								<fmt:message key="ficheProduitStandardLivraison" bundle="${storeText}" />
+							</span>
+						</div>
+					</div>
+				</div>
+			</c:if>
+		</div>
+	</div>
+</div>
+<div class="compareCheckboxLabels">
+    <label><fmt:message key="LAP003_COMPARE_ADD" bundle="${widgetText}"/></label>
+    <label>     
+	   	<fmt:message var="comparatorLabel" key="LAP004_COMPARE_ADDED" bundle="${widgetText}"/>
+	   	<fmt:message var="comparatorLabelWithLink" key="LAP004_COMPARE_ADDED_WITHLINK" bundle="${widgetText}"/>
+		<c:import url="/Widgets-lapeyre/Common/ECOComparatorControls.jsp">
+			<c:param name="asCheckbox" value="true"/>
+			<c:param name="comparatorLabel" value="${comparatorLabel}"/>
+			<c:param name="comparatorLabelWithLink" value="${comparatorLabelWithLink}"/>
+		</c:import>
+    </label>
+</div>
+
+<span itemprop="brand" itemscope itemtype="${MICRO_DATA_ORGANIZATION}" style="display:none;">
+	<span itemprop="name">${MICRO_DATA_MANUFACTURER}</span>
+</span>
+
+<script>
+dojo.addOnLoad(function(){
+	if(itemAvailabilityInPhysicalStores) {
+		$(itemAvailabilityInPhysicalStores).on("SetDefaultStoreSucceed", function(){
+			wc.render.getRefreshControllerById('itemAvailabilityRefreshAreaController');
+			wc.render.updateContext("ItemAvailablity_Context", {pageType :"ProductCustom", catalogEntryID : "${catalogEntryID}"});
+			
+			wc.render.getRefreshControllerById('HeaderStoreLocationRefreshArea');
+			wc.render.updateContext("HeaderStoreLocation_Context");
+		});
+	}
+	
+	dojo.subscribe('HeaderStoreLocator.onGetNearestStoreLocationSucceed', function(headerStoreId) {
+		wc.render.updateContext("ItemAvailablity_Context", {pageType :"ProductCustom", catalogEntryID : "${catalogEntryID}"});
+	});
+	
+});
+</script>

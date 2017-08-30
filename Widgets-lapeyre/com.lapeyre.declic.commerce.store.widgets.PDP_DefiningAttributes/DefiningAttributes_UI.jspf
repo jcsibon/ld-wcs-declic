@@ -1,0 +1,300 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%-- START DefiningAttributes_UI.jspf --%>
+	
+	<script type="text/javascript">
+		dojo.addOnLoad(function() { 
+			productDisplayJS.setSKUImageId('productMainImage${displayType}');
+		});
+	</script>
+	
+	<c:if test="${!empty fulfillmentFrequencyAttrName}">
+		<script type="text/javascript">
+			dojo.addOnLoad(function() {
+				productDisplayJS.setSelectedAttribute("<c:out value="${fn:replace(fulfillmentFrequencyAttrName, search01, replaceStr01)}"/>","<c:out value="${fn:replace(fulfillmentFrequency, search01, replaceStr01)}"/>", "<c:out value="entitledItem_${catalogEntryID}"/>");
+			});
+		</script>
+	</c:if>
+	<c:if test="${!empty paymentFrequencyAttrName}">
+		<script type="text/javascript">
+			dojo.addOnLoad(function() { 
+				productDisplayJS.setSelectedAttribute("<c:out value="${fn:replace(paymentFrequencyAttrName, search01, replaceStr01)}"/>","<c:out value="${fn:replace(paymentFrequency, search01, replaceStr01)}"/>", "<c:out value="entitledItem_${catalogEntryID}"/>");
+			});
+		</script>
+	</c:if>
+
+
+<c:if test = "${productAvailable ne 'true'}">
+	<c:set var="additionalCSSClass" value="no_border"/>
+</c:if>
+
+<div class="definingAttributes">
+	
+			<%--Micro data --%>
+			<c:forEach var="additionalProperty" items="${microDataAdditionalProperties}"> 
+				<span itemprop="additionalProperty"  itemprop="additionalProperty" itemscope itemtype="${MICRO_DATA_PROPERTYVALUE}">
+					<meta itemprop="name" content="${additionalProperty.key}" />
+					<meta itemprop="value" content="${additionalProperty.value.value}" />
+					<c:if test="${not fn:endsWith(additionalProperty.value.image1path, 'none.png')}">
+						<astpush:assetPushUrl var="additionalPropertyImage" urlRelative="${additionalProperty.value.image1path}" type="${catalogEntryDetails.type}" source="" device="${device}" format="thumbnail"/>
+						<meta itemprop="image" content="${additionalPropertyImage}" />
+					</c:if>
+				</span>
+			</c:forEach>
+
+			<%--START : DISPLAYING ATTRIBUTES FOR SHOPPER TO SELECT --%>
+			<c:set var="attributesSelected" value="false"/>
+			<c:choose>
+				<c:when test="${numberOfSKUs == 1}">
+					<c:forEach var="attribute" items="${definingAttributeList}" varStatus="aStatus" >
+						<c:choose>
+							<c:when test="${pageType eq 'ProductCustom'}">
+								<div class="col s12">
+							</c:when>
+							<c:otherwise>
+								<div class="col s6 m10 l6">
+							</c:otherwise>
+						</c:choose>
+						
+							<c:set var="attributeName" value="${fn:replace(attribute[0],replaceStr01,search01)}" />
+							<c:set var="attributeValues" value="${attribute[1]}" />
+							<c:set var="displayValue" value="${attribute[2]}" />
+							<%--ECOCEA --%>
+							<c:set var="attributeIdentifier" value="${attribute[3]}"/>
+							<div class="header color_swatch_label" id="swatch_selection_label_entitledItem_<c:out value='${catalogEntryID}'/>_<c:out value='${attributeIdentifier}'/>_<c:out value='${fn:replace(attributeValues, replaceStr01, search01)}'/>" itemprop="additionalProperty">
+								<span><c:out value="${swatchName}"/></span>
+							</div>
+								<c:if test="${empty displayValue}">
+								<div class="clear_float"></div>
+								<div class="color_swatch_list">
+								<div id="swatch_entitledItem_<c:out value='${catalogEntryID}'/>_<c:out value='${attributeIdentifier}'/>_<c:out value='${fn:replace(attributeValues, replaceStr01, search01)}'/>" class="color_swatch_selected">
+									<c:out value="${fn:replace(attributeValues, replaceStr01, search01)}"/>
+								</div>
+								</div>
+								</c:if>
+								<c:out value="${displayValue}"/>
+							<a href='javascript:productDisplayJS.skusCount = 1;productDisplayJS.setSKUImageId("productMainImage${displayType}");productDisplayJS.setSelectedAttribute("<c:out value='${attributeName}'/>","<c:out value="${fn:replace(attributeValues, search, replaceStr)}"/>", "<c:out value="entitledItem_${catalogEntryID}"/>");productDisplayJS.notifyAttributeChange("${catalogEntryID}","entitledItem_<c:out value='${catalogEntryID}'/>",false,${displayPriceRange}, "${displayType}");' id="ECO_QuickInfo_perform_uniqueSku_${catalogEntryID}_<c:out value="${fn:replace(attributeValues, search, replaceStr)}"/>"></a>
+							
+							<script type="text/javascript">
+								dojo.addOnLoad(function() { 
+									productDisplayJS.skusCount = 1;
+									productDisplayJS.setSKUImageId('productMainImage${displayType}');
+									productDisplayJS.setSelectedAttribute("<c:out value='${attributeName}'/>","<c:out value="${fn:replace(attributeValues, search, replaceStr)}"/>", "<c:out value="entitledItem_${catalogEntryID}"/>");
+								});
+							</script>
+							<c:set var="attributesSelected" value="true"/>
+						</div>
+					</c:forEach>
+				</c:when>
+				<c:when test="${!empty subsTimePeriodAttrList}" >
+					<c:forEach var="attribute" items="${subsTimePeriodAttrList}" varStatus="aStatus" >
+						<c:choose>
+							<c:when test="${pageType eq 'ProductCustom'}">
+								<div class="col s12">
+							</c:when>
+							<c:otherwise>
+								<div class="col s6 m10 l6">
+							</c:otherwise>
+						</c:choose>
+							<c:set var="attributeName" value="${fn:replace(attribute[0],replaceStr01,search01)}" />
+							<c:set var="attributeValues" value="${attribute[1]}" />
+							<c:set var="attributeDisplayValues" value="${attribute[2]}" />
+							<c:if test="${not empty WCParam[attributeName]}">
+								<script type="text/javascript">
+									dojo.addOnLoad(function() { 
+									productDisplayJS.setSelectedAttribute("<c:out value='${attributeName}'/>",'<c:out value="${WCParam[attributeName]}"/>', "<c:out value="entitledItem_${catalogEntryID}"/>");
+								});
+								</script>
+								<c:set var="attributesSelected" value="true"/>
+							</c:if>
+							<div class="heading">
+								<fmt:message key="ATTRNAMEKEY" bundle="${widgetText}">
+									<fmt:param value="${attributeName}"/>
+								</fmt:message>
+							</div>
+							<div class="clear_float"></div>
+							<div class="options_dropdown selectWrapper">
+								<label for="attrValue_<c:out value='${aStatus.count}'/><c:out value="${widgetSuffix}"/>" style="display:none;"><c:out value='${attributeName}'/><fmt:message key="PD_ACCE_required" bundle="${widgetText}"/></label>
+								<select aria-label="${attributeName}" data-dojo-type="dijit/form/Select" name="attrValue" id="attrValue_<c:out value='${aStatus.count}'/><c:out value="${widgetSuffix}"/>"
+											onChange='JavaScript:productDisplayJS.skusCount = null;productDisplayJS.setSKUImageId("productMainImage${displayType}");productDisplayJS.setSelectedAttribute("<c:out value='${attributeName}'/>",this.value, "<c:out value="entitledItem_${catalogEntryID}"/>");
+																productDisplayJS.notifyAttributeChange("${catalogEntryID}","entitledItem_<c:out value='${catalogEntryID}'/>",false,${displayPriceRange}, "${displayType}");'>
+									<option value="">
+										<fmt:message key="PD_SELECT" bundle="${widgetText}">
+											<fmt:param value="${fn:toLowerCase(attributeName)}"/>
+										</fmt:message>
+									</option>
+									<c:forEach var="allowedValue" items="${attributeValues}" varStatus="vStatus">
+										<c:set var="index" value="${fn:trim(vStatus.count-1)}" />
+										<option value='<c:out value="${allowedValue}"/>' <c:if test="${allowedValue == WCParam[attributeName]}">selected="selected"</c:if>>
+											<c:out value="${attributeDisplayValues[index]}"/>
+										</option>
+									</c:forEach>
+								</select>
+							</div>
+							<div class="item_spacer_3px"></div>
+							<div class="clear_float"></div>
+						</div>
+					</c:forEach>					
+				</c:when>
+				<c:otherwise>
+					<c:if test="${!empty swatchAttrList}">
+						<c:forEach var="attribute" items="${swatchAttrList}" varStatus="aStatus" >
+							<c:choose>
+								<c:when test="${pageType eq 'ProductCustom'}">
+									<div class="col s12">
+								</c:when>
+								<c:otherwise>
+									<div class="col s6 m10 l6">
+								</c:otherwise>
+							</c:choose>
+								<c:set var="swatchName" value="${fn:replace(attribute[0],replaceStr02,search01)}" />
+								<c:set var="swatchValues" value="${attribute[1]}" />
+								<c:set var="swatchImages" value="${attribute[2]}" />
+								<%--ECOCEA --%>
+								<c:set var="attributeIdentifier" value="${attribute[3]}"/>
+								<c:set var="swatchValueIdentifier" value="${attribute[4]}"/>
+								<div class="heading color_swatch_label" id="swatch_selection_label_entitledItem_<c:out value='${catalogEntryID}'/>_<c:out value='${attributeIdentifier}'/>">
+									<span>${swatchName}</span>
+								</div>
+								<div class="clear_float"></div>
+	
+	
+								<c:set var="hasOnlyGenericSwatchImage" value="true" />
+								<c:forEach var="swatchImage" items="${swatchImages}">
+									<c:if test="${not fn:contains(swatchImage, 'swatch_generic') and hasOnlyGenericSwatchImage}">
+										<c:set var="hasOnlyGenericSwatchImage" value="false" />
+									</c:if>
+								</c:forEach>
+	
+								<c:set var="backslash" value="\\\\"/>
+								<c:set var="replace" value=""/>
+	
+								<c:if test="${hasOnlyGenericSwatchImage}">
+									<div class="dropdown-toggle with-caret">
+										<select
+											class="swatch-list"
+											onchange="productDisplayJS.swatchListChanged(event, '${fn:escapeXml(attributeIdentifier)}', '${fn:escapeXml(catalogEntryID)}', '${fn:escapeXml(attrIdentifiers)}', 'productThumbNailImage_${fn:escapeXml(catalogEntryID)}', 'ItemImage', ${userType eq 'R'}, ${displayPriceRange}, false, '${displayType}')">
+											<c:forEach var="swatchValue" items="${swatchValues}" varStatus="vStatus">
+												<c:set var="swatchValue" value="${fn:replace(swatchValue, backslash, replace)}"/>
+												<option
+													id="swatch_option_entitledItem_${fn:escapeXml(catalogEntryID)}_${attributeIdentifier}_${fn:escapeXml(swatchValueIdentifier[vStatus.index])}"
+													class="swatch-list-item"
+													value="${fn:escapeXml(swatchValueIdentifier[vStatus.index])}">
+													<c:out value='${swatchValue}'/>
+												</option>
+											</c:forEach>
+										</select>
+									</div>
+								</c:if>
+	
+								<span class="spanacce" id="swatch_ACCE_description_<c:out value='${catalogEntryID}'/>_<c:out value="${fn:replace(attributeIdentifier, ' ', '-')}"/>"><fmt:message key="ACCE_Region_Price_Update" bundle="${widgetText}"/></span>
+								<div class="color_swatch_list">
+									<ul
+										class="${hasOnlyGenericSwatchImage? 'hidden' : ''}"
+										role="radiogroup"
+										aria-label="${swatchName}"
+										aria-describedby="swatch_ACCE_description_<c:out value='${catalogEntryID}'/>_<c:out value="${fn:replace(swatchName, ' ', '-')}"/>">
+	
+										<%-- FBA - Start / Removing empty "li" ... --%>
+										<%--<li></li>--%>
+										<%-- FBA - End --%>
+										<c:forEach var="swatchValue" items="${swatchValues}" varStatus="vStatus">
+											<c:set var="swatchValue" value="${fn:replace(swatchValue, backslash, replace)}"/>
+											<c:set var="index" value="${fn:trim(vStatus.count-1)}" />
+	
+											<c:set var="swatchAttrHref">
+												productDisplayJS.skusCount = null;
+												productDisplayJS.setSKUImageId("productMainImage${displayType}");
+												productDisplayJS.selectSwatch("${fn:escapeXml(attributeIdentifier)}", "${fn:escapeXml(swatchValueIdentifier[index])}", "entitledItem_${fn:escapeXml(catalogEntryID)}", "${fn:escapeXml(attrIdentifiers)}");
+												productDisplayJS.notifyAttributeChange("${fn:escapeXml(catalogEntryID)}", "entitledItem_${fn:escapeXml(catalogEntryID)}", false, ${displayPriceRange}, "${displayType}");
+											</c:set>
+	
+											<li>
+												<a role="radio"
+													aria-setsize="${fn:length(swatchValues)}"
+													aria-posinset="${vStatus.count}"
+													aria-label="${swatchValue}"
+													aria-checked="false"
+													id="swatch_link_entitledItem_<c:out value='${catalogEntryID}'/>_<c:out value='${attributeIdentifier}'/>_<c:out value='${swatchValueIdentifier[index]}'/>"
+													href='javascript:${swatchAttrHref}'>
+													<%-- FBA - Start --%>
+													<c:choose>
+														<c:when test="${fn:contains(swatchImages[index], '/swatch_generic')}">
+														<div 
+															id="swatch_entitledItem_<c:out value='${catalogEntryID}'/>_<c:out value='${attributeIdentifier}'/>_<c:out value='${swatchValueIdentifier[index]}'/>"
+															title="<c:out value='${swatchValue}'/>" class="color_swatch button tooltip">
+															<%-- id="swatch_entitledItem_<c:out value='${catalogEntryID}'/>_<c:out value='${swatchValue}'/>" --%>
+															<img aria-hidden="true" alt="<c:out value='${swatchValue}'/>" src="" style="width:0px;height:0px;display:none;" />
+															<%--<span class="spanacce"><c:out value='${swatchValue}'/></span>--%>
+															<c:out value='${swatchValue}'/>
+															<%-- 
+															<span style="DISPLAY: INLINE-BLOCK;position:absolute;top:2px;left:0px;width:100%;font-size:12px;white-space: nowrap;"><c:out value='${swatchValue}'/></span>
+															--%>
+															<%-- FBA - End --%>
+														</div>
+														</c:when>
+														<c:otherwise>
+															<span id="swatchSpanDisable_entitledItem_<c:out value='${catalogEntryID}'/>_<c:out value='${attributeIdentifier}'/>_<c:out value='${swatchValueIdentifier[index]}'/>" ></span>
+																<img aria-hidden="true" 
+																	id="swatch_entitledItem_<c:out value='${catalogEntryID}'/>_<c:out value='${attributeIdentifier}'/>_<c:out value='${swatchValueIdentifier[index]}'/>"
+																	alt="<c:out value='${swatchValue}'/>"
+																	title="<c:out value='${swatchValue}'/>"
+																	src="<c:out value='${swatchImages[index]}'/>"
+																	class="color_swatch tooltip" />														
+															<span class="spanacce"><c:out value='${swatchValue}'/></span>
+														</c:otherwise>
+													</c:choose>
+												</a>
+												<a href='javascript:productDisplayJS.addToAllSwatchsArray("<c:out value='${attributeIdentifier}'/>","<c:out value='${swatchValueIdentifier[index]}'/>","<c:out value='${swatchImages[index]}'/>", "entitledItem_<c:out value='${catalogEntryID}'/>");' id="ECO_QuickInfo_perform_AddToAllSwatchArray_<c:out value='${catalogEntryID}'/>_<c:out value='${swatchValueIdentifier[index]}'/>" style="display:none;"></a>
+												<script type="text/javascript">
+													dojo.addOnLoad(function() {
+														productDisplayJS.addToAllSwatchsArray("<c:out value='${attributeIdentifier}'/>","<c:out value='${swatchValueIdentifier[index]}'/>","<c:out value='${swatchImages[index]}'/>", "entitledItem_<c:out value='${catalogEntryID}'/>");
+													});
+												</script>
+											</li>
+										</c:forEach>
+									</ul>
+								</div>
+							</div>
+						</c:forEach>
+						<c:forEach var="attribute" items="${swatchAttrList}" varStatus="aStatus" >
+							<c:set var="swatchName" value="${fn:replace(attribute[0],replaceStr01,search01)}" />
+							<c:set var="attributeIdentifier" value="${attribute[3]}" />
+							<c:if test="${not empty WCParam[swatchName]}">
+								<script type="text/javascript">
+									dojo.addOnLoad(function() {
+										productDisplayJS.setSKUImageId('productMainImage${displayType}');
+										productDisplayJS.selectSwatch("<c:out value='${attributeIdentifier}'/>","<c:out value='${WCParam[attributeIdentifier]}'/>","entitledItem_<c:out value='${catalogEntryID}'/>","<c:out value='${attrIdentifiers}'/>");
+									});
+								</script>
+								<c:set var="attributesSelected" value="false"/>
+							</c:if>
+						</c:forEach>
+					</c:if>	
+				</c:otherwise>
+			</c:choose>	
+			<c:if test="${attributesSelected}">
+				<script type="text/javascript">
+					dojo.addOnLoad(function() {
+						if( typeof(InventoryStatusJS_${productId}) != "undefined"){
+							InventoryStatusJS_${productId}.isFetchInventoryStatus = true;
+						}
+						productDisplayJS.notifyAttributeChange("${catalogEntryID}","entitledItem_<c:out value='${catalogEntryID}'/>",false,${displayPriceRange}, "${displayType}");
+					});
+				</script>
+			</c:if>
+			<%--END : DISPLAYING ATTRIBUTES FOR SHOPPER TO SELECT --%>
+</div>
+
+<%-- END DefiningAttributes_UI.jspf --%>

@@ -1,0 +1,213 @@
+<%--	
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2007, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%@ page trimDirectiveWhitespaces="true" %>
+<!-- BEGIN mobile/TunnelShopCartDisplay_UI.jspf -->
+<%@ include file="/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.ItemAvailabilityInPhysicalStoresWidget/ItemAvailabilityInPhysicalStoresWidget_Data.jspf"%>
+
+
+<script type="text/javascript">
+<!--
+var itemIdsInShopCart = new Array();
+	<c:forEach var="itemDetails" items="${orderItemsDetailsList}" varStatus="status">
+		itemIdsInShopCart.push("<c:out value='${itemDetails["orderItemId"]}'/>");		
+	</c:forEach>
+	
+	var env_currency_symbol = '${env_CurrencySymbolToFormat}';
+	
+	var stockAvailabilityForShopCart = new StockAvailability('stockAvailabilityForShopCart');
+	var itemAvailabilityInPhysicalStoresForShopCart = new ItemAvailabilityInPhysicalStoresWidget();
+	var locale = '${locale}';
+	var localeDojo = locale.replace('_','-');localeDojo = localeDojo.toLowerCase();
+	var invalidCouponErrorMessage = "${invalidCouponErrorMessage}";
+	var unkownsCouponErrorMessage = "${unkownsCouponErrorMessage}";
+	var emptyCouponErrorMessage = "${emptyCouponErrorMessage}";
+	var technicalErrorCouponErrorMessage = "${technicalErrorCouponErrorMessage}";
+	var couponNotValidYetErrorMessage = "${couponNotValidYetErrorMessage}";
+	var OutdatedCouponErrorMesage = "${OutdatedCouponErrorMesage}";
+	var CouponAlreadyUsedErrorMessage = "${CouponAlreadyUsedErrorMessage}";
+	var unapplicableCouponMessage = "${unapplicableCouponMessage}";
+	var coupon_AMOUNT_Description = "${coupon_AMOUNT_Description}";
+	var coupon_RATE_ITEM_Description = "${coupon_RATE_ITEM_Description}";
+	var coupon_RATE_ORDER_Description = "${coupon_RATE_ORDER_Description}";
+
+	var codeAvantageErreur = {
+ 		'ERR_PARAM_CODE_PROMO_EMPTY':"${emptyCouponErrorMessage}",
+ 		'ERR_PARAM_CODE_PROMO_INVALIDE':"${invalidCouponErrorMessage}",
+ 		'NOT_FOUND':"${unkownsCouponErrorMessage}",
+ 		'ALREADY_USED':"${CouponAlreadyUsedErrorMessage}",
+ 		'EXPIRED':"${OutdatedCouponErrorMesage}",
+ 		'NOT_VALID_YET':"${couponNotValidYetErrorMessage}",
+ 		'NOT_APPLICABLE':"${unapplicableCouponMessage}",
+ 		'ERROR_TECHNIQUE':"${technicalErrorCouponErrorMessage}"
+ 		
+ 	};
+ 	
+ 	var isMixteStandardCatalog = ${isMixteStandardCatalog};
+ 	
+ 	var isPro = ${extendedUserContext.isPro?true:false};
+ 	
+ 	//Toggle code avantage
+ 	toggleCode = function() {
+ 		var myToggleBtn = dojo.byId("codeToggle");
+ 		dojo.connect(myToggleBtn, "onclick", function(e) {
+ 			if(dojo.hasClass(myToggleBtn, "showCode")){
+ 				$('#codeToShow').slideDown();
+ 				dojo.removeClass(myToggleBtn, "showCode"); 
+ 				dojo.addClass(myToggleBtn, "hideCode");
+ 			}
+ 			else {
+ 				$('#codeToShow').slideUp();
+ 				dojo.removeClass(myToggleBtn, "hideCode"); 
+ 				dojo.addClass(myToggleBtn, "showCode");
+ 			}
+ 		});
+ 	}
+
+ 	dojo.ready(toggleCode);
+ 	
+//-->
+</script>
+
+<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/ShopcartSection/TunnelShopCartDisplay.js?${versionNumber}"/>"></script>
+
+<div class="tunnel">
+	<div class="buttonContainer">
+		<a class="button button--minor" onclick="javascript:history.back();return false;">${tunnelBackButtonlabel}</a>
+		<%-- <div class="validateButton">
+			<c:choose>
+				<c:when test="${isMixteStandardCatalog}">
+					<a class="button green disabled" disabled="disabled" onclick="JavaScript:return false;">${tunnelValidationButtonlabel}</a>
+				</c:when>
+				<c:when test="${!empty isCatalogCommand && isCatalogCommand eq true}">
+					<button class="button green" onclick="JavaScript:validateRecapShopCart(this,'<c:out value="${userType}"/>','<c:out value="${tunnelLogonLink}"/>','<c:out value="${tunnelShippingLink}"/>');return false;">${tunnelValidationButtonlabel}</button>				
+				</c:when>
+				<c:otherwise>
+					<a class="button green" onclick="JavaScript:validateRecapShopCart(this,'<c:out value="${userType}"/>','<c:out value="${tunnelLogonLink}"/>','<c:out value="${tunnelShippingLink}"/>');return false;">${tunnelValidationButtonlabel}</a>
+				</c:otherwise>
+			</c:choose>
+			<div id="infobulle_top" class="infoBulleOptions ${isMixteStandardCatalog?'':'hide'}">
+				${isMixteStandardCatalog ? commandeMixteInfoBulleErrorMessage : 'hide'}
+			</div>
+		</div> --%>
+	</div>
+	<div class="stocks">
+		<c:if test="${(empty isCatalogCommand || isCatalogCommand eq false) && (empty isMixteStandardCatalog || isMixteStandardCatalog eq false)}">
+			<p class="label">${panierStoreSelectionLabel}</p>
+			<div tabindex="0" dojoType="wc.widget.RefreshArea" controllerId="itemAvailabilityRefreshAreaInShopCartController" id="itemAvailabilityRefreshArea">
+				<%out.flush(); %>
+					<c:import url="${itemAvailabilityInPhysicalStoreswidget}"/>
+				<%out.flush(); %>
+			</div>
+		</c:if>	
+	</div>
+	<div id="infoBulleDateDispo" class="close column_20 bcolumn_100" style="display:none;"></div>
+	<!-- LIGNES COMMANDES -->
+	<div class="orderBody" dojoType="wc.widget.RefreshArea" widgetId="ShopCartPagingDisplay" id="ShopCartPagingDisplay" controllerId="ShopCartPaginationDisplayController" ariaMessage="<fmt:message bundle="${storeText}" key="ACCE_Status_Order_Item_List_Updated"/>" ariaLiveId="${ariaMessageNode}" role="region" aria-labelledby="ShopCartPagingDisplay_ACCE_Label">
+		<jsp:include page="OrderItemDetail.jsp" /> 
+	</div>
+	
+	<%-- RECAP COMMANDE --%>
+	<%@ include file="../OrderItemDetail_Summary.jspf" %>
+	
+	<div class="alertIndispo ${isMixteStandardCatalog?'':'hide'}" id="zoneAlertIndispo">
+		<c:choose>
+			<c:when test="${isMixteStandardCatalog}">
+				<h2>${mixteOrderWarnMessageTitle}</h2>
+				<span>${mixteOrderWarnMessageContent}</span>
+			</c:when>
+			<c:otherwise>
+				<h2>${unavailableItemWarnMessageTitle}</h2>
+				<span>${unavailableItemWarnMessageContent}</span>
+			</c:otherwise>
+		</c:choose>
+	</div>
+	<div class="codeAvantage" >
+		<p>${codeAvantageSectionTitle}</p>
+		<div class="buttonContainer">
+			<a id="codeToggle" class="button showCode">${codeAvantageOpenButtonLabel}</a>
+		</div>
+	</div>	
+	<div id="codeToShow" style="display:none;">
+		<p>${codeAvantageFieldlabel}</p>
+		<c:choose>
+			<c:when test="${!empty orderExternalAdjusts}">
+				<c:forEach var="orderExternalAdjust" items="${orderExternalAdjusts}">
+					<input type="text" id="codeAvantageInput" value="${orderExternalAdjust.code}" disabled="disabled" maxlength="17"/>
+					<a class="button green" href="#" style="display:none;" id="addCodePromoButton" onclick="JavaScript:applyCodeAvantage('<c:out value="${validateCouponPromoLink}"/>');return false;">${codeAvantageApplySubmitButtonLabel}</a>
+					<a class="button red" href="#" id="removeCodePromoButton" onclick="JavaScript:removeCodeAvantage('<c:out value="${validateCouponPromoLink}"/>');return false;">${codeAvantageRemoveSubmitButtonLabel}</a>
+				</c:forEach>
+			</c:when>
+			<c:otherwise>
+				<input type="text" id="codeAvantageInput" maxlength="17"/>
+				<a class="button green" href="#" id="addCodePromoButton" onclick="JavaScript:applyCodeAvantage('<c:out value="${validateCouponPromoLink}"/>');return false;">${codeAvantageApplySubmitButtonLabel}</a>
+				<a class="button red" style="display:none;" href="#" id="removeCodePromoButton" onclick="JavaScript:removeCodeAvantage('<c:out value="${validateCouponPromoLink}"/>');return false;">${codeAvantageRemoveSubmitButtonLabel}</a>
+			</c:otherwise>
+		</c:choose>
+		
+		<p id="codeAvantageErrorMsg" class="error" style="display:none;"></p>
+	</div>
+	<div class="buttonContainer">
+		<div class="validateButton">
+			<c:choose>
+				<c:when test="${isMixteStandardCatalog}">
+					<a class="button green disabled" disabled="disabled" onclick="JavaScript:return false;">${tunnelValidationButtonlabel}</a>				
+				</c:when>
+				<%-- <c:when test="${!empty isCatalogCommand && isCatalogCommand eq true}">
+					<a class="button green" onclick="JavaScript:validateRecapShopCart(this,'<c:out value="${userType}"/>','<c:out value="${tunnelLogonLink}"/>','<c:out value="${tunnelShippingLink}"/>');return false;">${tunnelValidationButtonlabel}</a>				
+				</c:when> --%>
+				<c:otherwise>
+					<a class="button green" onclick="JavaScript:validateRecapShopCart(this,'<c:out value="${userType}"/>','<c:out value="${tunnelLogonLink}"/>','<c:out value="${tunnelShippingLink}"/>');return false;">${tunnelValidationButtonlabel}</a>
+				</c:otherwise>
+			</c:choose>
+			<div id="infobulle_bottom" class="infoBulleOptions ${isMixteStandardCatalog?'':'hide'}">
+				${isMixteStandardCatalog ? commandeMixteInfoBulleErrorMessage : 'hide'}
+			</div>
+		</div>
+	</div>
+</div>
+<!--  ZONE MEA -->
+<c:import url="/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.meaWidget/meaWidget.jsp">
+	<c:param name="emplacement" value="Bottom" />
+</c:import>
+<c:if test="${!isMixteStandardCatalog && !empty orderExternalAdjusts}">
+	<script>
+		dojo.ready(function() {
+			applyCodeAvantage('<c:out value="${validateCouponPromoLink}"/>');
+		});
+	</script>
+</c:if>
+
+<c:if test="${!isMixteStandardCatalog}">
+	<script>
+		dojo.addOnLoad(function(){
+			if(itemAvailabilityInPhysicalStoresForShopCart) {
+				$(itemAvailabilityInPhysicalStoresForShopCart).on("SetDefaultStoreSucceedOnPagePanier", function(){
+					//update default store in header
+					wc.render.getRefreshControllerById('HeaderStoreLocationRefreshArea');
+					wc.render.updateContext("HeaderStoreLocation_Context");
+					
+					wc.render.getRefreshControllerById('itemAvailabilityRefreshAreaInShopCartController');
+					wc.render.updateContext("ItemAvailablity_Context", {pageType :"TunnelPanier"});
+				});
+			}
+			
+			wc.render.updateContext('OrderSummaryContext');
+			
+			dojo.subscribe('HeaderStoreLocator.onGetNearestStoreLocationSucceed', function(headerStoreId) {
+				wc.render.updateContext("ItemAvailablity_Context", {pageType :"TunnelPanier"});
+			});
+		});
+	</script>
+</c:if>
+<!-- END mobile/TunnelShopCartDisplay_UI.jspf -->

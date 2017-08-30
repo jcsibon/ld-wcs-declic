@@ -1,0 +1,58 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<%@page import="java.text.MessageFormat"%>
+<%@page import="com.lapeyre.declic.configurations.ConfigTool"%>
+
+<!-- Widget Product Image Viewer -->
+<c:if test="${!empty catalogEntryID}">
+	<div id="widget_product_image_viewer<c:out value="${widgetSuffix}"/>" class="widget_product_image_viewer">		
+		<div class="content">
+			<c:choose>
+				<c:when test="${isOnMobileDevice}">
+			        <%@ include file="FullImage_Mobile_UI.jspf" %>
+			    </c:when>
+			    <c:otherwise>
+			        <%@ include file="FullImage_Desktop_UI.jspf" %>
+			    </c:otherwise>
+		    </c:choose>
+			
+		</div>
+		<c:set var="hiddenFieldName" value="ProductInfoImage_${catalogEntryID}${displayType}"/>
+		<c:if test="${!fn:contains(env_hiddenFieldsList, hiddenFieldName)}">
+		<input type="hidden" id="${hiddenFieldName}" value="<c:out value='${productFullImage}'/>"/>	
+		<c:set var="env_hiddenFieldsList" value="${env_hiddenFieldsList},${hiddenFieldName}" scope="request"/>
+		</c:if>
+		
+		<div dojoType="lapeyre/widget/Dialog" id="popupPhotoZoom${displayType}" style="display: none" >
+			<div class="widget_site_popup">
+				<div class="content">
+					<div class="header">
+						<a class="close" href="javascript:hidePopup('popupPhotoZoom${displayType}')" title="Fermer"></a>
+					</div>
+					<div class="body">
+						<img
+							title="<c:out value="${fullImageAltDescription}" escapeXml="false"/>" 
+							alt="<c:out value="${fullImageAltDescription}" escapeXml="false"/>" 
+							src="${zoomImage}" 
+							id="productMainImage${displayType}Preview" 
+							onerror="this.src='/wcsstore/LapeyreSAS/images/mobileZoom/defaultImage.png'"/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</c:if>
+
+<!-- End Widget Product Image Viewer -->

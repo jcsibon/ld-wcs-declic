@@ -1,0 +1,78 @@
+.static_page_content {
+	min-height: 1040px;
+}
+
+.static_page_content>.page_header {
+	font-size: 22px;
+	color: #808080;
+	height: 46px;
+	line-height: 46px;
+}
+
+.static_page_content>.content_box {
+	border-top: 2px solid #f8ad05;
+	border-left: 1px solid #e5e5e5;
+	border-right: 1px solid #e5e5e5;
+	border-bottom: 1px solid #e5e5e5;
+	background-color: #fbfbfb;
+	padding-bottom: 9px;
+}
+
+.static_page_content>.content_box .header_top {
+	height: 30px;
+	font-size: 16px;
+	color: #666666;
+	line-height: 30px;
+	border-bottom: 1px solid #f0f0f0;
+	padding-left: 9px;
+	padding-right: 9px;
+	background-color: #f7f7f7;
+}
+
+.static_page_content>.content_box .header {
+	font-size: 14px;
+	color: #666666;
+	font-weight: bold;
+	padding-left: 9px;
+	padding-right: 9px;
+}
+
+.static_page_content>.content_box .info_section {
+	color: #4d4d4d;
+	font-size: 12px;
+	line-height: 16px;
+	padding-top: 4px;
+	padding-bottom: 15px;
+	padding-left: 9px;
+	padding-right: 9px;
+}
+
+.container_static_full_width, .container_configurator_full_width {
+	width: 785px;
+	padding: 0px 91px;
+}
+
+div.item_spacer_10px {
+	height: 10px;
+}
+
+div.item_spacer_5px {
+	height: 5px;
+}
+
+.container_margin_5px {
+	margin: 5px 0;
+}
+
+.blockPresentation .textContainer {
+	margin: 0 !important;
+}
+
+.blockPresentation {
+	height: 150px !important;
+	width: 100%;
+}
+
+.servicesBlock, .engageBlock {
+	overflow: auto;
+}

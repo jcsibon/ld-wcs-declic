@@ -1,0 +1,51 @@
+<!-- Begin Content_Body_UI.jspf-->
+<%@ page trimDirectiveWhitespaces="true" %>
+<div itemprop="articleBody">
+	<c:forEach items="${content.page.paragraphes}" var="paragraphe">
+		<div class="row">
+			<div class="blockPresentation<c:if test="${empty paragraphe.visuel.url}"> noImageBkg</c:if>">
+				<c:choose>
+					<c:when test="${!empty paragraphe.visuel.url}">
+						<div class="editoBackground"><img alt="${paragraphe.visuel.alt}" src="${imageUrl}${paragraphe.visuel.url}"></div>
+						<div class="bottomTextContainer">
+							<h2>${paragraphe.titre}</h2>
+						</div>
+					</c:when>
+					<c:otherwise>
+						<h2 class="titleBlock">${paragraphe.titre}</h2>
+					</c:otherwise>
+				</c:choose>
+			</div>
+		</div>
+		<div class="row">
+			<div class="textArticle">
+				<p>${paragraphe.body}</p>
+				<div class="clearAll"></div>
+				<c:if test="${!empty paragraphe.videoUrl }">
+					<div class="video-container">
+						<c:set var="videoID" value="${ecocea:extractVideoId(paragraphe.videoUrl)}" />
+						<c:choose>
+							<c:when test="${!empty paragraphe.video_thumbnail_url  }">
+								<c:set var="thumbnailUrl" value="${paragraphe.videoThumbnail}" />
+							</c:when>
+							<c:otherwise>
+								<c:set var="thumbnailUrl" value="${ecocea:fmtMessage(ecocea:getProperty('youtube.thumbnail.url'), videoID)}" />
+							</c:otherwise>
+						</c:choose>
+						<c:set var="embedUrl" value="${ecocea:fmtMessage(ecocea:getProperty('youtube.embed.url'), videoID)}" />
+						<div itemscope itemtype="${MICRO_DATA_VIDEO}" class="youtubeVideo">
+							<meta itemprop="name" content="${paragraphe.videoTitle}"/>
+							<meta itemprop="description" content="${paragraphe.videoTitle}"/>
+							<meta itemprop="contentUrl" content="${embedUrl}"/>
+							<meta itemprop="thumbnailUrl" content="${thumbnailUrl}"/>
+							<meta itemprop="datePublished" content="${MICRO_DATA_TODAY}"/>
+							<meta itemprop="uploadDate" content="${MICRO_DATA_TODAY}"/>
+						</div>	
+						<iframe src="${embedUrl }" title="YouTube video player" allowfullscreen="1" id="youtubePlayer" frameborder="0" height="360" width="640"></iframe>
+					</div>
+				</c:if>
+			</div>
+		</div>
+	</c:forEach>
+</div>
+<!-- End Content_Body_UI.jspf-->

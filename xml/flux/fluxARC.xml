@@ -1,0 +1,32 @@
+<message type="arc">
+	<header>
+		<sender>GC</sender>
+		<extractDate>2015-10-07T10:25:00.00</extractDate>
+		<nbDataEntries>1</nbDataEntries>
+		<credentials>
+			<login>importadmin</login>
+			<password>passw0rd</password>
+		</credentials>
+	</header>
+	<data>
+		<order>
+			<numeroCommandeWeb>201001</numeroCommandeWeb>
+			<numeroCommandeMagasin>62201001</numeroCommandeMagasin>
+			<idMagasin>0062</idMagasin>
+			<idClientCRM>1234567890123456</idClientCRM>
+			<!-- SISource></SISource-->
+			<infosStatut>
+				<codeStatut>FAC_LD</codeStatut>
+				<libelleStatut>Expédiée</libelleStatut>
+				<dateStatut>
+				  <annee>2015</annee>
+				  <mois>10</mois>
+				  <jour>07</jour>
+				  <heure>10</heure>
+				  <minute>25</minute>
+				  <seconde>0</seconde>
+				</dateStatut>
+			</infosStatut>
+		</order>	
+	</data>
+</message>

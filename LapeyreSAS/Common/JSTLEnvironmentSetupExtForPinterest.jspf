@@ -1,0 +1,34 @@
+
+<c:set var="pinterestUrlSharing" value="http://www.pinterest.com/pin/create/button" />
+<c:url var="pinterestFullUrlSharing" value="${pinterestUrlSharing}" >
+	<c:param name="url" value="${socialSharingURL}" />
+	<c:param name="media" value="${socialSharingImage}" />
+	<c:param name="description" value="${socialSharingDescription}" />
+</c:url>
+
+<script id="SocialNetworksScript_pinterest">	
+	
+	function openPinterestSharePopup(event){
+		event.preventDefault();
+		event.stopImmediatePropagation();
+
+		var width = 767,
+			height = 330,
+			left = ($(window).width() - width)/2,
+			top = ($(window).height() - height)/2,
+			url = this.href,
+			opts = 'status=1' +
+				   ',width=' + width +
+				   ',height=' + height +
+				   ',top=' + top +
+				   ',left=' + left +
+				   ',directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no';
+		window.open(url,'Pinterest',opts);
+	}
+	
+	$(document).ready(function(){
+		$('#ficheSocialNetworks .pinterestShareLink').on('click touchstart', openPinterestSharePopup);
+	});
+	
+</script>
+

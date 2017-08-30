@@ -1,0 +1,171 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2007, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<!-- BEGIN TunnelLivraisonTab_UI.jspf -->
+<wcf:url var="SetAddressPrimaryURL" value="AddressToPrimarySwitchCmd" scope="request" type="Ajax">
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	<wcf:param name="langId" value="${WCParam.langId}" />
+	<wcf:param name="URL" value="${tunnelShippingLink}" />
+	<wcf:param name="errorViewName" value="${tunnelShippingLink}" />
+</wcf:url>
+
+<wcf:url var="LogonFormURL" value="LogonForm" scope="request" type="Ajax">
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	<wcf:param name="langId" value="${WCParam.langId}" />
+	<wcf:param name="URL" value="${tunnelShippingLink}" />
+</wcf:url>
+
+<c:set var="prefixLivraison" value="livraison"/>
+
+<script type="text/javascript">
+<!--
+	function switchLivraisonZoneDefaultSelectMagasin(type) {
+		if(type == 0) {
+			$('#livraisonZoneDefaultMagasin').show();
+			$('#livraisonZoneSelectMagasin').hide();
+		} else {
+			$('#livraisonZoneDefaultMagasin').hide();
+			$('#livraisonZoneSelectMagasin').show();
+		}
+	}
+	
+	function changeDefaultMagasinForTabLivraison(target) {
+		var shopName = $(target).attr("data-shop-name");
+		var shopId = $(target).attr("data-shop-id");
+		cursor_wait();
+		$.ajax({
+			type: "GET",
+			url : getAbsoluteURL() + "/SetDefaultStore",
+			data: {"shopId": shopId, "shopName" : shopName, "localisation" : "denied"},
+			success: function(event) {
+				cursor_clear();
+				window.location.reload();
+			},
+			error: function(errorThrown) {
+				cursor_clear();
+				console.error(errorThrown);
+			}
+		});
+	}
+	
+	function changeAdresseLivraison(idAddress) {
+		document.location.href="${SetAddressPrimaryURL}" + '&addressId='+idAddress;
+	}
+	
+	dojo.addOnLoad(function(){
+		switchLivraisonZoneDefaultSelectMagasin(0);
+		
+		$("div[id^='${prefixLivraison}_${prefixSelect}_magasin']").each(function(index){
+			if($(this).hasClass('selectable')) {
+				var that = this;
+				$(this).click(function(){
+					changeDefaultMagasinForTabLivraison(that);
+				});
+			}
+		});
+		
+		$("div[id^='${prefixLivraison}_${prefixSelect}_address']").each(function(index){
+			if($(this).hasClass('selectable')) {
+				var that = this;
+				$(this).click(function(){
+					changeAdresseLivraison($(that).attr('data-address-id'));
+				});
+			}
+		});
+	});
+	
+	
+//-->
+</script>
+
+<h2 class="titleBlock"><fmt:message key="shippingAddressSectionTitle" bundle="${widgetText}" /></h2>
+<div class="row headerStyle">
+	<a class="button button--minor tunnel" href="#" onclick="javascript:openAddressForm('<c:out value="${AddressFormURL}" />',false);return false;"><fmt:message key="addAddressButtonLabel" bundle="${widgetText}" /></a>
+	<span class="warning" id="supplementEtageWarningMessage" style="display:none;"><fmt:message key="supplementEtageWarningMessage" bundle="${widgetText}"/></span>
+</div>
+<div class="row">
+	  <div class="shopContainer" id="zoneSelectShippingAddress" 
+     dojoType="wc.widget.RefreshArea"  objectId="shippingAddressRefreshArea" controllerId="ShippingAddressController"
+     >  
+         <%@ include file="../LivraisonShipping.jsp" %>
+   </div>
+</div>
+<c:if test="${!extendedUserContext.isPro}">
+<div class="blockCheck" >
+	<label for="useSameAddressForBilling">
+		<input type="checkbox" id="useSameAddressForBilling" class="checkLP" onclick="useSameAddressForBillingClickHandler(this);"
+			   ${(!empty currentAddressBillingId && currentAddressBillingId eq person.contactInfo.contactInfoIdentifier.uniqueID )? 'checked="checked"':''}	
+		/>
+		<div></div>
+		<!--[if IE 8]>
+		    <span style="padding-left:20px">
+		<![endif]-->
+		<fmt:message key="sameShippingAddressAsBillingCheckbox" bundle="${widgetText}"/>
+		<!--[if IE 8]>
+		    </span>
+		<![endif]-->
+		</label>
+</div>
+</c:if>
+<c:if test="${(empty isCatalogCommand || isCatalogCommand eq false) && !empty defaultShopForShipping}">
+	<div class="sep col3 bcol4"></div>
+	
+	<div id="livraisonZoneDefaultMagasin">
+		
+			<h2 class="titleBlock"><fmt:message key="defaultStoreLivraisonSectionTitle" bundle="${widgetText}" /></h2>
+			<div class="row defaultShop">
+				<div class="shopContainer">
+					<c:set var="prefix" value="${prefixLivraison}_${prefixSelect}"/>
+		   			<c:set var="selectable" value="false"/>
+					<c:set var="selected" value="false"/>
+					<c:set var="shop" value="${defaultShopForShipping}"/>
+					<%@ include file="../Common/BlocMagasin/BlocMagasin_UI.jsp" %>
+					
+					<c:if test="${fn:length(ShopsListOfCurrentAddress) > 1}">
+							<div class="defaultShopButtonContainer">
+								<a class="button button--minor tunnel" href="#" onclick="switchLivraisonZoneDefaultSelectMagasin(1);return false;">
+									<fmt:message key="changeStoreButtonLabel" bundle="${widgetText}" />
+								</a>
+							</div>
+					</c:if>	
+				</div>
+				
+			</div>
+	</div>
+</c:if>
+<c:if test="${fn:length(ShopsListOfCurrentAddress) > 1}">
+	<div id="livraisonZoneSelectMagasin">
+		<h2 class="titleBlock"><fmt:message key="chooseStoreButtonLabel" bundle="${widgetText}" /></h2>
+		<div class="row">
+		   
+		   		<div class="col12 greyBackground left">
+					<div class="shopContainer">
+				   		<c:forEach var="shop" items="${ShopsListOfCurrentAddress}" varStatus="status">
+				   			<c:set var="prefix" value="${prefixLivraison}_${prefixSelect}"/>
+				   			<c:set var="selectable" value="true"/>
+							<c:set var="selected" value="false"/>
+							
+				   			<c:if test="${!empty defaultShopForShipping && shop.strLocId eq defaultShopForShipping.strLocId}">
+				   				<c:set var="selectable" value="false"/>
+								<c:set var="selected" value="true"/>
+				   			</c:if>
+				   			<%@ include file="../Common/BlocMagasin/BlocMagasin_UI.jsp" %>
+				   		</c:forEach>
+				   	</div>
+				</div>	
+		</div>
+	</div>
+</c:if>
+<!-- END TunnelLivraisonTab_UI.jspf -->

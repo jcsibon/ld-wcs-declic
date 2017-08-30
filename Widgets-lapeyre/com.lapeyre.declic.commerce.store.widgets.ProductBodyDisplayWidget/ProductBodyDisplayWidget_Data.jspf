@@ -1,0 +1,48 @@
+
+
+<%--  Add your data related code here --%>
+<%@ include file="/Widgets/Common/PDP_CatalogEntryData.jspf" %>
+
+<c:set var="longDesc" value="${catalogEntryDetails.longDescription}" />
+<c:set var="auxDesc1" value="${catalogEntryDetails.auxDescription1}" />
+<c:set var="auxDesc2" value="${catalogEntryDetails.auxDescription2}" />
+
+<c:set var="productType" value="${catalogEntryDetails.type}" scope="request"/>
+
+<c:set var="attachments" value="${catalogEntryDetails.attachments}" />
+
+<wcf:useBean var="brands" classname="java.util.LinkedList" />
+<c:forEach var="attachment" items="${attachments}">
+	<c:if test="${attachment.usage eq BRAND_LOGO_ATCHMT }">
+		<wcf:set target="${brands}" value="${attachment}" />
+	</c:if>
+</c:forEach>
+
+<jsp:useBean id="noticeMontageList" class="java.util.LinkedHashMap" type="java.util.Map" scope="page" />
+<c:set var="noticeMontageNumber" value="0" />
+
+<c:forEach var="attachment" items="${attachments}">
+	<c:if test="${attachment.usage eq PERSONNALISATIONDESKTOP_ATCHMT && !isOnMobileDevice}">
+		<c:set var="personnalisationAsset" value="${attachment}" />
+	</c:if>
+	<c:if test="${attachment.usage eq PERSONNALISATIONMOBILE_ATCHMT && isOnMobileDevice}">
+		<c:set var="personnalisationAsset" value="${attachment}" />
+	</c:if>
+	<c:if test="${attachment.usage eq USERMANUAL_ATCHMT}">
+		<c:set var="noticeMontageNumber" value="${noticeMontageNumber +1}" />
+		<c:set target="${noticeMontageList}" property="${attachment.attachmentAssetID}" value="${attachment}"/>
+	</c:if>
+</c:forEach>
+
+
+<c:choose>
+	<c:when test="${productType eq SUR_MESURE_PRODUCT}">
+		<%@include file="ProductBodyDisplayWidget_CustomisedData.jspf"%>
+	</c:when>
+	<c:when test="${productType eq COLLECTION_PRODUCT}">
+		<%@include file="ProductBodyDisplayWidget_CollectionData.jspf"%>
+	</c:when>
+	<c:otherwise>
+		<%@include file="ProductBodyDisplayWidget_StandardData.jspf"%>
+	</c:otherwise>
+</c:choose>

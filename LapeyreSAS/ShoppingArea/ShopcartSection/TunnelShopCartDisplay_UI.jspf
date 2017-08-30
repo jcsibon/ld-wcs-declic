@@ -1,0 +1,274 @@
+<%--	
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2007, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<!-- BEGIN TunnelShopCartDisplay_UI.jspf -->
+<%@ include file="/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.ItemAvailabilityInPhysicalStoresWidget/ItemAvailabilityInPhysicalStoresWidget_Data.jspf"%>
+
+<script type="text/javascript">
+<!--
+	var itemIdsInShopCart = new Array();
+	<c:forEach var="itemDetails" items="${orderItemsDetailsList}" varStatus="status">
+		itemIdsInShopCart.push("<c:out value='${itemDetails["orderItemId"]}'/>");		
+	</c:forEach>
+	
+	var env_currency_symbol = '${env_CurrencySymbolToFormat}';
+	
+	var stockAvailabilityForShopCart = new StockAvailability('stockAvailabilityForShopCart');
+	var itemAvailabilityInPhysicalStoresForShopCart = new ItemAvailabilityInPhysicalStoresWidget();
+	var locale = '${locale}';
+	var localeDojo = locale.replace('_','-');localeDojo = localeDojo.toLowerCase();
+	var invalidCouponErrorMessage = "${invalidCouponErrorMessage}";
+	var unkownsCouponErrorMessage = "${unkownsCouponErrorMessage}";
+	var emptyCouponErrorMessage = '${emptyCouponErrorMessage}';
+	var technicalErrorCouponErrorMessage = "${technicalErrorCouponErrorMessage}";
+	var couponNotValidYetErrorMessage = "${couponNotValidYetErrorMessage}";
+	var OutdatedCouponErrorMesage = "${OutdatedCouponErrorMesage}";
+	var CouponAlreadyUsedErrorMessage = "${CouponAlreadyUsedErrorMessage}";
+	var unapplicableCouponMessage = "${unapplicableCouponMessage}";
+	var coupon_AMOUNT_Description = "${coupon_AMOUNT_Description}";
+	var coupon_RATE_ITEM_Description = "${coupon_RATE_ITEM_Description}";
+	var coupon_RATE_ORDER_Description = "${coupon_RATE_ORDER_Description}";
+
+	var codeAvantageErreur = {
+ 		'ERR_PARAM_CODE_PROMO_EMPTY':"${emptyCouponErrorMessage}",
+ 		'ERR_PARAM_CODE_PROMO_INVALIDE':"${invalidCouponErrorMessage}",
+ 		'NOT_FOUND':"${unkownsCouponErrorMessage}",
+ 		'ALREADY_USED':"${CouponAlreadyUsedErrorMessage}",
+ 		'EXPIRED':"${OutdatedCouponErrorMesage}",
+ 		'NOT_VALID_YET':"${couponNotValidYetErrorMessage}",
+ 		'NOT_APPLICABLE':"${unapplicableCouponMessage}",
+ 		'ERROR_TECHNIQUE':"${technicalErrorCouponErrorMessage}"
+ 		
+ 	};
+ 	
+ 	var isMixteStandardCatalog = ${isMixteStandardCatalog};
+ 	
+ 	var isPro = ${extendedUserContext.isPro?true:false};
+//-->
+</script>
+
+<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/ShopcartSection/TunnelShopCartDisplay.js?${versionNumber}"/>"></script>
+
+<div class="checkout-container">
+	<div class="row shoppingcart-header">
+		<div class="shoppingcart-title">
+			<h1>
+				<fmt:message bundle="${storeText}" key="SHOPPINGCART_TITLE_1" />
+				<c:choose>
+					<c:when test="${orderQuantity <= 1}">
+						<span class="shoppingcart-quantity">(${orderQuantity} <fmt:message bundle="${storeText}" key="productLabel"/>)</span>
+					</c:when>
+					<c:otherwise>
+						<span class="shoppingcart-quantity">(${orderQuantity} <fmt:message bundle="${storeText}" key="productsLabel"/>)</span>
+					</c:otherwise>
+				</c:choose>
+			</h1>
+		</div>
+		<div class="shoppingcart-stock-wrapper">
+			<c:if test="${(empty isCatalogCommand || isCatalogCommand eq false) && (empty isMixteStandardCatalog || isMixteStandardCatalog eq false)}">
+				<div class="shoppingcart-stock">
+					${panierStoreSelectionLabel}&nbsp;
+					<span class="infobulle" title="<fmt:message bundle='${storeText}' key='cartStockInfo'/>">?</span>
+					:
+				</div>
+				<div class="shoppingcart-store" dojoType="wc.widget.RefreshArea" controllerId="itemAvailabilityRefreshAreaInShopCartController" id="itemAvailabilityRefreshArea">
+				<%out.flush(); %>
+					<c:import url="${itemAvailabilityInPhysicalStoreswidget}">
+						<c:param name="widgetCeption" value="true" />
+					</c:import>
+				<%out.flush(); %>
+				</div>
+			</c:if>
+		</div>
+<%-- 		<div id="infoBulleDateDispo" class="close" style="display:none;"></div> --%>
+	</div>
+	
+	<%-- Prxomity message --%>
+	<%out.flush();%>
+	<c:catch var="exc">
+		<ecocea:widgetPath var="emspotpath" identifier="EMarketingSpot" />
+		<c:import url="${emspotpath}">
+			<c:param name="emsName" value="ProximityAmount" />								
+			<c:param name="storeId" value="${storeId}" />
+			<c:param name="catalogId" value="${catalogId}" />
+		</c:import>
+	</c:catch>
+	<%out.flush();%>
+		
+	<%-- 	
+	<div class="validateButton">
+		<div id="infobulle_top" class="infoBulleOptions ${isMixteStandardCatalog?'':'hide'}">
+			${isMixteStandardCatalog ? commandeMixteInfoBulleErrorMessage : 'hide'}
+		</div>
+		<c:choose>
+			<c:when test="${isMixteStandardCatalog}">
+				<a class="button green disabled" disabled="disabled" onclick="JavaScript:return false;">${tunnelValidationButtonlabel}</a>
+			</c:when>
+			<c:when test="${!empty isCatalogCommand && isCatalogCommand eq true}">
+				<a class="button green" onclick="JavaScript:validateRecapShopCart(this,'<c:out value="${userType}"/>','<c:out value="${tunnelLogonLink}"/>','<c:out value="${tunnelShippingLink}"/>');return false;">${tunnelValidationButtonlabel}</a>				
+			</c:when>
+			<c:otherwise>
+				<a class="button green" onclick="JavaScript:validateRecapShopCart(this,'<c:out value="${userType}"/>','<c:out value="${tunnelLogonLink}"/>','<c:out value="${tunnelShippingLink}"/>');return false;">${tunnelValidationButtonlabel}</a>
+			</c:otherwise>
+		</c:choose>
+	</div> 
+	--%>
+	
+	
+	<!-- LISTE PRODUITS -->
+	<div class="orderBodyWrapper" dojoType="wc.widget.RefreshArea" widgetId="ShopCartPagingDisplay" id="ShopCartPagingDisplay" controllerId="ShopCartPaginationDisplayController" ariaMessage="<fmt:message bundle="${storeText}" key="ACCE_Status_Order_Item_List_Updated"/>" ariaLiveId="${ariaMessageNode}" role="region" aria-labelledby="ShopCartPagingDisplay_ACCE_Label">
+		<div class="orderBody">
+			<jsp:include page="OrderItemDetail.jsp" /> 
+		</div>
+	</div>
+	
+	<div class="row">
+	
+		<div class="col s12 m5 l6">
+			<%-- Promotion code --%>
+			<%-- Do not display the form for coupons if only paper catalogs are present in cart --%>
+			<c:if test="${not allItemsArePaperCatalogs}">
+				<div class="promotioncode-container">
+					<div class="row">
+						<c:choose>
+							<c:when test="${!empty orderExternalAdjusts}">
+								<c:forEach var="orderExternalAdjust" items="${orderExternalAdjusts}">
+									<div class="col s12 m12 l5">
+										<label class="promotioncode-label">${codeAvantageFieldlabel}</label>
+									</div>
+									<div class="col s12 m12 l7">
+										<input type="text" id="codeAvantageInput" class="promotioncode-input promotioncode-input-remove col s9 m7 " value="${orderExternalAdjust.code}" disabled="disabled" maxlength="17"/>	
+										<a class="button-primary promotioncode-add col s3 m5" href="#" style="display:none;" id="addCodePromoButton" onclick="JavaScript:applyCodeAvantage('<c:out value="${validateCouponPromoLink}"/>');return false;">${codeAvantageApplySubmitButtonLabel}</a>
+										<a class="link-primary promotioncode-remove" href="#" id="removeCodePromoButton" onclick="$('.promotioncode-message').remove(); $('.promotioncode-conditions').remove();JavaScript:removeCodeAvantage('<c:out value="${validateCouponPromoLink}"/>');return false;">${codeAvantageRemoveSubmitButtonLabel}</a>
+									</div>
+									<p class="promotioncode-message">
+										<i class="shoppingcart-icons shoppingcart-icon-validate left"></i>
+										<c:forEach var="line" items="${xOrderSummary.lines}">	
+											<c:if test="${line.special}">
+												${line.label}
+											</c:if>
+										</c:forEach>
+									</p>
+									<p class="promotioncode-conditions">
+										<fmt:message bundle="${widgetText}" key="promotionConditions" />
+									</p>
+								</c:forEach>
+							</c:when>
+							<c:otherwise>
+								<div class="col s12 m12 l5">
+									<label class="promotioncode-label">${codeAvantageFieldlabel}</label>
+								</div>
+								<div class="col s12 m12 l7">
+									<input type="text" id="codeAvantageInput" class="promotioncode-input col s9 m7" maxlength="17" placeholder="${promotionCodePlaceholder}" />
+									<a class="button-primary promotioncode-add col s3 m5" href="#" id="addCodePromoButton" onclick="JavaScript:applyCodeAvantage('<c:out value="${validateCouponPromoLink}"/>');return false;">${codeAvantageApplySubmitButtonLabel}</a>
+									<a class="link-primary promotioncode-remove" style="display:none;" href="#" id="removeCodePromoButton" onclick="JavaScript:removeCodeAvantage('<c:out value="${validateCouponPromoLink}"/>');return false;">${codeAvantageRemoveSubmitButtonLabel}</a>
+								</div>
+							</c:otherwise>
+						</c:choose>
+					</div>
+					<div id="codeAvantageErrorMsg" class="error" style="display:none;"><i class="shoppingcart-icons shoppingcart-icon-delete"></i></div>
+				</div>
+			</c:if>
+			
+			<%-- Means of payment--%>
+			<div class="row hide-on-small-only">
+				<span class="means-of-payment"><fmt:message bundle="${widgetText}" key="meansOfPayment" /></span>
+			</div>
+			<div class="row hide-on-small-only">
+				<img alt="" src="${jspStoreImgDir}images/means_of_payment.png">  
+			</div>
+			
+			<%-- Back button --%>
+			<div class="row back-button hide-on-small-only">
+				<i class="shoppingcart-icons shoppingcart-icon-back back-button-icon"></i>
+				<a class="link-primary" onclick="history.back()">${tunnelBackButtonlabel}</a>
+			</div>
+			
+		</div>
+		
+		<div class="col s12 m6 l5 push-m1">
+			<%-- RECAP COMMANDE --%>
+			<%@ include file="OrderItemDetail_Summary.jspf" %>
+			
+			<%--
+			<div class="alertIndispo ${isMixteStandardCatalog?'':'hide'}" id="zoneAlertIndispo">
+				<c:choose>
+					<c:when test="${isMixteStandardCatalog}">
+						<h2>${mixteOrderWarnMessageTitle}</h2>
+						<span>${mixteOrderWarnMessageContent}</span>
+					</c:when>
+					<c:otherwise>
+						<h2>${unavailableItemWarnMessageTitle}</h2>
+						<span>${unavailableItemWarnMessageContent}</span>
+					</c:otherwise>
+				</c:choose>
+			</div>
+			 --%>		
+		
+			<div class="validateButton">
+				<div id="infobulle_bottom" class="infoBulleOptions ${isMixteStandardCatalog?'':'hide'}">
+					${isMixteStandardCatalog ? commandeMixteInfoBulleErrorMessage : ''}
+				</div>
+				<c:choose>
+					<c:when test="${isMixteStandardCatalog}">
+						<img alt="" src="${jspStoreImgDir}images/picto/lock.png">  
+						<a class="button button-primary button-validate disabled" disabled="disabled" onclick="JavaScript:return false;">
+							${tunnelValidationButtonlabel}
+						</a>				
+					</c:when>
+					<%-- <c:when test="${!empty isCatalogCommand && isCatalogCommand eq true}">
+						<a class="button green" onclick="JavaScript:validateRecapShopCart(this,'<c:out value="${userType}"/>','<c:out value="${tunnelLogonLink}"/>','<c:out value="${tunnelShippingLink}"/>');return false;">${tunnelValidationButtonlabel}</a>				
+					</c:when> --%>
+					<c:otherwise>
+						<a class="button button-primary button-validate" onclick="JavaScript:validateRecapShopCart(this,'<c:out value="${userType}"/>','<c:out value="${tunnelLogonLink}"/>','<c:out value="${tunnelShippingLink}"/>');return false;">
+							<img alt="" src="${jspStoreImgDir}images/picto/lock.png">  
+							${tunnelValidationButtonlabel}
+						</a>
+					</c:otherwise>
+				</c:choose>
+			</div>
+		</div>
+		
+	</div>
+</div>
+
+<c:if test="${!empty orderExternalAdjusts}">
+	<script>
+		dojo.ready(function() {
+			applyCodeAvantage('<c:out value="${validateCouponPromoLink}"/>');
+		});
+	</script>
+</c:if>
+
+<script>
+	dojo.addOnLoad(function(){
+		if(itemAvailabilityInPhysicalStoresForShopCart) {
+			$(itemAvailabilityInPhysicalStoresForShopCart).on("SetDefaultStoreSucceedOnPagePanier", function(){
+				//update default store in header
+				wc.render.getRefreshControllerById('HeaderStoreLocationRefreshArea');
+				wc.render.updateContext("HeaderStoreLocation_Context");
+				
+				wc.render.getRefreshControllerById('itemAvailabilityRefreshAreaInShopCartController');
+				wc.render.updateContext("ItemAvailablity_Context", {pageType :"TunnelPanier"});
+			});
+		}
+		
+		wc.render.updateContext('OrderSummaryContext');
+		
+		dojo.subscribe('HeaderStoreLocator.onGetNearestStoreLocationSucceed', function(headerStoreId) {
+			wc.render.updateContext("ItemAvailablity_Context", {pageType :"TunnelPanier"});
+		});
+	});
+</script>
+
+<!-- END TunnelShopCartDisplay_UI.jspf -->

@@ -1,0 +1,28 @@
+<!-- Begin Content_Paginate_UI.jspf-->
+<%@ page trimDirectiveWhitespaces="true" %>
+<c:if test="${content.pageSuivante != null && !empty content.pageSuivante}">
+<div class="row contentPaginate">
+	<div class="blockPresentation article">
+		<div class="editoBackground"><img alt="${isMobile?content.pageSuivante.visuelMobile.alt:content.pageSuivante.visuelDesktop.alt}" src="${imageUrl}${isMobile?content.pageSuivante.visuelMobile.url:content.pageSuivante.visuelDesktop.url}" onerror="this.src='/wcsstore/LapeyreSAS/images/contentListView/defaultImage.png'" ></div>
+		<div class="textContainer">
+			<c:choose>	
+				<c:when test="${isOnMobileDevice}">
+					<c:if test="${!empty content.pageSuivante.surTitre}"><span><ecocea:crop value="${content.pageSuivante.surTitre}" length="31" /></span></c:if>
+					<c:if test="${!empty content.pageSuivante.surTitre && !empty content.pageSuivante.titre}"><img alt="separator" src="${jspStoreImgDir}images/separator.png"></c:if>
+					<a href="${content.pageSuivante.url}"><h2><ecocea:crop value="${content.pageSuivante.titre}" length="51" /></h2>
+				</c:when>
+				<c:when test="${!isOnMobileDevice}">
+					<c:if test="${!empty content.pageSuivante.surTitre}"><span><ecocea:crop value="${content.pageSuivante.surTitre}" length="61" /></span></c:if>
+					<c:if test="${!empty content.pageSuivante.surTitre && !empty content.pageSuivante.titre}"><img alt="separator" src="${jspStoreImgDir}images/separator.png"></c:if>
+					<a href="${content.pageSuivante.url}"><h2><ecocea:crop value="${content.pageSuivante.titre}" length="70" /></h2>
+				</c:when>
+			</c:choose>
+			
+		</div>
+		<div class="buttonContainer">
+			<a href="${content.pageSuivante.url}" class="button"><fmt:message key="nextEditorialContentButtonLabel" bundle="${widgetText}" /></a>
+		</div>
+	</div>
+</div>
+</c:if>
+<!-- End Content_Paginate_UI.jspf-->

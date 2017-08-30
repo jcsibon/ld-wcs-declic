@@ -1,0 +1,12 @@
+<script type="text/javascript">
+	dojo.addOnLoad(function() { 
+		if(typeof productDisplayJS != 'undefined'){
+			productDisplayJS.setCommonParameters('<c:out value="${langId}"/>','<c:out value="${storeId}" />','<c:out value="${catalogId}" />','<c:out value="${userType}" />','${env_CurrencySymbolToFormat}');
+			dojo.topic.subscribe('DefiningAttributes_Resolved', productDisplayJS.displayPrice);
+			dojo.topic.subscribe('DefiningAttributes_Resolved', productDisplayJS.updateProductName);
+			dojo.topic.subscribe('DefiningAttributes_Resolved', productDisplayJS.updateSurface);	
+			dojo.topic.subscribe('DefiningAttributes_Resolved', productDisplayJS.updateProductPartNumber);
+			dojo.topic.subscribe('DefiningAttributes_Resolved', productDisplayJS.refreshShopperAction);
+		}
+	});
+</script>

@@ -1,0 +1,26 @@
+<div class="acol12 col12 ccol12">
+	<h1 class="titleBlock">
+		<fmt:message key="myWishListsPageTitle" bundle="${storeText}" />
+	</h1>
+	<div class="firstList">
+		<div class="header">
+			<h3 class="subtitle"><fmt:message bundle="${storeText}" key="SL_CREATE_NEW_SHOPPING_LIST" /></h3>
+			<p><fmt:message bundle="${storeText}" key="addWishListsPageMessage" /></p>
+		</div>
+	</div>
+	<form class="firstListForm">
+		<label for="${param.parentPage}newListName"><fmt:message bundle="${storeText}" key="wishlistName" /></label><br/>
+		<input id="<c:out value="${param.parentPage}"/>newListName" type="text" size="35" maxlength="64" value="" onkeypress='if(event.keyCode==13){ shoppingListJS.create(); dojo.stopEvent(event);}' tabindex="1" />
+		<div id="${param.parentPage}shoppingListErrorMessageArea" style="display:none">
+			<span id="${param.parentPage}shoppingListErrorMessageText" class="error"></span>
+		</div>
+		<%-- <label id="<c:out value="${param.parentPage}"/>newListNameErrorMessageText" class="error" for="<c:out value="${param.parentPage}"/>newListName"></label> --%>
+		<div class="submit">
+			<a id="createShoppingListPopup_save" href="javascript:shoppingListJS.create();" class="button green" tabindex="2">
+				<span id="<c:out value="${param.parentPage}"/>CreateShoppingListPopup_div_create_save" class="button_text">
+					<fmt:message bundle="${storeText}" key="addWishlistButtonLabel" />	
+				</span>
+			</a>
+		</div>
+	</form>
+</div>

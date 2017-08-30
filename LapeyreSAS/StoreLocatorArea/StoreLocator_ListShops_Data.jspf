@@ -1,0 +1,4 @@
+<wcbase:useBean id="activeShopsDB" classname="com.lapeyre.declic.commerce.storelocator.beans.FullActiveStoreLocationDataBean" >
+	<c:set value="${storeId}" target="${activeShopsDB}" property="storeId" />
+	<c:set value="${langId}" target="${activeShopsDB}" property="languageId" />
+</wcbase:useBean>

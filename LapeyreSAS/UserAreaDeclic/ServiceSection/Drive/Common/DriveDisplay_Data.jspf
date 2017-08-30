@@ -1,0 +1,30 @@
+<%@ include file="../../../../Common/EnvironmentSetup.jspf"%>
+
+<c:set var="c" value="" />
+<c:if test="${!empty WCParam.c}">
+	<c:set var="c" value="${WCParam.c}" />
+</c:if>
+
+<c:set var="m" value="" />
+<c:if test="${!empty WCParam.m}">
+	<c:set var="m" value="${WCParam.m}" />
+</c:if
+
+
+<c:import url="${env_jspStoreDir}/include/ContentContext.jsp">
+	<c:param name="typePage" value="suivi" />
+	<c:param name="id" value="reservationDrive"/>
+</c:import>
+
+
+
+<fmt:message var="reservationCreneauDriveStep1BreadcrumbLabel" bundle="${storeText}"  key="reservationCreneauDriveStep1BreadcrumbLabel" />
+<fmt:message var="reservationCreneauDriveStep2BreadcrumbLabel" bundle="${storeText}"  key="reservationCreneauDriveStep2BreadcrumbLabel" />
+<fmt:message var="reservationCreneauDriveStep1PageTitle" bundle="${storeText}"  key="reservationCreneauDriveStep1PageTitle" />
+<fmt:message var="reservationCreneauDriveStep1Status" bundle="${storeText}"  key="reservationCreneauDriveStep1Status" >
+	<fmt:param value="${c}" />
+</fmt:message>
+<fmt:message var="reservationCreneauDriveStep2Body"  key="reservationCreneauDriveStep2Body" bundle="${storeText}" />
+<fmt:message var="reservationCreneauDriveStep1SubmitButtonLabel"  key="reservationCreneauDriveStep1SubmitButtonLabel" bundle="${storeText}" />
+<fmt:message var="reservationCreneauDriveStep2SubmitButtonLabel"  key="reservationCreneauDriveStep2SubmitButtonLabel" bundle="${storeText}" />
+<fmt:message var="reservationCreneauDriveTechnicalErrorMessage"  key="reservationCreneauDriveTechnicalErrorMessage" bundle="${storeText}" />

@@ -1,0 +1,243 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<c:set var="search" value='"'/>
+<c:set var="replaceStr" value="'"/>
+
+<%-- START MiniShopCartContents_UI.jsp --%>
+<div id="quick_cart_container">
+    <span class="spanacce" id="quick_cart_container_ACCE_Label"><fmt:message bundle="${storeText}" key="ACCE_MSC_SHOPPING_CART_POPUP_REGION"/></span>
+    <div id="quick_cart">
+        <div id ="MiniShopCartProductsList">
+            <div id="widget_minishopcart_popup">
+                <div id="cartDropdown">
+                
+                	<div class="cart-triangle"></div>
+                
+                    <span class="titleBlockShopCart">
+                    	<span><fmt:message bundle="${storeText}" key="apercuPanierTitle"/></span>
+
+						<c:choose>
+							<c:when test="${!empty orderItemsDetailsList}">
+								<c:choose>
+									<c:when test="${orderQuantity <= 1}">
+										<span class="orderQuantity_label">
+											(${orderQuantity}
+											<fmt:message bundle="${storeText}" key="productLabel" />)
+										</span>
+									</c:when>
+									<c:otherwise>
+										<span class="orderQuantity_label">
+											(${orderQuantity}
+											<fmt:message bundle="${storeText}" key="productsLabel" />)
+										</span>
+									</c:otherwise>
+								</c:choose>
+							</c:when>
+							<c:otherwise>
+								<span class="emptyShopCart_label">
+	                               	<fmt:message bundle="${storeText}" key="apecuPanierNoProductLabel"/>
+	                            </span>
+							</c:otherwise>
+						</c:choose>
+					</span>
+
+
+					<a id="MiniShopCartCloseButton_1" href="javascript:dijit.byId('quick_cart_container').hide();" class="closeButton"></a>
+
+                    <div class="">
+	                    <c:choose>
+	                        <c:when test="${!empty orderItemsDetailsList}">
+	
+                               	<%-- PRODUCTS --%>
+                                <div class="products">
+                                    <c:forEach var="itemDetails" items="${orderItemsDetailsList}" varStatus="status">
+                                        <div class="product row" id="miniShopCart_divInfoOrderItem_${itemDetails['orderItemId']}">
+                                            <div class="product_image col s3">
+                                                <c:set var="altImgText">
+                                                    <c:out value="${fn:replace(itemDetails['parentProductName'], search, replaceStr)}" escapeXml="false"/>
+                                                </c:set>
+                                                <a id="MiniShopCartProdImg_${itemDetails['orderItemId']}" href="${itemDetails['productURL']}">
+                                                    <img src="${itemDetails['productImage']}" alt="${altImgText}">
+                                                </a>
+                                            </div>
+                                            
+                                            <div class="product_summary col s9">
+                                            	<div class="product_sku">
+	                                                <a id="MiniShopCartProdName_${itemDetails['orderItemId']}" href="${itemDetails['productURL']}">
+	                                                	<fmt:message bundle="${storeText}" key="ficheProduitSkuLabel"/>: ${itemDetails['productSKU']}
+	                                                </a>
+	                                            </div>
+	                                            
+	                                            <div class="product_name">
+	                                                <a class="hover_underline" id="MiniShopCartProdName_${itemDetails['orderItemId']}" href="${itemDetails['productURL']}">
+	                                                	${itemDetails['parentProductName']}
+	                                                </a>
+	                                            </div>
+	                                            
+	                                            <div class="product_quantity">
+	                                                <fmt:message bundle="${storeText}" key="quantityLabel"/> : ${itemDetails['productQty']}
+	                                            </div>
+	                                            
+	                                            <c:choose>
+	                                                <c:when test="${extendedUserContext.isPro}">
+	                                                    <div class="product_price" id="miniShopCart_TotalProductPrice_${itemDetails['orderItemId'] }">${fn:trim(itemDetails['productPrice'])}<sup>${env_CurrencySymbolToFormat}</sup><sup>HT</sup></div>
+	                                                </c:when>
+	                                                <c:otherwise>
+	                                                    <div class="product_price" id="miniShopCart_TotalProductPrice_${itemDetails['orderItemId'] }">${fn:trim(itemDetails['productPrice'])}${env_CurrencySymbolToFormat}</div>
+	                                                </c:otherwise>
+	                                            </c:choose>
+	
+	                                            <!-- DISCOUNT -->
+	                                            <c:forEach var="discountsIterator" items="${itemDetails['discountReferences']}">
+	                                                <c:set var="discounts" value="${discountsIterator.value}" />
+	                                                <c:url var="DiscountDetailsDisplayViewURL" value="DiscountDetailsDisplayView">
+	                                                    <c:param name="code" value="${discounts.code}" />
+	                                                    <c:param name="langId" value="${langId}" />
+	                                                    <c:param name="storeId" value="${WCParam.storeId}" />
+	                                                    <c:param name="catalogId" value="${WCParam.catalogId}" />
+	                                                </c:url>
+	                                                <div class="discount">
+	                                                    <a href="${DiscountDetailsDisplayViewURL}">${discounts.description.value}</a>
+	                                                </div>
+	                                            </c:forEach>
+	
+	                                            <%-- COUPON APPLIQUE
+	                                            <c:if test="${!empty orderExternalAdjusts}">
+	                                                <c:forEach var="orderExternalAdjust" items="${orderExternalAdjusts}">
+	                                                    <c:if test="${orderExternalAdjust.type eq 'RATE_ITEM' && orderExternalAdjust.orderItemId eq itemDetails['orderItemId']}">
+	                                                        <c:set var="codePromo" value="${fn:replace(orderExternalAdjust.code,' ','-')}"/>
+	                                                        <div class="discount" id="miniShopCart_externalAdjustOrderItemLabel_${codePromo}_${orderExternalAdjust.orderId}">${orderExternalAdjust.description}</div>
+	                                                    </c:if>
+	                                                </c:forEach>
+	                                            </c:if>
+	                                            --%>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
+                                </div>
+                                <%-- END PRODUCTS --%>
+
+          
+                                
+                                
+                                	<%--
+                                	<!-- ECO-PARTS -->
+	                                <c:forEach var="entryMap" items="${ecoPartTotalMap}">
+	                                	<tr class="orderPart">
+	                                		<td class="orderPart_label">${dontLabel} ${entryMap.value.label}</td>
+	                                		<td class="orderPart_price">
+	                                			<fmt:formatNumber value="${entryMap.value.value}" type="number" minFractionDigits="${env_currencyDecimal}"/><sup>${env_CurrencySymbolToFormat}</sup>
+	                                		</td>
+	                                	</tr>
+	                                </c:forEach>
+	                                <!-- REMISES -->
+	                                <c:forEach var="discountsIterator" items="${discountReferences}">
+	                                    <tr class="orderPart remise">
+		                             		<td class="orderPart_label">
+		                             			<a href='<c:out value="${discounts['displayURL']}" />' >
+	                                                <c:out value="${discounts['discountDescription']}" escapeXml="false"/>
+	                                            </a>
+		                             		</td>
+		                             		<td class="orderPart_price">
+		                             			<fmt:message key="coupon_${orderExternalAdjust.type}_Description" bundle="${widgetText}">
+													<fmt:param value="${adjustValue}"/>
+	                                            </fmt:message>
+		                             		</td>
+		                             	</tr>
+	                                </c:forEach>
+	                                <!-- COUPONS -->
+	                                <c:forEach var="orderExternalAdjust" items="${orderExternalAdjusts}">
+	                                	<c:if test="${orderExternalAdjust.type eq 'AMOUNT' || orderExternalAdjust.type eq 'RATE_ORDER'}">
+	                                        <c:set var="codePromo" value="${fn:replace(orderExternalAdjust.code,' ','-')}"/>
+		                                	<tr class="orderPart remise">
+		                                		<td class="orderPart_label" id="miniShopCart_externalAdjustOrderLabel_${codePromo}_${orderExternalAdjust.orderId}">
+			                                        <c:choose>
+			                                            <c:when test="${orderExternalAdjust.type eq 'AMOUNT'}">
+			                                                <fmt:formatNumber var="adjustValue" value="${orderExternalAdjust.value}" type="currency" maxFractionDigits="${env_currencyDecimal}" currencySymbol="${env_CurrencySymbolToFormat}"/>
+			                                            </c:when>
+			                                            <c:otherwise>
+			                                                <c:set var="adjustValue" value="${orderExternalAdjust.value}%"/>
+			                                            </c:otherwise>
+			                                        </c:choose>
+			                                		<fmt:message key="coupon_${orderExternalAdjust.type}_Description" bundle="${widgetText}">
+		                                                <fmt:param value="${adjustValue}"/>
+		                                            </fmt:message>
+	                                            </td>
+		                                		<td class="orderPart_price" id="miniShopCart_externalAdjustOrderValue_${codePromo}_${orderExternalAdjust.orderId}">
+			                                        <c:set var="adjustAmount" value="${extendedUserContext.isPro ? orderExternalAdjust.adjustAmount_HT : orderExternalAdjust.adjustAmount_TTC}"/>
+			                                        <fmt:formatNumber value="${adjustAmount}" type="number" minFractionDigits="${env_currencyDecimal}"/><sup>${env_CurrencySymbolToFormat}</sup>
+		                                		</td>
+		                                	</tr>
+	                                    </c:if>
+	                                </c:forEach>
+	                                 --%>
+	                                
+									<!-- TOTAL -->
+									<c:if test="${showMoreLink == 'true'}">
+	                                    <div class="view_more">
+	                                        <span class="view_more_items"><a id="MiniShopCartMoreLink" href="${ShoppingCartURL}"><fmt:message bundle="${storeText}" key="apecuPanierSeeMoreLinkLabel"/></a></span>
+	                                    </div>
+                                	</c:if>
+									
+	                                <div class="total">
+	                                    <div class="total_label">
+	                                    	<c:choose>
+		                                        <c:when test="${extendedUserContext.isPro}">
+		                                        	<fmt:message bundle="${storeText}" key="cartTotalHT"/>
+                                        		</c:when>
+	                                      	 	<c:otherwise>
+	                                      	  		<fmt:message bundle="${storeText}" key="cartTotalTTC"/>
+                                      	  		</c:otherwise>
+	                                        </c:choose>
+	                                    </div>
+	                                    <c:choose>
+                                            <c:when test="${extendedUserContext.isPro}">
+                                                <div class="total_price" id="miniShopCart_TotalPrice">${orderSubTotal}<sup>&euro;</sup><sup class="vat_free">HT</sup></div>
+                                            </c:when>
+                                            <c:otherwise>
+	                                    		<div class="total_price" id="miniShopCart_TotalPrice">${orderSubTotal}&euro;</div>
+                                            </c:otherwise>
+                                        </c:choose>
+	                                </div>
+                                
+
+                                <div class="footer">
+                                    <a id="GotoCartButton1" href="${fn:escapeXml(ShoppingCartURL)}" class="">
+                                        <div class="picto whiteShopCartPicto"></div><span><fmt:message bundle="${storeText}" key="apecuPanierBuyingProceedLinkLabel"/></span>
+                                    </a>
+                                </div>
+	                        </c:when>
+	                        
+	                        <c:otherwise>
+                                <p class="emptyShopCart_image">
+                                	<img alt="<fmt:message bundle="${storeText}" key="apecuPanierNoProductLabel"/>" src="${hostPath}${jspStoreImgDir}images/responsive/basketEmpty.png" id="emptyCard" onload='dojo.publish("/MiniShopCartDisplayRefresh", [{ total:0}]);'/>
+                                </p>
+	                        </c:otherwise>
+	                        
+	                    </c:choose>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	<input type="hidden" id="currentOrderQuantity" value="<c:out value='${orderQuantity}'/>"/>
+	<input type="hidden" id="currentOrderAmount" value="<c:out value='${orderAmountValue}'/>"/>
+	<input type="hidden" id="currentOrderCurrency" value="<c:out value='${orderAmountCurrency}'/>"/>
+	<input type="hidden" id="currentOrderLanguage" value="<c:out value='${langId}'/>"/>
+	<input type="hidden" id="currentOrderId" value="<c:out value='${orderInCart.orderId}'/>"/>
+	<input type="hidden" id="currentOrderLocked" value="<c:out value='${currentOrderLocked}'/>"/>	
+</div>
+
+<%-- END MiniShopCartContents_UI.jsp --%>

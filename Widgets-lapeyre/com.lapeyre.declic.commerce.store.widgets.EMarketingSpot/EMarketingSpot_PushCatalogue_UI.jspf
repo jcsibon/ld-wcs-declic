@@ -1,0 +1,50 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<fmt:message bundle='${widgetText}' key='CATALOGUE_1_PRODUCT_URL' var="productURL1" />
+<fmt:message bundle='${widgetText}' key='CATALOGUE_2_PRODUCT_URL' var="productURL2"/>
+<fmt:message bundle='${widgetText}' key='CATALOGUE_3_PRODUCT_URL' var="productURL3"/>
+<fmt:message bundle='${widgetText}' key='CATALOGUE_4_PRODUCT_URL' var="productURL4"/>
+
+<c:if test="${!empty productURL1 && !empty productURL2 && !empty productURL3 && !empty productURL4}">
+	<div class="row mobile-hidden">
+		<span class="titleBlock">
+			<fmt:message bundle="${widgetText}" key="CATALOGUE_PUSH_TITLE" />
+		</span>
+		<div class="col12 acol12 catalogBlock rowCol4">
+			<ul>
+				<c:if test="${!empty productURL1}">
+					<li>
+						<a href="${productURL1}">
+							<img width="180px" height="126px"alt="<fmt:message bundle='${widgetText}' key='CATALOGUE_1_ALT_NAME' />" src="${jspStoreImgDir}images/<fmt:message bundle='${widgetText}' key='CATALOGUE_1_IMAGE_NAME' />">
+								<span><fmt:message bundle='${widgetText}' key='CATALOGUE_1_LABEL' /></span>
+						</a>
+					</li>
+				</c:if>
+				<c:if test="${!empty productURL2}">
+					<li>
+						<a href="${productURL2}">
+							<img alt="<fmt:message bundle='${widgetText}' key='CATALOGUE_2_ALT_NAME' />" src="${jspStoreImgDir}images/<fmt:message bundle='${widgetText}' key='CATALOGUE_2_IMAGE_NAME' />">
+								<span><fmt:message bundle='${widgetText}' key='CATALOGUE_2_LABEL' /></span>
+						</a>
+					</li>
+				</c:if>
+				<c:if test="${!empty productURL3}">
+					<li>
+						<a href="${productURL3}">
+							<img alt="<fmt:message bundle='${widgetText}' key='CATALOGUE_3_ALT_NAME' />" src="${jspStoreImgDir}images/<fmt:message bundle='${widgetText}' key='CATALOGUE_3_IMAGE_NAME' />">
+								<span><fmt:message bundle='${widgetText}' key='CATALOGUE_3_LABEL' /></span>
+						</a>
+					</li>
+				</c:if>
+				
+				<c:if test="${!empty productURL4}">
+					<li>
+						<a href="${productURL4}">
+							<img alt="<fmt:message bundle='${widgetText}' key='CATALOGUE_4_ALT_NAME' />" src="${jspStoreImgDir}images/<fmt:message bundle='${widgetText}' key='CATALOGUE_4_IMAGE_NAME' />">
+								<span><fmt:message bundle='${widgetText}' key='CATALOGUE_4_LABEL' /></span>
+						</a>
+					</li>
+				</c:if>
+			</ul>
+		</div>
+	</div>
+</c:if>

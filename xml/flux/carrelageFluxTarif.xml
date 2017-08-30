@@ -1,0 +1,69 @@
+<message type="priceImport">
+	<header>
+		<sender>SAS</sender>
+		<SASid>SASid</SASid>
+		<extractDate>2014-10-14T09:34:54.264</extractDate>
+		<targetCatalog>current</targetCatalog>
+		<nbDataEntries>1</nbDataEntries>
+		<credentials>
+			<login>importadmin</login>
+			<password>passw0rd</password>
+		</credentials>
+	</header>
+	<data>
+		<itemPriceList>
+			<sku>9000011</sku>
+			<priceList>
+				<price>
+					<part>
+						<startDate>2011-08-25T00:00:00.000</startDate>
+						<endDate>2016-08-31T00:00:00.000</endDate>
+						<standardPrice>
+							<unitPriceWithVAT currency="EUR">20</unitPriceWithVAT>
+							<vatPercentage>20</vatPercentage>
+							<ecoPartList>
+								<ecoPart>
+									<typeEcoPart>DEEE</typeEcoPart>
+									<ecoPartLabel>Eco participation DEEE</ecoPartLabel>
+									<ecoAmountWithVAT currency="EUR">0.83</ecoAmountWithVAT>
+									<ecoItemCode>E123SD</ecoItemCode>
+								</ecoPart>
+							</ecoPartList>
+						</standardPrice>
+					</part>
+					<pro>
+						<startDate>2011-08-25T00:00:00.000</startDate>
+						<endDate>2015-08-31T00:00:00.000</endDate>
+						<standardPrice>
+							<unitPriceWithVAT currency="EUR">18</unitPriceWithVAT>
+							<vatPercentage>20</vatPercentage>
+							<ecoPartList>
+								<ecoPart>
+									<typeEcoPart>DEEE</typeEcoPart>
+									<ecoPartLabel>Eco participation DEEE</ecoPartLabel>
+									<ecoAmountWithVAT currency="EUR">0.83</ecoAmountWithVAT>
+									<ecoItemCode>E123SD</ecoItemCode>
+								</ecoPart>
+							</ecoPartList>
+						</standardPrice>
+						<discountPriceList>
+							<discountPrice>
+								<unitPriceWithVAT currency="EUR">16</unitPriceWithVAT>
+								<vatPercentage>20</vatPercentage>
+								<ecoPartList>
+									<ecoPart>
+										<typeEcoPart>DEEE</typeEcoPart>
+										<ecoPartLabel>Eco participation DEEE</ecoPartLabel>
+										<ecoAmountWithVAT currency="EUR">0.83</ecoAmountWithVAT>
+										<ecoItemCode>E123SD</ecoItemCode>
+									</ecoPart>
+								</ecoPartList>
+							</discountPrice>
+						</discountPriceList>
+					</pro>
+				</price>
+				
+			</priceList>
+		</itemPriceList>
+	</data>		
+</message>

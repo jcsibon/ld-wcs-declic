@@ -1,0 +1,244 @@
+
+<%-- 	mantis 352, désactivé temporairiement
+		<a id="AppointmentBtn" onclick="javascript:appointmentPopup.show();" wairole="button" role="button" class="button button-primary"
+ 									title="<fmt:message key="PD_APPOINTMENT" bundle="${widgetText}"/>" > 
+ 									<div id="productPageAppointment" class="button_text">
+ 										<fmt:message key="PD_APPOINTMENT" bundle="${widgetText}"/> 
+ 									</div>
+ 		</a> --%>
+ 		
+ 		<a id="AppointmentBtn" onclick="location.href='${storeLocatorURL}';" wairole="button" role="button" class="button button-primary"
+ 									title="<fmt:message key="PD_STORE_APPOINTMENT" bundle="${widgetText}"/>" > 
+ 									<div id="productPageAppointment" class="button_text">
+ 										<fmt:message key="PD_STORE_APPOINTMENT" bundle="${widgetText}"/> 
+ 									</div>
+ 		</a>
+
+
+<script>
+
+/* Arrange an appointment Popup Validation */
+require([
+ 		"dojo/on",
+ 		"dojo/query",
+ 		"dojo/ready"
+ 	], function(on, query, ready) {
+	
+	ready(function(){
+		$('#submitAppointment').click(function(e) {
+			e.preventDefault();
+			$("#arrangeAppointment").submit();
+		});
+		var countryTagID = "countryField";
+		$("#arrangeAppointment")
+			.validate(
+					{
+						onfocusout: false,
+						onkeyup: false,
+						onclick: false,
+						rules : {
+							phoneNumber : {
+								maxlength : 20,
+								validatePhoneFR : [ countryTagID ],
+								required : true
+							},
+							email : {
+								maxlength : 100,
+								email: true,
+								required : true
+							},
+							firstName : {
+								required : true,
+								maxlength : 80
+							},
+							lastName : {
+								required : true,
+								maxlength : 80
+							}
+						},
+						messages : {
+							firstName:{
+								required : "<fmt:message bundle='${widgetText}' key='missingFirstnameFieldErrorMessage' />",
+								maxlength : "<fmt:message bundle='${widgetText}' key='maxLengthFirstnameFieldErrorMessage' />"
+							},
+							lastName:{
+								required : "<fmt:message bundle='${widgetText}' key='missingLastameFieldErrorMessage' />",
+								maxlength : "<fmt:message bundle='${widgetText}' key='maxLengthLastnameFieldErrorMessage' />"
+							},
+							phoneNumber : {
+								required : "<fmt:message bundle='${widgetText}' key='missingPhoneUniqueErrorMessage' />",
+								validatePhoneFR : "<fmt:message bundle='${widgetText}' key='InvalidPhoneFormatErrorMessage' />",
+								maxlength : "<fmt:message bundle='${widgetText}' key='maxLengthPhoneFieldErrorMessage' />"
+							},
+							email : {
+								required : "<fmt:message bundle='${widgetText}' key='missingEmailErrorMessage' />",
+								email : "<fmt:message bundle='${widgetText}' key='InvalidEmailErrorMessage' />",
+								maxlength : "<fmt:message bundle='${widgetText}' key='maxLengthEmailErrorMessage' />"
+							}
+						},
+						invalidHandler: function(form, validator) {
+						    var errors = validator.numberOfInvalids();
+						    if (errors) {
+						        $('#appointmentPopupValidationError').html(validator.errorList[0].message);
+								$('#appointmentPopupValidationError').show();
+						        validator.errorList[0].element.focus(); //Set Focus
+						    }
+						},
+						errorPlacement : function(error,
+								element) {
+							
+						},
+						submitHandler : function(form) {
+							$('#appointmentPopupValidationError').hide();
+							$('#appointmentPopupKO').hide();
+							$('#appointmentPopupKOTech').hide();
+							postDemandeRDV();
+// 							dijit.byId('appointmentPopup').hide();
+						}
+					}
+			);
+
+	});
+});
+
+function postDemandeRDV(){
+	var codeMag = $("#arrangeAppointment #shopSelect").val();
+	while(codeMag.length < 4){
+		codeMag = "0" + codeMag;
+	}
+	$.ajax({
+		type: "POST",
+		url : getAbsoluteURL() + "RDVService", 
+	    data: {
+			"codeMag": codeMag,
+			"nom" : $("#WC_Arrange_Appointment_LastName").val(),
+			"prenom" : $("#WC_Arrange_Appointment_FirstName").val(),
+			"telephone" : $("#WC_Arrange_Appointment_PhoneNumber").val(),
+			"email" : $("#WC_Arrange_Appointment_Email").val(),
+			"currentUrl" : window.location.href,
+			"comment" : ""	
+		},
+		success: function(response, statut) {
+			if(response === '"OK"'){
+				$("#appointmentPopupOK").show();
+				$("#submitAppointment").hide();
+			}else{
+				if(response.startsWith('"ERREUR')){
+					$('#appointmentPopupKO').text(response);
+					$('#appointmentPopupKO').show();
+				} else {
+					$('#appointmentPopupKOTech').show();
+				}
+			}
+		},
+		error: function(xhr, desc, err) {
+			$("#appointmentPopupKOTech").show();
+		}
+	});
+}
+</script>
+
+<!-- Popup Prendre un rendez-vous -->
+<div id="appointmentPopup" class="" role="dialog" dojoType="lapeyre/widget/Dialog" data-dojo-id="appointmentPopup" style="display:none" executeScripts="true" 
+ aria-label="<fmt:message key="AppointmentFormTitle" bundle="${widgetText}"/>">
+
+	<div class="dijitDialogTitleBar" data-dojo-attach-point="titleBar" title="titre">
+		<span level="1" role="header" id="appointmentPopup_title" class="dijitDialogTitle" data-dojo-attach-point="titleNode"><fmt:message key="AppointmentFormSubmitLabel" bundle="${storeText}"/></span>
+	</div>
+	<div class="dijitDialogPaneContent" data-dojo-attach-point="containerNode" style="width: auto; height: auto;">
+		<div class="widget_site_popup">
+			<div class="container">
+				<form action="#" method="post" name="appointmentForm" id="arrangeAppointment">
+					<div class="header row" id="appointmentFormTitle">
+						<div class="col s12">
+							<span><fmt:message bundle="${widgetText}" key="AppointmentFormTitle" /></span>
+							<a aria-label="Fermer" title="Fermer" class="close tlignore" onclick="javascript:dijit.byId('appointmentPopup').hide();return false;" href="javascript:void(0);" id="appointmentPopupClose" role="button"></a>
+						</div>
+					</div>
+					<div class="body row">
+						<div id="appointmentDescription" class="col s12">
+							<span><fmt:message bundle="${widgetText}" key="AppointmentFormDescription" /></span>
+						</div>
+						<div id="appointmentFields">
+							<%-- Prénom--%>
+							<div class="col s12" id="firstNameAppointment">
+								<div class="column_label">
+									<span class="spanacce">
+										<label for="WC_Arrange_Appointment_FirstName">
+											<fmt:message bundle="${widgetText}" key="AppointmentFormFirstnameFieldLabel" /> 
+										</label>
+									</span>
+									<fmt:message bundle="${widgetText}" key="AppointmentFormFirstnameFieldLabel" /> <span class="required-field">*</span>
+								</div>
+								<input type="text" id="WC_Arrange_Appointment_FirstName" class="col s12" name="firstName">
+							</div>
+							<%-- Nom--%>
+							<div class="col s12" id="lastNameAppointment">
+								<div class="column_label">
+									<span class="spanacce">
+										<label for="WC_Appointment_LastName">
+											<fmt:message bundle="${widgetText}" key="AppointmentFormLastnameFieldLabel" /> 
+										</label>
+									</span>
+									<fmt:message bundle="${widgetText}" key="AppointmentFormLastnameFieldLabel" /> <span class="required-field">*</span>
+								</div>
+								<input type="text" id="WC_Arrange_Appointment_LastName" class="col s12" name="lastName">
+							</div>
+							<%-- email--%> 
+							<div class="col s12" id="emailAppointment">
+								<div class="column_label">
+									<span class="spanacce">
+										<label for="WC_Appointment_Email">
+											<fmt:message bundle="${widgetText}" key="AppointmentFormEmailFieldLabel" /> 
+										</label>
+									</span>
+									<fmt:message bundle="${widgetText}" key="AppointmentFormEmailFieldLabel" /> <span class="required-field">*</span>
+								</div>
+								<input type="text" id="WC_Arrange_Appointment_Email" class="col s12" name="email">
+							</div>
+							<%-- téléphone--%>
+							<div class="col s12" id="phoneNumberAppointment">
+								<div class="column_label">
+									<span class="spanacce">
+										<label for="WC_Arrange_Appointment_PhoneNumber">
+											<fmt:message bundle="${widgetText}" key="AppointmentFormPhoneFieldLabel" /> 
+										</label>
+									</span>
+									<fmt:message bundle="${widgetText}" key="AppointmentFormPhoneFieldLabel" /> <span class="required-field">*</span>
+								</div>
+								<input type="text" id="WC_Arrange_Appointment_PhoneNumber" class="col s12" name="phoneNumber" >
+							</div>
+							<div class="col s12" id="storeAppointment">
+								<div class="column_label">
+									<span class="spanacce">
+										<label>
+											<fmt:message bundle="${widgetText}" key="AppointmentFormStoreFieldLabel" /> 
+										</label>
+									</span>
+									<fmt:message bundle="${widgetText}" key="AppointmentFormStoreFieldLabel" /> <span class="required-field">*</span>
+								</div>
+								<%out.flush(); %>
+								<c:import url="/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.SelectPhysicalStoresWidget/SelectPhysicalStoresWidget.jsp"/>
+								<%out.flush(); %>
+							</div>
+						</div>
+						<div  id="appointmentErrorMessageArea" class="col s12">
+							<span class="error" id="WC_Appointment_Error">
+								<p id="appointmentPopupValidationError" style="display:none"></p>
+								<p id="appointmentPopupOK" style="display:none"><fmt:message bundle="${storeText}" key="abonnementNewsletterFooterConfirmMessage"/></p>
+								<p id="appointmentPopupKO" style="display:none"><fmt:message bundle="${storeText}" key="abonnementNewsletterFooterFunctionnalErrorMessage"/></p>
+								<p id="appointmentPopupKOTech" style="display:none"><fmt:message bundle="${storeText}" key="abonnementNewsletterFooterTechnicalErrorMessage"/></p>
+							</span>
+						</div>
+						<div class="footer col s12">
+							<div class="ctaContainer">
+								<input type="submit" id="submitAppointment" class="button orange col s8 offset-s4" value="<fmt:message bundle="${widgetText}" key="AppointmentFormSubmitLabel" />">
+								<a id="submitAppointmentClose" onclick="dijit.byId('appointmentPopup').hide();" class="button orange" href="#" style="display:none;"><fmt:message bundle="${storeText}" key="CP_CLOSE" /></a> 
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

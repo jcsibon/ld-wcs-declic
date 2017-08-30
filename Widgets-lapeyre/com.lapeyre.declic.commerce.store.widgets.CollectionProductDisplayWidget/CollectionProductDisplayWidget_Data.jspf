@@ -1,0 +1,164 @@
+<%--  Add your data related code here --%>
+<%@page import="com.lapeyre.declic.configurations.ConfigTool"%>
+<%@ include file="/Widgets-lapeyre/Common/PDP_CatalogEntryData.jspf" %>
+
+<ecocea:widgetPath var="socialNetworksWidgetPath" identifier="SocialNetworks" storeId="${storeId}"/>
+<ecocea:widgetPath var="fullImagewidgetPath" identifier="FullImage" />
+<ecocea:widgetPath var="itemAvailabilityInPhysicalStoreswidget" identifier="ItemAvailabilityInPhysicalStoresWidget" />
+<ecocea:widgetPath var="definingAttributeswidgetsPath" identifier="DefiningAttributes" />
+<ecocea:widgetPath var="contentCarouselwidgetPath" identifier="ContentCarousel" />
+<c:set var="appointmentPopupPath" value="/Widgets-lapeyre/Common/AppointmentPopup/AppointmentPopup.jsp" />
+<c:set var="sharePopupPath" value="/Widgets-lapeyre/Common/SharePopup/SharePopup.jsp" />
+
+<c:set var="name" value="${catalogEntryDetails.name}" />
+<c:set var="partnumber" value="${catalogEntryDetails.partNumber}" />
+<c:set var="partNumber" value="${catalogEntryDetails.partNumber}" />
+<c:set var="manufacturerName" value="${catalogEntryDetails.manufacturer}" />
+<c:set var="shortDesc" value="${catalogEntryDetails.shortDescription}" />
+<c:set var="longDesc" value="${catalogEntryDetails.longDescription}" />
+<c:set var="auxDesc1" value="${catalogEntryDetails.auxDescription1}" />
+<c:set var="attachments" value="${catalogEntryDetails.attachments}" />
+<c:set var="isOnSpecial" value="${catalogEntryDetails.isOnSpecial}" />
+<c:set var="productId" value="${catalogEntryDetails.uniqueID}" />
+
+<c:set var="showCompareBox" value="true" />
+
+<c:set var="pageType" value="ProductCustom" scope="request" />
+
+<wcf:useBean var="pictos" classname="java.util.LinkedList" scope="request" />
+<wcf:useBean var="vids" classname="java.util.LinkedList" />
+<wcf:useBean var="fullImagesAngle" classname="java.util.LinkedList" />
+<wcf:useBean var="thumbImagesAngle" classname="java.util.LinkedList" />
+<wcf:useBean var="brands" classname="java.util.LinkedList" />
+
+<c:forEach var="attachment" items="${attachments}">
+    <c:if test="${attachment.usage eq ICON_ATCHMT}">
+        <wcf:set target="${pictos}" value="${attachment}" />
+    </c:if>
+    <c:if test="${attachment.usage eq YOUTUBE_VIDEO_ATCHMT}">
+        <wcf:set target="${vids}" value="${attachment}" />
+    </c:if>
+    <c:if test="${attachment.usage eq TOOL_LINK_ATCHMT}">
+        <c:set var="toolAttachment" value="${attachment}" />
+    </c:if>
+    <c:if test="${attachment.usage eq COLLECTION_DESC_ATCHMT}">
+        <c:set var="collectionDescriptionAttachment" value="${attachment}" />
+    </c:if>
+    <c:if test="${attachment.usage eq ANGLEIMAGES_FULLIMAGE_ATCHMT}">
+        <wcf:set target="${fullImagesAngle}" value="${attachment}" />
+    </c:if>
+    <c:if test="${attachment.usage eq ANGLEIMAGES_THUMBNAIL_ATCHMT}">
+        <wcf:set target="${thumbImagesAngle}" value="${attachment}" />
+    </c:if>
+    <c:if test="${attachment.usage eq BRAND_LOGO_ATCHMT }">
+        <wcf:set target="${brands}" value="${attachment}" />
+    </c:if>
+</c:forEach>
+
+
+<c:set var="attributes" value="${catalogEntryDetails.attributes}" />
+<c:forEach var="attr" items="${attributes}">
+	<c:if test="${attr.identifier eq GOOGLE_CATEGORY_ATTRIBUTE_NAME}">
+		<c:set var="googleCategory" value="${attr.name}" scope="request"/>
+	</c:if>
+	<c:if test="${attr.usage eq 'Descriptive' && attr.identifier eq 'isSoldes'}">
+           <c:set var="soldeFlagProduct" value="${attr.values[0].value}" scope="request" />
+ 	</c:if>
+</c:forEach>
+
+<wcf:useBean var="productImagesCarousel" classname="java.util.LinkedList" />
+<c:set var="minimumImagesSize" value="${ecocea:min(fn:length(fullImagesAngle),fn:length(thumbImagesAngle))}" />
+<%--Mantis 1071 --%>
+<c:if test="${minimumImagesSize > 0 }">
+	<c:forEach var="index" begin="0" end="${minimumImagesSize - 1}">
+		<wcf:useBean var="thumbImagesList" classname="java.util.LinkedList" />
+		<wcf:useBean var="fullImagesList" classname="java.util.LinkedList" />
+		<wcf:useBean var="fullAndThumbImagesMap" classname="java.util.HashMap" />
+		<astpush:assetPushUrl var="thumbImageURL" urlRelative="${thumbImagesAngle[index].attachmentAssetPath}" type="" source="" device="" format="" />
+		<astpush:assetPushUrl var="fullImageURL" urlRelative="${fullImagesAngle[index].attachmentAssetPath}" type="" source="" device="" format="" />
+		<astpush:assetPushUrl var="fullImageLinkURL" urlRelative="${fullImagesAngle[index].attachmentAssetPath}" type="${productType}" source="secondary" device="${device}" format="zoom" />
+		<wcf:set target="${thumbImagesList}" value="${thumbImageURL}" />
+		<wcf:set target="${thumbImagesList}" value="${thumbImagesAngle[index].name}" />
+		<wcf:set target="${fullImagesList}" value="${fullImageURL}" />
+		<wcf:set target="${fullImagesList}" value="${fullImagesAngle[index].name}" />
+		<wcf:set target="${fullImagesList}" value="${fullImageLinkURL}" />
+		<wcf:set target="${fullAndThumbImagesMap}" key="thumb" value="${thumbImagesList}" />
+		<wcf:set target="${fullAndThumbImagesMap}" key="full" value="${fullImagesList}" />
+		<wcf:set target="${productImagesCarousel}" value="${fullAndThumbImagesMap}" />
+		<c:remove var="thumbImagesList" />
+		<c:remove var="fullImagesList" />
+		<c:remove var="fullAndThumbImagesMap" />
+		<c:remove var="thumbImageURL" />
+		<c:remove var="fullImageURL" />
+	</c:forEach>
+</c:if>
+
+<c:forEach var="price" items="${catalogEntryDetails.price}">
+	<c:if test="${(price.usage eq 'Offer') && (price.ecopart > 0.0)}">
+		<c:set var="ecoPart">
+			<fmt:formatNumber value="${price.ecopart}" type="currency" currencySymbol="${env_CurrencySymbolToFormat} ${extendedUserContext.isPro ? '<sup>HT</sup>' : ''}" maxFractionDigits="${env_currencyDecimal}"/>
+		</c:set>
+	</c:if>
+	<c:if test="${(price.usage eq 'Offer') and (!empty price.value)}">
+		<c:set var="productAvailable" value="true" scope="request"/>
+	</c:if>
+</c:forEach>
+
+<c:if test="${productAvailable}">
+	<c:set var="microDataOfferAttributes" value="itemprop=\"offers\" itemscope itemtype=\"${MICRO_DATA_OFFER}\"" />
+	<c:set var="microDataAvailabilityInStoreAttributes" value="itemprop=\"availability\" content=\"${MICRO_DATA_INSTOREONLY}\"" />
+</c:if>
+
+
+<%--If the item is already selected (in the url for example) we preselect this one instead of the default one --%>
+<c:choose>
+	<c:when test="${not empty itemSelectedId}">
+		<c:forEach var="sku" items="${catalogEntryDetails.sKUs}">
+			<c:if test="${sku.uniqueID eq itemSelectedId}">
+				<c:set var="defaultSku" value="${sku}" scope="request"/>
+			</c:if>
+		</c:forEach>
+		<c:if test="${empty defaultSku}">
+			<c:forEach var="sku" items="${catalogEntryDetails.sKUs}">
+				<c:if test="${sku.isDefault eq 1}">
+					<c:set var="defaultSku" value="${sku}" scope="request"/>
+				</c:if>
+			</c:forEach>
+		</c:if>
+	</c:when>
+	<c:otherwise>
+		<c:forEach var="sku" items="${catalogEntryDetails.sKUs}">
+			<c:if test="${sku.isDefault eq 1}">
+				<c:set var="defaultSku" value="${sku}" scope="request"/>
+			</c:if>
+		</c:forEach>
+	</c:otherwise>
+</c:choose>
+
+
+
+<wcf:useBean var="defaultSkuAttributes" classname="java.util.LinkedList" scope="request"/>
+<c:forEach var="attr" items="${defaultSku.attributes}">
+	<c:if test="${attr.usage eq 'Defining'}">
+		<jsp:useBean id="defaultSkuAttributesKeyValue" class="java.util.HashMap" scope="request"/>
+		<c:set target="${defaultSkuAttributesKeyValue}" value="${fn:replace(attr.identifier,singleQuote,escapeSingleQuote)}" property="identifier" />
+		<c:set target="${defaultSkuAttributesKeyValue}" value="${fn:replace(attr.values[0].identifier,singleQuote,escapeSingleQuote)}" property="value" />
+		<wcf:set target="${defaultSkuAttributes}" value="${defaultSkuAttributesKeyValue}" />
+		<c:remove var="defaultSkuAttributesKeyValue" />
+	</c:if>
+</c:forEach>
+
+<ecocea:listToJson value="${defaultSkuAttributes}" var="defaultSkuAttrsJSON" />
+
+
+<c:set var="hasCollectionRelationship" value="${catalogEntryDetails.hasCollectionAssoc}" />
+
+<c:set var="searchProfile" value="ECO_findProductsBySearchTerm_Summary" scope="request"/>
+
+<wcf:rest var="catalogNavigationView2" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/bySearchTerm/*" >
+		<wcf:param name="profileName" value="${searchProfile}" />
+		<wcf:param name="langId" value="${langId}"/>
+		<wcf:param name="responseFormat" value="json"/>		
+		<wcf:param name="facet" value="collectionAssociation:${productId}_*" />
+		<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+</wcf:rest>

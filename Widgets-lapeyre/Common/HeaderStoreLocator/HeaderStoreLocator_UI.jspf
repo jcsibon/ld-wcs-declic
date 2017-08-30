@@ -1,0 +1,57 @@
+<script>
+	dojo.addOnLoad(function(){
+		wc.render.getRefreshControllerById('HeaderStoreLocationRefreshArea').url = '${HeaderStoreLocatorURL}';
+	});
+</script>
+<c:choose>
+	<c:when test="${not empty extendedUserContext && not empty extendedUserContext.defaultStores}">
+		<div class="defaultStoreContainerArea vCenteredHeaderBlock">
+			<div class="picto storePicto"></div>	
+			<div class="headerDataContainer"><%-- TODO popup monMag que sur desktop --%> 
+				<span title="${fullStoreDB.name}"><a id="storeQuickLink" class="hover_underline" href="${fullStoreDB.seoUrl}"><ecocea:crop value="${fullStoreDB.name}" length="60"></ecocea:crop></a></span> 
+				<p class="hide-on-med-and-down">${ecocea:fmtPhone(fullStoreDB.mainPhone)}</p>
+			</div>
+		</div>
+		<div id="monMagPopup" class="popover-frame hide-on-med-and-down">
+			<div class="popover-frame-arrow"></div>
+			<div class="header">
+				<h2 class="title">
+					<fmt:message key="headerStoreLocatorLabel" bundle="${widgetText}" />
+				</h2>
+				<a class="subtitle hover_underline" href="${storeLocatorURL}"><fmt:message key="headerStoreLocatorLinkLabel" bundle="${widgetText}" /></a>
+				<a class="closeButton" onclick="javascript:$('#monMagPopup').fadeToggle(300);"></a>
+			</div>
+			<div class="body">
+				<div class="col-container">
+					<div class="col shop-address">
+						<h3 class="title">
+							<a title="${fullStoreDB.name}" href="${fullStoreDB.seoUrl}">${fullStoreDB.name}</a>
+						</h3>
+						<p>${fullStoreDB.type}</p>
+						<hr class="horizontalDivider" />
+						<p>${fullStoreDB.address1}</p>
+						<c:if test="${not empty fullStoreDB.address2}"><p>${fullStoreDB.address2}</p></c:if>
+						<c:if test="${not empty fullStoreDB.address3}"><p>${fullStoreDB.address3}</p></c:if>
+						<c:if test="${not empty fullStoreDB.address4}"><p>${fullStoreDB.address4}</p></c:if>
+						<p>${fullStoreDB.cp} ${fullStoreDB.city}</p>
+						<p class="hide-on-med-and-down">${ecocea:fmtPhone(fullStoreDB.mainPhone)}</p>
+						<br/>
+						
+					</div>
+				</div>
+				<p class="cta">
+					<img class="icon" src="/LapeyreSAS/images/shopBlockYaller.png" alt="Se rendre au magasin" />
+					<a class="goToShop black underline" href="${fullStoreDB.seoUrl}"><fmt:message key="headerStoreLocatorGoToShopLink" bundle="${widgetText}" /></a>
+				</p>
+			</div>
+		</div>
+	</c:when>
+	<c:otherwise>
+		<div class="nodefaultStoreContainerArea vCenteredHeaderBlock">
+			<div class="picto storePicto"></div>
+			<div class="headerDataContainer">
+				<span><a class="hover_underline" href="${storeLocatorURL}"><fmt:message key="headerStoreLocatorNoGeoIPLinkLabel" bundle="${widgetText}" /></a></span>
+			</div>
+		</div>
+	</c:otherwise>
+</c:choose>

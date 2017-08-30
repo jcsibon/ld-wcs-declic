@@ -1,0 +1,460 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2007, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<!-- BEGIN TunnelLivraison_UI.jspf -->
+
+<%@ include file="../TunnelLivraison_Data.jspf"%>
+
+<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/ShopcartSection/TunnelLivraison.js?${versionNumber}"/>"></script>
+<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/UserArea/AddressHelper.js?${versionNumber}"/>"></script>
+<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/UserArea/AddressBookForm.js?${versionNumber}"/>"></script>
+	
+<script type="text/javascript" src="<c:out value="${jsAssetsDir}javascript/StoreLocatorArea/AddressController.js?${versionNumber}"/>"></script>
+<script type="text/javascript" src="${jsAssetsDir}javascript/Validation/dist/jquery.validate.js?${versionNumber}"></script>
+<script type="text/javascript"	src="${jspStoreImgDir}UserAreaDeclic/javascript/userJS.js?${versionNumber}"></script>
+<script type="text/javascript" src="${jsAssetsDir}javascript/Validation/dist/additional-methods.js?${versionNumber}"></script>
+<script type="text/javascript" src="${jspStoreImgDir}UserAreaDeclic/javascript/RNVPService.js?${versionNumber}"></script>
+
+<c:set var="prefixSelect" value="select"/>
+<c:set var="prefixDefault" value="default"/>
+<c:set var="prefixFacturationAddress" value="facturation"/>
+
+<wcf:url var="AddressFormURL" value="AjaxAccountAddressFormPopin" type="Ajax">
+	<wcf:param name="langId" value="${langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	<wcf:param name="URL" value="AjaxAccountAddressFormResponseJsonView" />
+	<wcf:param name="errorViewName" value="AjaxAccountAddressFormResponseJsonView" />
+</wcf:url>
+
+<wcf:url var="ShippingAddressesViewAjaxURL" value="ShippingAddressesViewAjax" type="Ajax">
+ 	<wcf:param name="langId" value="${langId}" />
+ 	<wcf:param name="storeId" value="${storeId}" />
+ 	<wcf:param name="catalogId" value="${catalogId}" />
+	<wcf:param name="orderId" value="${orderId}" />
+</wcf:url>
+
+<wcf:url var="ValidateTunnelShippingURL" value="ValidateTunnelShipping">
+	<wcf:param name="langId" value="${langId}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	<wcf:param name="orderId" value="${orderId}" />
+</wcf:url>
+
+<script type="text/javascript">
+	<c:if test="${!empty orderShippingData && !empty orderShippingData.driveSchedule}">
+		var driveScheduleSelected = '${orderShippingData.driveSchedule}';
+	</c:if>
+	
+	var isPro = ${extendedUserContext.isPro?true:false};
+	
+	var stockAvailabilityForTunnelLivraison = new StockAvailability('stockAvailabilityForTunnelLivraison');
+	var itemAvailabilityInPhysicalStoresForTunnelLivraison = new ItemAvailabilityInPhysicalStoresWidget();
+	
+	dojo.addOnLoad(function(){
+		switchLivraisonZoneDefaultSelectMagasin(0);
+		
+		$("div[id^='${prefixFacturationAddress}_${prefixSelect}']").each(function(index){
+			var that = this;
+			$(this).click(function(){
+				if($(this).hasClass('selectable')) {
+					changeFacturationAddress($(that).attr('data-address-id'));
+				}
+			});
+		});
+		
+	     var shippingAddressController = wc.render.getRefreshControllerById("ShippingAddressController");
+         shippingAddressController.url = '<c:out value="${ShippingAddressesViewAjaxURL}" />';
+         console.log("url="+shippingAddressController.url); 
+
+		shoppingActionsServicesDeclarationJS.setCommonParameters('<c:out value="${langId}" />','<c:out value="${storeId}" />','<c:out value="${catalogId}" />');
+		SearchShopsJS.init();
+		SearchShopsJS.initCountry("${CommandContext.country}");
+		<c:set var="geoLocRequired" value="true" />
+		<c:choose>
+			<c:when test="${userType eq 'G'}">
+				<c:set var="geoLocRequired" value="true" />
+			</c:when>
+			<c:otherwise>
+				<wcbase:useBean id="addressDB" classname="com.lapeyre.declic.commerce.usermanagement.commands.SelfAddressDataBean" scope="page" />
+				<c:if test="${!empty addressDB.selfAddress}">
+					<c:set var="geoLocRequired" value="false" />
+					<c:set var="address" value="${addressDB.selfAddress.address1}" />
+					<c:set var="address" value="${address}+${addressDB.selfAddress.city}" />
+					<c:set var="address" value="${address}+${addressDB.selfAddress.state}" />
+					<c:set var="address" value="${address}+${addressDB.selfAddress.zipCode}" />
+					SearchShopsJS.doSearchShopFromAddress('<c:out value="${address}" />');
+				</c:if>
+			</c:otherwise>
+		</c:choose>
+		<c:if test="${geoLocRequired eq 'true'}">
+			SearchShopsJS.geoLocSearch();
+		</c:if>
+		
+		stockAvailabilityForTunnelLivraison.initialize();
+		stockAvailabilityForTunnelLivraison.addOnStockAvailabilityReceivedListener(onGetProductsAvailabilityForShippingHandler);
+		
+		<c:choose>
+			<c:when test="${(!empty orderShippingData && !empty orderShippingData.shippingMode_idClient && (orderShippingData.shippingMode_idClient eq modeTransporter || orderShippingData.shippingMode_idClient eq modeColissimo)) || (!empty isCatalogCommand && isCatalogCommand eq true)}">
+				switchTabTunnelCommand(1,false,true);
+			</c:when>
+			<c:otherwise>
+				switchTabTunnelCommand(0,false,true);		
+			</c:otherwise>
+		</c:choose>
+	});
+	
+	refreshControllerAddressFormInTunnel.postRefreshHandler = function(widget) {
+		dojo.query('script[id^="addressFormInTunnelScript"]').forEach(function(node, index, nodelist){
+			dojo.eval(node.innerHTML);
+		 });
+		dojo.publish("CMPageRefreshEvent");
+		$('#tunnelHeader').focus();
+		hideAll();
+		
+		$('#zoneAddressForm').show();
+		
+	}
+	
+	if(typeof(openAddressForm) == 'undefined' || openAddressForm == null) {
+		openAddressForm = function(url) {
+			refreshControllerAddressFormInTunnel.url = url;
+			wc.render.updateContext('addressFormInTunnel_Context',{});
+		}
+	}
+	
+	refreshControllerStoreHoursPopin.postRefreshHandler = function(){
+		$('#tunnelHeader').focus();
+		hideAll();
+		$('#zoneInfoStoreHours').show();
+	}
+	if(typeof(openStoreHours) == 'undefined' || openStoreHours == null) {
+		openStoreHours = function(url) {
+			refreshControllerStoreHoursPopin.url = url;
+			wc.render.updateContext('StoreHoursPopin_Context',{});
+		}
+	}
+	
+	var addressIdForShipping = '${person.contactInfo.contactInfoIdentifier.uniqueID}';
+	<c:if test="${!empty defaultShopForShipping}">
+		var shopForDeliver = new Object();
+		shopForDeliver.strLocId = '${defaultShopForShipping.strLocId}';
+		shopForDeliver.identifier = '${defaultShopForShipping.identifier}';
+		shopForDeliver.name = "${defaultShopForShipping.name}";
+		shopForDeliver.retraitMagasin = '${defaultShopForShipping.retraitMagasin}';
+		shopForDeliver.retraitDrive = '${defaultShopForShipping.retraitDrive}';
+		shopForDeliver.livraisonTransporteur = '${defaultShopForShipping.livraisonTransporteur}';
+		shopForDeliver.livraisonColissimo = '${defaultShopForShipping.livraisonColissimo}';
+	</c:if>
+	<c:if test="${!empty fullStoreDB1}">
+		var shopForWithdrawalStore = new Object();
+		shopForWithdrawalStore.strLocId = '${fullStoreDB1.strLocId}';
+		shopForWithdrawalStore.identifier = '${fullStoreDB1.identifier}';
+		shopForWithdrawalStore.name = "${fullStoreDB1.name}";
+		shopForWithdrawalStore.retraitMagasin = '${fullStoreDB1.retraitMagasin}';
+		shopForWithdrawalStore.retraitDrive = '${fullStoreDB1.retraitDrive}';
+		shopForWithdrawalStore.livraisonTransporteur = '${fullStoreDB1.livraisonTransporteur}';
+		shopForWithdrawalStore.livraisonColissimo = '${fullStoreDB1.livraisonColissimo}';
+	</c:if>
+	var orderId = '${orderId}';
+	var modeRetrait = '${modeRetrait}';
+	var modeDrive = '${modeDrive}';
+	var modeTransporter = '${modeTransporter}';
+	var modeColissimo = '${modeColissimo}';
+	var modeLivraisonCatalog = '${modeLivraisonCatalog}';
+	var env_currency_symbol = '${env_CurrencySymbolToFormat}';
+	
+	//Alert and error message
+// 	var supEtageInfoMessage  = "${supEtageInfoMessage}";
+	var messageDispo  = "<c:out value= '${orderItemavailabilityInStockLabel}' />"; 
+	var messageNonDispo  = "<c:out value= '${unavailableLabel}' />"; 
+	var messageDispoLater  ="<c:out value= '${availablefromLabel}' />"; 
+	var orderGlobalAvailabilityMessage  = "<c:out value= '${orderGlobalAvailabilityMessage}' />";
+	var availabilityTechErr  = "<c:out value= '${availabilityTechErr}' />";
+	var availabilityMessageTopForLivraison  = "${availabilityMessageTopForLivraison}";
+	var availabilityMessageTopForRetrait  = "${availabilityMessageTopForRetrait}";
+	var availabilityMessageBottom  = "${availabilityMessageBottom}";
+	var availabilityMessageBottomForLivraison  = "${availabilityMessageBottomForLivraison}";
+	var availabilityMessageBottomForRetrait  = "${availabilityMessageBottomForRetrait}";
+	var noCreneauDriveMessageTop  = "<c:out value= '${noCreneauDriveMessageTop}' />";
+	var noCreneauDriveMessageBottom  = "<c:out value= '${noCreneauDriveMessageBottom}' />";
+	var noStoreForAddressMessageTop  = "<c:out value= '${noStoreForAddressMessageTop}' />";
+	var noStoreForAddressMessageBottom  = "<c:out value= '${noStoreForAddressMessageBottom}' />";
+    var noShippingServiceCarryoutMessageTop= "<c:out value= '${noShippingServiceCarryoutMessageTop}' />";
+    var noShippingServiceCarryoutMessageBottom= "<c:out value= '${noShippingServiceCarryoutMessageBottom}' />";
+    var noShippingServiceDeliveryMessageTop= "<c:out value= '${noShippingServiceDeliveryMessageTop}' />";
+    var noShippingServiceDeliveryMessageBottom= "<c:out value= '${noShippingServiceDeliveryMessageBottom}' />";
+	var noStoreMessageTop  = "<c:out value= '${noStoreMessageTop}' />";
+	var noStoreMessageBottom  = "<c:out value= '${noStoreMessageBottom}' />";
+	var noAddressMessageTop  = "<c:out value= '${noAddressMessageTop}' />";
+	var noAddressMessageBottom  = "<c:out value= '${noAddressMessageBottom}' />";
+	var uncompletedAddressMessageBottom  = "<c:out value= '${uncompletedAddressMessageBottom}' />";
+	var technicalErrorMessageTop  = "<c:out value= '${technicalErrorMessageTop}' />";
+	var technicalErrorMessageBottom  = "<c:out value= '${technicalErrorMessageBottom}' />";
+	var selectCreneauDriveMessageBottom  = "<c:out value= '${selectCreneauDriveMessageBottom}' />";
+	var noStockMessageTop  = "<c:out value= '${noStockMessageTop}' />";
+	var noStockMessageBottom  = "<c:out value= '${noStockMessageBottom}' />";
+	var reservationCreneauDriveError  = "<c:out value= '${reservationCreneauDriveError}' />";
+
+	//
+	var locale = '${locale}';
+	var localeDojo = locale.replace('_','-');localeDojo = localeDojo.toLowerCase();
+	
+	//build products map for stockAvailability
+	var productsInCart = new Object();
+	<c:forEach var="itemDetails" items="${orderItemsDetailsList}" varStatus="status">
+		<c:choose>
+			<c:when test="${itemDetails['COLISAGE']=='true'}">
+				qty=${itemDetails['productQty']/itemDetails['COEFF_CONVERSION']};
+			</c:when>
+			<c:otherwise>
+				qty=parseInt("${itemDetails['productQty']}");
+			</c:otherwise>
+		</c:choose>
+		var partNumber = "${itemDetails['productSKU']}";
+		if(productsInCart[partNumber]){
+		  	productsInCart[partNumber] = productsInCart[partNumber] + qty ;
+		}else{
+		  	productsInCart[partNumber] = qty;
+		}
+	</c:forEach>
+	
+	var sDriveScheduleStartDate = '${driveScheduleCurrentDate}';
+	var sEndDriveScheduleDate = '${endDriveScheduleDate}';
+	var driveScheduleNbDays = parseInt('${driveScheduleNbDays}');
+	var driveScheduleStepDays = parseInt('${driveScheduleStepDays}');
+	
+	function hideAll() {
+		$('#zoneShippingSelection').hide();
+		$('#zoneShopCart').hide();
+		$('#zoneInfoStoreHours').hide();
+		$('#tunnelHeader').hide();
+		$('#zoneAddressForm').hide();
+	}
+	function showHideShopCart() {
+		if($('#zoneShippingSelection').is(':visible')) {
+			hideAll();
+			$('#zoneShopCart').show();
+		} else {
+			hideAll();
+			$('#zoneShippingSelection').show();
+			$('#tunnelHeader').show();
+		}
+	}
+	
+	function showZoneShippingSelection() {
+		hideAll();
+		$('#tunnelHeader').show();
+		$('#zoneShippingSelection').show();
+	}
+	
+</script>
+<!-- check if addressFacturationId is changed due to an update of address (address updated is duplicated and his statut is changed to T)-->
+<c:set var="addressBillingIdChanged" value="true"/>
+<c:if test="${!empty orderShippingData && !empty orderShippingData.facturationAddressId}">
+	<c:if test="${orderShippingData.facturationAddressId eq person.contactInfo.contactInfoIdentifier.uniqueID}">
+		<c:set var="addressBillingIdChanged" value="false"/>
+		<c:set var="currentAddressBillingId" value="${orderShippingData.facturationAddressId}"/>
+	</c:if>
+	<c:forEach items="${addressBookBean.contact}" var="contact">
+		<c:if test="${orderShippingData.facturationAddressId eq contact.contactInfoIdentifier.uniqueID}">
+			<c:set var="addressBillingIdChanged" value="false"/>
+			<c:set var="currentAddressBillingId" value="${orderShippingData.facturationAddressId}"/>
+		</c:if>
+	</c:forEach>
+</c:if>
+<script>
+	var currentAddressBillingId = '${currentAddressBillingId}';
+</script>
+<c:if test="${addressBillingIdChanged eq true}">
+	<c:set var="currentAddressBillingId" value="${person.contactInfo.contactInfoIdentifier.uniqueID}"/>
+	<script>
+		dojo.addOnLoad(function(){
+			changeFacturationAddress('${currentAddressBillingId}');
+		});
+	</script>
+</c:if>
+<!--  -->
+<div class="row tunnel" id="zoneShippingSelection">
+	<c:if test="${!empty errorCode}">
+		<div class="col12">
+			<p class="error textAlignCenter">
+				<fmt:message key="${errorCode}" bundle="${widgetText}" />
+			</p>
+		</div>
+	</c:if>
+	<c:choose>
+		<c:when test="${(empty isCatalogCommand || isCatalogCommand eq false) and empty itemsShippingNotAllowedList}">
+		    <div class="col12 livraisonButtons">
+				<a id="boutonTabRetraitMagasin" class="button selected" href="" onclick="if(!$(this).hasClass('selected')) {switchTabTunnelCommand(0, true);} return false;">
+					<c:choose>
+						<c:when test="${!empty fullStoreDB1 && fullStoreDB1.retraitDrive}">
+							<fmt:message key="driveModeButtonLabel" bundle="${widgetText}" />
+						</c:when>
+						<c:otherwise>
+							<fmt:message key="pickupInStoreModeButtonLabel" bundle="${widgetText}" />
+						</c:otherwise>
+					</c:choose>
+				</a>
+				<a id="boutonTabLivraison" class="button" href="" onclick="if(!$(this).hasClass('selected')) {switchTabTunnelCommand(1, true);} return false;">
+					<fmt:message key="HomeDeliveryModeButtonLabel" bundle="${widgetText}" />
+				</a>
+		    </div>
+	    </c:when>
+   	    <c:when test="${not empty itemsShippingNotAllowedList}">
+	    	<div class="col12 retraitObligatoire">
+	    		<h2><fmt:message key="deliveryNotAvailableWarningTitle" bundle="${widgetText}" /></h2>
+	    		<fmt:message key="deliveryNotAvailableWarningMessage" bundle="${widgetText}" />
+	    		<ul>
+	    		<c:forEach items="${itemsShippingNotAllowedList}" var="item">
+	    			<li>-${item.value} (<fmt:message key="deliveryNotAvailableSkuLabel" bundle="${widgetText}"/> ${item.key})</li> 
+	    		</c:forEach>
+	    		</ul>
+    		</div>
+	    </c:when>
+    </c:choose>
+    <div class="col12 basketButton">
+    	<fmt:message var="recapPanierProduitLabel" key="recapPanierProduitTitle" bundle="${widgetText}" />
+		<c:if test="${orderQuantity gt 1}">
+			<fmt:message var="recapPanierProduitLabel" key="recapPanierProduitsTitle" bundle="${widgetText}" />
+		</c:if>
+		<a class="button" href="" onclick="showHideShopCart(); return false;"><fmt:message key="recapPanierBlockTitle" bundle="${widgetText}" /> <span>(${orderQuantity} ${recapPanierProduitLabel})</span></a>
+    </div>
+	<div class="col12" >
+			<c:if test="${empty isCatalogCommand || isCatalogCommand eq false}">
+				<!-- ZONE RETRAIT DU MAGASIN -->
+				<div id="retraitDuMagasinTab">
+					<%@ include file="TunnelRetraitMagasinTab_UI.jspf" %>
+				</div>
+			</c:if>
+
+			<!-- ZONE LIVRAISON -->
+			<div id="livraisonTab">
+				<%@ include file="TunnelLivraisonTab_UI.jspf" %>
+			</div>
+				
+			<!-- ZONE MESSAGE D'ERREUR GLOBAL -->
+			<div id="zoneAlertErrorMessage" class="blockInfos pasDispo" style="display:none;">
+				<p class="title" id="alertErrorMessageTop">${unavailableItemWarnMessageTitle}</p>
+				<p id="alertErrorMessageBottom">${unavailableItemWarnMessageContent}</p>
+				<p id="alertErrorMessageBottomAddress"></p>
+			</div>
+			
+			<!--  PLAGE HORAIRES -->
+			<c:if test="${empty isCatalogCommand || isCatalogCommand eq false}">
+				<c:if test="${!empty fullStoreDB1 && fullStoreDB1.retraitDrive}">
+					<div class="plagesHoraire" id="retraitMagasinPlageHoraire" style="display:none;">
+						<p class="error alignCenter" id="driveScheduleChoiceError"></p>
+						<%out.flush(); %>
+						<c:import url="/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.DriveScheduleWidget/DriveScheduleWidget.jsp">
+							<c:param name="shopId" value="${fullStoreDB1.identifier}" />
+						</c:import>
+						<%out.flush(); %>
+					</div>
+				</c:if>
+			</c:if>
+			
+			<div id="zoneSelectBillingAddress" style="display:${(!empty currentAddressBillingId && currentAddressBillingId eq person.contactInfo.contactInfoIdentifier.uniqueID )? 'none':'block'};">
+				<div class="sep col3 bcol4"></div>
+				
+				<!-- ZONE ADRESSE DE FACTURATION -->
+				<c:choose>
+					<c:when test="${extendedUserContext.isPro}">
+						<h2 class="titleBlock"><fmt:message key="billingAdressSectionProTitle" bundle="${widgetText}" /></h2>
+					</c:when>
+					<c:otherwise>
+						<h2 class="titleBlock"><fmt:message key="billingAdressSectionTitle" bundle="${widgetText}" /></h2>
+						<div class="row headerStyle">
+							<a class="button button--minor tunnel" href="#" onclick="javascript:openAddressForm('<c:out value="${AddressFormURL}" />');return false;"><fmt:message key="addAddressButtonLabel" bundle="${widgetText}" /></a>
+						</div>
+					</c:otherwise>
+				</c:choose>
+				
+				<div class="row">
+                    <div class="shopContainer"><%-- <c:if test="${extendedUserContext.isPro}">billingPro</c:if> --%>
+						<%-- affichage de l'adresse principale --%>
+						<c:set var="contact" value="${person.contactInfo}"/>
+						<c:set var="prefix" value="${prefixFacturationAddress}_${prefixSelect}"/>
+						<c:set var="selected" value="false"/>
+						<c:set var="selectable" value="true"/>
+						<c:set var="editable" value="true"/>
+						<c:set var="disable" value="false"/>
+						<c:set var="isBillingAddress" value="true"/>
+						
+						<c:if test="${!empty currentAddressBillingId && currentAddressBillingId eq contact.contactInfoIdentifier.uniqueID }">
+							<c:set var="selected" value="true"/>
+							<c:set var="selectable" value="false"/>
+						</c:if>
+						<c:if test="${extendedUserContext.isPro}">
+                            <c:set var="editable" value="false"/>
+                        </c:if>
+						<%@ include file="../Common/BlocAdresse/BlocAdresse_UI.jsp" %>
+
+					<c:if test="${!extendedUserContext.isPro}">
+						<%-- affichage les autres adresses --%>
+						<c:forEach items="${addressBookBean.contact}" var="contact">
+							<c:set var="prefix" value="${prefixFacturationAddress}_${prefixSelect}"/>
+							<c:set var="selected" value="false"/>
+							<c:set var="selectable" value="true"/>
+							<c:set var="editable" value="true"/>
+							<c:set var="disable" value="false"/>
+							<c:set var="isBillingAddress" value="true"/>
+							<c:if test="${!empty currentAddressBillingId && currentAddressBillingId eq contact.contactInfoIdentifier.uniqueID }">
+								<c:set var="selected" value="true"/>
+								<c:set var="selectable" value="false"/>
+							</c:if>
+							<%@ include file="../Common/BlocAdresse/BlocAdresse_UI.jsp" %>
+						</c:forEach>
+					</c:if>
+					</div>
+				</div>
+			</div>
+			
+			<!-- ZONE BOUTON VALIDER -->
+			<div>
+				<a class="shipping validateButton button green" href="" onclick="submitShippingChoice(this,'${ValidateTunnelShippingURL}');return false;">
+					<fmt:message key="deliverySubmitButtonLabel" bundle="${widgetText}" />
+				</a>
+			</div>
+	</div>
+</div>
+
+<div class="row tunnel" id="zoneShopCart" style="display:none;">
+	<div class="col12 basketButton">
+		<a class="button backButton" href="" onclick="showHideShopCart(); return false;"><fmt:message key="retour" bundle="${widgetText}" /></a>
+    </div>
+	<div class="col12 left apercuPanier">
+		<jsp:include page="../TunnelRecapPanier.jsp">
+			<jsp:param name="tunnelStep" value="3"/>
+			<jsp:param name="pageType" value="LIVRAISON" />
+		</jsp:include>
+	</div>
+</div>
+<div class="row tunnel" id="zoneInfoStoreHours" style="display:none;">
+	<div class="col12 basketButton">
+		<a class="button backButton" href="" onclick="showZoneShippingSelection(); return false;"><fmt:message key="retour" bundle="${widgetText}" /></a>
+    </div>
+	<div class="col12 left">
+		<div dojoType="wc.widget.RefreshArea" id="storeHoursPopinId" objectId="storeHoursPopinId" controllerId="storeHoursPopin_controller"></div>
+	</div>
+</div>
+<div class="row tunnel" id="zoneAddressForm" style="display:none;">
+	<div class="col12 basketButton">
+		<a class="button backButton" href="" onclick="showZoneShippingSelection(); return false;"><fmt:message key="retour" bundle="${widgetText}" /></a>
+    </div>
+	<div class="col12 left" id="addressFormArea">
+		<div class="row" dojoType="wc.widget.RefreshArea" id="addressFormInTunnelId" objectId="addressFormInTunnelId" controllerId="addressFormInTunnel_controller">
+		</div>
+	</div>
+</div>
+<!-- END TunnelLivraison_UI.jspf -->

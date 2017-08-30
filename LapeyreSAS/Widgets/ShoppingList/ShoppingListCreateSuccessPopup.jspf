@@ -1,0 +1,70 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2012, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<%--Mantis 1252: on ne doit pas fermer la popin automatiquement sinon la page ne se reload pas. => data-dojo-props="closeOnTimeOut:false"--%>
+<div id="<c:out value="${param.parentPage}"/>shoppingListCreateSuccessPopup" data-dojo-props="closeOnTimeOut:false" dojoType="wc/widget/WCDialog" title="<fmt:message bundle="${storeText}" key='DIALOG_TITLE_MESSAGE' />" style="display:none;">
+	<div class="widget_site_popup">
+					<div class="content">
+						<div class="body">
+							<div class="item_spacer_10px"></div>
+							<div class="item_spacer_10px"></div>
+							<div class="item_spacer_10px"></div>
+							<div class="item_spacer_10px"></div>
+							<img class="error_icon" src="${jspStoreImgDir}/images/colors/color1/success_icon.png" alt=""/>
+							<p id="<c:out value="${param.parentPage}"/>successMessageAreaText" class="textinlinewithicon"><fmt:message bundle="${storeText}" key="LIST_CREATED" /></p>
+							<div class="clear_float"></div>
+							<div class="item_spacer_10px"></div>
+							<div class="item_spacer_10px"></div>
+							<div class="item_spacer_10px"></div>
+							<div class="item_spacer_10px"></div>
+						</div>
+						<div class="footer">
+						<div class="ctaContainer">
+							<script><%-- 2 écrans => redirection vers list detail ou rien selon l'action --%>
+							function redirectMe(successActionText){
+								if(successActionText=='detail'){
+									document.location.href='${WishListResultDisplayViewURL}';
+									return;
+								}
+								else if(successActionText=='void')
+									return;
+									
+								document.location.href='${WishListDisplayURL}';
+								
+							}
+							</script>
+							<input type="hidden" id="successActionText" value="list" />
+								<a id="<c:out value="${param.parentPage}"/>shoppingListCreateSuccessPopup_continue_shopping" href="javascript:redirectMe(dojo.byId('successActionText').value);"
+								<c:choose>
+									<c:when test="${param.parentPage == 'QuickInfo'}">
+										onclick="dijit.byId('<c:out value="${param.parentPage}"/>shoppingListCreateSuccessPopup').hide();QuickInfoJS.showDetails('<c:out value="${param.productId}"/>');" 	
+									</c:when>
+									<c:otherwise>
+										onclick="dijit.byId('<c:out value="${param.parentPage}"/>shoppingListCreateSuccessPopup').hide();" 
+									</c:otherwise>
+								</c:choose> 
+								class="button green tlignore">
+									<div class="left_border"></div>
+									<span><fmt:message bundle="${storeText}" key="CONTINUE_SHOPPING" /></span>
+									<div class="right_border"></div>
+								</a>
+								<div class="clear_float"></div>
+							</div>
+							<div class="clear_float"></div>
+						</div>
+						<div class="clear_float"></div>
+					</div>
+		<div class="clear_float"></div>
+	</div>
+</div>

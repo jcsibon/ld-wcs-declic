@@ -1,0 +1,48 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<div id="productRedirectionPopup" data-dojo-type="lapeyre/widget/Dialog" style="display: none;">
+	<div class="widget_site_popup">
+		<div class="content">
+			<div class="header">
+				<span>
+					<fmt:message key="LAP023_REDIRECTION_PRODUIT_TITLE" bundle="${widgetText }" />
+					<span>
+						<c:choose>
+							<c:when test="${productRedirectedType eq 0}">
+								<fmt:message key="LAP019_SUBSTITUTION_TITLE" bundle="${widgetText }" />
+							</c:when>
+							<c:when test="${productRedirectedType eq 1}">
+								<fmt:message key="LAP021_UPSELL_TITLE" bundle="${widgetText }" />
+							</c:when>
+						</c:choose>
+					</span>
+				</span>
+				<a role="button" id="productRedirectionPopup_close" href="javascript:hidePopup('productRedirectionPopup')"
+					aria-label="<fmt:message bundle="${widgetText}" key="SL_CLOSE" />" title="<fmt:message bundle="${widgetText}" key="SL_CLOSE" />"
+					class="close tlignore" tabindex="4" title="<fmt:message key="SL_CLOSE" bundle="${widgetText}" />">
+				</a>
+			</div>
+			<div class="body">
+				<c:choose>
+					<c:when test="${productRedirectedType eq 0}">
+						<fmt:message key="LAP020_SUBSTITUTION_CONTENT" bundle="${widgetText}" />
+					</c:when>
+					<c:when test="${productRedirectedType eq 1}">
+						<fmt:message key="LAP022_UPSELL_CONTENT" bundle="${widgetText }" />
+					</c:when>
+				</c:choose>
+			</div>
+			<div class="footer">
+				<div class="ctaContainer">
+					<a id="productRedirectionPopup_ok" href="javascript:hidePopup('productRedirectionPopup')" class="button green" tabindex="0">
+						<fmt:message key="LAP024_REDIRECTION_PRODUIT_BUTTON_OK" bundle="${widgetText}" />
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	dojo.addOnLoad(function(){
+		showPopup('productRedirectionPopup')
+	});
+</script>

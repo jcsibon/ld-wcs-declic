@@ -1,0 +1,109 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<jsp:useBean id="activeShopsByZipCode" class="java.util.HashMap" />
+
+<c:forEach items="${activeShopsDB.fullActiveStores}" var="activeShopCurr" >
+	<c:set var="zipCodeFirstChar" value="${fn:substring(activeShopCurr.cp,0,1)}" />
+	<%
+		java.util.ArrayList listActiveShopForCurrZip = null;
+		if(activeShopsByZipCode.containsKey(pageContext.getAttribute("zipCodeFirstChar"))){
+			listActiveShopForCurrZip = (java.util.ArrayList)activeShopsByZipCode.get(pageContext.getAttribute("zipCodeFirstChar"));
+		}
+		else{
+			listActiveShopForCurrZip = new java.util.ArrayList();
+			activeShopsByZipCode.put(pageContext.getAttribute("zipCodeFirstChar"),listActiveShopForCurrZip);
+		}
+		listActiveShopForCurrZip.add(pageContext.getAttribute("activeShopCurr"));
+	 %>
+</c:forEach>
+
+<span class="titleBlock"><fmt:message key="StoreLocListeMagasinsBlockTitle" bundle="${storeText}" /></span>
+<script>
+	$(document).ready(function () {
+		$('.navSection').on('click', function (e) {
+			var elemId = "";    //eg: #nav2
+			switch (e.target.id) {
+				case "nav0": elemId = "#s0"; break;
+				case "nav1": elemId = "#s1"; break;
+				case "nav2": elemId = "#s2"; break;
+				case "nav3": elemId = "#s3"; break;
+				case "nav4": elemId = "#s4"; break;
+				case "nav5": elemId = "#s5"; break;
+				case "nav6": elemId = "#s6"; break;
+				case "nav7": elemId = "#s7"; break;
+				case "nav8": elemId = "#s8"; break;
+				case "nav9": elemId = "#s9"; break;
+			}
+			$('.content').animate({scrollTop: $(elemId).parent().scrollTop() + $(elemId).offset().top - $(elemId).parent().offset().top}, 200 );
+			e.preventDefault();
+		});
+
+       $('.scrollbar-inner').scrollbar();
+       
+       var nbNavSection = $('.nav .navSection a[id ^="nav"]').length;
+       
+       $('.nav .navSection').each(function(){
+       		$(this).height(100/nbNavSection+'%');
+       });
+	});
+</script>
+
+<div class="nav" style="height: 334px">
+		<c:forEach items="${activeShopsByZipCode}" var="shopsList">
+			<c:if test="${fn:length(shopsList.value) > 0}">
+				<div class="navSection">
+					<a id="nav${shopsList.key}" href="#">${shopsList.key}0</a>
+				</div>
+			</c:if>
+		</c:forEach>
+</div>
+
+<div class="listeMagasins content scrollbar-inner">
+	<c:forEach items="${activeShopsByZipCode}" var="shopsList" varStatus="statusList">
+		<c:if test="${fn:length(shopsList.value) > 0}">
+			<c:set var="lengthList" value="${fn:length(shopsList.value)}" />
+			<c:set var="nbRowByCol" value="${lengthList/3}" />
+			<c:choose>
+				<c:when test="${lengthList < 5}">
+					<c:set var="nbRowByCol" value="1" />
+				</c:when>
+				<c:otherwise>
+					<c:set var="nbRowByCol" value="${nbRowByCol + (1 - (nbRowByCol%1))%1}" />
+				</c:otherwise>
+			</c:choose>
+			<div class="row rowCol3" id="s${shopsList.key}">
+				<ul>
+					<c:forEach items="${shopsList.value}" var="shop" varStatus="status" >
+						<wcbase:useBean id="shopDescDB" classname="com.lapeyre.declic.commerce.StoreLocationDescription.StoreLocationDescriptionDataBean" >
+							<c:set target="${shopDescDB}" property="languageId" value="${langId}" />
+							<c:set target="${shopDescDB}" property="stlocId" value="${shop.strLocId}" />
+						</wcbase:useBean>
+						<wcbase:useBean id="shopDB" classname="com.lapeyre.declic.commerce.storelocator.beans.FullShopDataBean" scope="page">
+							<c:set value="${shop.strLocId}" target="${shopDB}" property="stlocId"/>
+							<c:set value="${langId}" target="${shopDB}" property="languageId"/>
+							<c:set value="${CommandContext}" target="${shopDB}" property="commandContext"/>
+						</wcbase:useBean>
+						<c:if test="${status.index%nbRowByCol eq 0}" >
+							<li>
+								<ul>
+						</c:if>
+						<li class="truncate">
+							<a href="${shopDescDB.stlocDesc.field3}">${shop.cp} - ${shopDB.name}</a>
+						</li>
+						<c:if test="${status.count%nbRowByCol eq 0}" >
+								</ul>
+							</li>
+						</c:if>
+						<%--Il faut supprimer la variable à la fin de chaque boucle pour qu'elle soit bien réinitialisée --%>
+						<c:remove var="shopDescDB"/>
+						<c:remove var="shopDB"/>
+					</c:forEach>
+				</ul>
+			</div>
+			<c:if test="${not statusList.last}">
+				<hr>
+			</c:if>
+		</c:if> 
+	</c:forEach>
+	<br/>
+	<br/>
+</div>

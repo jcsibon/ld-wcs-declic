@@ -1,0 +1,153 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2007, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%@page import="java.util.Date"%>
+<%@page import="java.util.Calendar"%>
+<%@page import="com.lapeyre.declic.configurations.ConfigTool"%>
+<%@ page import="java.text.SimpleDateFormat" %>
+
+<!-- BEGIN TunnelLivraison_Data.jspf -->
+<wcbase:useBean id="fullStoreDB1" classname="com.lapeyre.declic.commerce.storelocator.beans.FullShopDataBean">
+	<c:set value="${extendedUserContext.defaultStores[0].id}" target="${fullStoreDB1}" property="stlocId" />
+	<c:set value="${langId}" target="${fullStoreDB1}" property="languageId" />
+</wcbase:useBean>
+
+<wcbase:useBean id="fullStoreDB2" classname="com.lapeyre.declic.commerce.storelocator.beans.FullShopDataBean">
+	<c:set value="${extendedUserContext.defaultStores[1].id}" target="${fullStoreDB2}" property="stlocId" />
+	<c:set value="${langId}" target="${fullStoreDB2}" property="languageId" />
+</wcbase:useBean>
+<wcbase:useBean id="fullStoreDB3" classname="com.lapeyre.declic.commerce.storelocator.beans.FullShopDataBean">
+	<c:set value="${extendedUserContext.defaultStores[2].id}" target="${fullStoreDB3}" property="stlocId" />
+	<c:set value="${langId}" target="${fullStoreDB3}" property="languageId" />
+</wcbase:useBean>
+
+<c:set var="SHIPPINGANDBILLING" value="ShippingAndBilling"/>
+<c:set var="SHIPPING" value="Shipping"/>
+<c:set var="BILLING" value="Billing"/>
+
+<c:set var="pageType" value="TunnelLivraison" scope="request" />
+
+<%-- Retrieve excluded postal code liste --%>
+<%
+    if(request.getAttribute("excludedPostalCodeList") == null) {
+    	String excludedPostalCodeList = ConfigTool.getListValuePropertiesResource().getProperty("ExcludedPostalCode");
+    	request.setAttribute("excludedPostalCodeList",excludedPostalCodeList);
+    }
+    
+    //retrieve idMetier of shipping mode
+    if(request.getAttribute("modeRetrait") == null) {
+    	String modeRetrait = ConfigTool.getConfigurationPropertiesResource().getProperty("RetraitMagasinIdMetier");
+    	request.setAttribute("modeRetrait",modeRetrait);
+    }
+    if(request.getAttribute("modeDrive") == null) {
+    	String modeDrive = ConfigTool.getConfigurationPropertiesResource().getProperty("RetraitMagasinDriveIdMetier");
+    	request.setAttribute("modeDrive",modeDrive);
+    }
+    if(request.getAttribute("modeTransporter") == null) {
+    	String modeTransporter = ConfigTool.getConfigurationPropertiesResource().getProperty("LivraisonTransporterIdMetier");
+    	request.setAttribute("modeTransporter",modeTransporter);
+    }
+    if(request.getAttribute("modeColissimo") == null) {
+    	String modeColissimo = ConfigTool.getConfigurationPropertiesResource().getProperty("LivraisonColissimoIdMetier");
+    	request.setAttribute("modeColissimo",modeColissimo);
+    }
+    if(request.getAttribute("modeLivraisonCatalog") == null) {
+    	String modeLivraisonCatalog = ConfigTool.getConfigurationPropertiesResource().getProperty("LivraisonCatalogIdMetier");
+    	request.setAttribute("modeLivraisonCatalog",modeLivraisonCatalog);
+    }
+    //Retrieve number of days to display for drive schedule
+	if(request.getAttribute("driveScheduleNbDays") == null) {
+    	String driveScheduleNbDays = ConfigTool.getConfigurationPropertiesResource().getProperty("drive.schedule.nb.days");
+    	request.setAttribute("driveScheduleNbDays",driveScheduleNbDays);
+    }
+    //Retrieve number of days for each drive schedule
+	if(request.getAttribute("driveScheduleStepDays") == null) {
+    	String driveScheduleStepDays = ConfigTool.getConfigurationPropertiesResource().getProperty("drive.schedule.step.days");
+    	request.setAttribute("driveScheduleStepDays",driveScheduleStepDays);
+    }
+    
+//     int driveScheduleNbDays = Integer.parseInt((String) request.getAttribute("driveScheduleNbDays"));
+//     int driveScheduleStepDays = Integer.parseInt((String) request.getAttribute("driveScheduleNbDays"));
+    
+//     if(request.getAttribute("driveScheduleStartDate") == null) {
+//     	String dateDebut = "";
+//     	String dateFin = "";
+//     	SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm"); //format du CMS
+// 	    dateDebut = formatter.format(new Date());
+// 	    dateDebut = "20150306";
+// 	    Calendar cal = Calendar.getInstance();
+// 	    cal.add(Calendar.DAY_OF_YEAR, 7);
+// 	    dateFin = formatter.format(cal.getTime());
+// 	    dateFin = "20150313";
+//     	request.setAttribute("driveScheduleStartDate",dateDebut);
+//     	request.setAttribute("driveScheduleEndDate",dateFin);
+//     }
+%>
+
+<wcf:url var="DriveScheduleURL" value="/DriveScheduleView" type="Ajax">
+	<wcf:param name="shopId" value="${fullStoreDB1.identifier}" />
+	<wcf:param name="dateDebut" value="${driveScheduleStartDate}" />
+	<wcf:param name="dateFin" value="${driveScheduleEndDate}" />
+</wcf:url>
+
+<%@ include file="LivraisonShipping_Data.jsp"%>
+
+
+<ecocea:xOrderDetails orderId="${orderId}" var="xOrderDetails" scope="2"/>
+
+<c:if test="${!empty orderShippingData && !empty orderShippingData.shippingMode_idClient && (orderShippingData.shippingMode_idClient eq modeTransporter || orderShippingData.shippingMode_idClient eq modeColissimo)}">
+	<c:set var="isDefaultLivraison" value="true"/> 
+</c:if>
+
+<fmt:message var="supEtageInfoMessage" key="supEtageInfoMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="orderGlobalAvailabilityMessage" key="orderGlobalAvailabilityMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="indispoProduitInfoBulleErrorMessage" key="indispoProduitInfoBulleErrorMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="orderItemavailabilityInStockLabel" key="orderItemavailabilityInStockLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="unavailableLabel"  key="noStockInformationErrorMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="availablefromLabel" key="availabilityDatePrefixLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="availableLabel" key="availabilityInStockLabel" bundle="${widgetText}" scope="request"/>
+<fmt:message var="availabilityTechErr" key="LAP_037_UNAVAILABLE_TECHERR" bundle="${widgetText}" scope="request"/>
+<fmt:message var="availabilityMessageTopForRetrait" key="availabilityMessageTopForRetrait" bundle="${widgetText}" scope="request"/>
+<fmt:message var="availabilityMessageTopForLivraison" key="availabilityMessageTopForLivraison" bundle="${widgetText}" scope="request"/>
+<fmt:message var="availabilityMessageBottomForRetrait" key="availabilityMessageBottomForRetrait" bundle="${widgetText}" scope="request"/>
+<fmt:message var="availabilityMessageBottomForLivraison" key="availabilityMessageBottomForLivraison" bundle="${widgetText}" scope="request"/>
+<fmt:message var="availabilityMessageBottom" key="availabilityMessageBottom" bundle="${widgetText}" scope="request"/>
+<fmt:message var="noCreneauDriveMessageTop" key="noCreneauDriveMessageTop" bundle="${widgetText}" scope="request"/>
+<fmt:message var="noCreneauDriveMessageBottom" key="noCreneauDriveMessageBottom" bundle="${widgetText}" scope="request"/>
+<fmt:message var="noStoreForAddressMessageTop" key="noStoreForAddressMessageTop" bundle="${widgetText}" scope="request"/>
+<fmt:message var="noStoreForAddressMessageBottom" key="noStoreForAddressMessageBottom" bundle="${widgetText}" scope="request"/>
+<fmt:message var="noStoreMessageTop" key="noStoreMessageTop" bundle="${widgetText}" scope="request"/>
+<fmt:message var="noShippingServiceCarryoutMessageTop" key="noShippingServiceCarryoutMessageTop" bundle="${widgetText}" scope="request"/>
+<fmt:message var="noShippingServiceCarryoutMessageBottom" key="noShippingServiceCarryoutMessageBottom" bundle="${widgetText}" scope="request"/>
+<fmt:message var="noShippingServiceDeliveryMessageTop" key="noShippingServiceDeliveryMessageTop" bundle="${widgetText}" scope="request"/>
+<fmt:message var="noShippingServiceDeliveryMessageBottom" key="noShippingServiceDeliveryMessageBottom" bundle="${widgetText}" scope="request"/>
+<fmt:message var="noStoreMessageBottom" key="noStoreMessageBottom" bundle="${widgetText}" scope="request"/>
+<fmt:message var="noAddressMessageTop" key="noAddressMessageTop" bundle="${widgetText}" scope="request"/>
+<fmt:message var="noAddressMessageBottom" key="noAddressMessageBottom" bundle="${widgetText}" scope="request"/>
+<fmt:message var="uncompletedAddressMessageBottom" key="uncompletedAddressMessageBottom" bundle="${widgetText}" scope="request"/>
+<fmt:message var="technicalErrorMessageTop" key="technicalErrorMessageTop" bundle="${widgetText}" scope="request"/>
+<fmt:message var="technicalErrorMessageBottom" key="technicalErrorMessageBottom" bundle="${widgetText}" scope="request"/>
+<fmt:message var="selectCreneauDriveMessageBottom" key="selectCreneauDriveMessageBottom" bundle="${widgetText}" scope="request"/>
+<fmt:message var="noStockMessageTop" key="noStockMessageTop" bundle="${widgetText}" scope="request"/>
+<fmt:message var="noStockMessageBottom" key="noStockMessageBottom" bundle="${widgetText}" scope="request"/>
+<fmt:message var="ERR_ORDER_SHIPPING_NOT_VALID" key="ERR_ORDER_SHIPPING_NOT_VALID" bundle="${widgetText}" scope="request"/>
+<fmt:message var="ERR_ORDER_BILLING_ADDRESS_NOT_VALID" key="ERR_ORDER_BILLING_ADDRESS_NOT_VALID" bundle="${widgetText}" scope="request"/>
+<fmt:message var="ERR_ORDER_DEFAULT_SHOP_NOT_VALID" key="ERR_ORDER_DEFAULT_SHOP_NOT_VALID" bundle="${widgetText}" scope="request"/>
+<fmt:message var="ERR_ORDER_NOT_AVAILABLE" key="ERR_ORDER_NOT_AVAILABLE" bundle="${widgetText}" scope="request"/>
+<fmt:message var="ERR_ORDER_SHIPPING_ADDRESS_NOT_VALID" key="ERR_ORDER_SHIPPING_ADDRESS_NOT_VALID" bundle="${widgetText}" scope="request"/>
+<fmt:message var="ERR_MIXTE_STANDARD_CATALOG" key="ERR_MIXTE_STANDARD_CATALOG" bundle="${widgetText}" scope="request"/>
+<fmt:message var="ERR_DRIVE_SCHEDULE_NOT_VALID" key="ERR_DRIVE_SCHEDULE_NOT_VALID" bundle="${widgetText}" scope="request"/>
+<fmt:message var="addressNotEligibleErrorMessage" key="addressNotEligibleErrorMessage" bundle="${widgetText}" scope="request"/>
+<fmt:message var="reservationCreneauDriveError" bundle="${widgetText}" key="reservationCreneauDriveError" scope="request"></fmt:message>
+
+<!-- END TunnelLivraison_Data.jspf -->

@@ -1,0 +1,36 @@
+<message type="attributeImport">
+	<header>
+		<sender>SAS</sender>
+		<SASid>sas id </SASid>
+		<extractDate>2014-11-20T09:34:54.00</extractDate>
+		<targetCatalog>current</targetCatalog>
+		<nbDataEntries>1</nbDataEntries>
+		<credentials>
+			<login>importadmin</login>
+			<password>passw0rd</password>
+		</credentials>
+	</header>
+	<data>
+		<attribute>
+			<action>update</action>
+			<identifier>isSoldes</identifier>
+			<label locale="fr">Flag Soldes</label>
+			<description locale="fr"><![CDATA[Flag solde]]></description>
+			<type>Decimal</type>
+			<isListOfValues>true</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+			<allowedValueList>
+				<allowedValue>
+					<allowedValueIdentifier>0.0</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">0.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">1.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>DROITE</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="false">1.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">2.0</allowedValueSequence>
+				</allowedValue>
+			</allowedValueList>
+		</attribute>
+	</data>
+</message>

@@ -1,0 +1,60 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+
+<%-- BEGIN SearchSummary_UI.jsp --%>
+
+<%--On affiche le terme qui � �t� recherch� (renseign� par l'utilisateur) --%>
+
+		<c:if test="${!empty WCParam.searchTerm}">
+			<div class="widget_title_container_position">
+				<div class="widget_title_container">
+					<h1 class="searchSummaryTitle">
+						<c:choose>
+							<c:when test="${param.type eq 'cross-content'}">
+								<span id="totalCountSearchSummary">${totalContentCount}</span>
+								<fmt:message key = "LAP030_cross_content_matches"  bundle="${widgetText}" />
+							</c:when>
+							<c:when test="${param.type eq 'mobile-title'}">
+								<span id="searchSummaryMobileTitle"><fmt:message key = "LAP030_mobile_search"  bundle="${widgetText}" /></span>
+							</c:when>
+							<c:otherwise>
+								<span id="totalCountSearchSummary">${totalCount}</span>
+								<fmt:message key = "LAP030_products_matches"  bundle="${widgetText}" />
+							</c:otherwise>
+						</c:choose>
+						<span class="searchTermTitle">
+							"<c:out value='${WCParam.searchTerm}'/>"
+						</span>
+					</h1>
+				</div>
+			</div>
+		</c:if>
+		<%--If empty searchterm, the search is probably based on manufacturer term --%>
+		<c:if test="${empty WCParam.searchTerm && !empty WCParam.manufacturer}">
+			<div class="widget_title_container_position">
+				<div class="widget_title_container">
+					<h1>
+						<span id="totalCountSearchSummary"></span>
+						<fmt:message key = "LAP030_matches"  bundle="${widgetText}" /></span>
+						<span>
+							<c:out value='${WCParam.manufacturer}'/>
+						</span>
+					</h1>
+				</div>
+			</div>
+		</c:if>
+												
+<!-- End Widget Title Container -->
+
+<%-- END SearchSummary_UI.jsp --%>

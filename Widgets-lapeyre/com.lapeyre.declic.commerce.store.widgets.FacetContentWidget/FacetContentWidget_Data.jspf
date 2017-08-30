@@ -1,0 +1,43 @@
+<%@ include file="/Widgets/Common/Facet/FacetFilter.jspf" %>
+
+<%@ include file="/Widgets-lapeyre/Common/SearchCrossContentSetup.jspf" %>
+
+<%-- var f = nombre de facets --%>
+<c:set var="f" value="0" />
+<c:set var="sType" value="${WCParam.sType}"/>
+<c:if test="${empty sType}">
+	<c:set var="sType" value="SimpleSearch"/>
+</c:if>
+
+<c:set var="pageView" value="${WCParam.pageView}" scope="request"/>
+<c:if test="${empty pageView}" >
+	<c:set var="pageView" value="${env_defaultPageView}" scope="request"/>
+</c:if>
+
+
+<!-- Récupération des Facets -->
+<wcf:useBean var="facetArray" classname="java.util.ArrayList" scope="request"/>
+<c:forEach var="xcontentFacet" items="${xcontentsFacet}" varStatus="statut">
+	
+	<wcf:set target="${facetArray}" value="${xcontentFacet}"/>
+	<c:set var="f" value="${f + 1}" />
+</c:forEach>
+
+
+
+
+<c:set var="widgetSuffix" value="" />
+<c:if test="${(!empty param.pgl_widgetSlotId) && (!empty param.pgl_widgetDefId) && (!empty param.pgl_widgetId)}">
+	<c:set var="widgetSuffix" value="_${param.pgl_widgetSlotId}_${param.pgl_widgetDefId}_${param.pgl_widgetId}" />
+</c:if>
+
+<wcf:getData type="com.ibm.commerce.infrastructure.facade.datatypes.OnlineStoreType"
+	var="relatedOnlineStore"
+	expressionBuilder="findByUniqueID">
+	<wcf:param name="storeId" value="${storeId}"/>
+	<wcf:param name="accessProfile" value="IBM_Details"/>
+	<wcf:param name="name" value="wc.mi.product.MIGThreshold"/>
+</wcf:getData>
+<c:if test="${!empty relatedOnlineStore}" >	
+	<c:set var="storeConfView" value="${relatedOnlineStore.userData.userDataField}" />
+</c:if>

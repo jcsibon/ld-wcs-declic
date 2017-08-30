@@ -1,0 +1,71 @@
+<%--  Add your data related code here --%>
+<%@ include file="/Widgets/Common/PDP_CatalogEntryData.jspf" %>
+
+<ecocea:widgetPath var="socialNetworksWidgetPath" identifier="SocialNetworks" storeId="${storeId}"/>
+<ecocea:widgetPath var="fullImagewidgetPath" identifier="FullImage" />
+<ecocea:widgetPath var="itemAvailabilityInPhysicalStoreswidget" identifier="ItemAvailabilityInPhysicalStoresWidget" />
+<ecocea:widgetPath var="meawidgetPath" identifier="meaWidget" />
+<ecocea:widgetPath var="shopperActionswidgetPath" identifier="ShopperActions" />
+<c:set var="appointmentPopupPath" value="/Widgets-lapeyre/Common/AppointmentPopup/AppointmentPopup.jsp" />
+<c:set var="sharePopupPath" value="/Widgets-lapeyre/Common/SharePopup/SharePopup.jsp" />
+
+<wcf:useBean var="pictos" classname="java.util.LinkedList" scope="request" />
+<c:set var="name" value="${catalogEntryDetails.name}" />
+<c:set var="partnumber" value="${catalogEntryDetails.partNumber}" />
+<c:set var="partNumber" value="${catalogEntryDetails.partNumber}" scope="request" />
+<c:set var="manufacturerName" value="${catalogEntryDetails.manufacturer}" />
+<c:set var="shortDesc" value="${catalogEntryDetails.shortDescription}" />
+<c:set var="longDesc" value="${catalogEntryDetails.longDescription}" />
+<c:set var="auxDesc1" value="${catalogEntryDetails.auxDescription1}" />
+<c:set var="attachments" value="${catalogEntryDetails.attachments}" />
+<c:set var="isOnSpecial" value="${catalogEntryDetails.isOnSpecial}" />
+
+<c:set var="showCompareBox" value="true" />
+
+<c:set var="pageType" value="ProductCustom" scope="request" />
+
+<wcf:useBean var="vids" classname="java.util.LinkedList" />
+
+<c:forEach var="attachment" items="${attachments}">
+	<c:if test="${attachment.usage eq ICON_ATCHMT}">
+		<wcf:set target="${pictos}" value="${attachment}" />
+	</c:if>
+	<c:if test="${attachment.usage eq YOUTUBE_VIDEO_ATCHMT}">
+		<wcf:set target="${vids}" value="${attachment}" />
+	</c:if>
+	<c:if test="${attachment.usage eq TOOL_LINK_ATCHMT}">
+		<c:set var="toolAttachment" value="${attachment}" />
+	</c:if>
+</c:forEach>
+
+<c:set var="attributes" value="${catalogEntryDetails.attributes}" />
+<c:forEach var="attr" items="${attributes}">
+	<c:if test="${attr.identifier eq GOOGLE_CATEGORY_ATTRIBUTE_NAME}">
+		<c:set var="googleCategory" value="${attr.name}" scope="request"/>
+	</c:if>
+	<c:if test="${attr.usage eq 'Descriptive' && attr.identifier eq 'isSoldes'}">
+           <c:set var="soldeFlagProduct" value="${attr.values[0].value}" scope="request" />
+ 	</c:if>
+</c:forEach>
+
+<c:forEach var="sku" items="${catalogEntryDetails.sKUs}">
+	<c:if test="${sku.isDefault eq 1}">
+		<c:set var="defaultSku" value="${sku}" scope="request"/>
+	</c:if>
+</c:forEach>
+
+<c:forEach var="price" items="${catalogEntryDetails.price}">
+	<c:if test="${(price.usage eq 'Offer') && (price.ecopart > 0.0)}">
+		<c:set var="ecoPart">
+			<fmt:formatNumber value="${price.ecopart}" type="currency" currencySymbol="${env_CurrencySymbolToFormat} ${extendedUserContext.isPro ? '<sup>HT</sup>' : ''}" maxFractionDigits="${env_currencyDecimal}"/>
+		</c:set>
+		<%-- <ecocea:ecopart var="ecoPart" partnumber="${partnumber}" usage="Offer" isProBTP="${extendedUserContext.isPro}" currency="${price.currency}" />--%>
+	</c:if>
+	<c:if test="${(price.usage eq 'Offer') and (!empty price.value)}">
+		<c:set var="productAvailable" value="true" scope="request"/>
+	</c:if>
+</c:forEach>
+
+<c:if test="${productAvailable}">
+	<c:set var="microDataOfferAttributes" value="itemprop=\"offers\" itemscope itemtype=\"${MICRO_DATA_OFFER}\"" />
+</c:if>

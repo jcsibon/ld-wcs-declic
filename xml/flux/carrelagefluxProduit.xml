@@ -1,0 +1,205 @@
+<message type="productImport">
+	<header>
+		<sender>SAS</sender>
+		<SASid>SASid</SASid>
+		<extractDate>2014-10-14T09:34:54.00</extractDate>
+		<targetCatalog>current</targetCatalog>
+		<nbDataEntries>9</nbDataEntries>
+		<credentials>
+			<login>importadmin</login>
+			<password>passw0rd</password>
+		</credentials>
+	</header>
+	<data>
+		<!--escalier Metal Std-->
+		<product>
+			<action>update</action>
+			<partnumber>AM-9000001</partnumber>
+			<type>STANDARD</type>
+			<published locale="fr">true</published>
+			<label locale="fr">Carrelage Chester</label>
+			<shortDesc locale="fr"><![CDATA[Carrelage de sol]]></shortDesc>
+			<longDesc locale="fr"><![CDATA[Carrelage de sol 16.5 x 66.4 cm. Grès cérame émaillé. Boite de 10 carreaux (1.09 m²)]]></longDesc>
+			<additionalDesc1 locale="fr"><![CDATA[<ul><li>Carrelage de sol 16.5 x 66.4 cm.</li><li>Grès cérame émaillé. Boite de 10 carreaux (1.09 m²).</li></ul>.]]></additionalDesc1>
+			<additionalDesc2 locale="fr"><![CDATA[]]></additionalDesc2>
+			<brandPartnumber>LAPEYRE</brandPartnumber>
+			<brandName>Lapeyre</brandName>
+			
+			<keyword locale="fr"><![CDATA[carrelage,interieur]]></keyword>
+			<imageThumbnail locale="fr"><![CDATA[/thumbnail/AM-9000001.jpg]]></imageThumbnail>
+			<imageFull locale="fr"><![CDATA[/standardMain/AM-9000001.jpg]]></imageFull>
+			
+			<categoriesParentList>
+					<categoryParent>
+						<categoryIdentifier>1-SOLS-cat-carrelage</categoryIdentifier>
+					</categoryParent>					
+			</categoriesParentList>
+			<seo>
+				<urlKeyword locale="fr">carrelage-chester-9000001</urlKeyword>
+				<pageTitle locale="fr"><![CDATA[Carrelage - chester  - Lapeyre]]></pageTitle>
+				<metaDesc locale="fr"><![CDATA[Mon carrelage de test.]]></metaDesc>
+				<metaKeyword locale="fr"><![CDATA[carrelage,chester]]></metaKeyword>
+				<imageAltText locale="fr"><![CDATA[carrelage Chester]]></imageAltText>
+			</seo>
+			<associatedAssetList>
+				<associatedAsset>
+					<identifier>picto-fab-france</identifier>
+					<usage>ICON</usage>
+					<fileUrl><![CDATA[/picto/pictoFabFrance.png]]></fileUrl>
+					<label locale="fr">Fabriqué en France</label>
+					<shortDesc locale="fr"/>
+					<sequence>0</sequence>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>carrelage-chester-other1-thumbnail</identifier>
+					<usage>ANGLEIMAGES_THUMBNAIL</usage>
+					<fileUrl><![CDATA[/thumbnail/AM-9000001.jpg]]></fileUrl>
+					<label locale="fr">Votre carrelage</label>
+					<shortDesc locale="fr"/>
+					<sequence>1</sequence>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>carrelage-chester--other1-full</identifier>
+					<usage>ANGLEIMAGES_FULLIMAGE</usage>
+					<fileUrl><![CDATA[/standardMain/AM-9000001.jpg]]></fileUrl>
+					<label locale="fr">Votre carrelage</label>
+					<shortDesc locale="fr"/>
+					<sequence>2</sequence>
+				</associatedAsset>
+				<associatedAsset>
+					<identifier>carrelage-chester--gridfull</identifier>
+					<usage>GRIDIMAGES_FULLIMAGE</usage>
+					<fileUrl><![CDATA[/desktopList/AM-9000001.jpg]]></fileUrl>
+					<label locale="fr">Votre carrelage</label>
+					<shortDesc locale="fr"/>
+					<sequence>3</sequence>
+				</associatedAsset>
+			</associatedAssetList>
+			<attributeValueList>
+				<attributeValue>
+					<attrIdentifier>DIMENSIONS-COMMUNES-LARGEUR</attrIdentifier>
+					<attrSequence>2.0</attrSequence>
+					<attrUsage>2</attrUsage>
+					<valueIdentifier>30</valueIdentifier>
+				</attributeValue>
+				<attributeValue>
+					<attrIdentifier>DIMENSIONS-COMMUNES-HAUTEUR</attrIdentifier>
+					<attrSequence>3.0</attrSequence>
+					<attrUsage>2</attrUsage>
+					<valueIdentifier>140</valueIdentifier>
+				</attributeValue>
+				<attributeValue>
+					<attrIdentifier>COMMUNES-COLOR</attrIdentifier>
+					<attrSequence>1.0</attrSequence>
+					<attrUsage>1</attrUsage>
+				</attributeValue>
+			</attributeValueList>
+			<itemList>
+				<item>
+					<sku>9000011</sku>
+					<isDefault>true</isDefault>
+					<published locale="fr">true</published>
+					<label locale="fr">Large</label>
+					<shortDesc locale="fr"><![CDATA[]]></shortDesc>
+					<longDesc locale="fr"><![CDATA[]]></longDesc>
+					<additionalDesc1 locale="fr"><![CDATA[]]></additionalDesc1>
+					<additionalDesc2 locale="fr"><![CDATA[]]></additionalDesc2>
+					<imageThumbnail locale="fr"><![CDATA[/thumbnail/AM-9000001.jpg]]></imageThumbnail>
+					<imageFull locale="fr"><![CDATA[/standardMain/AM-9000001.jpg]]></imageFull>
+					<seoItem>
+						<urlKeyword locale="fr">carrelage-chester-9000011</urlKeyword>
+					</seoItem>
+					<attributeValueList>
+						<attributeValue>
+							<attrIdentifier>contrainteColisage</attrIdentifier>
+							<attrSequence>1.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>TRUE</valueIdentifier>
+							<valueString locale="fr">1.0</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-COLOR</attrIdentifier>
+							<attrSequence>2.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CHESTER</valueIdentifier>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>coeffConversionQuantite</attrIdentifier>
+							<attrSequence>3.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">1.09</valueString>
+						</attributeValue>		
+						<attributeValue>
+							<attrIdentifier>uniteVente</attrIdentifier>
+							<attrSequence>4.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">M2</valueString>
+						</attributeValue>					
+						<attributeValue>
+							<attrIdentifier>uniteVenteLabel</attrIdentifier>
+							<attrSequence>4.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">m2</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteSecondaire</attrIdentifier>
+							<attrSequence>4.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">UN</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteSecondaireLabel</attrIdentifier>
+							<attrSequence>4.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">unité</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>uniteVenteLegale</attrIdentifier>
+							<attrSequence>4.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">M2</valueString>
+						</attributeValue>					
+						<attributeValue>
+							<attrIdentifier>uniteVenteLegaleLabel</attrIdentifier>
+							<attrSequence>4.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueString locale="fr">m 2</valueString>
+						</attributeValue>							
+						
+					</attributeValueList>
+				</item>
+				<item>
+					<sku>9000012</sku>
+					<isDefault>false</isDefault>
+					<published locale="fr">true</published>
+					<label locale="fr">Mosaique</label>
+					<shortDesc locale="fr"><![CDATA[]]></shortDesc>
+					<longDesc locale="fr"><![CDATA[]]></longDesc>
+					<additionalDesc1 locale="fr"><![CDATA[]]></additionalDesc1>
+					<additionalDesc2 locale="fr"><![CDATA[]]></additionalDesc2>
+					<imageThumbnail locale="fr"><![CDATA[/thumbnail/AM-9000001.jpg]]></imageThumbnail>
+					<imageFull locale="fr"><![CDATA[/standardMain/AM-9000001.jpg]]></imageFull>
+					<seoItem>
+						<urlKeyword locale="fr">carrelage-chester-9000012</urlKeyword>
+					</seoItem>
+					<attributeValueList>
+						<attributeValue>
+							<attrIdentifier>contrainteColisage</attrIdentifier>
+							<attrSequence>1.0</attrSequence>
+							<attrUsage>2</attrUsage>
+							<valueIdentifier>FALSE</valueIdentifier>
+							<valueString locale="fr">0.0</valueString>
+						</attributeValue>
+						<attributeValue>
+							<attrIdentifier>COMMUNES-COLOR</attrIdentifier>
+							<attrSequence>1.0</attrSequence>
+							<attrUsage>1</attrUsage>
+							<valueIdentifier>CHESTER-MOSAIQUE</valueIdentifier>
+						</attributeValue>	
+					</attributeValueList>
+				</item>
+			</itemList>
+		</product>	
+			
+	</data>
+</message>

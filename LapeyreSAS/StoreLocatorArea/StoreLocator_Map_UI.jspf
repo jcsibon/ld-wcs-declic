@@ -1,0 +1,175 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<wcf:url var="Logon_LogoutURLMap" value="LogonForm">
+  <wcf:param name="langId" value="${langId}" />
+  <wcf:param name="storeId" value="${storeId}" />
+  <wcf:param name="catalogId" value="${catalogId}" />
+  <wcf:param name="myAcctMain" value="1" />
+</wcf:url>
+
+<div id="map-canvas" ></div>
+<script>
+	dojo.addOnLoad(function(){
+		MapStoreLocatorJS.setPrefixImageUrl('<c:out value="${jspStoreImgDir}/images" />');
+		MapStoreLocatorJS.setDirectionsLabel('<fmt:message key="StoreLocatorDirectionsLabel" bundle="${storeText}" />');
+		MapStoreLocatorJS.init('map-canvas',5,47.0377844,2.6859007);
+		MapStoreLocatorJS.logonFormUrl = '<c:out value="${Logon_LogoutURLMap}" />'	
+		MapStoreLocatorJS.isRegisterUser = false;
+
+		<c:if test="${userType eq 'R'}">
+			MapStoreLocatorJS.isRegisterUser = true;
+			<wcbase:useBean id="addressDB" classname="com.lapeyre.declic.commerce.usermanagement.commands.SelfAddressDataBean" scope="page" />
+			<c:set var="selfAddress" value="${addressDB.selfAddress}" />
+			<c:choose>
+			<c:when test="${!empty selfAddress && !empty selfAddress.addressField2}">
+	            <c:set var="address" value="${selfAddress.address1} ${selfAddress.zipCode} ${selfAddress.city}" />
+				document.DirectionsForm.departAddress.value = '${ecocea:escapeJS(address)}';
+	            var userLatLng = ${addressDB.selfAddress.addressField2};
+				if (userLatLng) {
+					document.DirectionsForm.departLat.value = userLatLng.lat;
+					document.DirectionsForm.departLng.value = userLatLng.lng;
+				}
+			</c:when>
+			<%-- <c:otherwise>
+			//adresse principale du client inconnue, utiliser la geoloc deja sett�e...ou rien si geoloc non autorisee
+			</c:otherwise> --%>
+			</c:choose>
+		</c:if>
+		
+		placeStoresOnMap();
+		
+		var checkAndSubmitOnKeyUp = function(e){
+			var ok = checkInputDirections();
+			document.DirectionsForm.departLat.value='';
+			document.DirectionsForm.departLng.value='';
+			if(ok && e.keyCode == 13) { //
+				submitDirections();
+			}
+		}
+	
+		var popupDirectionsDepartInput = document.DirectionsForm.departAddress;
+		var popupDirectionsArriveeInput = document.DirectionsForm.arriveeAddress;
+		dojo.connect(popupDirectionsDepartInput,'onkeyup', checkAndSubmitOnKeyUp);
+		dojo.connect(popupDirectionsArriveeInput,'onkeyup', checkAndSubmitOnKeyUp);
+	});
+	
+	function checkInputDirections(){
+		var popupDirectionsDepartInput = document.DirectionsForm.departAddress;
+		var popupDirectionsArriveeInput = document.DirectionsForm.arriveeAddress;
+		var submitButtonDirections = dojo.byId('popupDirections_ok');
+		if(trim(popupDirectionsDepartInput.value).length > 0 && trim(popupDirectionsArriveeInput.value).length > 0){
+			dojo.removeClass(submitButtonDirections,'disabled');
+			submitButtonDirections.removeAttribute('disabled');
+			submitButtonDirections.setAttribute('onclick','submitDirections(); return false;');
+			return true;
+		} else {
+			dojo.addClass(submitButtonDirections,'disabled');
+			submitButtonDirections.setAttribute('disabled',true);
+			submitButtonDirections.setAttribute('onclick','return false;');
+		}
+		return false;
+	}
+	
+	function cancelDirections() {
+		hidePopup('popupDirections');
+		resetDirectionsForm(); 
+	}
+	
+	function submitDirections(){
+		//Check input
+		if(trim(document.DirectionsForm.arriveeAddress.value).length == 0 && 
+			trim(document.DirectionsForm.departAddress.value).length == 0){
+			return;
+		}
+		//Get lat/lng first if not empty else address
+		var origin = null;
+		var destination = null;
+		
+		if(document.DirectionsForm.departLat.value.length > 0 && 
+			document.DirectionsForm.departLng.value.length > 0){
+			origin = new google.maps.LatLng(document.DirectionsForm.departLat.value,document.DirectionsForm.departLng.value);
+		}
+		else{
+			origin = document.DirectionsForm.departAddress.value.replace(/\s/g,'+');
+		}
+		
+		if(document.DirectionsForm.arriveeLat.value.length > 0 && 
+			document.DirectionsForm.arriveeLng.value.length > 0){
+			destination = new google.maps.LatLng(document.DirectionsForm.arriveeLat.value,document.DirectionsForm.arriveeLng.value);
+		}
+		else{
+			destination = document.DirectionsForm.arriveeAddress.value.replace(/\s/g,'+');
+		}
+		
+		MapStoreLocatorJS.launchDirections(origin,destination);
+		
+		resetDirectionsForm();
+		
+		hidePopup('popupDirections');
+	}
+	
+	function resetDirectionsForm(){
+		document.DirectionsForm.departAddress.value = '';
+		document.DirectionsForm.departLat.value = '';
+		document.DirectionsForm.departLng.value = '';
+		document.DirectionsForm.arriveeAddress.value = '';
+		document.DirectionsForm.arriveeLat.value = '';
+		document.DirectionsForm.arriveeLng.value = '';
+	}
+	<c:if test="${userType eq 'R'}">
+		SearchShopsJS.userId = ${CommandContext.userId};
+	</c:if>
+</script>
+
+<div id="popupDirections" data-dojo-type="lapeyre/widget/Dialog" style="display: none;">
+	<div class="widget_site_popup">
+		<div class="content">
+			<div class="header">
+				<span>
+					<fmt:message key="popupDirectionsTitle" bundle="${storeText}" />
+				</span>
+				<a role="button" id="popupDirections_close" href="javascript:hidePopup('popupDirections');" aria-label="<fmt:message bundle="${storeText}" key="SL_CLOSE" />" title="<fmt:message bundle="${storeText}" key="SL_CLOSE" />"  class="close tlignore" tabindex="4" title="<fmt:message key="SL_CLOSE" bundle="${storeText}" />"></a>
+				<div class="clear_float"></div>
+			</div>
+			<div class="body">
+				<form id="DirectionsForm" name="DirectionsForm" onsubmit="submitDirections()">
+					<div class="row">
+						<label for="departAddress"><fmt:message key="StoreLocatorDirectionsFromLabel" bundle="${storeText}" /></label>
+						<input type="text" name="departAddress" value="" size="35" />
+					</div>
+					
+					<div class="row">
+						<label for="arriveeAddress"><fmt:message key="StoreLocatorDirectionsToLabel" bundle="${storeText}" /></label>
+						<input type="text" name="arriveeAddress" value="" size="35" />
+					</div>
+					
+					<input type="hidden" name="departLat" value=""/>
+					<input type="hidden" name="departLng" value=""/>
+					
+					<input type="hidden" name="arriveeLat" value=""/>
+					<input type="hidden" name="arriveeLng" value=""/>
+				</form>
+				<div class="shopContainer">
+					<div class="shopBlock" id="popupDirections_shopBlockMain">
+					</div>
+				</div>
+			</div>
+			<div class="footer">
+			<c:if test="${!isOnMobileDevice}">
+				<c:set var="classInline" value="inline"/>
+			</c:if>
+				<div class="infoPin-links">
+					<div class="infoPin-link">
+						<a id="popupDirections_voirFiche" href="#" class="shop-infoPin-button button-light-gray" tabindex="0" onclick="cancelDirections(); return false;">
+							<fmt:message key="popupDirectionsAnnuler" bundle="${storeText}" />
+						</a>
+					</div>
+					<div class="infoPin-link">
+						<a id="popupDirections_ok" href="#" class="shop-infoPin-button button-primary" tabindex="1" onclick="submitDirections(); return false;">
+							<fmt:message key="popupDirectionsSubmit" bundle="${storeText}" />
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

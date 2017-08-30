@@ -1,0 +1,40 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2012, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%@ page trimDirectiveWhitespaces="true" %>
+<%-- 
+  *****
+  * This JSP file serves as sub-component of CategoryRecommendation, represent one category
+  *****
+--%>
+<!-- BEGIN widgets-lapeyre/CategorySpot.jspf-->
+<div class="linkToArticle centeredText">
+<!-- afficher l'image par défaut si category.fullimage est vide ou null -->
+
+<c:choose>
+	<c:when test="${!empty categoryImageMap[aStatus.current.key] && categoryImageMap[aStatus.current.key] != null}">
+		<astpush:assetPushUrl var="categoryImgURL" scope="page" urlRelative="${categoryImageMap[aStatus.current.key]}" type="CATEGORY" source="list" device="${device}" format="full"/>
+	</c:when>
+	<c:otherwise>
+		<c:set var="keyDefaultImageMaps" value="GRID_ASSET_main_full"/>
+		<astpush:assetPushUrl var="categoryImgURL" urlRelative="${defaultImageMaps[keyDefaultImageMaps]}" type="GRID_ASSET" source="main" device="${device}" format="desktopList" defaultUrl="true"/>
+	</c:otherwise>
+</c:choose>
+	<a class="hover_underline" href="${categoryURLMap[aStatus.current.key]}${cmcrurl_ProductNameLink}">
+		<div class="backgroundContainer">
+			<img alt="${categoryIdentifierMap[aStatus.current.key]}" src="${categoryImgURL}" >
+			<h2 class="title">${categoryIdentifierMap[aStatus.current.key]}</h2>
+		</div>
+	</a>
+</div>	
+<!-- END CategorySpot.jspf-->

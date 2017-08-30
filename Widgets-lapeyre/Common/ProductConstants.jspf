@@ -1,0 +1,32 @@
+<%--ECOCEA perf: on met les variables en dur plutot que d'aller chercher en base. --%>
+<%-- Constants for products Types --%>
+<c:set var="STANDARD_PRODUCT" value="STANDARD" scope="request" />
+<c:set var="COLLECTION_PRODUCT" value="COLLECTION" scope="request" />
+<c:set var="SUR_MESURE_PRODUCT" value="SUR_MESURE" scope="request" />
+<c:set var="CATALOGUE_PAPIER_PRODUCT" value="CATALOGUE_PAPIER" scope="request" />
+
+<%-- Constants for merchandising association types --%>
+<c:set var="X_SELL_MASSOC" value="X-SELL" scope="request" />
+<c:set var="COLLECTION_MASSOC" value="COLLECTION" scope="request" />
+<c:set var="UPSELL_MASSOC" value="UPSELL" scope="request" />
+<c:set var="SUBSTITUTION_MASSOC" value="SUBSTITUTION" scope="request" />
+<c:set var="COMPLEMENTARY_MASSOC" value="COMPLEMENTARY" scope="request" />
+<c:set var="REPLACEMENT_MASSOC" value="REPLACEMENT" scope="request" />
+
+<%-- Constants for attachments types --%>
+<c:set var="ANGLEIMAGES_FULLIMAGE_ATCHMT" value="ANGLEIMAGES_FULLIMAGE" scope="request" />
+<c:set var="ANGLEIMAGES_THUMBNAIL_ATCHMT" value="ANGLEIMAGES_THUMBNAIL" scope="request" />
+<c:set var="GRIDIMAGES_FULLIMAGE_ATCHMT" value="GRIDIMAGES_FULLIMAGE" scope="request" />
+<c:set var="ICON_ATCHMT" value="ICON" scope="request" />
+<c:set var="BRAND_LOGO_ATCHMT" value="BRAND_LOGO" scope="request" />
+<c:set var="COLLECTION_DESC_ATCHMT" value="COLLECTION_DESC" scope="request" />
+<c:set var="COLLECTION_COMPO_TYPE_ATCHMT" value="COLLECTION_COMPO_TYPE" scope="request" />
+<c:set var="TOOL_LINK_ATCHMT" value="TOOL_LINK" scope="request" />
+<c:set var="YOUTUBE_VIDEO_ATCHMT" value="YOUTUBE_VIDEO" scope="request" />
+<c:set var="PERSONNALISATIONDESKTOP_ATCHMT" value="PersonnalisationDesktop" scope="request" />
+<c:set var="PERSONNALISATIONMOBILE_ATCHMT" value="PersonnalisationMobile" scope="request" />
+<c:set var="USERMANUAL_ATCHMT" value="USERMANUAL" scope="request" />
+
+<%-- Constants for attributes identifier --%>
+<c:set var="GOOGLE_CATEGORY_ATTRIBUTE_NAME" value="categorieGoogle" scope="request" />
+

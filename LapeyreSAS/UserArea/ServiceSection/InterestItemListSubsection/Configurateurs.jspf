@@ -1,0 +1,153 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+
+<c:set var="projectPageSize" value="10" />
+<c:set var="projectListUrl" value="${wishlistRootUrl}&pageNumber=${pageNum}"  />
+<c:set var="returnToListUrl" value="${projectListUrl}&projectPageNum=${projectPageNum}"  />
+	
+<c:if test="${empty projectPageNum}">
+	<c:set var="projectPageNum" value="0" />
+</c:if>
+<script>projectListUrl="${fn:replace(returnToListUrl,'&amp;','&')}";</script>
+
+<c:choose>
+<c:when test="${!empty WCParam.myWebID}">
+        <c:set var="myWebID" value="${ WCParam.myWebID}"/>
+</c:when>
+<c:otherwise>
+	<c:set var="myWebID" value="${userId}"/>
+</c:otherwise>
+</c:choose>
+
+<jsp:useBean id="configurateurHelper" class="com.lapeyre.declic.flux.facade.configurateur.ConfigurateurHelper" scope="request">
+	<jsp:setProperty name="configurateurHelper" property="idWeb" value="${myWebID}" />
+	<jsp:setProperty name="configurateurHelper" property="numeroPage" value="${projectPageNum+1}" />
+	<jsp:setProperty name="configurateurHelper" property="nombreElementsParPage" value="${projectPageSize}" />
+</jsp:useBean>
+
+<c:choose><c:when test="${!empty configurateurHelper.projects}"><%@ include file="../../../Widgets/ShoppingList/DeleteProjectShoppingListPopup.jspf" %>
+<div class="listesAchat" id="mesprojets">
+	<h2 class="titleBlock">
+		<fmt:message key="surMesureProjectSectionTitle" bundle="${storeText}" />
+	</h2>
+		<div class="listesAchatHeader mobile-hidden">
+			${configurateurHelper.projects.count} projet<c:if test="${configurateurHelper.projects.count>1}">s</c:if>
+		</div>
+		<div class="orderBody">
+			<c:forEach var="myProject" items="${configurateurHelper.projects.data}" varStatus="status">
+				<div class="row ${status.count % 2 == 1 ? 'odd' : 'even'}" >
+					<div class="productImage ">		
+						<a href="${myProject.configuratorUrl}" alt="voir mon projet">												
+							<img width="212px" height="212px" src="${myProject.imageUrl}" alt="VISUEL CONFIGURATEUR FENETRE" border="0" onerror="this.src='/wcsstore/LapeyreSAS/images/desktopList/defaultImage.png';"/>
+						</a>
+					</div>
+					<div class="productSummary">
+						<p class="productName">
+							<a href="${myProject.configuratorUrl}" alt="voir mon projet">
+								${myProject.description}
+								<%-- TODO comment afficher les champs width/height/range/finishing --%>
+							</a>
+						</p>
+						<p class="skuReference mobile-hidden"><span>
+							<c:forEach var="parametre" items="${myProject.details}">
+								<%-- ${parametre.key} :  --%>${parametre.value}<br/>
+							</c:forEach>
+						</span></p>
+					</div>
+					<div class="totalPrice">
+						<div class="offerprice">
+							<c:set var="montant" value="${myProject.totalPrice /100}"/>
+ 							<fmt:formatNumber value="${montant}" type="currency" currencySymbol="<sup class='currency'>${env_CurrencySymbolToFormat}</sup>" maxFractionDigits="${env_currencyDecimal}" />
+						</div>
+					</div>
+					<div class="deleteAction">
+						<a class="deleteLink hover_underline" href="javascript:cartId='${myProject.cartId}';cartLineId='${myProject.cartLineId}';shoppingListJS.hideDeleteProjectErrorMessage();shoppingListJS.showPopup('DeleteProject');" id="WC_ConfiguratorProject_${myProject.cartId}_${myProject.cartLineId}_links">
+							<img src="${jspStoreImgDir}images/delete.png" alt="Supprimer" onmouseover="this.src='${jspStoreImgDir}images/deleteRed.png';" onmouseout="this.src='${jspStoreImgDir}images/delete.png';">
+						</a>
+					</div>
+				</div>
+			</c:forEach>
+		</div>
+		<div class="orderSummary">
+			<dl class="main line">
+				<dt class="label">
+					<fmt:message bundle="${storeText}" key="projectTotalPriceLabel" />
+				</dt>
+				<dd class="value">
+					<span class="price">
+						<fmt:formatNumber value="${configurateurHelper.projects.totalPrice /100}" type="currency" currencySymbol="<sup class='currency'>${env_CurrencySymbolToFormat}</sup>" maxFractionDigits="${env_currencyDecimal}" />
+					</span>
+				</dd>
+			</dl>
+		</div>
+
+
+<%--Pagination --%>
+	<c:set var="numberOfProjectsPage"
+		value="${(configurateurHelper.projects.count-1)/projectPageSize+1}" />
+	<fmt:parseNumber var="numberOfProjectsPage" integerOnly="true"
+		type="number" value="${numberOfProjectsPage}" />
+
+	<c:if test="${numberOfProjectsPage > 1}">
+		<c:set var="nextpagelistRootUrl"
+			value="" />
+		<div class="paging_controls">
+
+			<%-- Bouton "Plus récents" --%>
+			<a role="button"
+				class="button <c:if test="${projectPageNum <= 0 || empty projectPageNum}">hidden</c:if>"
+				id="WC_SearchBasedNavigationResults_pagination_link_left_categoryResults"
+				href='${projectListUrl}&projectPageNum=${projectPageNum-1}'
+				title="Show previous page"> <span class="mobile-hidden"><fmt:message
+						key="paginationPreviousButtonLabel" bundle="${storeText}" />
+			</span> </a>
+
+			<%-- Pagination --%>
+			<div class="pages pageControlMenu" role="combobox">
+				<div class="header">
+					<div class="controlBar">
+						<div class="pageControlWrapper">
+							<div id="pageControlMenu_Projects"
+								class="pageControlMenu"
+								data-dojo-attach-point="pageControlMenu"
+								data-parent="header">
+								<div class="pageControl number">
+									<c:forEach var="pageIdx" begin="1"
+										end="${numberOfProjectsPage}">
+										<c:choose>
+											<c:when test="${pageIdx==projectPageNum+1}">
+												<a class="active selected" href="#" role="button"
+													aria-disabled="true"
+													aria-label="Move to page ${pageIdx}"
+													tabindex="${pageIdx-1}">${pageIdx}</a>
+											</c:when>
+											<c:otherwise>
+												<a class="hoverover" role="button"
+													href="${projectListUrl}&projectPageNum=${pageIdx-1}"
+													aria-label="Move to page ${pageIdx}"
+													title="Move to page ${pageIdx}">${pageIdx}</a>
+											</c:otherwise>
+										</c:choose>
+									</c:forEach>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<%-- Bouton "Plus anciennes" --%>
+			<a role="button"
+				class="button <c:if test="${projectPageNum+1 >= numberOfProjectsPage}">hidden</c:if>"
+				id="WC_SearchBasedNavigationResults_pagination_link_right_categoryResults"
+				href="${projectListUrl}&projectPageNum=${projectPageNum+1}"
+				title="Show next page"> <span class="mobile-hidden"><fmt:message
+						key="paginationNextButtonLabel" bundle="${storeText}" />
+			</span> </a>
+		</div>
+	</c:if>	
+</div>
+</c:when>
+<%-- <c:otherwise>
+	<fmt:message key="noProjectFoundLabel" bundle="${storeText}" />
+</c:otherwise> --%>
+</c:choose>

@@ -1,0 +1,158 @@
+<%--  Add your data related code here --%>
+<c:set var="displayProductCount" value="false" />
+
+<wcf:useBean var="subFamilyMap" classname="java.util.HashMap" scope="request"/>
+
+<c:set var="currentCategoryID" value="${WCParam.categoryId}" scope="request"/>
+
+<wcf:rest var="currentCategory" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/categoryview/byId/${currentCategoryID}">
+	<wcf:param name="langId" value="${WCParam.langId}"/>
+	<wcf:param name="currency" value="${env_currencyCode}"/>
+	<wcf:param name="responseFormat" value="json"/>		
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+</wcf:rest>
+
+<c:set var="currentParentCategoryID" value="${currentCategory.catalogGroupView[0].parentCatalogGroupID}" />
+
+<c:if test="${not empty currentParentCategoryID}">
+	<wcf:rest var="parentCategory" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/categoryview/byId/${currentParentCategoryID}">
+		<wcf:param name="langId" value="${WCParam.langId}"/>
+		<wcf:param name="currency" value="${env_currencyCode}"/>
+		<wcf:param name="responseFormat" value="json"/>		
+		<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	</wcf:rest>
+	
+	<c:set var="parentCategoryName" value="${parentCategory.catalogGroupView[0].name}" />
+	<wcf:url var="parentCategoryUrl" patternName="CanonicalCategoryURL" value="Category3">
+   		<wcf:param name="langId" value="${langId}"/>
+		<wcf:param name="urlLangId" value="${urlLangId}" />
+		<wcf:param name="storeId" value="${storeId}"/>
+		<wcf:param name="catalogId" value="${catalogId}"/>
+		<wcf:param name="categoryId" value="${parentCategory.catalogGroupView[0].uniqueID}"/>
+   	</wcf:url>
+</c:if>
+
+<%-- Une petite page recursive pour chopper l'id de l'univers, et �viter de se baser sur le breadcrumb qui peut �tre parfois incomplet selon de l'endroit d'ou l'on vient. --%>
+<c:set var="nodeCategoryID" value="${currentCategoryID}" scope="request"/>
+
+<c:set var="catlevel" value="1" scope="request"/>
+<jsp:include page="FamilyCategoryNavigationNode.jsp" />
+
+<wcf:rest var="familyCategories" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/categoryview/byParentCategory/${universeCategoryID}">
+	<wcf:param name="langId" value="${WCParam.langId}"/>
+	<wcf:param name="currency" value="${env_currencyCode}"/>
+	<wcf:param name="responseFormat" value="json"/>		
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+</wcf:rest>
+
+<wcf:useBean var="topCategories" classname="java.util.ArrayList"/>
+<wcf:useBean var="fullTopCategoryList" classname="java.util.ArrayList" />
+
+<c:forEach var="familyCategory" items="${familyCategories.catalogGroupView}">
+	<wcf:useBean var="topCategoryMappingList" classname="java.util.ArrayList"/>
+	
+	<wcf:url var="CategoryDisplayURL" patternName="CanonicalCategoryURL" value="Category3">
+        <wcf:param name="langId" value="${WCParam.langId}" />
+        <wcf:param name="storeId" value="${WCParam.storeId}" />
+        <wcf:param name="catalogId" value="${WCParam.catalogId}" />             
+        <wcf:param name="categoryId" value="${familyCategory.uniqueID}" /> 
+        <wcf:param name="top_category" value="${universeCategoryID}"/>
+        <wcf:param name="beginIndex" value="0" />
+        <wcf:param name="urlLangId" value="${urlLangId}" />
+    </wcf:url>
+    
+    <wcf:set target="${topCategoryMappingList}" value="${familyCategory.uniqueID}" />       
+    <wcf:set target="${topCategoryMappingList}" value="${familyCategory.name}" />       
+    <wcf:set target="${topCategoryMappingList}" value="${CategoryDisplayURL}" />
+    <wcf:set target="${fullTopCategoryList}" value="${topCategoryMappingList}" />                   
+    <c:remove var="topCategoryMappingList"/>
+
+	<wcf:rest var="subFamilyCategories" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/categoryview/byParentCategory/${currentCategoryID}">
+		<wcf:param name="langId" value="${WCParam.langId}"/>
+		<wcf:param name="currency" value="${env_currencyCode}"/>
+		<wcf:param name="responseFormat" value="json"/>		
+		<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	</wcf:rest>
+	
+	<wcf:useBean var="fullSubFamilyCategoryList" classname="java.util.ArrayList" />
+	
+	<c:forEach var="subFamilyCategory" items="${subFamilyCategories.catalogGroupView}">
+		<wcf:useBean var="subFamilyCatMappingList" classname="java.util.ArrayList" />
+		
+		<wcf:url var="subFamilyCategoryURL" patternName="CanonicalCategoryURL" value="Category3">
+	        <wcf:param name="langId" value="${WCParam.langId}" />
+	        <wcf:param name="storeId" value="${WCParam.storeId}" />
+	        <wcf:param name="catalogId" value="${WCParam.catalogId}" /> 
+	        <wcf:param name="top_category" value="${universeCategoryID}"/>
+	        <wcf:param name="parent_category_rn" value="${currentCategoryID}" />             
+	        <wcf:param name="categoryId" value="${subFamilyCategory.uniqueID}" />
+	        <wcf:param name="beginIndex" value="0" />
+	        <wcf:param name="urlLangId" value="${urlLangId}" />
+	    </wcf:url>
+       	<wcf:set target="${subFamilyCatMappingList}" value="${subFamilyCategory.uniqueID}" />
+	    <wcf:set target="${subFamilyCatMappingList}" value="${subFamilyCategory.shortDescription}" />       
+	    <wcf:set target="${subFamilyCatMappingList}" value="${subFamilyCategoryURL}" />
+	    <wcf:set target="${fullSubFamilyCategoryList}" value="${subFamilyCatMappingList}" />
+	    <c:remove var="subFamilyCatMappingList"/>
+	    
+	</c:forEach>
+	<wcf:set key="${currentCategoryID}" value="${fullSubFamilyCategoryList}" target="${subFamilyMap}"/>
+	<c:remove var="fullSubFamilyCategoryList" />
+</c:forEach>
+
+<%-- On est sur une page famille, on peut recuperer la liste des sous famille directement avec l'id de la category courrante. --%>
+<c:set var="familySubCategories" value="${subFamilyMap[currentCategoryID]}" />
+<c:if test="${empty familySubCategories and not empty currentParentCategoryID}">
+	<%-- L'object est vide, du coup on recupere la liste des soeurs = sous familles de la category parente --%>
+	<wcf:rest var="subFamilyCategories" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/categoryview/byParentCategory/${currentParentCategoryID}">
+		<wcf:param name="langId" value="${WCParam.langId}"/>
+		<wcf:param name="currency" value="${env_currencyCode}"/>
+		<wcf:param name="responseFormat" value="json"/>		
+		<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	</wcf:rest>
+	
+	<wcf:useBean var="fullSubFamilyCategoryList" classname="java.util.ArrayList" />
+	
+	<c:forEach var="subFamilyCategory" items="${subFamilyCategories.catalogGroupView}">
+		<wcf:useBean var="subFamilyCatMappingList" classname="java.util.ArrayList" />
+		
+		<wcf:url var="subFamilyCategoryURL" patternName="CanonicalCategoryURL" value="Category3">
+	        <wcf:param name="langId" value="${WCParam.langId}" />
+	        <wcf:param name="storeId" value="${WCParam.storeId}" />
+	        <wcf:param name="catalogId" value="${WCParam.catalogId}" /> 
+	        <wcf:param name="top_category" value="${universeCategoryID}"/>
+	        <wcf:param name="parent_category_rn" value="${currentParentCategoryID}" />             
+	        <wcf:param name="categoryId" value="${subFamilyCategory.uniqueID}" />
+	        <wcf:param name="beginIndex" value="0" />
+	        <wcf:param name="urlLangId" value="${urlLangId}" />
+	    </wcf:url>
+       	<wcf:set target="${subFamilyCatMappingList}" value="${subFamilyCategory.uniqueID}" />       
+	    <wcf:set target="${subFamilyCatMappingList}" value="${subFamilyCategory.name}" />       
+	    <wcf:set target="${subFamilyCatMappingList}" value="${subFamilyCategoryURL}" />
+	    <wcf:set target="${fullSubFamilyCategoryList}" value="${subFamilyCatMappingList}" />
+	    <c:remove var="subFamilyCatMappingList"/>
+	    
+	</c:forEach>
+	<wcf:set key="${currentParentCategoryID}" value="${fullSubFamilyCategoryList}" target="${subFamilyMap}"/>
+	<c:remove var="fullSubFamilyCategoryList" />
+	<c:remove var="familySubCategories" />
+	<c:set var="familySubCategories" value="${subFamilyMap[currentParentCategoryID]}" />
+</c:if>
+
+<c:set var="isUniverse" value="${universeCategoryID == currentCategoryID}"/>
+<c:set var="navigationClass" value="familyNav"/>
+<c:if test="${isUniverse}">
+	<c:set var="navigationClass" value="universeNav"/>
+</c:if>
+<c:if test="${catlevel == 3 && !empty universeCategoryID}">
+	
+   	<wcf:url var="universeCategoryUrl" patternName="CanonicalCategoryURL" value="Category3">
+	   <wcf:param name="storeId" value="${WCParam.storeId}"  />
+	   <wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	   <wcf:param name="langId" value="${WCParam.langId}" />
+	   <wcf:param name="urlLangId" value="${urlLangId}"/>
+	   <wcf:param name="categoryId" value="${universeCategoryID}" />
+		<wcf:param name="pageView" value="${env_defaultPageView}"/>
+		<wcf:param name="beginIndex" value="0"/>
+	</wcf:url>
+</c:if>

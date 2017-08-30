@@ -1,0 +1,31 @@
+<c:choose>
+	<c:when test="${content.template == '3' || content.template == '2'}">
+		<c:choose>
+			<c:when test="${content.dossier.seo.url eq '/c/magazine/' || content.dossier.seo.url eq '/c/lapeyre/' || content.dossier.seo.url eq '/c/lapeyre-pro/'}" >
+				<c:set var="pageTemplate" value="HomeMag" />
+			</c:when>
+			<c:otherwise>
+				<c:set var="pageTemplate" value="dossier" />
+			</c:otherwise>
+		</c:choose>
+	</c:when>
+	<c:otherwise>
+		<c:set var="pageTemplate" value="article" />
+		<c:set var="pieceHabitation" value="${content.page.piecesHabitation}" />
+	</c:otherwise>
+</c:choose>
+<wcf:useBean var="catGroupIdentifiers" classname="java.util.ArrayList"/>
+<c:forEach var="ariane" items="${content.filAriane}" varStatus="status">
+	<c:set var="links" value="${fn:split(ariane.lien, '/')}" />
+	<c:set var="linkLabel" value="${links[fn:length(links) - 1]}" />
+	<wcf:set target="${catGroupIdentifiers}" value="${linkLabel}" />
+	<c:if test="${status.count eq 1 && !empty linkLabel}">
+		<c:set var="cat1Name" value="${linkLabel}" />
+	</c:if>
+	<c:if test="${status.count eq 2 && !empty linkLabel}">
+		<c:set var="cat2Name" value="${ariane.libelle}" />
+	</c:if>
+	<c:if test="${status.count eq 3 && !empty linkLabel}">
+		<c:set var="cat3Name" value="${ariane.libelle}" />
+	</c:if>
+</c:forEach>

@@ -1,0 +1,72 @@
+<fmt:message var="subjectMailShare" key="emailSharingSubject" bundle="${widgetText}" />
+<fmt:message var="bodyMailShare" key="emailSharingBody" bundle="${widgetText}" >
+	<fmt:param value="${ecocea:concatUrls(env_absoluteUrl,socialSharingURL)}" />
+	<fmt:param value="${socialSharingTitle}" />
+</fmt:message>
+<c:set var="mailtourlContent" value="?subject=${subjectMailShare}&body=${bodyMailShare}" scope="request"/>
+
+<script type="text/javascript" src="${jsAssetsDir}javascript/ContentArea/Contrib.js?${versionNumber}"></script>
+<wcf:url var="SendFormURL" value="SendFormCmd" type="Ajax">
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+</wcf:url>
+<script id="SocialNetworksScript_email">
+	dojo.require("dojox.validate.web");
+	dojo.require("dojox.validate._base");
+	dojo.require("dojox.validate.creditCard");
+	dojo.require("dojox.validate.isbn");
+
+	function openMailSharePopup(event) {
+		event.preventDefault();
+		event.stopImmediatePropagation();
+		event.stopPropagation();
+		dojo.byId('mailSharingSubject').value = "${ecocea:escapeJS(subjectMailShare)}";
+		dojo.byId('mailSharingContent').value = "${ecocea:escapeJS(bodyMailShare)}";
+		showPopup('popUpMailSharing');
+		return false;
+	}
+
+	dojo.addOnLoad(function() {
+		var mailSharingToDestInput = dojo.byId('mailSharingToDest');
+		var mailButtonSharing = dojo.byId('popUpMailSharing_ok');
+
+		dojo.addClass(mailButtonSharing, 'disabled');
+		mailButtonSharing.setAttribute('disabled', true);
+		mailButtonSharing.setAttribute('onclick', 'return false;');
+
+		dojo.connect(mailSharingToDestInput, 'onchange', function(e) {
+			var valueEmail = mailSharingToDestInput.value
+			var s = dojox.validate.isEmailAddress(valueEmail);
+			if (s) {
+				dojo.removeClass(mailButtonSharing, 'disabled'); 
+				mailButtonSharing.removeAttribute('disabled');
+				mailButtonSharing.setAttribute('onclick','sendMailWithDest();return false;');
+			} else {
+				dojo.addClass(mailButtonSharing, 'disabled');
+				mailButtonSharing.setAttribute('disabled', true);
+				mailButtonSharing.setAttribute('onclick', 'return false;');
+			}
+		});
+	});
+
+	function sendMailWithDest() {
+		var mailTo = dojo.byId('mailSharingToDest').value;
+		var s = dojox.validate.isEmailAddress(mailTo);
+		if (s) {
+			Contrib.setEndpoint('${SendFormURL}');
+			Contrib.sendForm("mailSharingForm","shareMailSentPopup","shareMailNotSentPopup");
+					
+			var mailButtonSharing = dojo.byId('popUpMailSharing_ok');
+			dojo.addClass(mailButtonSharing, 'disabled');
+			mailButtonSharing.setAttribute('disabled', true);
+			mailButtonSharing.setAttribute('onclick', 'return false;');
+		}
+		hidePopup('popUpMailSharing');
+	}
+	
+	$(document).ready(function(){
+		$('#ficheSocialNetworks .mailShareLink').on('click touchstart', openMailSharePopup);
+		
+		
+	});
+</script>
+

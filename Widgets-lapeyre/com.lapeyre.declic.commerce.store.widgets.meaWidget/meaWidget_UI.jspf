@@ -1,0 +1,86 @@
+<!-- MEA ${param.emplacement} -->
+<%@ page trimDirectiveWhitespaces="true" %>
+<c:set var="sumMea" value="0" />
+<div class="row">
+
+<%-- Display differently the MEAs in the header based on their associated zone --%>
+<c:if test="${param.isHeaderMea}">
+	<c:choose>
+	    <c:when test="${param.emplacement eq 'SubMenuRight'}">
+			<c:set var="meas" value="${measBottom}" scope="request" />
+	    </c:when>
+	    <c:otherwise>
+			<c:set var="meas" value="${measTop}" scope="request" />
+	    </c:otherwise>
+	</c:choose>
+</c:if>
+
+<c:forEach var="mea" items="${meas}" varStatus="statut">
+
+	<%-- Default values --%>
+	<c:set var="meaClassToApply" value="col12" />
+	<c:set var="colNumber" value="4" />
+	
+	<c:set var="sumMea" value="${sumMea + mea.largeur}" />
+	<c:if test="${sumMea > 100 }">
+		<c:set var="sumMea" value="0" />
+	</c:if>
+	
+	
+	<c:choose>
+		<%-- Mobile --%>
+		<c:when test="${isMobile}">
+			<!-- ${mea.largeur} -->
+			<c:choose>
+				<c:when test="${mea.largeur eq '100' or mea.largeur eq '75'}">
+					<!-- Mobile 100-75  -->
+					<c:set var="colNumber" value="2" />
+				</c:when>
+				<c:otherwise>
+					<!-- Mobile other -->
+					<c:set var="colNumber" value="1" />
+				</c:otherwise>
+			</c:choose>
+		</c:when>
+		<%-- Desktop --%>
+		<c:when test="${mea.largeur eq '15'}">
+			<c:set var="meaClassToApply" value="col2" />
+			<c:set var="colNumber" value="1" />	
+		</c:when>
+		<c:when test="${mea.largeur eq '25'}">
+			<c:set var="meaClassToApply" value="col3" />
+			<c:set var="colNumber" value="1" />
+		</c:when>
+		<c:when test="${mea.largeur eq '33'}">
+			<c:set var="meaClassToApply" value="col4" />
+			<c:set var="colNumber" value="1" />
+		</c:when>
+		<c:when test="${mea.largeur eq '50'}">
+			<c:set var="meaClassToApply" value="col6" />
+			<c:set var="colNumber" value="2" />
+		</c:when>
+		<c:when test="${mea.largeur eq '66'}">
+			<c:set var="meaClassToApply" value="col8" />
+			<c:set var="colNumber" value="3" />
+		</c:when>
+		<c:when test="${mea.largeur eq '75'}">
+			<c:set var="meaClassToApply" value="col9" />
+			<c:set var="colNumber" value="3" />
+		</c:when>
+		<c:when test="${param.isHeaderMea}">
+			<c:set var="meaClassToApply" value="col12" />
+			<c:set var="colNumber" value="1" />
+		</c:when>
+	</c:choose>
+	
+	<c:import url="/Widgets-lapeyre/com.lapeyre.declic.commerce.store.widgets.meaWidget/meaWidget_${mea.template==0?'banniere':mea.template==1?'carrousel':mea.template==2?'vignette':mea.template==3?'liste_liens':mea.template==5?'univers':'free'}_UI.jsp">
+		<c:param name="idx" value="${statut.index}" />
+		<c:param name="classForMeaBlock" value=" ${meaClassToApply}" />
+		<c:param name="colNumber" value="${colNumber}" />
+	</c:import>
+	
+</c:forEach>
+</div>
+<!-- fin MEA ${param.emplacement} -->
+ 
+ 

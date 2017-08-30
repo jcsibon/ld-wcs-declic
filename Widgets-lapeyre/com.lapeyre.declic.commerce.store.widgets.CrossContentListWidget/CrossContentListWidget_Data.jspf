@@ -1,0 +1,104 @@
+<c:set var="pageSize" value="${WCParam.pageSize}" scope="request"/>
+<c:if test="${empty pageSize}" >
+	<c:set var="pageSize" value="${param.resultsPerPage}" scope="request"/>
+	<c:if test="${empty pageSize}">
+		<c:set var="pageSize" value="12" scope="request"/>
+	</c:if>
+</c:if>
+
+<c:if test="${!empty param.contentBeginIndex}">
+	<c:set var="beginIndex" value="${param.contentBeginIndex}" />
+</c:if>
+<c:if test="${empty beginIndex}">
+	<c:set var="beginIndex" value="0" />
+</c:if>
+<%-- 
+	0000237: [mode de vue] Le mode de vue (grille/liste) doit s'appliquer sur toutes familles et ce pour une même session 
+	0000236: [Règle de tri] les règles de tri doivent s'appliquer sur toutes les familles et ce pour une même session
+--%>
+
+<c:set var="pageViewContent" value="${WCParam.pageViewContent}"/>
+
+<c:if test="${empty pageViewContent}">
+	<c:set var="contentPreferedPageView" value="${!empty cookie['contentPreferedPageView'] ? cookie['contentPreferedPageView'].value:''}"/>
+	<c:choose>
+		<c:when test="${!empty contentPreferedPageView}">
+			<c:set var="pageViewContent" value="${contentPreferedPageView}"/>
+		</c:when>
+		<c:otherwise>
+			<c:set var="pageViewContent" value="grid"/>
+		</c:otherwise>
+	</c:choose>
+</c:if>
+
+<c:if test="${empty totalContentCount}" >
+	<%@include file="/Widgets-lapeyre/Common/SearchCrossContentSetup.jspf" %>
+</c:if>
+
+<c:set var="env_resultsPerRow" value="4" scope="request"/>
+
+<c:set var="endIndex" value = "${pageSize + beginIndex}"/>
+
+<%-- divide to calculate page number and round down --%>
+<c:set var="pageNum" value = "${(endIndex div pageSize) - 1}" />
+<fmt:formatNumber var="pageNum" maxFractionDigits="0" value="${pageNum}" />
+
+
+<c:set var="endIndex" value = "${pageSize + beginIndex}"/>
+<c:if test="${endIndex > totalContentCount}">
+	<c:set var="endIndex" value = "${totalContentCount}"/>
+</c:if>
+<%-- totalCount is set in SearchSetup.jspf file.. --%>
+<fmt:parseNumber var="total" value="${totalContentCount}" parseLocale="en_US"/> <%-- Get a float value from totalCount which is a string --%>
+
+<c:set  var="totalPages"  value = "${total / pageSize * 1.0}"/>
+<%-- Get a float value from totalPages which is a string --%>
+<fmt:parseNumber var="totalPages" value="${totalPages}" integerOnly="false" parseLocale="en_US"/>
+
+<%-- do a ceil if totalPages contains fraction digits --%>
+<c:set var="totalPages" value = "${totalPages + (1 - (totalPages % 1)) % 1}"/>
+
+<c:set var="currentPage" value = "${( beginIndex + 1) / pageSize}" />
+<%-- Get a float value from currentPage which is a string --%>
+<fmt:parseNumber var="currentPage" value="${currentPage}" integerOnly="false" parseLocale="en_US"/>
+
+<%-- do a ceil if currentPage contains fraction digits --%>
+<c:set var="currentPage" value = "${currentPage + (1 - (currentPage % 1)) % 1}"/>
+
+<%-- Get a float value from currentPage which is a string --%>
+<fmt:parseNumber var="currentPage" value="${currentPage}" integerOnly="false" parseLocale="en_US"/>
+
+<%-- Get number of items to be displayed in this page --%>
+<fmt:parseNumber var="numOfItemsInPage" value="${endIndex - beginIndex}" integerOnly="false" parseLocale="en_US"/>
+
+<%-- If we are using grid mode, then we need to know the total number of rows to display --%>
+<c:set var="totalRows"  value="${numOfItemsInPage / env_resultsPerRow}"/>
+
+<%-- Get a float value from totalRows which is a string --%>
+<fmt:parseNumber var="totalRows" value="${totalRows}" integerOnly="false" parseLocale="en_US"/>
+
+<%-- do a ceil if totalRows contains fraction digits --%>
+<c:set var="totalRows" value = "${totalRows + (1 - (totalRows % 1)) % 1}"/>
+<c:if test="${empty contentSearchTerm}"><c:set var="contentSearchTerm" value="${param.contentSearchTerm}"/></c:if>
+<wcf:url var="CrossContentListingViewURL" value="CrossContentListingView" type="Ajax">
+	<wcf:param name="searchTerm" value="${contentSearchTerm}" />
+	<wcf:param name="storeId" value="${WCParam.storeId}" />
+	<wcf:param name="langId" value="${WCParam.langId}" />
+	<wcf:param name="catalogId" value="${WCParam.catalogId}" />
+	<wcf:param name="pageSize" value="${pageSize}" /> 
+	<wcf:param name="ajaxStoreImageDir" value="${env_jspStoreDir}" />
+	<c:if test="${!empty param.searchMethod}"><wcf:param name="searchMethod" value="${WCParam.searchMethod}"/></c:if>
+</wcf:url>
+
+
+<%-- <c:set var="columnCountByWidth_Grid" value="${!empty param.columnCountByWidth ? param.columnCountByWidth : '{0:1,201:2,488:3,730:4,923:5,1207:6}'}"/> --%>
+<c:set var="columnCountByWidth_Grid" value="${!empty param.columnCountByWidth ? param.columnCountByWidth : '{0:1,430:2,640:3,850:4}'}"/>
+<c:set var="columnCountByWidth_List" value="${!empty param.columnCountByWidth ? param.columnCountByWidth : '{0:1,900:2}'}"/>
+
+
+<c:set var="otherViews" value="true"/>
+
+<c:if test="${isOnMobileDevice}">
+	<c:set var="pageView" value="list" />
+	<c:set var="otherViews" value="false"/>
+</c:if>

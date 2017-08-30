@@ -1,0 +1,149 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%--
+  *
+  * Create the e-Marketing Spot.
+  *
+--%>
+
+<%@page import="java.util.Map"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.Iterator"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.Collections"%>
+<%@page import="java.util.Comparator"%>
+<%@page import="com.ibm.commerce.marketing.facade.datatypes.impl.BaseMarketingSpotActivityDataTypeImpl"%>
+
+
+<c:set var="useDefaultData" value="false"/>
+
+<c:if test="${fn:length(marketingSpotDatas.baseMarketingSpotActivityData) > 0 }">
+	<c:set var="data" value="${marketingSpotDatas.baseMarketingSpotActivityData[0]}"/>
+	<c:if test="${data.activityIdentifier.uniqueID eq '0'}">
+		<c:set var="useDefaultData" value="true"/>
+	</c:if>
+</c:if>
+
+<c:if test="${isEmspotProductContent eq true}">
+	<c:set var="baseMarketingSpotActivityDatas" value="${marketingSpotDatas.baseMarketingSpotActivityData}"/> 
+</c:if>
+
+<%
+	List<BaseMarketingSpotActivityDataTypeImpl> msaDatasList = (List<BaseMarketingSpotActivityDataTypeImpl>) pageContext.getAttribute("baseMarketingSpotActivityDatas");
+	
+	Map<String,Map<String,List<BaseMarketingSpotActivityDataTypeImpl>>> msaDatasProductContentMap = new HashMap<String,Map<String,List<BaseMarketingSpotActivityDataTypeImpl>>>();
+	List<String> remainedMarketingSpotDatas = new ArrayList<String>();
+	
+	boolean useDefaultData = Boolean.parseBoolean((String) pageContext.getAttribute("useDefaultData"));
+	
+	if(!useDefaultData) {
+		List<String> excludedMarketingSpotDatas = new ArrayList<String>();
+		Iterator<BaseMarketingSpotActivityDataTypeImpl> it = msaDatasList.iterator();
+		while(it.hasNext()) {
+			BaseMarketingSpotActivityDataTypeImpl msaData = it.next();
+			
+			if(	msaData.getActivityIdentifier() != null &&
+				msaData.getProperties().get("elementId") != null &&
+				msaData.getProperties().get("displaySequence") != null && msaData.getProperties().get("displaySequence") != null
+			  ) 
+		  	{
+		  		excludedMarketingSpotDatas.add(msaData.getUniqueID());
+				if(!msaDatasProductContentMap.containsKey(msaData.getActivityIdentifier().getUniqueID())) {
+					Map<String,List<BaseMarketingSpotActivityDataTypeImpl>> m = new HashMap<String,List<BaseMarketingSpotActivityDataTypeImpl>>();
+					msaDatasProductContentMap.put((String) msaData.getActivityIdentifier().getUniqueID(),m);
+				}
+				
+				Map<String,List<BaseMarketingSpotActivityDataTypeImpl>> map = msaDatasProductContentMap.get(msaData.getActivityIdentifier().getUniqueID());
+				if(!map.containsKey((String)msaData.getProperties().get("elementId"))) {
+					List<BaseMarketingSpotActivityDataTypeImpl> l = new ArrayList<BaseMarketingSpotActivityDataTypeImpl>();
+					map.put((String)msaData.getProperties().get("elementId"),l);
+				}
+				
+				List<BaseMarketingSpotActivityDataTypeImpl> list = map.get((String) msaData.getProperties().get("elementId"));
+				list.add(msaData);
+			} else {
+				remainedMarketingSpotDatas.add(msaData.getUniqueID());
+			}
+		}
+		
+		Iterator<String> itMap1 = msaDatasProductContentMap.keySet().iterator();
+		while (itMap1.hasNext()) { //activity
+			Map<String,List<BaseMarketingSpotActivityDataTypeImpl>> map2 = msaDatasProductContentMap.get(itMap1.next());
+			Iterator<String> itMap2 = map2.keySet().iterator();
+			while (itMap2.hasNext()) { // element
+				List<BaseMarketingSpotActivityDataTypeImpl> listToSort = map2.get(itMap2.next()); // list
+				Collections.sort(listToSort, new Comparator<BaseMarketingSpotActivityDataTypeImpl>() {
+			    public int compare(BaseMarketingSpotActivityDataTypeImpl o1, BaseMarketingSpotActivityDataTypeImpl o2)
+			    {
+			    	double sequence1 = Double.parseDouble((String) o1.getProperties().get("displaySequence"));
+			    	double sequence2 = Double.parseDouble((String) o2.getProperties().get("displaySequence"));
+			        return Double.compare(sequence1,sequence2);
+			    }});
+			    boolean onlyContent = true;
+			    boolean onlyProduct = true;
+			    //ne garder que les listes mixtes
+			    for(BaseMarketingSpotActivityDataTypeImpl data : listToSort) {
+			    	String dataType = (String) data.getDataType();
+			    	if(dataType.equalsIgnoreCase("CatalogEntryId") || dataType.equalsIgnoreCase("CatalogEntry")) {
+			    		onlyContent = false;
+			    	}
+			    	if(dataType.equalsIgnoreCase("MarketingContent")) {
+			    		onlyProduct = false;
+			    	}
+			    }
+			    
+			    if(onlyProduct || onlyContent) {
+			    	for(BaseMarketingSpotActivityDataTypeImpl data : listToSort) {
+			    		remainedMarketingSpotDatas.add((String) data.getUniqueID());
+			    	}
+			    	itMap2.remove();
+			    }
+			}
+		}
+		
+		excludedMarketingSpotDatas.removeAll(remainedMarketingSpotDatas);
+    
+		request.setAttribute("excludedMarketingSpotDatas", excludedMarketingSpotDatas);
+		String sRemainedMarketingSpotDatas = "";
+		for(int i = 0; i<remainedMarketingSpotDatas.size();i++) {
+			if(i == 0)
+				sRemainedMarketingSpotDatas = remainedMarketingSpotDatas.get(i);
+			else
+				sRemainedMarketingSpotDatas = sRemainedMarketingSpotDatas + "," + remainedMarketingSpotDatas.get(i);
+		}
+		request.setAttribute("remainedMarketingSpotDatas", sRemainedMarketingSpotDatas);
+	} else {
+		List<BaseMarketingSpotActivityDataTypeImpl> listToSort = new ArrayList<BaseMarketingSpotActivityDataTypeImpl>();
+		Iterator<BaseMarketingSpotActivityDataTypeImpl> it = msaDatasList.iterator();
+		while(it.hasNext()) {
+			BaseMarketingSpotActivityDataTypeImpl msaData = it.next();
+			listToSort.add(msaData);
+		}
+		
+		Collections.sort(listToSort, new Comparator<BaseMarketingSpotActivityDataTypeImpl>() {
+			    public int compare(BaseMarketingSpotActivityDataTypeImpl o1, BaseMarketingSpotActivityDataTypeImpl o2)
+			    {
+			    	double sequence1 = Double.parseDouble((String) o1.getProperties().get("displaySequence"));
+			    	double sequence2 = Double.parseDouble((String) o2.getProperties().get("displaySequence"));
+					return Double.compare(sequence1,sequence2);	
+				}
+		});
+		Map<String,List<BaseMarketingSpotActivityDataTypeImpl>> map = new HashMap<String,List<BaseMarketingSpotActivityDataTypeImpl>>();
+		map.put("0",listToSort);
+		msaDatasProductContentMap.put("0",map);
+	}
+	
+	request.setAttribute("msaDatasProductContentMap", msaDatasProductContentMap);
+%>

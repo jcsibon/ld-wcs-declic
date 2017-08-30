@@ -1,0 +1,231 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2014 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<c:if test="${empty storeText}">
+	<fmt:setBundle basename="/${sdb.jspStoreDir}/storetext_v2" var="storeText" scope="request"/>
+</c:if>
+
+<flow:ifEnabled feature="Analytics">
+	<c:if test="${fn:contains(catEntryDisplayUrl, '?')}">
+		<c:set var="cmcrurl" value="${fn:replace(cmcrurl, '?', '&')}" />	
+		<c:if test="${!empty cmcrurl}"> 
+			<c:set var="cmcrurl_productImageLink" value="${cmcrurl}-productImageLink"/>
+			<c:set var="cmcrurl_productNameLink" value="${cmcrurl}-productNameLink"/>
+		</c:if>
+	</c:if>
+</flow:ifEnabled>
+
+<c:set var="COEFF_QUANTITE" value="<%=com.lapeyre.declic.commerce.messaging.commands.attributes.AttributeConstants.COEFF_QUANTITE %>" />
+<c:set var="COEFF_PRIX" value="<%=com.lapeyre.declic.commerce.messaging.commands.attributes.AttributeConstants.COEFF_PRIX %>" />
+<c:set var="UNITE_SECONDAIRE_CODE" value="<%=com.lapeyre.declic.commerce.messaging.commands.attributes.AttributeConstants.UNITE_SECONDAIRE_CODE %>" />
+<c:set var="UNITE_VENTE_LEGALE_CODE" value="<%=com.lapeyre.declic.commerce.messaging.commands.attributes.AttributeConstants.UNITE_VENTE_LEGALE_CODE %>" />
+<c:set var="PRICE_LABEL" value="<%=com.lapeyre.declic.commerce.messaging.commands.attributes.AttributeConstants.PRICE_LABEL %>" />
+<c:set var="CONTRAINTE_COLISAGE" value="<%=com.lapeyre.declic.commerce.messaging.commands.attributes.AttributeConstants.CONTRAINTE_COLISAGE %>" />
+
+<c:remove var="uniteSecondaire" scope="request" />
+<c:remove var="uniteVenteLegale" scope="request" />
+<c:remove var="contrainteColisage" scope="request" />
+
+<c:forEach var="attr" items="${attributes}">
+	<c:choose>
+		<c:when test="${attr.identifier eq UNITE_SECONDAIRE_CODE}">
+			<c:set var="uniteSecondaire" value="${attr.values[0].value}" scope="request"/>
+		</c:when>
+		<c:when test="${attr.identifier eq UNITE_VENTE_LEGALE_CODE}">
+			<c:set var="uniteVenteLegale" value="${attr.values[0].value}" scope="request"/>
+		</c:when>
+		<c:when test="${attr.identifier eq CONTRAINTE_COLISAGE}">
+			<c:set var="contrainteColisage" value="${attr.values[0].value}" scope="request"/>
+		</c:when>
+	</c:choose>
+</c:forEach>
+
+<%-- Image container --%>
+<div id="CatalogEntryProdImg_${catEntryIdentifier}" class="catentrydisplay-image-container" >
+	<div class="image productImage <c:if test="${isOnSpecial}">promo</c:if> <c:if test="${soldeFlagProduct eq 1 || soldeFlagProduct eq 1.0 }"> soldes</c:if>">
+		<%-- Target2SellReco customization BEGIN --%>
+		<a ${ShowProductInNewWindow} id="catalogEntry_img${catEntryIdentifier}" class="hover_underline"
+			href="${fn:escapeXml(catEntryDisplayUrl)}${fn:escapeXml(cmcrurl_productImageLink)}"
+			title="${altImgText}" 
+			<%out.flush();%>
+			<c:import url="/Widgets-lapeyre/Common/ECOCatalogEntry/t2sOnclick.jsp">		
+				<c:param name="catEntryIdentifier" value="${catEntryIdentifier}"/>
+				<c:param name="partNumber" value="${partNumber}"/>
+				<c:param name="redir" value="${fn:escapeXml(catEntryDisplayUrl)}${fn:escapeXml(cmcrurl_productImageLink)}"/>
+			</c:import>
+			<%out.flush();%> 
+		>
+		<%-- Target2SellReco customization END --%>
+			<img itemprop="image" alt="${altImgText}" src="${imgSourceFull}" class="catentrydisplay-image" onerror="this.src='/wcsstore/LapeyreSAS/images/desktopList/defaultImage.png'"/>
+			<c:forEach var="adRibbon" items="${adRibbonMap}">
+				<c:set var="adRibbonStyle" value="RibbonAdDefault ${fn:replace(adRibbon.key , '\"' , '_')}"/>
+				<div class="${fn:escapeXml(adRibbonStyle)}">${adRibbon.value}</div>
+			</c:forEach>
+		</a>
+		
+		<%-- Wishlist button --%>
+		<div class="catentrydisplay-wishlist hidden">
+			<%out.flush();%>
+			<c:if test="${!isOnMobileDevice && catEntryType != CATALOGUE_PAPIER_PRODUCT}">
+				<c:import url = "/Widgets-lapeyre/Common/ShoppingList/ShoppingList.jsp">
+					<c:param name="productId" value="${catEntryIdentifier}" />
+					<c:param name="defaultProductSkuID" value="${defaultProductSkuID}" />
+					<c:param name="display" value="overlay" />
+				</c:import>
+			</c:if>
+			<%out.flush();%>
+		</div>
+	</div>
+</div>
+
+<%-- Content container --%>
+<div class="catentrydisplay-content">
+	<%-- If the priceLabel of the defaultItem is empty, get the priceLabel of the product --%>
+	<c:if test="${empty priceLabelDefaultSku }">
+		<c:set var="priceLabelDefaultSku" value="${priceLabelProduct}" />
+	</c:if>
+
+	<%-- Catalog entry name --%>
+	<div class="catentrydisplay-name">
+		<c:if test="${not empty searchScore}">
+			<div class="searchScore">[<fmt:message key='SEARCH_SCORE' bundle="${widgetText}"/> <c:out value="${searchScore}"/>]</div>
+		</c:if>
+		<a class="hover_underline" aria-hidden="true" title="${highlightedName}" tabindex="-1" id="WC_CatalogEntryDBThumbnailDisplayJSPF_${catEntryIdentifier}_link_9b" ${ShowProductInNewWindow}
+			href="${fn:escapeXml(catEntryDisplayUrl)}${fn:escapeXml(cmcrurl_productNameLink)}"		
+			<%-- Target2SellReco customization BEGIN--%>
+			<%out.flush();%>
+			<c:import url = "/Widgets-lapeyre/Common/ECOCatalogEntry/t2sOnclick.jsp">
+				<c:param name="catEntryIdentifier" value="${catEntryIdentifier}"/>
+				<c:param name="partNumber" value="${partNumber}"/>
+				<c:param name="redir" value="${fn:escapeXml(catEntryDisplayUrl)}${fn:escapeXml(cmcrurl_productNameLink)}"/>
+			</c:import>
+			<%out.flush();%>
+		>
+		<%-- Target2SellReco customization END --%>
+			<h2><ecocea:crop value="${highlightedName}" length="54" /></h2>	
+		</a>
+		<meta itemprop="name" content="${highlightedName}" />
+		<meta itemprop="productId" content="${partNumber}" />
+		<meta itemprop="manufacturer" content="${MICRO_DATA_MANUFACTURER}" />
+		<meta itemprop="itemCondition" content="NewCondition" />
+		<meta itemprop="url" content="${fn:escapeXml(catEntryDisplayUrl)}${fn:escapeXml(cmcrurl_productNameLink)}" />
+		<meta itemprop="sku" content="${defaultProductSkuValue}" />
+		
+		<%-- Additional properties--%>
+		<c:forEach var="additionalProperty" items="${microDataAdditionalProperties}">
+			<span itemprop="additionalProperty"  itemprop="additionalProperty" itemscope itemtype="${MICRO_DATA_PROPERTYVALUE}" >
+				<meta itemprop="name" content="${additionalProperty.key}" />
+				<meta itemprop="value" content="${additionalProperty.value.value}" />
+				<c:if test="${not fn:endsWith(additionalProperty.value.image1path, 'none.png')}">
+					<astpush:assetPushUrl var="additionalPropertyImage" urlRelative="${additionalProperty.value.image1path}" type="${catalogEntryDetails.type}" source="" device="${device}" format="thumbnail"/>
+					<meta itemprop="image" content="${additionalPropertyImage}" />
+				</c:if>
+			</span>
+		</c:forEach>
+	</div>
+	
+	<%-- Integration notes BazaarVoice --%>
+	<div id="BVRRInlineRating-${defaultProductSkuValue}" class="catentrydisplay-rating"></div>
+</div>
+
+<div class="catentrydisplay-price-container">
+	<%-- Price label or short description --%>
+	<div class="catentrydisplay-label">
+		<%--
+		<c:if test="${catEntryType eq STANDARD_PRODUCT || catEntryType eq COLLECTION_PRODUCT && productAvailable}">
+			<c:out value="${priceLabelDefaultSku}" />
+		</c:if>
+		 --%>
+		<c:if test="${catEntryType eq SUR_MESURE_PRODUCT}">
+			<fmt:message key="fpSurMesureProductTypeLabel" bundle="${widgetText}" />
+		</c:if>
+		<c:if test="${catEntryType eq COLLECTION_PRODUCT}">
+			<c:out value="${productShortDescription}" />
+		</c:if>
+	</div>
+	
+	<%-- Catalog entry price --%>
+	<div class="catentrydisplay-price" id="product_price_${catEntryIdentifier}" ${microDataAttributesOffer}>
+		<%@include file = "/Widgets-lapeyre/Common/PriceDisplay/PriceDisplay.jspf" %>
+		<c:if test="${productAvailable}">
+			<c:choose>
+				<c:when test="${catEntryType eq COLLECTION_PRODUCT || catEntryType eq SUR_MESURE_PRODUCT}">
+					<meta itemprop="availability" content="InStoreOnly" />
+				</c:when>
+				<c:otherwise>
+					<meta itemprop="availability" content="InStock" />
+				</c:otherwise>
+			</c:choose>
+		</c:if>
+	</div>
+</div>
+
+<c:choose>
+	<c:when test="${catEntryType eq SUR_MESURE_PRODUCT}">
+		<div class="catentrydisplay-action-container">
+			<a href="${storeLocatorURL}" class="button button-primary button-catentrydisplay hidden">
+				<fmt:message key="ficheProduitSMStoreLocButtonLabel" bundle="${widgetText}" />
+			</a>
+		</div>
+	</c:when>
+	<c:when test="${catEntryType eq COLLECTION_PRODUCT}">
+		<div class="catentrydisplay-action-container">
+			<c:choose>
+				<c:when test="${hasCollectionRelationship}">
+				<wcf:url var="CollectionSearchDisplayURL" value="CollectionSearchDisplay">
+					<wcf:param name="storeId" value="${storeId}" />
+					<wcf:param name="catalogId" value="${catalogId}" />
+					<wcf:param name="productId" value="${catEntryIdentifier}" />
+					<wcf:param name="categoryId" value="${WCParam.categoryId}" />
+				</wcf:url>
+				<a href="${CollectionSearchDisplayURL}" class="button orange button-primary button-catentrydisplay hidden">
+					<fmt:message key="ficheProduitCollectionListeMeublesButtonLabel" bundle="${widgetText}">
+						<fmt:param value="" />
+					</fmt:message>
+				</a>
+				</c:when>
+				<c:otherwise>
+				<a href="${storeLocatorURL}" class="button button-primary button-catentrydisplay hidden">
+					<fmt:message key="ficheProduitCollectionStoreLocButtonLabel" bundle="${widgetText}" />
+				</a>
+				</c:otherwise>
+			</c:choose>
+		</div>	
+	</c:when>
+	<c:otherwise>
+		<div class="<c:if test="${catEntryType == CATALOGUE_PAPIER_PRODUCT}">cataloguePapier</c:if> catentrydisplay-action-container ">
+			<c:choose>
+				<c:when test="${!empty emptyPriceString || offerPrice le 0.0}">
+					<div class="button orange disabled">
+						<fmt:message key="PD_UNAVAILABLE" bundle="${widgetText}"/>
+					</div>
+				</c:when>
+				<c:otherwise>
+					<%-- Target2SellReco customization BEGIN--%> 
+					<a class="button button-primary button-catentrydisplay hidden" href="${fn:escapeXml(catEntryDisplayUrl)}${fn:escapeXml(cmcrurl_productNameLink)}"
+						<%out.flush();%>
+						<c:import url = "/Widgets-lapeyre/Common/ECOCatalogEntry/t2sOnclick.jsp">
+							<c:param name="catEntryIdentifier" value="${catEntryIdentifier}"/>
+							<c:param name="partNumber" value="${partNumber}"/>
+							<c:param name="redir" value="${fn:escapeXml(catEntryDisplayUrl)}${fn:escapeXml(cmcrurl_productNameLink)}"/>
+						</c:import>
+						<%out.flush();%>
+					>
+					<%-- Target2SellReco customization END --%>
+						<fmt:message key="addToCartStandardButtonLabel" bundle="${widgetText}" />
+					</a>
+				</c:otherwise>
+			</c:choose>
+		</div>	
+	</c:otherwise>
+</c:choose>

@@ -1,0 +1,264 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2012, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<%@ page trimDirectiveWhitespaces="true" %>
+<!-- BEGIN CategoryNavigationSetup.jspf for categoryID = ${WCParam.categoryId}-->
+<%@page import="org.apache.solr.client.solrj.response.SpellCheckResponse"%>
+<%@page import="org.apache.solr.client.solrj.response.QueryResponse"%>
+<%@page import="org.apache.solr.common.SolrDocumentList"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.Map"%>
+<%@page import="com.ibm.commerce.registry.StoreCopy"%>
+<%@page import="com.ibm.commerce.registry.StoreRegistry"%>
+<%@page import="com.ibm.commerce.catalog.facade.datatypes.CatalogNavigationViewType"%>
+<%@page import="com.ibm.commerce.foundation.internal.server.services.search.util.SpecialCharacterHelper"%>
+<%@page import="com.ibm.commerce.datatype.WcParam" %>
+<%@page import="com.ibm.commerce.foundation.internal.server.services.search.config.solr.SolrSearchConfigurationRegistry"%>
+
+<%@ include file="/Widgets-ecocea/Common/Target2SellRanking_Data.jspf"%>
+<c:if test="${empty includedCategoryNavigationSetupJSPF}">
+	<c:set var="includedCategoryNavigationSetupJSPF" value="includedCategoryNavigationSetupJSPF" scope="request"/> <%-- For singleton feature --%>
+
+	<%--ECOCEA: CategoryNavigationSetup.jspf est appelé plusieurs fois par page à différents endroits. Pour être sûr on récupère ici le sortBy du cookie --%>
+	<%--0000236: [Règle de tri] les règles de tri doivent s'appliquer sur toutes les familles et ce pour une même session --%>
+	<c:if test="${empty sortBy}">
+		<c:set var="productSortBySelected" value="${!empty cookie['productSortBySelected'] ? cookie['productSortBySelected'].value:''}"/>
+		<c:if test="${!empty productSortBySelected}">
+			<c:set var="sortBy" value="${productSortBySelected}" scope="request"/>
+		</c:if>
+	</c:if>
+
+
+	<c:set var="categoryId" value="${WCParam.categoryId}"/>
+	<c:if test = "${empty categoryId}">
+		<c:set var="categoryId" value="${param.categoryId}"/>
+	</c:if>
+
+	<c:set var="searchType" value="${WCParam.searchType}" scope="request"/>
+	<c:if test="${empty searchType}" >
+		<c:set var="searchType" value="1000" scope="request"/>
+	</c:if>
+
+	<%-- Do not need to get category facets separately in case of expanded category navigation. --%>
+	<flow:ifDisabled feature="ExpandedCategoryNavigation">
+	
+		<%-- Use a deep search with no filters in order to populate the complete child category list with product counts.  Since the category search will return only the category facet belonging to the resulting products, we must use this for now to obtain the complete view.  --%>
+		<wcf:rest var="catalogNavigationView1" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byCategory/${categoryId}" >
+			<wcf:param name="searchType" value="${searchType}" />
+	<%-- 		<wcf:param name= "profileName" value="IBM_ComposeFacetListByCategoryId" /> --%>
+			<wcf:param name= "profileName" value="ECO_ComposeFacetListByCategoryId" />
+			<wcf:param name="searchSource" value="E" />
+			<wcf:param name="langId" value="${langId}"/>
+			<wcf:param name="searchType" value="${searchType}" />
+			<wcf:param name = "buyable" value ="1" />
+			<wcf:param name="currency" value="${env_currencyCode}"/>
+			<wcf:param name="responseFormat" value="json"/>		
+			<wcf:param name="catalogId" value="${WCParam.catalogId}"/>		
+			<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+		</wcf:rest> 
+		<c:set var="globalcategories" value="${catalogNavigationView1.facetView}" scope="request"/>
+		
+	</flow:ifDisabled>
+
+	<%-- Category navigation.  Only display products and facets belonging to the current category with a shallow search --%>
+
+	<c:if test="${empty pageSize}" >
+		<c:set var="pageSize" value="${param.resultsPerPage}"/>
+		<c:if test="${empty pageSize}">
+			<c:set var="pageSize" value="24"/>
+		</c:if>
+	</c:if>
+	
+	<c:if test="${empty currentPage}">
+		<c:set var="currentPage" value = "${(beginIndex + 1) / pageSize}" />
+		<fmt:parseNumber var="currentPage" value="${currentPage}" integerOnly="true" parseLocale="en_US"/>
+	</c:if>
+	
+	<c:if test="${empty pageNum}" >
+		<c:set var="pageNum" value = "${currentPage}"/>
+	</c:if>
+	
+	<%-- 
+		  ECOCEA perf: on a pas besoin de beaucoup de details 
+	--%>
+	<c:set var="mysearchProfile" value="ECO_findProductsByCategory_Summary"/>
+<%-- JCL erreur log prod si pas de famille --%>
+	<wcf:rest var="catalogNavigationView1" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byCategory/${categoryId}" >
+		<wcf:param name="pageSize" value="${pageSize}" />
+		<wcf:param name="pageNumber" value="${pageNum + 1}" />
+		<wcf:param name="profileName" value="${mysearchProfile}" />
+		<wcf:param name="searchTerm" value="${newSearchTerm}" />
+		<wcf:param name="intentSearchTerm" value="${intentSearchTerm}" />
+		<wcf:param name="searchType" value="${searchType}" />
+		<wcf:param name="metaData" value="${WCParam.metaData}" />
+		<wcf:param name="langId" value="${langId}"/>
+		<%-- Default sort for CatEntListWidget --%>
+		<c:choose>
+			<c:when test="${not empty sortBy }" >
+				<c:set var="sortParameter" value="${sortBy}" />
+			</c:when>
+			<c:otherwise>
+				<c:set var="sortParameter" value="${WCParam.orderBy}" />
+			</c:otherwise>
+		</c:choose>
+		<wcf:param name="orderBy" value="${sortParameter}" />
+		<flow:ifEnabled feature="Target2SellRanking">
+			<c:if test="${sortParameter == '6'}">
+				<wcf:param name="t2sRanking" value="${t2sRanking}" />
+			</c:if>
+		</flow:ifEnabled>
+		<wcf:param name="currency" value="${env_currencyCode}"/>
+		<wcf:param name="responseFormat" value="json"/>		
+		<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+		<c:forEach var="facetValue" items="${paramValues.facet}">
+			<c:if test="${!empty facetValue}">
+				<wcf:param name="facet" value="${facetValue}" />
+			</c:if>	
+		</c:forEach>
+		<c:forEach var="facetLimit" items="${paramValues.facetLimit}">
+			<wcf:param name="facetLimit" value="${facetLimit}" />
+		</c:forEach>
+		<c:forEach var="item" items="${WCParam}"><c:if test="${fn:startsWith(item.key,'min')}">
+            <wcf:param name="${item.key}" value="${item.value[0]}"/>
+        </c:if></c:forEach>
+        <c:forEach var="item" items="${WCParam}"><c:if test="${fn:startsWith(item.key,'max')}">
+            <wcf:param name="${item.key}" value="${item.value[0]}"/>
+        </c:if></c:forEach>
+		<wcf:param name="advancedFacetList" value="${newAdvancedFacetList}"/>
+		<wcf:param name="categoryId" value="${currentCategoryId}" />
+		<wcf:param name="filterTerm" value="${newFilterTerm}" />
+		<wcf:param name="filterType" value="${WCParam.filterType}" />
+		<wcf:param name="filterFacet" value="${WCParam.filterFacet}" />
+		<wcf:param name="manufacturer" value="${newManufacturer}" />
+		<wcf:param name="physicalStoreIds" value="${cookieVal}" />
+		<wcf:param name="profileName" value="${profileName}" />
+		<flow:ifEnabled feature="ExpandedCategoryNavigation">
+			<%-- Perform deep search to retrieve all products within the current category and all the subcategories.  The default of this parameter in the expression is "N" for shallow search Navigation to return immediate products in the category.  --%>
+			<wcf:param name="searchSource" value="E" />
+		</flow:ifEnabled>
+		<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+	</wcf:rest>
+	
+	<flow:ifEnabled feature="ExpandedCategoryNavigation">
+		<c:set var="globalcategories" value="${catalogNavigationView1.facetView}" scope="request"/>
+	</flow:ifEnabled>
+	<c:set var="globalfacets" value="${catalogNavigationView1.facetView}" scope="request"/>
+	<%-- --%>
+	<c:set var="globalresults" value="${catalogNavigationView1.catalogEntryView}" scope="request"/>
+
+	<c:set var="totalCount" value="${catalogNavigationView1.recordSetTotal}" scope="request"/>
+
+	<c:set var="searchMissed" value="false" scope="request"/>
+	
+	<c:set var="globalpricemode" value="${catalogNavigationView1.metaData.price}" scope="request"/>
+
+	<c:set var="totalContentCount" value="0" scope="request"/>
+
+	<c:set var="totalSearchCount" value="${totalCount + totalContentCount}" scope="request"/>
+
+	<c:set var="originalTotalSearchCount" value="${totalSearchCount}" scope="request"/> <%-- When we do search again, totalSearchCount will be updated. Save it for further use --%>
+	<flow:ifEnabled feature="Analytics">
+		<%@ include file="/Widgets/Common/AnalyticsSearch.jspf" %>
+	</flow:ifEnabled> 
+
+	<wcf:rest var="minPriceRequest" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byCategory/${WCParam.categoryId}" >
+		<wcf:param name="searchType" value="1000" />
+		<wcf:param name="searchSource" value="E" />
+		<wcf:param name="langId" value="${WCParam.langId}"/>
+		<wcf:param name="currency" value="${env_currencyCode}"/>
+		<wcf:param name="responseFormat" value="json"/>		
+		<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+		<wcf:param name="profileName" value="ECO_findMinOrMaxPriceByCategory" />
+		<wcf:param name="searchTerm" value="${newSearchTerm}" />
+		<wcf:param name="intentSearchTerm" value="${intentSearchTerm}" />
+		<wcf:param name="searchType" value="${searchType}" />
+		<wcf:param name="metaData" value="${WCParam.metaData}" />
+		<wcf:param name="orderBy" value="priceAsc" />
+		<c:forEach var="facetValue" items="${paramValues.facet}">
+			<c:if test="${!empty facetValue}">
+				<wcf:param name="facet" value="${facetValue}" />
+			</c:if>	
+		</c:forEach>
+		<c:forEach var="facetLimit" items="${paramValues.facetLimit}">
+			<wcf:param name="facetLimit" value="${facetLimit}" />
+		</c:forEach>
+		<c:forEach var="item" items="${WCParam}"><c:if test="${fn:startsWith(item.key,'min')}">
+            <wcf:param name="${item.key}" value="${item.value[0]}"/>
+        </c:if></c:forEach>
+        <c:forEach var="item" items="${WCParam}"><c:if test="${fn:startsWith(item.key,'max')}">
+            <wcf:param name="${item.key}" value="${item.value[0]}"/>
+        </c:if></c:forEach>		
+		<wcf:param name="advancedFacetList" value="${newAdvancedFacetList}"/>
+		<wcf:param name="categoryId" value="${currentCategoryId}" />
+		<wcf:param name="filterTerm" value="${newFilterTerm}" />
+		<wcf:param name="filterType" value="${WCParam.filterType}" />
+		<wcf:param name="filterFacet" value="${WCParam.filterFacet}" />
+		<wcf:param name="manufacturer" value="${newManufacturer}" />
+		<wcf:param name="physicalStoreIds" value="${cookieVal}" />
+		<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+	</wcf:rest>
+	
+	<wcf:rest var="maxPriceRequest" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byCategory/${WCParam.categoryId}" >
+		<wcf:param name="searchType" value="1000" />
+		<wcf:param name="searchSource" value="E" />
+		<wcf:param name="langId" value="${WCParam.langId}"/>
+		<wcf:param name="currency" value="${env_currencyCode}"/>
+		<wcf:param name="responseFormat" value="json"/>		
+		<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+		<wcf:param name="profileName" value="ECO_findMinOrMaxPriceByCategory" />
+		
+		<wcf:param name="searchTerm" value="${newSearchTerm}" />
+		<wcf:param name="intentSearchTerm" value="${intentSearchTerm}" />
+		<wcf:param name="searchType" value="${searchType}" />
+		<wcf:param name="metaData" value="${WCParam.metaData}" />
+		<wcf:param name="orderBy" value="priceDesc" />
+		<c:forEach var="facetValue" items="${paramValues.facet}">
+			<c:if test="${!empty facetValue}">
+				<wcf:param name="facet" value="${facetValue}" />
+			</c:if>	
+		</c:forEach>
+		<c:forEach var="facetLimit" items="${paramValues.facetLimit}">
+			<wcf:param name="facetLimit" value="${facetLimit}" />
+		</c:forEach>
+		<c:forEach var="item" items="${WCParam}"><c:if test="${fn:startsWith(item.key,'min')}">
+            <wcf:param name="${item.key}" value="${item.value[0]}"/>
+        </c:if></c:forEach>
+        <c:forEach var="item" items="${WCParam}"><c:if test="${fn:startsWith(item.key,'max')}">
+            <wcf:param name="${item.key}" value="${item.value[0]}"/>
+        </c:if></c:forEach>
+		<wcf:param name="advancedFacetList" value="${newAdvancedFacetList}"/>
+		<wcf:param name="categoryId" value="${currentCategoryId}" />
+		<wcf:param name="filterTerm" value="${newFilterTerm}" />
+		<wcf:param name="filterType" value="${WCParam.filterType}" />
+		<wcf:param name="filterFacet" value="${WCParam.filterFacet}" />
+		<wcf:param name="manufacturer" value="${newManufacturer}" />
+		<wcf:param name="physicalStoreIds" value="${cookieVal}" />
+		
+		<wcf:param name="isProBTP" value="${extendedUserContext.isPro}" />
+	</wcf:rest>
+	
+	<c:set var="minPrice" value="${minPriceRequest.priceBound}"/>
+	<c:set var="maxPrice" value="${maxPriceRequest.priceBound}"/>	
+	
+<%-- TODO desactiver les 2 lignes ci-dessous si on ne veut pas d'arrondi sur les prix --%>
+	<fmt:formatNumber value="${minPrice-(minPrice%1)}" type="number" pattern="#" var="formattedMinPrice"/>
+	<fmt:formatNumber value="${maxPrice+(1-(maxPrice%1))%1}" type="number" pattern="#" var="formattedMaxPrice"/>
+	
+	<c:set var="priceFacetFilterRange" value="${formattedMinPrice};${formattedMaxPrice}" scope="request" />
+	<c:set var="priceFacetFilterMin" value="${formattedMinPrice}" scope="request" />
+	<c:set var="priceFacetFilterMax" value="${formattedMaxPrice}" scope="request" />
+	
+	<c:set var="mustDisplayPriceDisplay" value="${((formattedMaxPrice - formattedMinPrice) <= 2 ) ? false : true}" scope="request"/>
+</c:if>
+<!-- END CategoryNavigationSetup.jspf-->

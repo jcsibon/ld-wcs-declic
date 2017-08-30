@@ -1,0 +1,49 @@
+
+<c:set var="twitterUrlSharing" value="http://twitter.com/share" />
+<c:url var="twitterFullUrlSharing" value="${twitterUrlSharing}" >
+	<c:param name="text" value="${socialSharingTitle}" />
+	<c:param name="url" value="${socialSharingURL}" />
+</c:url>
+
+<script id="SocialNetworksScript_twitter">
+
+	window.twttr=(function(d,s,id){
+	var t,js,fjs=d.getElementsByTagName(s)[0];
+	if(d.getElementById(id)){
+		return
+	}
+	js=d.createElement(s);
+	js.id=id;
+	js.src="https://platform.twitter.com/widgets.js";
+	js.async = true;
+	fjs.parentNode.insertBefore(js,fjs);
+	return window.twttr||(t={_e:[],ready:function(f){t._e.push(f)}})}
+	(document,"script","twitter-wjs"));
+	
+	
+	function openTwitterSharePopup(event) {
+		event.preventDefault();
+		event.stopImmediatePropagation();
+		var textToShare = this.title || "${ecocea:escapeJS(socialSharingTitle)}",
+		    urlToShare = this.href || "${socialSharingURL}" ;
+		    twitterFullUrl = "http://twitter.com/share?text="+textToShare+"&url="+urlToShare;
+		var width = 575,
+			height = 251,
+			left = ($(window).width() - width)/2,
+			top = ($(window).height() - height)/2,
+			url = twitterFullUrl,
+			opts = 'status=1' +
+				   ',width=' + width +
+				   ',height=' + height +
+				   ',top=' + top +
+				   ',left=' + left +
+				   ',directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no';
+		window.open(url,'Twitter',opts);
+	}
+	
+	$(document).ready(function(){
+		$('#ficheSocialNetworks .twitterShareLink').on('click touchstart', openTwitterSharePopup);
+	});
+	
+</script>
+

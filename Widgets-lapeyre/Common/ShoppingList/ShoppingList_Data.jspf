@@ -1,0 +1,143 @@
+<%--
+ =================================================================
+  Licensed Materials - Property of IBM
+
+  WebSphere Commerce
+
+  (C) Copyright IBM Corp. 2011, 2013 All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp.
+ =================================================================
+--%>
+<c:set var="search01" value="'"/>
+<c:set var="search02" value='"'/>
+<c:set var="replaceStr01" value="\\\'"/>
+
+<c:set var="escapedSingleQuote" value="\\\\'"/>
+<%-- Fetches the existing shopping list --%>
+<c:if test="${(userType ne 'G') && (empty shoppingLists)}">
+	<wcf:getData
+		type="com.ibm.commerce.giftcenter.facade.datatypes.GiftListType[]"
+		var="shoppingLists" expressionBuilder="findWishListsForUser" scope="request">
+		<wcf:contextData name="storeId" data="${storeId}" />
+	</wcf:getData>
+</c:if>
+
+<%-- Prepares the map with shopping list id and names --%>
+<jsp:useBean id="shoppingListMap" class="java.util.HashMap" type="java.util.Map"/>
+<c:set var="defaultShoppingListId" value="-1"/>
+<c:set var="shoppingListNames" value=""/>
+<fmt:message key="SL_DEFAULT_WISH_LIST_NAME" var="defaultName" bundle="${widgetText}"/>
+<c:forEach var="shoppingList" items="${shoppingLists}">
+	<c:set target="${shoppingListMap}" property="${shoppingList.giftListIdentifier.uniqueID}" value="${shoppingList.description.name}"/>
+	<c:if test="${shoppingList.description.name eq defaultName}">
+		<c:set var="defaultShoppingListId" value="${shoppingList.giftListIdentifier.uniqueID}"/>
+	</c:if>
+	<c:if test="${!empty shoppingListNames}">
+		<c:set var="shoppingListNames" value="${shoppingListNames},"/>
+	</c:if>
+	<%-- Replacing backslash with double-backslash since it gets omitted as it is the escape character --%>
+	<c:set var="shoppingListName" value="${fn:replace(shoppingList.description.name,'\\\\','\\\\\\\\')}"/>
+	<c:set var="shoppingListName" value="${fn:replace(shoppingListName,'\\'','&#39;')}"/>
+	<c:set var="shoppingListNames" value="${shoppingListNames}'${fn:escapeXml(shoppingListName)}': 1"/>
+</c:forEach>
+<c:set target="${shoppingListMap}" property="${defaultShoppingListId}" value="${null}"/>
+<c:set var="shoppingListNames" value="${fn:toUpperCase(shoppingListNames)}"/>
+
+<%-- Pick the productId from WCParam, if empty pick from param <== No, it's the opposite. --%>
+<c:choose>
+	<c:when test="${empty param.catalogEntryID}">
+		<c:set var="uniqueID" value="${param.productId}"/>
+	</c:when>
+	<c:otherwise>
+		<c:set var="uniqueID" value="${param.catalogEntryID}"/>
+	</c:otherwise>
+</c:choose>
+
+<c:if test="${empty uniqueID}">
+	<c:set var="uniqueID" value="${WCParam.productId}"/>
+</c:if>
+
+<c:if test="${empty catalogId}">
+	<c:set var="catalogId" value="${param.catalogId}"/>
+</c:if>
+
+<%-- Id de l'item qui sera ajout� � la wishlist  --%>
+<%-- Pour un produit avec plusieurs items, itemIDWishlist est renseign� initialement avec l'id de l'item par d�faut (voir plus bas) --%>
+<c:set var="itemIDWishlist" value="${uniqueID}"/>
+
+<%-- Fetches the details of the currently displayed catalogEntry --%>
+<%-- Look in our internal cached map. ALL will give us required data --%>
+<c:set var="key1" value="${uniqueID}+getCatalogEntryViewAllByID"/>
+<c:set var="catalogEntryView" value="${cachedCatalogEntryDetailsMap[key1]}"/>
+
+<c:if test="${empty catalogEntryView}">
+	<%-- Look in our internal cached map for a particular expression builder --%>
+	<c:set var="key1" value="${uniqueID}+getCatalogEntryViewDetailsWithComponentsAndAttachmentsByID"/>
+	<c:set var="catalogEntryView" value="${cachedCatalogEntryDetailsMap[key1]}"/>
+	<c:if test="${empty catalogEntryView}">
+		<wcf:rest var="catalogNavigationView" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/productview/byId/${uniqueID}" >	
+			<wcf:param name="langId" value="${langId}"/>
+			<wcf:param name="currency" value="${env_currencyCode}"/>
+			<wcf:param name="responseFormat" value="json"/>		
+			<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+            <%--ECOCEA: ici on a pas besoin de tous les SKUs --%>
+            <wcf:param name="profileName" value="ECO_findProductByIds_Details_With_Only_Default_SKU"/>
+		</wcf:rest>
+		<c:set var="catalogEntryView" value="${catalogNavigationView.catalogEntryView[0]}"/>
+		<wcf:set target = "${cachedCatalogEntryDetailsMap}" key="${key1}" value="${catalogEntryView}"/>
+	</c:if>
+</c:if>
+
+<c:set var="componentItems" value=""/>
+<c:set var="skus" value=""/>
+<c:choose>
+	<%-- If the catalog entry is a ProductBean --%>
+	<c:when test="${catalogEntryView.catalogEntryTypeCode eq 'ProductBean'}">
+		<c:choose>
+			<%-- If the catalog entry is a ProductBean and it has only one SKU, then it is as good as ItemBean.
+			So identify the uniqueID of the single SKU and mark it as ItemBean --%>
+			<c:when test="${catalogEntryView.hasSingleSKU}">
+				<c:set var="uniqueID" value="${catalogEntryView.sKUs[0].uniqueID}"/>
+				<c:set var="itemIDWishlist" value="${catalogEntryView.sKUs[0].uniqueID}"/>
+				<c:set var="type" value="ItemBean"/>
+			</c:when>
+			<c:otherwise>
+				<c:set var="uniqueID" value="${catalogEntryView.uniqueID}"/>
+				<c:set var="type" value="${catalogEntryView.catalogEntryTypeCode}"/>
+				<%-- Pick the SKUs and the corresponding attributes --%>
+				<c:forEach var="sku" items="${catalogEntryView.sKUs}">
+					<c:if test="${!empty skus}">
+						<c:set var="skus" value="${skus},"/>
+					</c:if>
+					<c:set var="attributes" value=""/>
+					<c:set var="skus" value="${skus}{id: '${sku.uniqueID}', attributes: {${attributes}}, isDefault : '${sku.isDefault}'}"/>
+					<c:if test="${sku.isDefault > 0}">
+						<c:set var="itemIDWishlist" value="${sku.uniqueID}"/>
+					</c:if>
+				</c:forEach>
+			</c:otherwise>
+		</c:choose>
+	</c:when>
+	
+	<c:otherwise>
+		<c:set var="uniqueID" value="${catalogEntryView.uniqueID}"/>
+		<c:set var="type" value="${catalogEntryView.catalogEntryTypeCode}"/>
+	</c:otherwise>
+</c:choose>
+
+<wcf:url var="itemIDWishlistDisplayUrl" patternName="ProductURL" value="Product1">
+	<wcf:param name="langId" value="${langId}" />
+    <wcf:param name="storeId" value="${WCParam.storeId}"/>
+    <wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+    <wcf:param name="productId" value="${itemIDWishlist}"/>
+	<wcf:param name="urlLangId" value="${urlLangId}" />
+</wcf:url>
+
+<astpush:assetPushUrl var="shoppingListImage" urlRelative="${catalogEntryView.fullImage}" scope="page" type="${catalogEntryView.type}" source="main" device="${device}" format="full"/>
+<c:set var="catEntryParams" value="{id: '${uniqueID}', name: '${fn:replace(catalogEntryView.name, search01, replaceStr01)}', image: '${fn:replace(shoppingListImage, search01, replaceStr01)}', type: '${type}', quantity: 1, components: {${componentItems}}, skus: [${skus}]}"/>
+
+<%-- Keep the store specific parameters like storeId, catalogId and langId in json object format --%>
+<c:set var="storeParams" value="{storeId: '${fn:escapeXml(storeId)}',catalogId: '${fn:escapeXml(catalogId)}',langId: '${fn:escapeXml(langId)}'}"/>

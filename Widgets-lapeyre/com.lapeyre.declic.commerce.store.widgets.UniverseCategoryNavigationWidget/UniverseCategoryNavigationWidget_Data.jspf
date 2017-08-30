@@ -1,0 +1,48 @@
+<%--  Add your data related code here --%>
+<c:set var="displayProductCount" value="false" />
+
+<wcf:rest var="currentCategory" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/categoryview/byId/${WCParam.categoryId}" >	
+	<wcf:param name="langId" value="${WCParam.langId}"/>
+	<wcf:param name="currency" value="${env_currencyCode}"/>
+	<wcf:param name="responseFormat" value="json"/>		
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+</wcf:rest>
+
+<c:if test="${fn:length(currentCategory.catalogGroupView) == 1}">
+	<c:set var="currentCategoryName" scope="request" value="${currentCategory.catalogGroupView[0].name}" />
+	<c:set var="parentCategoryID" value="${currentCategory.catalogGroupView[0].parentCatalogGroupID}" />
+</c:if>
+
+<wcf:rest var="categoriesBro" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/categoryview/byParentCategory/${parentCategoryID}" >	
+	<wcf:param name="langId" value="${WCParam.langId}"/>
+	<wcf:param name="currency" value="${env_currencyCode}"/>
+	<wcf:param name="responseFormat" value="json"/>		
+	<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+</wcf:rest>
+
+<wcf:useBean var="topCategories" classname="java.util.ArrayList"/>
+<wcf:useBean var="fullTopCategoryList" classname="java.util.ArrayList" />
+
+<c:forEach var="topCategory" items="${categoriesBro.catalogGroupView}" varStatus="status">
+ 	<wcf:useBean var="topCategoryMappingList" classname="java.util.ArrayList"/>
+ 	<c:set var="productCount" value="0"/>
+ 	
+ 	<wcf:url var="CategoryDisplayURL" patternName="CanonicalCategoryURL" value="Category3">
+		<wcf:param name="langId" value="${WCParam.langId}" />
+		<wcf:param name="storeId" value="${WCParam.storeId}" />
+		<wcf:param name="catalogId" value="${WCParam.catalogId}" />			
+		<wcf:param name="top_category" value="${WCParam.categoryId}" />	
+		<wcf:param name="categoryId" value="${topCategory.uniqueID}" />		
+		<wcf:param name="beginIndex" value="0" />
+		<wcf:param name="urlLangId" value="${urlLangId}" />
+	</wcf:url>
+
+	<wcf:set target="${topCategoryMappingList}" value="${topCategory.name}" />	   	 
+	<wcf:set target="${topCategoryMappingList}" value="${productCount}" /> 			 	
+ 	<wcf:set target="${topCategoryMappingList}" value="${CategoryDisplayURL}" />
+	<wcf:set target="${fullTopCategoryList}" value="${topCategoryMappingList}" />					
+	<c:remove var="topCategoryMappingList"/>	
+									
+</c:forEach>
+
+

@@ -1,0 +1,71 @@
+<%--  Add your data related code here --%>
+<!-- BEGIN ItemAvailabilityInPhysicalStoresWidget_Data.jspf -->
+<%@page import="com.lapeyre.declic.commerce.order.commands.SwitchShippingModeCmdImpl" %>
+
+
+<wcbase:useBean id="activeStoreLocationDB" classname="com.lapeyre.declic.commerce.storelocator.beans.FullActiveStoreLocationDataBean">
+	<c:set value="${storeId}" target="${activeStoreLocationDB}" property="storeId" />
+	<c:set value="${langId}" target="${activeStoreLocationDB}" property="languageId" />
+</wcbase:useBean>
+
+<c:set var="fullActiveStores" value="${activeStoreLocationDB.fullActiveStores}" />
+<wcf:useBean var="activeShopsList" classname="java.util.ArrayList" />
+<c:set var="defaultUserShops" value="${extendedUserContext.defaultStores}" />
+
+<c:forEach var="activeshop" items="${fullActiveStores}">
+	<c:if test="${ activeshop.retraitMagasin || activeshop.retraitDrive || activeshop.livraisonColissimo || activeshop.livraisonTransporteur}">
+		<wcf:useBean var="activeShopMap" classname="java.util.HashMap" />
+		<wcf:set target="${activeShopMap}" key="id" value="${activeshop.strLocId}" />
+		<wcf:set target="${activeShopMap}" key="identifier" value="${activeshop.identifier}" />
+		<wcf:set target="${activeShopMap}" key="name" value="${activeshop.name}" />
+		<wcf:set target="${activeShopMap}" key="address1" value="${activeshop.address1}" />
+		<wcf:set target="${activeShopMap}" key="address2" value="${activeshop.address2}" />
+		<wcf:set target="${activeShopMap}" key="address3" value="${activeshop.address3}" />
+		<wcf:set target="${activeShopMap}" key="address4" value="${activeshop.address4}" />
+		<wcf:set target="${activeShopMap}" key="zipcode" value="${activeshop.cp}" />
+		<wcf:set target="${activeShopMap}" key="city" value="${activeshop.city}" />
+		<wcf:set target="${activeShopMap}" key="phone" value="${activeshop.mainPhone}" />
+		<wcf:set target="${activeShopMap}" key="email" value="${activeshop.email}" />
+		<wcf:set target="${activeShopMap}" key="seoUrl" value="${activeshop.seoUrl}" />
+		<wcf:set target="${activeShopMap}" key="retrait" value="${activeshop.retraitMagasin || activeshop.retraitDrive}" />
+		<wcf:set target="${activeShopMap}" key="livraison" value="${activeshop.livraisonColissimo || activeshop.livraisonTransporteur}" />
+		<c:remove var="dontadd"/>
+		<c:if  test="${(!empty pageType && pageType eq 'TunnelLivraison') || (!empty param.pageType && param.pageType eq 'TunnelLivraison')}">
+		<%
+		pageContext.setAttribute("RETRAIT_MAGASIN_ID_METIER", SwitchShippingModeCmdImpl.RETRAIT_MAGASIN_ID_METIER);
+		pageContext.setAttribute("RETRAIT_MAGASIN_DRIVE_ID_METIER", SwitchShippingModeCmdImpl.RETRAIT_MAGASIN_DRIVE_ID_METIER);
+		pageContext.setAttribute("LIVRAISON_TRANSPORTER_ID_METIER", SwitchShippingModeCmdImpl.LIVRAISON_TRANSPORTER_ID_METIER);
+		pageContext.setAttribute("LIVRAISON_COLISSIMO_ID_METIER", SwitchShippingModeCmdImpl.LIVRAISON_COLISSIMO_ID_METIER);
+		%>
+			<c:choose>
+				<c:when test="${(modeRetrait==RETRAIT_MAGASIN_ID_METIER || modeRetrait==RETRAIT_MAGASIN_DRIVE_ID_METIER) && (empty activeshop.retraitDrive || !activeshop.retraitDrive) && (empty activeshop.retraitMagasin || !activeshop.retraitMagasin)}">
+					<c:set var="dontadd" value="true"/>
+				</c:when>
+				<c:when test="${(modeRetrait==LIVRAISON_TRANSPORTER_ID_METIER || modeRetrait==LIVRAISON_COLISSIMO_ID_METIER) && (empty activeshop.livraisonColissimo || !activeshop.livraisonColissimo) && (empty activeshop.livraisonTransporteur || !activeshop.livraisonTransporteur)}">
+					<c:set var="dontadd" value="true"/>
+				</c:when>
+			</c:choose>
+			<wcf:set target="${activeShopMap}" key="retraitDrive" value="${activeshop.retraitDrive}" />
+			<wcf:set target="${activeShopMap}" key="retraitMagasin" value="${activeshop.retraitMagasin}" />
+			<wcf:set target="${activeShopMap}" key="livraisonColissimo" value="${activeshop.livraisonColissimo}" />
+			<wcf:set target="${activeShopMap}" key="livraisonTransporteur" value="${activeshop.livraisonTransporteur}" />
+			
+		</c:if>
+		<c:if test="${empty dontadd}">
+			<wcf:set target="${activeShopsList}" value="${activeShopMap}" />
+			<c:if test="${defaultUserShops[0] != null && defaultUserShops[0].id eq activeshop.strLocId}">
+				<c:set var="firstDefaultShop" value="${activeShopMap}" />
+			</c:if>
+		</c:if>
+		<c:if test="${defaultUserShops[1] != null && defaultUserShops[1].id eq activeshop.strLocId}">
+			<c:set var="secondDefaultShop" value="${activeShopMap}" />
+		</c:if>
+		<c:if test="${defaultUserShops[2] != null && defaultUserShops[2].id eq activeshop.strLocId}">
+			<c:set var="thirdDefaultShop" value="${activeShopMap}" />
+		</c:if>
+		<c:remove var="activeShopMap" />
+	</c:if>
+</c:forEach>
+
+
+<!-- END ItemAvailabilityInPhysicalStoresWidget_Data.jspf -->

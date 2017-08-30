@@ -1,0 +1,107 @@
+<!-- BEGIN mobile/TunnelShopCartHeader_UI.jspf -->
+<%@ page trimDirectiveWhitespaces="true" %>
+<fmt:message var="tunnelRecapCmdBreadcrumbLabel" key="tunnelRecapCmdBreadcrumbLabel" bundle="${widgetText}" />
+<fmt:message var="tunnelIdentificationBreadcrumbLabel" key="tunnelIdentificationBreadcrumbLabel" bundle="${widgetText}" />
+<fmt:message var="tunnelLivraisonBreadcrumbLabel" key="tunnelLivraisonBreadcrumbLabel" bundle="${widgetText}" />
+<fmt:message var="tunnelRetraitBreadcrumbLabel" key="tunnelRetraitBreadcrumbLabel" bundle="${widgetText}" />
+<fmt:message var="tunnelPaiementBreadcrumbLabel" key="tunnelPaiementBreadcrumbLabel" bundle="${widgetText}" />
+<fmt:message var="tunnelConfirmationBreadcrumbLabel" key="tunnelConfirmationBreadcrumbLabel" bundle="${widgetText}" />
+<div class="row">
+	<div class="col12 slot1 full-background" id="tunnelHeader" tabindex="0" data-slot-id="1">
+		<ul class="etapes">
+			<li>
+				<a class="hoverable" href="${tunnelRecapShopCartLink}">
+				<div class="${tunnelStep eq 1 ? 'current':'' }">
+					<span>1</span>
+				</div>
+			</a>
+			</li>
+			<c:choose>
+				<c:when test="${userType eq 'R'}">
+					<li>
+						<a>
+							<div class="${tunnelStep eq 2 ? 'current':'' }">
+								<span>2</span>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="${tunnelStep >= 4 ? tunnelShippingLink : '#'}" class="<c:if test= "${tunnelStep eq 4 }">hoverable</c:if>">
+							<div class="${tunnelStep eq 3 ? 'current':'' }">
+								<span>3</span>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<div class="${tunnelStep eq 4 ? 'current':'' }">
+								<span>4</span>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<div class="${tunnelStep eq 5 ? 'current':'' }">
+								<span>5</span>
+							</div>
+						</a>
+					</li>
+				</c:when>
+				<c:otherwise>
+					<li>
+						<a href="#">
+							<div class="${tunnelStep eq 2 ? 'current':'' }">
+								<span>2</span>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<div class="${tunnelStep eq 3 ? 'current':'' }">
+								<span>3</span>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<div class="${tunnelStep eq 4 ? 'current':'' }">
+								<span>4</span>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							<div class="${tunnelStep eq 5 ? 'current':'' }">
+								<span>5</span>
+							</div>
+						</a>
+					</li>
+				</c:otherwise>
+			</c:choose>
+		</ul>
+		<p class="etapeTitle title${tunnelStep}">
+			<c:choose>
+				<c:when test="${tunnelStep == 1}">
+					${tunnelRecapCmdBreadcrumbLabel}
+				</c:when>
+				<c:when test="${tunnelStep == 2}">
+					${tunnelIdentificationBreadcrumbLabel}
+				</c:when>
+				<c:when test="${tunnelStep == 3 and empty itemsShippingNotAllowedList}">
+					${tunnelLivraisonBreadcrumbLabel}
+				</c:when>
+				<c:when test="${tunnelStep == 3 and not empty itemsShippingNotAllowedList}">
+					${tunnelRetraitBreadcrumbLabel}
+				</c:when>
+				<c:when test="${tunnelStep == 4}">
+					${tunnelPaiementBreadcrumbLabel}
+				</c:when>
+				<c:when test="${tunnelStep == 5}">
+					${tunnelConfirmationBreadcrumbLabel}
+				</c:when>
+			</c:choose>
+		</p>
+	</div>
+</div>
+
+<!-- END mobile/TunnelShopCartHeader_UI.jspf -->

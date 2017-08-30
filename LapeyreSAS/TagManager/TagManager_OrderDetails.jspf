@@ -1,0 +1,147 @@
+<%@ page trimDirectiveWhitespaces="true" %>
+<wcf:useBean classname="java.util.ArrayList" var="tmsOrderItems" />
+<wcf:useBean classname="java.util.ArrayList" var="tmsOrderItemsEE" />
+<c:set var="cookieOrderIdKey" value="WC_CartOrderId_${storeId}"/>
+
+<c:choose>
+	<%--Dans le cas de la page confirmation, on sp�cifie l'orderId que l'on veut r�cup�rer (ce n'est plus le panier courant mais la commande que l'on vient de passer) --%>
+	<c:when test="${!empty orderIdGTM && !empty GTM_getOrderForConfirmation && GTM_getOrderForConfirmation}">
+		<c:catch>
+			<wcf:getData type="com.ibm.commerce.order.facade.datatypes.OrderType"
+				   var="order" expressionBuilder="findByOrderIdWithPagingOnItem" maxItems="${env_maxOrderItemsToInspect}" recordSetStartNumber="0" scope="request">
+				<wcf:param name="orderId" value="${orderIdGTM}" />	 
+			</wcf:getData>
+		</c:catch>
+		<%-- Hack to avoid get data from scratch --%>
+		<c:set var="orderInCart" value="${order}" />
+	</c:when>
+	<%--Toutes les autres pages --%>
+	<c:otherwise>
+		<c:set var="fetchCartContents" value="true" />
+	</c:otherwise>
+</c:choose>
+
+<c:set var="countMax" value="-1" scope="request"/>
+<%@ include file="../Widgets/MiniShopCartDisplay/MiniShopCartDisplay_Data.jspf" %>
+
+<c:if test="${!empty orderItemsDetailsList}">
+	<wcf:rest var="orderItemsCategories" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/categoryview/byIds" >
+		<wcf:param name="profileName" value="ECO_findCategoryByUniqueIds" />
+		<c:forEach items="${orderItemsDetailsList}" var="orderItem">
+			<wcf:useBean classname="java.util.HashMap" var="itemObject" />
+            <wcf:set target="${itemObject}" key="id" value="${orderItem.productSKU}" />
+			<wcf:set target="${itemObject}" key="name" value="${orderItem.productName}" />
+			<wcf:set target="${itemObject}" key="brand" value="${orderItem.mfName}" />
+			<wcf:set target="${itemObject}" key="variant" value="Standard"/>
+			<wcf:set target="${itemObject}" key="price" value="${fn:replace(fn:replace(orderItem.unitPriceWithEcoPart,',','.'),' ', '')}" /><% //on fait un replace, car le prix est deja une chaine formatee %>
+			<wcf:set target="${itemObject}" key="parentCatgroupID" value="${orderItem.parentCatalogGroupID}" />
+			<wcf:set target="${itemObject}" key="quantity" value="${orderItem.productQty}" />
+			<wcf:set target="${itemObject}" key="orderItemId" value="${orderItem.orderItemId}" />
+			<wcf:set target="${itemObject}" key="sku" value="${orderItem.productSKU}" />
+			<wcf:set target="${tmsOrderItems}" value="${itemObject}" />
+			<c:remove var="itemObject" />
+			<wcf:useBean classname="java.util.HashMap" var="itemObjectEE" />
+			<wcf:set target="${itemObjectEE}" key="id" value="${orderItem.productSKU}" />
+			<wcf:set target="${itemObjectEE}" key="name" value="${orderItem.productName}" />
+			<wcf:set target="${itemObjectEE}" key="price" value="${fn:replace(fn:replace(orderItem.unitPriceWithEcoPart,',','.'),' ', '')}" /><% //on fait un replace, car le prix est deja une chaine formatee %>
+			<wcf:set target="${itemObjectEE}" key="quantity" value="${orderItem.productQty}" />
+			<wcf:set target="${itemObjectEE}" key="variant" value="Standard"/>
+			
+			<wcf:set target="${itemObjectEE}" key="brand" value="${orderItem.mfName}" />
+			<wcf:set target="${itemObjectEE}" key="coupon" value="${orderItem.coupons}" />
+			
+			<wcf:set target="${tmsOrderItemsEE}" value="${itemObjectEE}" />
+			<c:remove var="itemObjectEE" />
+			<wcf:param name="id" value="${orderItem.parentCatalogGroupID}" />
+		</c:forEach>
+		<wcf:param name="langId" value="${WCParam.langId}"/>
+		<wcf:param name="responseFormat" value="json"/>		
+		<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+	</wcf:rest>
+	<%-- 2731 Mettre a jour les produits avec leurs breadcrumbs --%>
+	<c:forEach items="${tmsOrderItems}" var="oitem" >
+		<c:forEach var="parentcatgroups" items="${orderItemsCategories.catalogGroupView}">
+			<c:if test="${parentcatgroups.uniqueID == oitem.parentCatgroupID }">
+				<wcf:rest var="parent_cat1" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/categoryview/byId/${parentcatgroups.breadCrumbTrailEntryView[0].value}" >
+					<wcf:param name="langId" value="${WCParam.langId}"/>
+					<wcf:param name="responseFormat" value="json"/>		
+					<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+				</wcf:rest>
+				<wcf:rest var="parent_cat2" url="${searchHostNamePath}${searchContextPath}/store/${WCParam.storeId}/categoryview/byId/${parentcatgroups.breadCrumbTrailEntryView[1].value}" >
+					<wcf:param name="langId" value="${WCParam.langId}"/>
+					<wcf:param name="responseFormat" value="json"/>		
+					<wcf:param name="catalogId" value="${WCParam.catalogId}"/>
+				</wcf:rest>
+				
+				<wcf:set target="${oitem}" key="parent_cat1_id" value="${parent_cat1.catalogGroupView[0].identifier}" />
+				<wcf:set target="${oitem}" key="parent_cat2_id" value="${parent_cat2.catalogGroupView[0].identifier}" />
+				<wcf:set target="${oitem}" key="parent_cat3_id" value="${parentcatgroups.identifier}" />
+				<wcf:set target="${oitem}" key="parent_cat1_name" value="${parentcatgroups.breadCrumbTrailEntryView[0].label}" />
+				<wcf:set target="${oitem}" key="parent_cat2_name" value="${parentcatgroups.breadCrumbTrailEntryView[1].label}" />
+				<wcf:set target="${oitem}" key="parent_cat3_name" value="${parentcatgroups.breadCrumbTrailEntryView[2].label}" />
+				<wcf:set target="${oitem}" key="category" value="${parentcatgroups.breadCrumbTrailEntryView[1].label}" />
+			</c:if>
+		</c:forEach>
+		<c:forEach items="${tmsOrderItemsEE}" var="oitemEE" >
+			<c:if test="${oitemEE.id == oitem.sku }">
+				<wcf:set target="${oitemEE}" key="category" value="${oitem.parent_cat2_name}" />
+			</c:if>
+		</c:forEach>
+	</c:forEach>
+	
+</c:if>
+
+<wcf:useBean classname="java.util.HashMap" var="parentCatGroupsIdentifiers"/>
+<c:forEach var="parentcatgroups" items="${orderItemsCategories.catalogGroupView}">
+	<wcf:set target="${parentCatGroupsIdentifiers}" key="${parentcatgroups.uniqueID}" value="${parentcatgroups.identifier}" />
+</c:forEach> 
+
+<%-- <c:forEach var="tmsOrderItem" items="${tmsOrderItems}"> --%>
+<%-- 	<wcf:set target="${tmsOrderItem}" key="category" value="${parentCatGroupsIdentifiers[tmsOrderItem.parentCatgroupID]}" /> --%>
+<%-- </c:forEach> --%>
+
+<c:if test="${!empty tmsOrderItemsEE}">
+	<c:set var="EE_orderItems" value="${tmsOrderItemsEE}" />
+	<c:remove var="tmsOrderItemsEE" />
+</c:if>
+
+<c:if test="${!empty tmsOrderItems}">
+	<c:set var="GTM_orderId" value="${orderIdGTM}" />
+
+	<fmt:formatNumber var="orderAmountValueFormatted_TTC" value="${orderAmountValue_TTC}" maxFractionDigits="${env_currencyDecimal}" />
+	<fmt:parseNumber var="GTM_orderTotal" value="${orderAmountValueFormatted_TTC}"  />
+	
+	<c:set var="GTM_orderTax" value="${orderAmountValue_TTC - orderAmountValue_HT}" />
+	<fmt:formatNumber var="GTM_orderTax" value="${GTM_orderTax}" maxFractionDigits="${env_currencyDecimal}" />
+	<fmt:parseNumber var="GTM_orderTax" value="${GTM_orderTax}"  />
+	
+	<c:set var="GMT_orderItems" value="${tmsOrderItems}" />
+	<c:remove var="tmsOrderItems" />
+	
+	<c:set var="GMT_orderTotalWithoutSf" value="${GTM_orderTotal}" />
+	
+	<c:set var="GMT_orderTotalDiscount" value="" />
+	<c:if test="${totalDiscountValue_TTC ne '0.00' && totalDiscountValue_TTC ne '0.0'}">
+		<fmt:formatNumber var="GMT_orderTotalDiscount" value="${-totalDiscountValue_TTC}" maxFractionDigits="${env_currencyDecimal}" />
+		<fmt:parseNumber var="GMT_orderTotalDiscount" value="${GMT_orderTotalDiscount}"/>
+	</c:if>
+	
+	<c:set var="discountCodeList" value="" />
+	<c:forEach var="orderExternalAdjust" items="${orderExternalAdjusts}" varStatus="status">
+		<c:set var="code" value="${orderExternalAdjust.code}" />
+		<c:set var="discountCodeList" value="${discountCodeList}${status.first  ?  '' : ','}${code}" />
+	</c:forEach>
+	<c:set var="GMT_orderPromoCodes" value="${discountCodeList}" />
+	<c:remove var="discountCodeList"  />
+	
+	<c:set var="GMT_orderQty" value="${orderQuantity}" />
+	
+	<%-- Payment additionial data Init --%>
+	<c:set var="GTM_paymentMode" value="" />
+	
+	<%-- Shipping Additional Data Init--%>
+	<c:set var="GTM_shippingMode" value="" />
+	<c:set var="GTM_shipping" value="" />
+	
+	<c:set var="GTM_orderEmail" value=""/>
+</c:if>

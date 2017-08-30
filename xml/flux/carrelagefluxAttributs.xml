@@ -1,0 +1,842 @@
+<message type="attributeImport">
+	<header>
+		<sender>SAS</sender>
+		<SASid>SASid</SASid>
+		<extractDate>2014-10-14T09:34:54.00</extractDate>
+		<targetCatalog>current</targetCatalog>
+		<nbDataEntries>9</nbDataEntries>
+		<credentials>
+			<login>importadmin</login>
+			<password>passw0rd</password>
+		</credentials>
+	</header>
+	<data>
+		<!-- PRICE LABEL -->
+		<attribute>
+			<action>add</action>
+			<identifier>COMMUNES-PRICE-LABEL</identifier>
+			<label locale="fr">Marque</label>
+			<description locale="fr"><![CDATA[Définit la marque.]]></description>
+			<type>String</type>
+			<isListOfValues>false</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+		</attribute>
+		<!-- POIDS -->
+		<attribute>
+			<action>add</action>
+			<identifier>COMMUNES-WEIGHT</identifier>
+			<label locale="fr">Poids</label>
+			<description locale="fr"><![CDATA[Définit le poids.]]></description>
+			<type>String</type>
+			<isListOfValues>false</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+		</attribute>
+		<attribute>
+			<action>add</action>
+			<identifier>poids</identifier>
+			<label locale="fr">Poids</label>
+			<description locale="fr"><![CDATA[Définit le poids.]]></description>
+			<type>String</type>
+			<isListOfValues>false</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+		</attribute>
+		<!-- UNITE BASE LABEL -->
+		<attribute>
+			<action>add</action>
+			<identifier>uniteSecondaireLabel</identifier>
+			<label locale="fr">Libellé Unité de base</label>
+			<description locale="fr"><![CDATA[Définit le libellée de l'unité de base, dans le cas du carrelage ou du parquet.]]></description>
+			<type>String</type>
+			<isListOfValues>false</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+		</attribute>
+		<!-- UNITE BASE -->
+		<attribute>
+			<action>add</action>
+			<identifier>uniteSecondaire</identifier>
+			<label locale="fr">Unité de base</label>
+			<description locale="fr"><![CDATA[Code de l'unité de b.]]>ase</description>
+			<type>String</type>
+			<isListOfValues>false</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+		</attribute>
+		<!-- UNITE-VENTE LABEL -->
+		<attribute>
+			<action>add</action>
+			<identifier>uniteVenteLabel</identifier>
+			<label locale="fr">Libellé Unité de vente</label>
+			<description locale="fr"><![CDATA[Définit le libellée de l'unité de vente, dans le cas du carrelage ou du parquet.]]></description>
+			<type>String</type>
+			<isListOfValues>false</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+		</attribute>
+		<!-- UNITE-VENTE -->
+		<attribute>
+			<action>add</action>
+			<identifier>uniteVente</identifier>
+			<label locale="fr">Unité de vente</label>
+			<description locale="fr"><![CDATA[Code de l'unité de vente.]]></description>
+			<type>String</type>
+			<isListOfValues>false</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+		</attribute>
+		<!-- UNITE-VENTELEGALE LABEL -->
+		<attribute>
+			<action>add</action>
+			<identifier>uniteVenteLegaleLabel</identifier>
+			<label locale="fr">Libellé Unité de vente legale</label>
+			<description locale="fr"><![CDATA[Définit le libellé de l'unité de vente legale, dans le cas du carrelage ou du parquet.]]></description>
+			<type>String</type>
+			<isListOfValues>false</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+		</attribute>
+		<!-- UNITE-VENTELEGALE -->
+		<attribute>
+			<action>add</action>
+			<identifier>uniteVenteLegale</identifier>
+			<label locale="fr">Unité de vente LEGALE</label>
+			<description locale="fr"><![CDATA[Code de l'unité de vente LEGALE.]]></description>
+			<type>String</type>
+			<isListOfValues>false</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+		</attribute>
+			<attribute>
+			<action>add</action>
+			<identifier>contrainteColisage</identifier>
+			<label locale="fr">contrainte de colisage</label>
+			<description locale="fr"><![CDATA[contrainte de colisage pour carrelage]]></description>
+			<type>String</type>
+			<isListOfValues>false</isListOfValues>
+			<isDisplayedFront>false</isDisplayedFront>
+		</attribute>
+		<!-- COEFF CONVERSION CARRELAGE -->
+		<attribute>
+			<action>add</action>
+			<identifier>coeffConversionQuantite</identifier>
+			<label locale="fr">Coefficient de conversion carrelage</label>
+			<description locale="fr"><![CDATA[Coefficient de conversion carrelage]]></description>
+			<type>String</type>
+			<isListOfValues>false</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+		</attribute>
+		<!-- COEFF CONVERSION PARQUET -->
+		<attribute>
+			<action>add</action>
+			<identifier>coeffConversionPrix</identifier>
+			<label locale="fr">Coefficient de conversion parquet</label>
+			<description locale="fr"><![CDATA[Coefficient de conversion parquet]]></description>
+			<type>String</type>
+			<isListOfValues>false</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+		</attribute>
+		<!-- CODE EAN -->
+		<attribute>
+			<action>add</action>
+			<identifier>codeEan</identifier>
+			<label locale="fr">Code EAN</label>
+			<description locale="fr"><![CDATA[Code EAN]]></description>
+			<type>String</type>
+			<isListOfValues>false</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+		</attribute>
+		<!-- GOOGLE CATEGORY -->
+		<attribute>
+			<action>add</action>
+			<identifier>categorieGoogle</identifier>
+			<label locale="fr">Catégorie Google</label>
+			<description locale="fr"><![CDATA[Google Catégorie pour Google Shopping]]></description>
+			<type>String</type>
+			<isListOfValues>false</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+		</attribute>
+		<!-- Couleur -->
+		<attribute>
+			<action>add</action>
+			<identifier>COMMUNES-COLOR</identifier>
+			<label locale="fr">Couleur</label>
+			<description locale="fr"><![CDATA[Définit la couleur.]]></description>
+			<type>String</type>
+			<isListOfValues>true</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+			<allowedValueList>
+				<allowedValue>
+					<allowedValueIdentifier>BLACK</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">BLACK</allowedValueString>
+					<allowedValueSequence locale="fr">1.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-black.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>WHITE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">WHITE</allowedValueString>
+					<allowedValueSequence locale="fr">2.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-white.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>RED</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">RED</allowedValueString>
+					<allowedValueSequence locale="fr">3.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-red.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>BLUE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">BLUE</allowedValueString>
+					<allowedValueSequence locale="fr">4.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-blue.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>ORANGE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">ORANGE</allowedValueString>
+					<allowedValueSequence locale="fr">5.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-orange.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>TEAL</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">TEAL</allowedValueString>
+					<allowedValueSequence locale="fr">6.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-teal.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>CHOCOLAT</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">CHOCOLAT</allowedValueString>
+					<allowedValueSequence locale="fr">7.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-chocolat.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>ORCHIDEE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">ORCHIDEE</allowedValueString>
+					<allowedValueSequence locale="fr">8.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-orchidee.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>ANTHRACITE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">ANTHRACITE</allowedValueString>
+					<allowedValueSequence locale="fr">9.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-gris-anthracite.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>GRAPHITE-BRILLANT</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">GRAPHITE-BRILLANT</allowedValueString>
+					<allowedValueSequence locale="fr">10.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-graphite-brillant.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>CARMIN</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">CARMIN</allowedValueString>
+					<allowedValueSequence locale="fr">11.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-carmin.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>CORAIL</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">CORAIL</allowedValueString>
+					<allowedValueSequence locale="fr">12.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-rouge-corail.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>JAUNE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">JAUNE</allowedValueString>
+					<allowedValueSequence locale="fr">13.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-jaune.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>CHESTER</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">CHESTER</allowedValueString>
+					<allowedValueSequence locale="fr">14.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-chester.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>CHESTER-MOSAIQUE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">CHESTER-MOSAIQUE</allowedValueString>
+					<allowedValueSequence locale="fr">13.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-chester-mosaique.jpg</allowedValueImage>
+				</allowedValue>
+			</allowedValueList>
+		</attribute>
+		<!-- Code Expo -->
+		<attribute>
+			<action>add</action>
+			<identifier>COMMUNES-3.COMM-CODE-EXPO</identifier>
+			<label locale="fr">Article expo</label>
+			<description locale="fr"><![CDATA[Définit le code expo.]]></description>
+			<type>String</type>
+			<isListOfValues>true</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+			<allowedValueList>
+				<allowedValue>
+					<allowedValueIdentifier>TRUE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">TRUE</allowedValueString>
+					<allowedValueSequence locale="fr">1.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>FALSE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">FALSE</allowedValueString>
+					<allowedValueSequence locale="fr">2.0</allowedValueSequence>
+				</allowedValue>
+			</allowedValueList>
+		</attribute>
+		<!-- Eligible Colissimo -->
+		<attribute>
+			<action>add</action>
+			<identifier>COMMUNES-COLISSIMO</identifier>
+			<label locale="fr">Eligible Colissimo</label>
+			<description locale="fr"><![CDATA[Définit si l'article est éligible Colissimo]]></description>
+			<type>String</type>
+			<isListOfValues>true</isListOfValues>
+			<isDisplayedFront>false</isDisplayedFront>
+			<allowedValueList>
+				<allowedValue>
+					<allowedValueIdentifier>TRUE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">TRUE</allowedValueString>
+					<allowedValueSequence locale="fr">1.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>FALSE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">FALSE</allowedValueString>
+					<allowedValueSequence locale="fr">2.0</allowedValueSequence>
+				</allowedValue>
+			</allowedValueList>
+		</attribute>
+		<attribute>
+			<action>add</action>
+			<identifier>colissimo</identifier>
+			<label locale="fr">Eligible Colissimo</label>
+			<description locale="fr"><![CDATA[Définit l'éligibilité de colissimo.]]></description>
+			<type>String</type>
+			<isListOfValues>false</isListOfValues>
+			<isDisplayedFront>false</isDisplayedFront>
+		</attribute>
+		<!-- Série limitée -->
+		<attribute>
+			<action>add</action>
+			<identifier>COMMUNES-SERIE-LIMLITE</identifier>
+			<label locale="fr">Série Limité</label>
+			<description locale="fr"><![CDATA[Définit si l'article une série limitée]]></description>
+			<type>String</type>
+			<isListOfValues>true</isListOfValues>
+			<isDisplayedFront>false</isDisplayedFront>
+			<allowedValueList>
+				<allowedValue>
+					<allowedValueIdentifier>TRUE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">TRUE</allowedValueString>
+					<allowedValueSequence locale="fr">1.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>FALSE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">FALSE</allowedValueString>
+					<allowedValueSequence locale="fr">2.0</allowedValueSequence>
+				</allowedValue>
+			</allowedValueList>
+		</attribute>
+		<!-- Largeur -->
+		<attribute>
+			<action>add</action>
+			<identifier>DIMENSIONS-COMMUNES-LARGEUR</identifier>
+			<label locale="fr">Largeur</label>
+			<description locale="fr"><![CDATA[Définit la largeur.]]></description>
+			<type>Decimal</type>
+			<isListOfValues>true</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+			<allowedValueList>
+				<allowedValue>
+					<allowedValueIdentifier>30</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">30.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">1.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>40</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">40.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">2.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>45</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">45.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">3.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>50</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">50.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">4.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>55</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">55.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">5.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>60</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">60.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">6.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>70</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">70.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">7.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>75</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">75.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">8.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>85</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">85.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">9.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>95</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">95.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">10.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>105</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">105.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">10.5</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>110</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">110.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">11.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>115</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">115.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">11.5</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>120</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">120.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">12</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>125</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">125.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">12.5</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>135</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">135.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">14.0</allowedValueSequence>
+				</allowedValue>				
+			</allowedValueList>
+		</attribute>
+		<!-- Hauteur -->
+		<attribute>
+			<action>add</action>
+			<identifier>DIMENSIONS-COMMUNES-HAUTEUR</identifier>
+			<label locale="fr">hauteur</label>
+			<description locale="fr"><![CDATA[Définit la hauteur.]]></description>
+			<type>Decimal</type>
+			<isListOfValues>true</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+			<allowedValueList>
+				<allowedValue>
+					<allowedValueIdentifier>85</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">85.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">0.9</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>95</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">95.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">1.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>105</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">105.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">2.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>115</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">115.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">3.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>125</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">125.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">3.1</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>135</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">135.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">3.3</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>140</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">140.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">3.4</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>150</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">150.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">3.6</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>160</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">160.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">3.8</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>250</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">250.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">4.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>260</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">260.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">5.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>275</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">275.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">6.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>295</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">295.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">7.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>315</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">315.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">8.0</allowedValueSequence>
+				</allowedValue>					
+			</allowedValueList>
+		</attribute>
+		<!-- Profondeur -->
+		<attribute>
+			<action>add</action>
+			<identifier>DIMENSIONS-COMMUNES-PROFONDEUR</identifier>
+			<label locale="fr">Epaisseur</label>
+			<description locale="fr"><![CDATA[Définit la hauteur.]]></description>
+			<type>Decimal</type>
+			<isListOfValues>true</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+			<allowedValueList>
+				<allowedValue>
+					<allowedValueIdentifier>0.5</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">0.5</allowedValueDecimal>
+					<allowedValueSequence locale="fr">0.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>1</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">1.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">1.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>2</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">2.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">2.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>5</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">5.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">3.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>10</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">10.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">4.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>35</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">35.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">5.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>45</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">45.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">6.0</allowedValueSequence>
+				</allowedValue>	
+				<allowedValue>
+					<allowedValueIdentifier>55</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">55.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">7.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>60</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">60.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">8.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>65</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">65.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">9.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>75</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">75.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">10.0</allowedValueSequence>
+				</allowedValue>	
+				<allowedValue>
+					<allowedValueIdentifier>85</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">85.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">11.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>95</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">95.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">12.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>105</allowedValueIdentifier>
+					<allowedValueDecimal locale="fr" default="true">105.0</allowedValueDecimal>
+					<allowedValueSequence locale="fr">13.0</allowedValueSequence>
+				</allowedValue>					
+			</allowedValueList>
+		</attribute>
+		<!-- Sens ouverture -->
+		<attribute>
+			<action>add</action>
+			<identifier>NAT-SENS-OUVERTURE</identifier>
+			<label locale="fr">Sens d'ouverture</label>
+			<description locale="fr"><![CDATA[Définit le sens d'ouverture d'une porte ou d'une fenêtre.]]></description>
+			<type>String</type>
+			<isListOfValues>true</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+			<allowedValueList>
+				<allowedValue>
+					<allowedValueIdentifier>Gauche</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">106</allowedValueString>
+					<allowedValueSequence locale="fr">1.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>DROITE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">107</allowedValueString>
+					<allowedValueSequence locale="fr">2.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>GUILLOTINE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">207</allowedValueString>
+					<allowedValueSequence locale="fr">3.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>VERTICAL</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">307</allowedValueString>
+					<allowedValueSequence locale="fr">4.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>VERTICAL-DROITE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">407</allowedValueString>
+					<allowedValueSequence locale="fr">5.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>VERTICAL-Gauche</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">407</allowedValueString>
+					<allowedValueSequence locale="fr">6.0</allowedValueSequence>
+				</allowedValue>
+			</allowedValueList>
+		</attribute>
+		<!-- Type escalier -->
+		<attribute>
+			<action>add</action>
+			<identifier>NAT-TYPE-ESCALIER</identifier>
+			<label locale="fr">Type d'escalier</label>
+			<description locale="fr"><![CDATA[Définit le type.]]></description>
+			<type>String</type>
+			<isListOfValues>true</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+			<allowedValueList>
+				<allowedValue>
+					<allowedValueIdentifier>DROIT</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">036</allowedValueString>
+					<allowedValueSequence locale="fr">1.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>SPIRAL</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">112</allowedValueString>
+					<allowedValueSequence locale="fr">2.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>QUART-TOURNANT</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">115</allowedValueString>
+					<allowedValueSequence locale="fr">3.0</allowedValueSequence>
+				</allowedValue>
+			</allowedValueList>
+		</attribute>
+		<!-- Finition Couleur -->
+		<attribute>
+			<action>add</action>
+			<identifier>NAT-FINITION-COLOR</identifier>
+			<label locale="fr">Finition d'escalier</label>
+			<description locale="fr"><![CDATA[Définit la finition.]]></description>
+			<type>String</type>
+			<isListOfValues>true</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+			<allowedValueList>
+				<allowedValue>
+					<allowedValueIdentifier>BLANC</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">103</allowedValueString>
+					<allowedValueSequence locale="fr">1.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-white.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>NOIR</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">105</allowedValueString>
+					<allowedValueSequence locale="fr">2.0</allowedValueSequence>
+					<allowedValueImage>/picto/color-black.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>INOX</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">287</allowedValueString>
+					<allowedValueSequence locale="fr">4.0</allowedValueSequence>
+					<allowedValueImage>/picto/finition-inox.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>CHROME</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">387</allowedValueString>
+					<allowedValueSequence locale="fr">5.0</allowedValueSequence>
+					<allowedValueImage>/picto/finition-chrome.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>CHOCOLAT</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">CHOCOLAT</allowedValueString>
+					<allowedValueSequence locale="fr">6.0</allowedValueSequence>
+					<allowedValueImage>/picto/finition-chocolat.jpg</allowedValueImage>
+				</allowedValue>
+			</allowedValueList>
+		</attribute>
+		<!-- Materiaux Finition -->
+		<attribute>
+			<action>add</action>
+			<identifier>NAT-FINITION-MATERIAUX</identifier>
+			<label locale="fr">Matériau de finition</label>
+			<description locale="fr"><![CDATA[Définit le matériau de finition.]]></description>
+			<type>Integer</type>
+			<isListOfValues>true</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+			<allowedValueList>
+				<allowedValue>
+					<allowedValueIdentifier>PVC</allowedValueIdentifier>
+					<allowedValueInteger locale="fr" default="true">258</allowedValueInteger>
+					<allowedValueSequence locale="fr">1.0</allowedValueSequence>
+					<allowedValueImage>/picto/finition-pvc.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>BOIS</allowedValueIdentifier>
+					<allowedValueInteger locale="fr" default="true">015</allowedValueInteger>
+					<allowedValueSequence locale="fr">2.0</allowedValueSequence>
+					<allowedValueImage>/picto/finition-bois.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>ALU</allowedValueIdentifier>
+					<allowedValueInteger locale="fr" default="true">267</allowedValueInteger>
+					<allowedValueSequence locale="fr">3.0</allowedValueSequence>
+					<allowedValueImage>/picto/finition-alu.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>INOX</allowedValueIdentifier>
+					<allowedValueInteger locale="fr" default="true">287</allowedValueInteger>
+					<allowedValueSequence locale="fr">4.0</allowedValueSequence>
+					<allowedValueImage>/picto/finition-inox.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>VERRE</allowedValueIdentifier>
+					<allowedValueInteger locale="fr" default="true">123</allowedValueInteger>
+					<allowedValueSequence locale="fr">5.0</allowedValueSequence>
+					<allowedValueImage>/picto/finition-verre.jpg</allowedValueImage>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>CUIR</allowedValueIdentifier>
+					<allowedValueInteger locale="fr" default="true">687</allowedValueInteger>
+					<allowedValueSequence locale="fr">6.0</allowedValueSequence>
+					<allowedValueImage>/picto/finition-cuir.jpg</allowedValueImage>
+				</allowedValue>
+			</allowedValueList>
+		</attribute>
+		<!-- Mode cuisson-->
+		<attribute>
+			<action>add</action>
+			<identifier>NAT-MODE-CUISSON</identifier>
+			<label locale="fr">Mode de cuission de l'appareil</label>
+			<description locale="fr"><![CDATA[Définit le mode de cuisson.]]></description>
+			<type>String</type>
+			<isListOfValues>true</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+			<allowedValueList>
+				<allowedValue>
+					<allowedValueIdentifier>VITROCERAMIQUE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">359</allowedValueString>
+					<allowedValueSequence locale="fr">1.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>GAZ</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">A93</allowedValueString>
+					<allowedValueSequence locale="fr">2.0</allowedValueSequence>
+				</allowedValue>
+			</allowedValueList>
+		</attribute>
+		<!-- position-->
+		<attribute>
+			<action>add</action>
+			<identifier>NAT-POSITION</identifier>
+			<label locale="fr">Position d'une plaque</label>
+			<description locale="fr"><![CDATA[Définit la position d'une élément.]]></description>
+			<type>String</type>
+			<isListOfValues>true</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+			<allowedValueList>
+				<allowedValue>
+					<allowedValueIdentifier>BAS</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">BAS</allowedValueString>
+					<allowedValueSequence locale="fr">1.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>MILIEU</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">MILIEU</allowedValueString>
+					<allowedValueSequence locale="fr">2.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>HAUT</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">HAUT</allowedValueString>
+					<allowedValueSequence locale="fr">3.0</allowedValueSequence>
+				</allowedValue>
+			</allowedValueList>
+		</attribute>		
+		<!-- Longueur rampe-->
+		<attribute>
+			<action>add</action>
+			<identifier>NAT-LONGEUR-RAMPE</identifier>
+			<label locale="fr">Position d'une plaque</label>
+			<description locale="fr"><![CDATA[Définit longueur d'une rampe d'escalier.]]></description>
+			<type>String</type>
+			<isListOfValues>true</isListOfValues>
+			<isDisplayedFront>true</isDisplayedFront>
+			<allowedValueList>
+				<allowedValue>
+					<allowedValueIdentifier>SHORT</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">SHORT</allowedValueString>
+					<allowedValueSequence locale="fr">1.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>MEDIUM</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">MEDIUM</allowedValueString>
+					<allowedValueSequence locale="fr">2.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>LONG</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">LONG</allowedValueString>
+					<allowedValueSequence locale="fr">3.0</allowedValueSequence>
+				</allowedValue>
+			</allowedValueList>
+		</attribute>
+		<attribute>
+			<action>add</action>
+			<identifier>isRemisable</identifier>
+			<label locale="fr">Item remisable</label>
+			<description locale="fr"><![CDATA[Item remisable]]></description>
+			<type>String</type>
+			<isListOfValues>true</isListOfValues>
+			<isDisplayedFront>false</isDisplayedFront>
+			<allowedValueList>
+				<allowedValue>
+					<allowedValueIdentifier>TRUE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">TRUE</allowedValueString>
+					<allowedValueSequence locale="fr">1.0</allowedValueSequence>
+				</allowedValue>
+				<allowedValue>
+					<allowedValueIdentifier>FALSE</allowedValueIdentifier>
+					<allowedValueString locale="fr" default="true">FALSE</allowedValueString>
+					<allowedValueSequence locale="fr">2.0</allowedValueSequence>
+				</allowedValue>
+			</allowedValueList>
+		</attribute>
+	</data>
+</message>

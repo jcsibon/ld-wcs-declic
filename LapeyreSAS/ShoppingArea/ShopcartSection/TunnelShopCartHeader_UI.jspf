@@ -1,0 +1,109 @@
+<!-- BEGIN TunnelShopCartHeader_UI.jspf -->
+<fmt:message var="tunnelRecapCmdBreadcrumbLabel" key="tunnelRecapCmdBreadcrumbLabel" bundle="${widgetText}" />
+<fmt:message var="tunnelIdentificationBreadcrumbLabel" key="tunnelIdentificationBreadcrumbLabel" bundle="${widgetText}" />
+<fmt:message var="tunnelLivraisonBreadcrumbLabel" key="tunnelLivraisonBreadcrumbLabel" bundle="${widgetText}" />
+<fmt:message var="tunnelRetraitBreadcrumbLabel" key="tunnelRetraitBreadcrumbLabel" bundle="${widgetText}" />
+<fmt:message var="tunnelPaiementBreadcrumbLabel" key="tunnelPaiementBreadcrumbLabel" bundle="${widgetText}" />
+<fmt:message var="tunnelConfirmationBreadcrumbLabel" key="tunnelConfirmationBreadcrumbLabel" bundle="${widgetText}" />
+
+<div class="row">
+	<div class="col12 slot1 ${tunnelIdentificationBreadcrumbLabel} full-background" id="tunnelHeader" data-slot-id="1">
+		<ul class="steps-list">
+			<li>
+				<a class="step1_link hoverable" href="${tunnelRecapShopCartLink}">
+				<div class="${tunnelStep eq 1 ? 'current':'' }">
+					<span class="step-number">1</span>
+					<span class="step-label hide-on-small-only">${tunnelRecapCmdBreadcrumbLabel}</span>
+				</div>
+			</a>
+			</li>
+			<c:choose>
+				<c:when test="${userType eq 'R'}">
+					<li>
+						<a>
+							<div class="${tunnelStep eq 2 ? 'current':'' }">
+								<span class="step-number">2</span>
+								<span class="step-label hide-on-small-only">${tunnelIdentificationBreadcrumbLabel}</span>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a class="step${tunnelStep}_Link <c:if test="${tunnelStep eq 4 }">hoverable</c:if>" href="${tunnelStep >= 4 ? tunnelShippingLink : '#'}">
+							<div class="${tunnelStep eq 3 ? 'current':'' }">
+								<span class="step-number">3</span>
+								<c:choose>
+ 									<c:when test="${not empty itemsShippingNotAllowedList}"> 
+ 										<span class="step-label hide-on-small-only">${tunnelRetraitBreadcrumbLabel}</span>
+ 									</c:when> 
+ 									<c:otherwise> 
+										<span class="step-label hide-on-small-only">${tunnelLivraisonBreadcrumbLabel}</span>
+ 									</c:otherwise> 
+ 								</c:choose> 
+							</div>
+						</a>
+					</li>
+					<li>
+						<a>
+							<div class="${tunnelStep eq 4 ? 'current':'' }">
+								<span class="step-number">4</span>
+								<span class="step-label hide-on-small-only">${tunnelPaiementBreadcrumbLabel}</span>
+							</div>
+						</a>
+					</li>
+                    <li>
+                        <a>
+                            <div class="${tunnelStep == 5 ? 'current':'' }">
+                                <span class="step-number">5</span>
+                                <span class="step-label hide-on-small-only"> ${tunnelConfirmationBreadcrumbLabel}</span>
+                            </div>
+                        </a>
+                    </li>
+					
+				</c:when>
+				<c:otherwise>
+					<li>
+						<a>
+							<div class="${tunnelStep eq 2 ? 'current':'' }">
+								<span class="step-number">2</span>
+								<span class="step-label hide-on-small-only">${tunnelIdentificationBreadcrumbLabel}</span>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a>
+							<div class="${tunnelStep eq 3 ? 'current':'' }">
+								<span class="step-number">3</span>
+								<c:choose>
+ 									<c:when test="${not empty itemsShippingNotAllowedList}"> 
+ 										<span class="step-label hide-on-small-only">${tunnelRetraitBreadcrumbLabel}</span>
+ 									</c:when> 
+ 									<c:otherwise> 
+										<span class="step-label hide-on-small-only">${tunnelLivraisonBreadcrumbLabel}</span>
+ 									</c:otherwise> 
+ 								</c:choose> 
+							</div>
+						</a>
+					</li>
+					<li>
+						<a>
+							<div class="${tunnelStep eq 4 ? 'current':'' }">
+								<span class="step-number">4</span>
+								<span class="step-label hide-on-small-only">${tunnelPaiementBreadcrumbLabel}</span>
+							</div>
+						</a> 
+					</li>
+                    <li>
+                        <a>
+                            <div class="${tunnelStep == 5 ? 'current':'' }">
+                                <span class="step-number">5</span>
+                                <span class="step-label hide-on-small-only"> ${tunnelConfirmationBreadcrumbLabel}</span>
+                            </div>
+                        </a>
+                    </li>
+				</c:otherwise>
+			</c:choose>
+		</ul>
+	</div>
+</div>
+
+<!-- END TunnelShopCartHeader_UI.jspf -->
